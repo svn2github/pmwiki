@@ -167,6 +167,7 @@ $Conditions['match'] = 'preg_match("!$condparm!",$pagename)';
 $Conditions['auth'] =
   '@$GLOBALS["PCache"][$GLOBALS["pagename"]]["=auth"][trim($condparm)]';
 $Conditions['authid'] = '@$GLOBALS["AuthId"] > ""';
+$Conditions['enabled'] = '(boolean)@$GLOBALS[$condparm]';
 
 $MarkupTable['_begin']['seq'] = 'B';
 $MarkupTable['_end']['seq'] = 'E';
@@ -439,10 +440,12 @@ function PCache($pagename,$page) {
   
 ## FmtPageName handles $[internationalization] and $Variable 
 ## substitutions in strings based on the $pagename argument.
-function FmtPageName($fmt,$pagename) {
+function FmtPageName($fmt, $pagename, $pc=0) {
   # Perform $-substitutions on $fmt relative to page given by $pagename
   global $GroupPattern, $NamePattern, $EnablePathInfo, $ScriptUrl,
     $GCount, $UnsafeGlobals, $FmtV, $FmtP, $PCache, $AsSpacedFunction;
+  if ($pc && !isset($PCache[$pagename]))
+    PCache($pagename, ReadPage($pagename, READPAGE_CURRENT));
   if (strpos($fmt,'$')===false) return $fmt;                  
   $fmt = preg_replace('/\\$([A-Z]\\w*Fmt)\\b/e','$GLOBALS[\'$1\']',$fmt);
   $fmt = preg_replace('/\\$\\[(?>([^\\]]+))\\]/e',"XL(PSS('$1'))",$fmt);
@@ -467,7 +470,8 @@ function FmtPageName($fmt,$pagename) {
     krsort($g); reset($g);
   }
   $fmt = str_replace(array_keys($g),array_values($g),$fmt);
-  $fmt = str_replace(array_keys($FmtV),array_values($FmtV),$fmt);
+  $fmt = preg_replace('/(?>(\\$[[:alpha:]]\\w+))/e', 
+          "isset(\$FmtV['$1']) ? \$FmtV['$1'] : '$1'", $fmt); 
   return $fmt;
 }
 
