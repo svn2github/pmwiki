@@ -1,0 +1,8 @@
+version=pmwiki-2.0.devel3
+newline=²
+text=²:$DeleteKeyPattern:The pattern used to determine if a page should be deleted.  The default is to remove pages that contain only the single word "delete" (and optional spaces).²        # change delete word to "remove"²        $DeleteKeyPattern = "^\\s*remove\\s*$";²        # delete any page with no visible text, i.e., empty²        $DeleteKeyPattern = "^\\s*$";²²
+time=1094132302
+name=PmWiki.EditVariables
+host=24.1.26.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7) Gecko/20040707 Firefox/0.8
+rev=1

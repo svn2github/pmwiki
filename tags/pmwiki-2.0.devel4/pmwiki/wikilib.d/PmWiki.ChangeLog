@@ -1,0 +1,9 @@
+version=pmwiki-2.0.devel3
+newline=²
+version=pmwiki-2.0.devel1
+text=!!!²²* Fixed call-time-pass-by-reference in simuledit.php (thanks to [[~CB]]).²* Added ?action=crypt.²* Added ?action=print.²* Added XLPage() functions and fixed problems with i18n (PITS:00011)²* Fixed bug in trails.php code (PITS:00017)²* Documented custom markup functions (PITS:00003)²* Improved ?action=ruleset slightly²* Added [@[[<<]]@] markup (thanks to JF)²²!!!Version 2.0.devel3 (27-Aug-2004)²²* Fixed missing mode parameter in mkdir (thanks to javajunky on irc).²²!!!Version 2.0.devel2 (27-Aug-2004)²²* Added $EnablePathInfo support.²* Fixed problem with QUERY_STRING handling of '?'.²²!!!Version 2.0.devel1 (26-Aug-2004)²²* Initial release.  For experimental and development use '''only'''.²²
+time=1094414871
+name=PmWiki.ChangeLog
+host=216.7.163.171
+agent=pmwikiedit
+rev=7

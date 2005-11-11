@@ -1,0 +1,10 @@
+version=pmwiki-2.0.beta5
+newline=²
+text=<<|[[PmWiki.Variables]]|>>²²:$HTMLStylesFmt:An array of CSS statements to be included in the page's output along with other HTML headers.  This array provides an easy place for scripts to add custom CSS statements.²²:$WikiTitle:A variable which contains the Wiki title as displayed by the browser²²:$WikiStyle:An array which contains the predefined WikiStyles which can be used on a textpage.[[<<]]See: PmWiki.CustomWikiStyles²²:$MaxIncludes:Controls the number of times that pages can be included via the [@(:include:)@] and other directives, used to control recursion and otherwise pose a sanity check on page contents.  $MaxIncludes defaults to 50, but can be set to any value by the wiki administrator.²        $MaxIncludes = 50;            # default²        $MaxIncludes = 1000;          # allow lots of includes²        $MaxIncludes = 0;             # turn off includes²²
+time=1102173921
+name=PmWiki.LayoutVariables
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0
+rev=13
+author=Pm
+targets=PmWiki.Variables,PmWiki.BasicVariables,PmWiki.LinkVariables,PmWiki.WikiStyles,PmWiki.CustomWikiStyles

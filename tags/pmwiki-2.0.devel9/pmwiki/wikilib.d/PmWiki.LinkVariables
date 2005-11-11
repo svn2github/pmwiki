@@ -1,0 +1,9 @@
+version=pmwiki-2.0.devel1
+newline=²
+version=
+text=:$MakePageNameFunction:Name of a custom function to replace PmWikiFunctions/MakePageName, which converts strings into valid page names.²²:$PagePathFmt:TODO²
+time=1093573280
+name=PmWiki.LinkVariables
+host=24.1.26.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7) Gecko/20040707 Firefox/0.8
+rev=5

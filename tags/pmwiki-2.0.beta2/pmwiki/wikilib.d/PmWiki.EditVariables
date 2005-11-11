@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel26
+newline=²
+text=<<|[[PmWiki.Variables]]|>>²²:$DeleteKeyPattern:The pattern used to determine if a page should be deleted.  The default is to remove pages that contain only the single word "delete" (and optional spaces).²        # change delete word to "remove"²        $DeleteKeyPattern = "^\\s*remove\\s*$";²        # delete any page with no visible text, i.e., empty²        $DeleteKeyPattern = "^\\s*$";²²:$DefaultPageTextFmt:The text that should be displayed when editing or browsing non-existent pages.²        $DefaultPageTextFmt = 'Page $Name does not exist';²²:$EditFunctions: This array contains all the function names that are called when you edit a page (in the same order). It could be used to perform some additional or own functions just by adding another (own) function name. Standard setting is (see pmwiki.php):²       [= $EditFunctions = array('RestorePage','ReplaceOnSave','SaveAttributes',²  'PostPage','PostRecentChanges','PreviewPage'); =]²²:$ROSPatterns: With this array you can give a pattern as key and a text which should replace it when saving an edited text. The following example replaces every occurence of @@[[test:sometext@@ with @@[[special:--sometext@@ when you save an edited page.²        # Replace text on Save (add pattern and replacement to array $ROSPatterns)²        $ROSPatterns["/\\[\\[test:([^\\s$UrlExcludeChars]*)/"] = "[[special:--\$1";²²:$IsPagePosted:²²:$PageEditFmt:²²:$PagePreviewFmt:²²:$HandleEditFmt:²²
+time=1100874182
+name=PmWiki.EditVariables
+host=62.245.250.121
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0
+rev=9
+author=Klonk
+targets=PmWiki.Variables,PmWiki.LinkVariables,PmWiki.UploadVariables

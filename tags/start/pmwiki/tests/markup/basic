@@ -1,0 +1,48 @@
+=test strong [=
+This is '''strong text'''.
+=]
+=result [=
+<p>This is <strong>strong text</strong>.
+</p>
+=]
+
+=test em [=
+This is ''emphasized text''.
+=]
+=result [=
+<p>This is <em>emphasized text</em>.
+</p>
+=]
+
+=test emstrong [=
+This is '''''strong emphasis'''''.
+=]
+=result [=
+<p>This is <strong><em>strong emphasis</em></strong>.
+</p>
+=]
+
+=test monospace [=
+This is @@monospace@@ text.
+=]
+=result [=
+<p>This is <code>monospace</code> text.
+</p>
+=]
+
+=test bigger [=
+This is [++bigger++] text.
+=]
+=result [=
+<p>This is <span style='font-size:144%'>bigger</span> text.
+</p>
+=]
+
+=test smaller [=
+This is [---smaller---] text.
+=]
+=result [=
+<p>This is <span style='font-size:58%'>smaller</span> text.
+</p>
+=]
+

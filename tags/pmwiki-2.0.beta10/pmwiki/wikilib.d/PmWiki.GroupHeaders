@@ -1,0 +1,9 @@
+version=pmwiki-2.0.devel27
+newline=²
+text=<<|[[Documentation Index]]|>> ²(:nogroupfooter:)²(:nogroupheader:)²²Every WikiGroup can have [[GroupHeader(s)]] and [[GroupHeaders |GroupFooter]] pages that contain markup that should be included at the beginning or end of each page within the group.  This feature is primarily used for:²²* adding a disclaimer or heading to all of the pages of a group²* defining custom WikiStyles that may be used for all pages in a group²* replacing the default headers and/or footers for pages in a group (using @@[=[[=]noheader]]@@ and @@[=[[=]nofooter]]@@ -- see SpecialMarkups)²²GroupHeaders allow WikiUsers to create groups with custom headers and footers without having to coordinate with a WikiAdministrator.  For even more control, [[WikiAdministrator]]s can do PerGroupCustomizations as a [[LocalCustomization(s)]].²²A wiki page within a group can suppress the default GroupHeader or [=GroupFooter=] by using the @@[=[[nogroupheader]]=]@@ and @@[=[[nogroupfooter]]=]@@ markups.²²%trail%<<|PmWiki.DocumentationIndex|>>²
+time=1101494438
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0
+rev=20
+author=PFo
+name=PmWiki.GroupHeaders

@@ -1,0 +1,9 @@
+version=pmwiki-2.0.devel3
+newline=²
+version=pmwiki-2.0.devel3
+text=<<|[[PmWiki.Variables]]|>>²²:$HTMLStylesFmt:An array of CSS statements to be included in the page's output along with other HTML headers.  This array provides an easy place for scripts to add custom CSS statements.²²
+time=1094132058
+name=PmWiki.LayoutVariables
+host=24.1.26.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7) Gecko/20040707 Firefox/0.8
+rev=3

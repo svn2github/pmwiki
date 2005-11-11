@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel26
+newline=²
+text=:[@?action=browse@]: display the specified page ²²:[@?action=edit@]: edit the specified page²²:[@?action=diff@]: show a change history of the specified page²²:[@?action=attr@]: displays dialog for setting/changing password of the specified page²²:[@?action=postattr@]:²²:[@?action=upload@]: display a form to upload an attachment for the current group²²:[@?action=crypt@]: displays a form for generating hashed passwords out of clear text for usage in your config.php²²!!! actions enabled by $EnableDiag:²²the following actions are available only if you set [@$EnableDiag = 1@] in your config-file. They can be used for debugging and should not be set in a production environment.²²:[@?action=ruleset@]: displays a list of all markups in 3 columns:²** column 1 = markup-name (1. parameter of markup() )²** column 2 = when will rule apply (2. parameter of markup() )²** column 3 = ??? %red% TODO²->(see [[PmWiki/CustomMarkup]])²²:[@?action=phpinfo@]: displays the output of phpinfo() and exits. no page will be processed²²:[@?action=diag@]: displays a dump of all global vars and exits. no page will be processed²
+time=1101298877
+name=PmWiki.AvailableActions
+host=62.245.250.121
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0
+rev=5
+targets=PmWiki.CustomMarkup
+author=Klonk

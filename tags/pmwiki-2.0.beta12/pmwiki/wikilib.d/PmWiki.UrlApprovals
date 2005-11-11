@@ -1,0 +1,10 @@
+version=pmwiki-2.0.beta6
+newline=²
+time=1102305481
+text=²²²%trail%<<|PmWiki.DocumentationIndex|>>
+targets=PmWiki.RSS,PmWiki.AvailableActions,PmWiki.DocumentationIndex
+author=
+name=PmWiki.UrlApprovals
+host=83.213.209.93
+agent=Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.7.5) Gecko/20041111 Firefox/1.0 (Debian package 1.0-2)
+rev=1

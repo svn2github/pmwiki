@@ -1,0 +1,10 @@
+version=pmwiki-2.0.beta1
+newline=²
+text=!!!Version 2.0.beta2²²This release fixes the bug that caused $PageTemplateFmt to no longer²work in pmwiki-2.0.beta1.²²!!!Version 2.0.beta1²²This release marks PmWiki 2.0 as entering "beta" status, as it finally²begins moving towards official release.  The major change for this release²is in the skins code -- previous versions of PmWiki used $PageTemplateFmt²to specify the location of the template file to be used; newer versions²now use the $Skin variable to specify the location of the skins directory²(in pub/skins/) that contains the skin template file, php configuration²script, and other files.²²In general, if you previously had $PageTemplateFmt set to "pub/skins/myskin/myskin.tmpl", then you now simply set $Skin='myskin'; to get things to work.  See PmWiki.LayoutBasics for more details.²²!!!Version 2.0.devel releases²²These are the release notes for the development releases of PmWiki 2.0.²²First, this is definitely still in the development stages, so many²things are likely to change between now and the official releases.²²Second, at present there's not a good way to upgrade from PmWiki 1.0²to PmWiki 2.0, although upgrade support is expected to arrive in future²(development) releases.  So, you can use this version just to see the²new developments and gain some experience, but migrating from 1.0²to this version is still likely to be a bit of a chore.²²Bugs and other requests can be reported to the PmWiki Issue Tracking ²System at http://www.pmwiki.org/pmwiki2/pmwiki.php/PITS.  Any help²in testing, development, and/or documentation is greatly appreciated.²²
+time=1101698249
+name=PmWiki.ReleaseNotes
+host=216.7.163.171
+agent=pmwikiedit
+rev=2
+targets=PmWiki.PmWiki,PmWiki.LayoutBasics
+author=Pm

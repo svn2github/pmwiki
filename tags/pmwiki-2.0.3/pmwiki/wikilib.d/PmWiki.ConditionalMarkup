@@ -1,0 +1,10 @@
+version=pmwiki-2.0.beta54 ordered=1
+newline=²
+agent=Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.7.8) Gecko/20050511 Firefox/1.0.4
+author=HaganFox
+host=216.161.175.221
+name=PmWiki.ConditionalMarkup
+rev=46
+targets=PmWiki.InterMap,PmWiki.DocumentationIndex,PmWiki.MarkupMasterIndex
+text=%audience% authors, admins (advanced)²!! Using the [=(:if:)=] Directive²The [@(:if:)@] directive allows portions of a page to be included or excluded from processing.  The generic form of the [@(:if:)@] directive is²²    [@(:if cond param:) body (:ifend:)@]²²where "cond" names a condition to be tested (described below), and "param" is a parameter or other argument to the condition.²²The built-in conditions include:²²    [@(:if group [name]:)@]  - current page is in group "name"²    [@(:if name [name]:)@]   - current page is named "name"²    [@(:if auth [level]:)@]  - viewer is authorized at "level"²    [@(:if authid:)@]        - current viewer is authenticated²    [@(:if false:)@]         - always exclude text (same as a comment)²    [@(:if attachments:)@]   - current page has attachments²²Negated forms of conditions also work²²    [@(:if !attachments:) This page has no attachments@]²²Any [@(:if:)@] automatically terminates the previous one, thus markup can be easily cased:²²    [@(:if auth read:)* You can read²    (:if auth edit:)* You can edit²    (:if auth upload:)* You can upload²    (:ifend:)@]²²%audience% admins (advanced)²!! Creating new conditions²²%trail%<<|[[DocumentationIndex]]|>>²
+time=1124491530

@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel26
+newline=²
+time=1100874213
+text=<<|[[PmWiki.Variables]]|>>²²:$EnableUpload:The upload.php script is automatically included from stdconfig.php if the $EnableUpload variable is true in config.php.  Note that one may still need to set an upload password before users can upload (see UploadsAdmin).²²:$UploadDir:²:$UploadUrlFmt:Config.php can set the $UploadDir and $UploadUrlFmt variables to specify the local directory where uploaded files should be stored, and the URL that can be used to access that directory.
+author=Klonk
+name=PmWiki.UploadVariables
+host=62.245.250.121
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0
+rev=12
+targets=PmWiki.Variables,PmWiki.EditVariables,PmWiki.I18nVariables,PmWiki.UploadsAdmin

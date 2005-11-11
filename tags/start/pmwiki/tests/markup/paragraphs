@@ -1,0 +1,25 @@
+=test para [=
+Hello world
+
+Foo bar baz
+=]
+=result [=
+<p>Hello world
+</p><p class='vspace'></p>
+<p>Foo bar baz
+</p>
+=]
+
+
+=test listvspace [=
+* Line 1
+
+
+
+* Line 2
+=]
+=result [=
+<ul><li> Line 1
+<p class='vspace'></p></li><li> Line 2
+</li></ul>
+=]

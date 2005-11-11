@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel12
+newline=²
+text=See also the MarkupMasterIndex.²²PmWiki uses the markup sequence [@[:directive ...:]@] for a number of directives and text substitutions.  Many of these replace the "double-bracket" directives that were used in PmWiki 0.6 and earlier versions.  Here's a brief description of each.²²[[#title]][@[:title text:]@]²->Sets a page's title to be something other than the name of the page.  For example, the markup²²    [=[:title Patrick's home page:]=]²²->uses "Patrick's home page" as the title of the page in the browser title bar (HTML <title> tag) and the title area of the page ($PageTitle variable).  Note that apostrophes and other special characters can be used here.²²²[[#keywords]][@[:keywords word, ...:]@]²->Sets page keywords in an HTML @@<meta name='keywords' content='word, ...' />@@ tag.²²[[#include]][@[:include PageName:]@] and [@[:include PageName#start#end:]@]²->Includes the contents of another page into the text of the current page.  The second form of the include is used to include only the portion of the page between the #start and #end anchors.  #start and #end can be numeric, in which case they refer to line numbers within the page, so that [@[:include RecentChanges#1#10:]@] grabs only the first ten lines of the RecentChanges file.²²[[#noheader]][@[:noheader:]@], [@[:nofooter:]@], [@[:notitle:]@], etc.²->These directives disable the header, footer, and page title portions of a page's layout (if the page's skin allows it).²²²[@[:(no)spacewikiwords:]@]²->Turns on (off) automatic spacing of WikiWords within the page text.  When on, `WikiWord will be displayed as "Wiki Word".²²[@[:(no)linkwikiwords:]@]²->Turns on (off) automatic linking of WikiWords to pages of the same name.²²²%trail%<<|PmWiki.DocumentationIndex|>>²
+time=1097560919
+name=PmWiki.Directives
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.6) Gecko/20040206 Firefox/0.8
+rev=7
+targets=PmWiki.MarkupMasterIndex,PmWiki.PmWiki,PmWiki.RecentChanges,PmWiki.WikiWords,PmWiki.WikiStructure,PmWiki.DocumentationIndex
+author=Pm

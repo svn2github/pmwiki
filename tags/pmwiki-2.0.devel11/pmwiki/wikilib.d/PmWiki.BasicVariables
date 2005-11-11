@@ -1,0 +1,9 @@
+version=
+newline=²
+version=
+text=<<|[[PmWiki.Variables]]|>>²²:$WikiWordPattern:The pattern that describes a WikiWord.²²²²
+time=1093541936
+name=PmWiki.BasicVariables
+host=24.1.26.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7) Gecko/20040707 Firefox/0.8
+rev=4

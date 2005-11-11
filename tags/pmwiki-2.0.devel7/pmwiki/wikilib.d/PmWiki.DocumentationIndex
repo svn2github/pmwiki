@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel6
+newline=²
+version=
+text=The pages below describe various aspects of using and administering a PmWiki installation. As you can see, the documentation is still incomplete.²²* Beginner topics for creating and editing pages in PmWiki²** [[Basic editing]]²** [[Creating new pages]]²** [[Links to pages]]²** [[Images in wiki pages]]²** [[Tips for editing]]²²* Intermediate editing topics²** [[Text formatting rules]]²** [[WikiStyles]]²** [[Uploads]]²** [[Simple tables]]²** [[Simple tables 2]]²** [[Advanced tables]]²** [[InterMap]] links²** [[Special markups]]²** [[Markup master index]]²²* [[WikiStructure]]s : organizing and protecting pages in PmWiki²** [[WikiGroup]]s - organize pages into groups²** [[Passwords]] - password protect pages and groups²** [[WikiTrails]] - create paths (trails) through pages²** [[GroupHeaders]] - add content to the beginning of all pages in a [[WikiGroup]]²** [[Page history]] - view/recover previous versions of a page²** [[Author tracking]] - track authorship of page changes²²* PmWiki site administration²** [[Installation]]²** [[Initial setup tasks]]²** [[Local customizations]]²*** [[Layout basics]]²*** [[Layout advanced]]²*** [[Passwords admin]]istration²*** [[Uploads admin]]inistration²*** [[Internationalizations]]²*** [[MailPosts]]²*** [[Custom InterMaps]]²*** [[Custom markup]]²** [[Upgrades]]²** [[Available actions]]²** [[Variables]]²²* About PmWiki²** [[PmWikiPhilosophy]]²** [[Audiences]]²** [[MailingLists]]²** [[Contributors]]²²²
+time=1095779347
+name=PmWiki.DocumentationIndex
+host=24.1.26.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7) Gecko/20040803 Firefox/0.9.3
+rev=6
+author=Pm

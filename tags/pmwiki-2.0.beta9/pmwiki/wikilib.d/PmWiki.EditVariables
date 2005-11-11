@@ -1,0 +1,10 @@
+version=pmwiki-2.0.beta6
+newline=²
+text=<<|[[PmWiki.Variables]]|>>²²:$EnablePostAuthorRequired:When set to '1', posting of pages requires the author to provide an author name (see AuthorTracking).  Otherwise, authors can post without a name.²        # require authors to provide a name²        $EnablePostAuthorRequired = 1; ²²:$DeleteKeyPattern:The pattern used to determine if a page should be deleted.  The default is to remove pages that contain only the single word "delete" (and optional spaces).²        # change delete word to "remove"²        $DeleteKeyPattern = "^\\s*remove\\s*$";²        # delete any page with no visible text, i.e., empty²        $DeleteKeyPattern = "^\\s*$";²²:$DefaultPageTextFmt:The text that should be displayed when editing or browsing non-existent pages.²        $DefaultPageTextFmt = 'Page $Name does not exist';²²:$EditFunctions: This array contains all the function names that are called when you edit a page (in the same order). It could be used to perform some additional or own functions just by adding another (own) function name. Standard setting is (see pmwiki.php):²       [= $EditFunctions = array('RestorePage','ReplaceOnSave','SaveAttributes',²  'PostPage','PostRecentChanges','PreviewPage'); =]²²:$ROSPatterns: With this array you can give a pattern as key and a text which should replace it when saving an edited text. The following example replaces every occurence of @@[[test:sometext@@ with @@[[special:--sometext@@ when you save an edited page.²        # Replace text on Save (add pattern and replacement to array $ROSPatterns)²        $ROSPatterns["/\\[\\[test:([^\\s$UrlExcludeChars]*)/"] = "[[special:--\$1";²²:$IsPagePosted:²²:$PageEditFmt:²²:$PagePreviewFmt:²²:$HandleEditFmt:²²:$EnablePostAuthorRequired:²With this variable set to "1" posting an edit of a page is only possible when an author is given. Default setting is "0".
+time=1102436298
+name=PmWiki.EditVariables
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0
+rev=12
+author=Pm
+targets=PmWiki.Variables,PmWiki.LinkVariables,PmWiki.UploadVariables,PmWiki.AuthorTracking

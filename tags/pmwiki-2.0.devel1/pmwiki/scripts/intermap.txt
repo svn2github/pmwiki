@@ -1,0 +1,5 @@
+PmWiki		http://www.pmwiki.org/pmwiki2/pmwiki.php/
+Cookbook	http://www.pmwiki.org/pmwiki2/pmwiki.php/Cookbook/
+Wiki		http://www.c2.com/cgi/wiki?
+Meatball	http://www.usemod.com/cgi-bin/mb.pl?
+Wikipedia	http://www.wikipedia.com/wiki/

@@ -1,0 +1,29 @@
+=test h1 [=
+!heading 1
+=]
+=result [=
+<h1>heading 1</h1>
+=]
+
+=test h2 [=
+!!heading 2
+=]
+=result [=
+<h2>heading 2</h2>
+=]
+
+=test h3 [=
+!!!heading 3
+=]
+=result [=
+<h3>heading 3</h3>
+=]
+
+=test h8 [=
+!!!!!!!!heading 8
+=]
+=result [=
+<h6>!!heading 8</h6>
+=]
+
+

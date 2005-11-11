@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel13
+newline=²
+time=1098280742
+text=<<|[[PmWiki.Variables]]|>>²²:$GroupPattern:The regular expression pattern used for valid [[WikiGroup(s)]] name specifications.  Defaults to allowing any group name beginning with an uppercase letter, but can be set to limit the valid group names (see Cookbook:LimitWikiGroups).²²:$NamePattern: ?...²²:$SearchPatterns:An array of page name patterns to be required or excluded from search and pagelist results.  In order to be included in a search listing or page listing, a page's name must not match any pattern that is delimited by exclamation points (!) and must match all other patterns.  See Cookbook:SearchPatterns.²        # limit all searches to Main group²        $SearchPatterns['default'][] = [='/^Main\\./';=]²        # exclude RecentChanges pages from search results²        $SearchPatterns['default'][] = [='!\\.(All)?RecentChanges$/';=]²²:$EnableIMSCaching:A variable which, when set equal to 1, validate the page caching by the browser. Unactivated by default to help the administrator customize its page without needing permanent reloading.²²:$VarPagesFmt:An array which contains the `PageNames where you can find variables definition. To be modified when documentation is not in english. See ''vardoc.php'' ²²
+author=Pm
+name=PmWiki.OtherVariables
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; rv:1.7.3) Gecko/20041001 Firefox/0.10.1
+rev=9
+targets=PmWiki.UploadVariables,PmWiki.Variables,PmWiki.MailPosts,PmWiki.WikiGroups,PmWiki.RecentChanges

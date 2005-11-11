@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel13
+newline=²
+text=<<|[[PmWiki.Variables]]|>>²²:$DefaultGroup:Group used by default (on startup)²²:$DefaultName:Name of the default `HomePage of each group  ²²:$DefaultPage:Startup page, normally ''$DefaultGroup.$DefaultName''²²:$WikiWordPattern:The pattern that describes a WikiWord.²²:$SpaceWikiWords:If set, then WikiWords in pages are automatically spaced according to $AsSpacedFunction.  Note that this value can also be affected by the [@(:spacewikiwords:)@] and [@(:nospacewikiwords:)@] directives.²        $SpaceWikiWords = 1;          # turn on WikiWord spacing²        $SpaceWikiWords = 0;          # turn off WikiWord spacing²²:$AsSpacedFunction:The name of the function used to convert WikiWords into normal, spaced strings.  Defaults to '`AsSpaced'.²        $AsSpacedFunction = '`MyAsSpaced';²²²
+time=1098284268
+name=PmWiki.BasicVariables
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; rv:1.7.3) Gecko/20041001 Firefox/0.10.1
+rev=10
+author=Pm
+targets=PmWiki.Variables,PmWiki.LayoutVariables,PmWiki.WikiWord,PmWiki.WikiWords

@@ -1,0 +1,10 @@
+version=pmwiki-2.0.beta6
+newline=²
+time=1102410869
+text=<<|[[PmWiki.Variables]]|>>²²This page describes the variables used by PmWiki for [[Internationalizations]] (i18n).
+targets=PmWiki.Variables,PmWiki.UploadVariables,PmWiki.OtherVariables,PmWiki.Internationalizations,PmWiki.PmWiki
+author=Klonk
+name=PmWiki.I18nVariables
+host=62.245.250.121
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0
+rev=2

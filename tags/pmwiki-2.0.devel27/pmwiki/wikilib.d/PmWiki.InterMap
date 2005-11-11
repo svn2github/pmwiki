@@ -1,0 +1,9 @@
+version=pmwiki-2.0.devel5
+newline=²
+version=pmwiki-2.0.devel5
+text=The InterMap is a system for defining links between WikiWikiWeb sites that was first developed by UseMod:UseModWiki and Meatball:MeatballWiki.  InterMap links have the form [@MapPrefix:Page@], where the host prefix is converted to a partial URL based on entries in the site's ''intermap.txt'' and ''localmap.txt'' files.²²The default ''intermap.txt'' distributed with PmWiki includes the following InterMap entries:²    [=²    PmWiki          http://www.pmwiki.org/pmwiki2/pmwiki.php/²    Cookbook        http://www.pmwiki.org/pmwiki2/pmwiki.php/Cookbook/²    Wiki            http://www.c2.com/cgi/wiki?²    UseMod          http://www.usemod.com/cgi-bin/wiki.pl?²    Meatball        http://www.usemod.com/cgi-bin/mb.pl?²    Wikipedia       http://www.wikipedia.com/wiki/²    =]²Thus, PmWiki:Variables becomes a link to the [[PmWiki.Variables]] page on the official PmWiki web site, Wiki:FrontPage is a link to the front page of the first WikiWikiWeb, and Wikipedia:Stonehenge takes you to the Wikipedia article about the famous megaliths in England.²²InterMap links can be used to link to non-wiki pages: %newwin% ISBN:020171499X  %% is a link to Amazon.com's entry for ''The Wiki Way'' by Bo Leuf and Ward Cunningham (an excellent book about [[WikiWikiWeb]]s in general).²²The actual set of InterMap links at any site is defined by the site administrator; for more details, see [[PmWiki.CustomInterMap]]s.²²%trail%<<|PmWiki.DocumentationIndex|>>²
+time=1095688370
+name=PmWiki.InterMap
+host=24.1.26.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7) Gecko/20040803 Firefox/0.9.3
+rev=3

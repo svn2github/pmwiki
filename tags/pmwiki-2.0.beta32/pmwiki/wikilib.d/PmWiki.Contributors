@@ -1,0 +1,11 @@
+version=pmwiki-2.0.beta14
+newline=²
+text=Here's a list of contributors to PmWiki development and improvement.  My apologies if I've forgotten anyone -- feel free to add your name if you've²been left out, feel free to remove your name if you don't want to be associated with these people.  :-)²²* Glenn Blalock - WikiStyles suggestions, testing, documentation²* James Davis - WikiStyles markup, testing²* Scott Duff - pmwe, simple-journal.php, all-around Pm sanity checker ²* Dawn Green - WikiStyles suggestions, [[uploads]], documentation²* Janice Heinold - early PmWiki testing and suggestions, documentation²* Ross Kowalski - [[uploads]] and printable page research²* Isabelle Michaud - floating images markup, [[WikiGroup]]s, [[uploads]]/attachments²* John Rankin - WikiTrails, [[Links]], EditQuickReference, notify.php, documentation, debugging²* Carlo Strozzi - Internationalization, PmWiki on Boa, HTML redirection²* Jessica Tishmack - uploads, testing²* Robert Abitbol - Customization; suggestions for various features or modifications²* Christian Ridderström - [[Cookbook:EmacsPmWikiMode |pmwiki-mode for Emacs]] and some other hacks/modifications.²* Jean-Claude Gorichon - voting²²%trail%<<|PmWiki.DocumentationIndex|>>
+time=1104433431
+host=82.124.119.127
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; fr-FR; rv:1.7.5) Gecko/20041108 Firefox/1.0
+rev=32
+post= Save
+author=PRZ
+name=PmWiki.Contributors
+targets=PmWiki.PmWiki,PmWiki.WikiStyles,PmWiki.Uploads,PmWiki.WikiGroup,PmWiki.Links,PmWiki.WikiTrails,PmWiki.EditQuickReference,PmWiki.Audiences,PmWiki.MailingLists,PmWiki.DocumentationIndex

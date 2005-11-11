@@ -1,0 +1,20 @@
+=test pre [=
+  This is some preformatted text.
+
+
+
+  It should honor spaces and formatting.
+  This should be on a different line.
+
+And this is the end.
+=]
+=result [=
+<pre>  This is some preformatted text.
+
+
+
+  It should honor spaces and formatting.
+  This should be on a different line.
+</pre><p class='vspace'></p><p>And this is the end.
+</p>
+=]

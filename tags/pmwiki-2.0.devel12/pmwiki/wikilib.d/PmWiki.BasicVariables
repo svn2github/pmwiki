@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel11
+newline=�
+version=
+text=<<|[[PmWiki.Variables]]|>>께:$WikiWordPattern:The pattern that describes a WikiWord.께:$DefaultGroup:Group used by default (on startup)께:$DefaultName:Name of the default `HomePage of each group  께:$DefaultPage:Startup page, normally ''$DefaultGroup.$DefaultName''께 께께
+time=1097470384
+name=PmWiki.BasicVariables
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.6) Gecko/20040206 Firefox/0.8
+rev=6
+author=Pm

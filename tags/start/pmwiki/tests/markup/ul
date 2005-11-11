@@ -1,0 +1,27 @@
+=test ul1 [=
+* one
+* two
+* three
+The end
+=]
+=result [=
+<ul><li> one
+</li><li> two
+</li><li> three
+</li></ul><p>The end
+</p>
+=]
+
+=test ul2 [=
+** one
+** two
+** three
+The end
+=]
+=result [=
+<dl><dd><ul><li> one
+</li><li> two
+</li><li> three
+</li></ul></dd></dl><p>The end
+</p>
+=]

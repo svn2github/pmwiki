@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel13
+newline=²
+text=%define=trail bgcolor=#eee block%²%define=note font-style=italic color=green%²
+time=1098126753
+name=PmWiki.GroupHeader
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; rv:1.7.3) Gecko/20041001 Firefox/0.10.1
+rev=3
+targets=
+author=Pm

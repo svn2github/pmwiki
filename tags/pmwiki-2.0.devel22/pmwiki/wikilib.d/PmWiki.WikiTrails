@@ -1,0 +1,9 @@
+version=pmwiki-2.0.devel3
+newline=²
+version=pmwiki-2.0.devel3
+text=The WikiTrails feature allows wiki authors to create "trails" through sequences of pages in the wiki.  To do this, an author creates a "trail page" that gives the sequence of page names as either a bullet or numbered list.  The page names must be the first item following each bullet.  Then, for each page on the trail, add the markup [="<<|TrailPage|>>"=] somewhere on the page (usually at the bottom).  This markup will then be replaced with links to the previous and next pages in the trail, as defined by the [=TrailPage=].²²As an example, the page PmWiki.DocumentationIndex defines a [[WikiTrail(s)]] through the set of pages that make up the documentation for PmWiki.  The special markup ²²  [=<<|PmWiki.DocumentationIndex|>>=]²²appears at the bottom of each page along the trail, providing links to the previous and next pages in the trail sequence.  Note that this makes reorganizing the sequence of pages or adding new pages quite easy--simply edit the trail page (PmWiki.DocumentationIndex in this case).²²There are a couple of other markups available:  [=^|TrailPage|^=] will show a page's ancestry to the trail page, while [=<|TrailPage|>=] will completely omit the "[=<PrevPage|=]" or "[=|NextPage>=]" markups at the beginning or end of the trail respectively.  ²²!!!Other notes²²The @@[=%trail%=]@@ markup used in PmWiki's documentation pages is actually a [[WikiStyle(s)]] defined in the PmWiki.GroupHeader page, and is not required for WikiTrails to work.²²%trail%<<|PmWiki.DocumentationIndex|>>²
+time=1094411849
+name=PmWiki.WikiTrails
+host=24.1.26.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7) Gecko/20040707 Firefox/0.8
+rev=3

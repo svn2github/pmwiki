@@ -1,0 +1,8 @@
+version=pmwiki-2.0.devel1
+newline=²
+text=!!!Version 2.0.devel releases²²These are the release notes for the development releases of PmWiki 2.0.²²First, this is definitely still in the development stages, so many²things are likely to change between now and the official releases.²²Second, at present there's not a good way to upgrade from PmWiki 1.0²to PmWiki 2.0, although upgrade support is expected to arrive in future²(development) releases.  So, you can use this version just to see the²new developments and gain some experience, but migrating from 1.0²to this version is still likely to be a bit of a chore.²²Bugs and other requests can be reported to the PmWiki Issue Tracking ²System at http://www.pmwiki.org/pmwiki2/pmwiki.php/PITS.  Any help²in testing, development, and/or documentation is greatly appreciated.²²
+time=1093570159
+name=PmWiki.ReleaseNotes
+host=216.7.163.171
+agent=pmwikiedit
+rev=1

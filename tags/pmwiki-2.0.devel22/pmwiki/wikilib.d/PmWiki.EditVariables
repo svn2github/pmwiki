@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel11
+newline=²
+version=pmwiki-2.0.devel3
+text=<<|[[PmWiki.Variables]]|>>²²:$DeleteKeyPattern:The pattern used to determine if a page should be deleted.  The default is to remove pages that contain only the single word "delete" (and optional spaces).²        # change delete word to "remove"²        $DeleteKeyPattern = "^\\s*remove\\s*$";²        # delete any page with no visible text, i.e., empty²        $DeleteKeyPattern = "^\\s*$";²²:$DefaultPageTextFmt:The text that should be displayed when editing or browsing non-existent pages.²        $DefaultPageTextFmt = 'Page $Name does not exist';²²:$EditFunctions:²²:$ROSPatterns:²²:$IsPagePosted:²²:$PageEditFmt:²²:$PagePreviewFmt:²²:$HandleEditFmt:²²
+time=1097345044
+name=PmWiki.EditVariables
+host=82.120.154.162
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.4) Gecko/20030624 Netscape/7.1 (ax)
+rev=6
+author=PRZ

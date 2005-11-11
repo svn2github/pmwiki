@@ -1,0 +1,9 @@
+version=pmwiki-2.0.devel1
+newline=²
+version=pmwiki-2.0.devel1
+text=There are currently two mailing lists available for PmWiki.²²:[+[[(http://www.pmichaud.com/lists/)pmwiki-users]]+]:This is a great resource where a very helpful group of people will answer questions and discuss PmWiki development. Traffic is around 20-40 messages a day.  Archives are available from:²-->http://www.pmichaud.com/pipermail/pmwiki-users_pmichaud.com²-->http://news.gmane.org/gmane.comp.web.wiki.pmwiki.user²²->''Note'': You can change your settings for the mail list by logging in to http://www.pmichaud.com/mailman/listinfo/pmwiki-users_pmichaud.com²²:[+[[(http://www.pmichaud.com/mailman/listinfo/)pmwiki-announce(_pmichaud.com)]]+]:Announcements of new version releases.  The archive is at:²-->http://www.pmichaud.com/pipermail/pmwiki-announce_pmichaud.com²²%trail% <<|PmWiki.DocumentationIndex|>>
+time=1093571199
+name=PmWiki.MailingLists
+host=24.1.26.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7) Gecko/20040707 Firefox/0.8
+rev=4

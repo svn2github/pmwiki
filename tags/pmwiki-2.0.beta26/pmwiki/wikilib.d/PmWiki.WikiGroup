@@ -1,0 +1,10 @@
+version=pmwiki-2.0.beta23
+newline=�
+text=PmWiki has the capability of classifying pages into groups of related pages.  [[WikiWord]]s act as [[links]] between pages of the same group; to create a link to a wiki page in another group, you use @@[=[[GroupName.WikiWord]]=]@@ or @@[=[[GroupName/WikiWord]]=]@@ to create the link.께By default, the [[RecentChanges]] page of each group shows only the pages that have changed within that group; the [[Main.AllRecentChanges]] page shows all pages that have changed in all groups.께To list all the groups in a site, try the markup [@(:pagelist fmt=group:)@].께Creating a new group is as easy as [[CreatingNewPages]]; simply edit an existing page to include a [[link(s)]] to a page in the new group, then click on the '?' to edit the page. By default, group names must start with a letter (but this can be changed by the wiki administrator).께Each group can also have [=GroupHeader=] or [=GroupFooter=] pages that contain text to be automatically prepended or appended to every page in the group.  A group can also have a `GroupAttributes page that defines attributes (read and edit passwords) shared by all pages within the group.  Each page can also have its own individual read/edit password that overrides the group passwords (see [[PmWiki.Passwords]]).께Finally, [[WikiAdministrator]]s can set [[LocalCustomizations]] on a per-group basis--see [[PerGroupCustomizations]].께%trail%<<|PmWiki.DocumentationIndex|>>
+time=1109370192
+name=PmWiki.WikiGroup
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0
+rev=8
+targets=PmWiki.WikiWord,PmWiki.Links,PmWiki.PmWiki,PmWiki.RecentChanges,Main.AllRecentChanges,PmWiki.CreatingNewPages,PmWiki.Passwords,PmWiki.WikiAdministrator,PmWiki.LocalCustomizations,PmWiki.PerGroupCustomizations,PmWiki.WikiStructure,PmWiki.GroupHeaders,PmWiki.DocumentationIndex
+author=Pm

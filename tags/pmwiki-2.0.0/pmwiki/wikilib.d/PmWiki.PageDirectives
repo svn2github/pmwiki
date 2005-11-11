@@ -1,0 +1,10 @@
+version=pmwiki-2.0.beta55 ordered=1
+newline=²
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6
+author=Pm
+host=24.1.26.255
+name=PmWiki.PageDirectives
+rev=5
+targets=PmWiki.PmWiki,PmWiki.Skins,PmWiki.GroupHeaders,PmWiki.WikiWord,PmWiki.WikiWords
+text=PmWiki uses a number of directives to specify page titles, descriptions, page keywords, and control the display of various components.²²:[@(:title text:)@]: Sets a page's title to be something other than the page's name.  The title text can contain apostrophes and other special characters.²²:[@(:keywords word1, word2, ...:)@]:Identifies keywords associated with the page.  These are not displayed anywhere, but are useful to help search engines locate the page.  (Essentially, this generates a [@<meta name='keywords' content='...' />@] element in the output.)²²:[@(:description text:)@]:Descriptive text associated with the page.  (Generates a [@<meta name='description' content='...' />@] element in the page output.)²²:[@(:redirect PageName:)@]:Redirects the browser to another page, along with a redirect message.  For security reasons this only redirects to other pages within the wiki and does not redirect to external urls.²²:[@(:noheader:)@]:²:[@(:nofooter:)@]: ²:[@(:notitle:)@]:²:[@(:noleft:)@]:²: :If supported by the [[skin(s)]], turns off the header, footer, title area, or left sidebar.²²:[@(:nogroupheader:)@]:²:[@(:nogroupfooter:)@]:²: :Turns off any groupheader or groupfooter for the page.  (See [[GroupHeaders]].)²²:[@(:linkwikiwords:), (:nolinkwikiwords:)@]:²:[@(:spacewikiwords:), (:nospacewikiwords:)@]:²: :Enables/disables WikiWord links and automatic spacing of WikiWords in text.²²
+time=1125082830

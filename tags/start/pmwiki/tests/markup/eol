@@ -1,0 +1,27 @@
+=test eolslash [=
+now is the time \
+for all good things
+=]
+=result [=
+<p>now is the time  for all good things
+</p>
+=]
+
+=test eolbr1 [=
+now is the time \\
+for all good things
+=]
+=result [=
+<p>now is the time  <br />for all good things
+</p>
+=]
+
+=test eolbr2 [=
+now is the time \\\
+for all good things
+=]
+=result [=
+<p>now is the time  <br /><br />for all good things
+</p>
+=]
+

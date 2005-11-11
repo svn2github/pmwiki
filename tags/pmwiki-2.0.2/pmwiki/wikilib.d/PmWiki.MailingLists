@@ -1,0 +1,9 @@
+version=pmwiki-2.0.beta55 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6
+author=Pm
+host=24.1.26.255
+name=PmWiki.MailingLists
+rev=21
+targets=PmWiki.PmWiki,PmWiki.Contributors,PmWiki.DocumentationIndex,PmWiki.PmWikiPhilosophy
+text=There are several mailing lists available for [[PmWiki]].%0a%0a:[ [[(http://pmichaud.com/lists/)pmwiki-users]] ]: This is a great resource where a very helpful group of people will answer questions and discuss PmWiki development. Traffic is around 20-40 messages a day (on slow days :).  Archives are available from:%0a-->http://pmichaud.com/pipermail/pmwiki-users/%0a-->http://news.gmane.org/gmane.comp.web.wiki.pmwiki.user%0asearchable at%0a-->http://search.gmane.org/search.php?group=gmane.comp.web.wiki.pmwiki.user%0a%0a%25green%25'''Hint:''' If you ask a question on the list and it doesn't get answered, don't feel let down. Just '''ask it again'''. It probably slipped unnoticed.%0a%0a->''Note'': You can change your settings for the mail list by logging in at the bottom of http://pmichaud.com/mailman/listinfo/pmwiki-users%0a%0a:[ [[(http://pmichaud.com/lists/)pmwiki-announce]] ]: Announcements of new version releases.  The archive is at:%0a-->http://pmichaud.com/pipermail/pmwiki-announce%0a%0a:[ [[(http://pmichaud.com/lists/)pmwiki-users-de]] ]: A mailing list for german-speaking users of PmWiki.  Archived at%0a-->http://pmichaud.com/pipermail/pmwiki-users-de%0a%0a%25trail%25 %3c%3c|[[DocumentationIndex]]|>>
+time=1125538500

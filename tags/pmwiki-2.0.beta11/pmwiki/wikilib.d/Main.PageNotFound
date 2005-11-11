@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel13
+newline=²
+text=We couldn't find a page called "{$UrlPage}".  You can:²²* Create [[{$UrlPage}.{$UrlPage}]]²* Create [[{$UrlPage}.{$DefaultName}]]²* Create [[{$DefaultGroup}.{$UrlPage}]]²²Or, perhaps the page you want is listed below:²²(:searchresults group={$UrlPage}:)²²
+time=1098283748
+name=Main.PageNotFound
+host=24.1.28.47
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; rv:1.7.3) Gecko/20041001 Firefox/0.10.1
+rev=5
+targets=UrlPage.UrlPage,UrlPage.HomePage,Main.UrlPage
+author=Pm

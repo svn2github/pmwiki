@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel21
+newline=²
+text=<<|[[PmWiki.Variables]]|>>²²:$HTMLStylesFmt:An array of CSS statements to be included in the page's output along with other HTML headers.  This array provides an easy place for scripts to add custom CSS statements.²²:$WikiTitle:A variable which contains the Wiki title as displayed by the browser²²:$WikiStyle:An array which contains the predefined WikiStyles which can be used on a textpage.[[<<]]See: PmWiki.CustomWikiStyles
+time=1099511035
+name=PmWiki.LayoutVariables
+host=80.130.6.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; rv:1.7.3) Gecko/20040913 Firefox/0.10
+rev=12
+author=KAL
+targets=PmWiki.Variables,PmWiki.BasicVariables,PmWiki.LinkVariables,PmWiki.WikiStyles,PmWiki.CustomWikiStyles

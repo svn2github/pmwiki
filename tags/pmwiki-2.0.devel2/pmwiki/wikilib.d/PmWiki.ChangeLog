@@ -1,0 +1,9 @@
+version=pmwiki-2.0.devel1
+newline=�
+version=pmwiki-2.0.devel1
+text=!!!Version 2.0.devel2 (27-Aug-2004)께* Added $EnablePathInfo support.�* Fixed problem with QUERY_STRING handling of '?'.께!!!Version 2.0.devel1 (26-Aug-2004)께* Initial release.  For experimental and development use '''only'''.께
+time=1093616908
+name=PmWiki.ChangeLog
+host=216.7.163.171
+agent=pmwikiedit
+rev=2

@@ -1,0 +1,10 @@
+version=pmwiki-2.0.devel9
+newline=²
+version=
+text=:$MakePageNameFunction:Name of a custom function to replace PmWikiFunctions/MakePageName, which converts strings into valid page names.²²:$PagePathFmt:TODO²²:$LinkPageExistsFmt:The (HTML) string to output for links to already existing wiki pages.  Defaults to ²        <a class='wikilink' href='$LinkUrl'>$LinkText</a>²²:$LinkPageCreateFmt:The (HTML) string to output for links to non-existent wiki pages.  The default is to add a '?' after the link text with a link to the page edit/create form.  Defaults to²        <a class='createlinktext' href='$PageUrl?action=edit'>$LinkText</a>²        <a class='createlink' href='$PageUrl?action=edit'>?</a>²²:$LinkPageCreateSpaceFmt:Same as $LinkPageCreateFmt, but used when the link text has a space in it.²²:$LinkPageSelfFmt:The (HTML) string to output for self-referencing links (i.e. links to the page itself).  Defaults to²        <a class='selflink' href='$LinkUrl'>$LinkText</a>²²:$UrlLinkFmt:The (HTML) string to output for URL-links that begin with 'http:', 'ftp:', etc.  Defaults to²        <a class='urllink' href='$LinkUrl'>$LinkText</a>²²²²
+time=1096643616
+name=PmWiki.LinkVariables
+host=24.1.26.221
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7) Gecko/20040803 Firefox/0.9.3
+rev=7
+author=Pm

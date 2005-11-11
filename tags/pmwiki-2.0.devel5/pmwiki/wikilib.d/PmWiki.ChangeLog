@@ -1,0 +1,9 @@
+version=pmwiki-2.0.devel4
+newline=²
+version=pmwiki-2.0.devel1
+text=!!!Version 2.0.devel5 (13-Sep-2004)²²* Fixed wikistyle nesting problem (PITS:00032, thanks to Balu for catching this)²* Moved body { margin-left:20px; } into pmwiki.css (PITS:00034, thanks to Balu)²* Changed calls to ucwords() to use preg_replace() since ucwords doesn't work properly in some languages (PITS:00031, thanks to Zverik)²* Fixed problems with partial URLs (PITS:00013)²* Fixed upload.php to use SDVA on $UploadExts (thanks to Larry Baltz)²* Fixed problem with WikiStyles crossing header tags (PITS:00032, thanks to Balu)²²!!!Version 2.0.devel4 (6-Sep-2004)²²* Fixed call-time-pass-by-reference in simuledit.php (thanks to [[~CB]]).²* Added ?action=crypt.²* Added ?action=print.²* Added XLPage() functions and fixed problems with i18n (PITS:00011)²* Fixed bug in trails.php code (PITS:00017)²* Documented custom markup functions (PITS:00003)²* Improved ?action=ruleset slightly²* Added [@[[<<]]@] markup (thanks to JF)²²!!!Version 2.0.devel3 (27-Aug-2004)²²* Fixed missing mode parameter in mkdir (thanks to javajunky on irc).²²!!!Version 2.0.devel2 (27-Aug-2004)²²* Added $EnablePathInfo support.²* Fixed problem with QUERY_STRING handling of '?'.²²!!!Version 2.0.devel1 (26-Aug-2004)²²* Initial release.  For experimental and development use '''only'''.²²
+time=1095318080
+name=PmWiki.ChangeLog
+host=216.7.163.171
+agent=pmwikiedit
+rev=10
