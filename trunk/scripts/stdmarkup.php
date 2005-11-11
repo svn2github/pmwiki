@@ -201,6 +201,13 @@ Markup('[[|#', '<[[|',
   "/(?>\\[\\[([^|\\]]+))\\|#\\]\\]/e",  
   "Keep(MakeLink(\$pagename,PSS('$1'),'['.++\$MarkupFrame[0]['ref'].']'),'L')");
 
+## [[target |+]] title links
+Markup('[[|+', '<[[|',
+  "/(?>\\[\\[([^|\\]]+))\\|\\s*\\+\\s*]]/e",
+  "Keep(MakeLink(\$pagename,PSS('$1'),
+                 FmtPageName('\$Title',MakePageName(\$pagename,PSS('$1')),1),
+                 '$2'),'L')");
+
 ## bare urllinks 
 Markup('urllink','>[[',
   "/\\b(?>(\\L))[^\\s$UrlExcludeChars]*[^\\s.,?!$UrlExcludeChars]/e",
