@@ -63,8 +63,6 @@ if (IsEnabled($EnableStdWikiStyles,1))
   include_once("$FarmD/scripts/wikistyles.php");
 if (IsEnabled($EnableMailPosts,0))
   include_once("$FarmD/scripts/mailposts.php");
-if (IsEnabled($EnableUpload,0))
-  include_once("$FarmD/scripts/upload.php");
 if (IsEnabled($EnablePageList,1))
   include_once("$FarmD/scripts/pagelist.php");
 if (IsEnabled($EnableVarMarkup,1))
@@ -77,6 +75,8 @@ if ($action=='edit' && IsEnabled($EnableGUIButtons,0))
   include_once("$FarmD/scripts/guiedit.php");
 if (IsEnabled($EnableForms,1))                     
   include_once("$FarmD/scripts/forms.php");       # must come after prefs
+if (IsEnabled($EnableUpload,0))
+  include_once("$FarmD/scripts/upload.php");      # must come after forms
 if (IsEnabled($EnableDiag,0)) 
   include_once("$FarmD/scripts/diag.php");
 
