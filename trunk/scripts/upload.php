@@ -263,7 +263,7 @@ function FmtUploadList($pagename, $args) {
   $filelist = array();
   while (($file=readdir($dirp)) !== false) {
     if ($file{0} == '.') continue;
-    if ($matchext && !preg_match($matchext, $file)) continue;
+    if (@$matchext && !preg_match(@$matchext, $file)) continue;
     $filelist[$file] = $file;
   }
   closedir($dirp);
