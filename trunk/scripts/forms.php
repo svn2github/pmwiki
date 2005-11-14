@@ -13,13 +13,14 @@ SDV($InputAttrs, array('name', 'value', 'id', 'class', 'rows', 'cols',
 
 # Set up formatting for text, submit, hidden, radio, etc. types
 foreach(array('text', 'submit', 'hidden', 'password', 'radio', 'checkbox',
-              'reset') as $t) 
+              'reset', 'file') as $t) 
   SDV($InputTags[$t][':html'], "<input type='$t' \$InputFormArgs />");
 
 # (:input form:)
 SDVA($InputTags['form'], array(
   ':args' => array('action', 'method'),
   ':html' => "<form \$InputFormArgs>",
+  'action' => FmtPageName('$PageUrl', $pagename),
   'method' => 'post'));
 
 # (:input end:)
@@ -52,6 +53,11 @@ function InputMarkup($pagename, $type, $args) {
   $out = FmtPageName($opt[':html'], $pagename);
   return preg_replace('/<(\\w+\\s)(.*)$/es',"'<$1'.Keep(PSS('$2'))", $out);
 }
+
+## Set uploads to use Site.UploadForm by default
+SDV($PageUploadFmt, 'wiki:$SiteGroup.UploadForm');
+#SDV($HandleUploadFmt, 
+#    array(&$PageStartFmt, 'wiki:$SiteGroup.UploadForm', &$PageEndFmt));
 
 ## The section below handles specialized EditForm pages.
 ## We don't bother to load it if we're not editing.
