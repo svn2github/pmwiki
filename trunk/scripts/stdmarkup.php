@@ -349,7 +349,7 @@ Markup('^>><<', '<^>>',
 #### special stuff ####
 ## (:markup:) for displaying markup examples
 function MarkupMarkup($pagename, $lead, $text) {
-  return "$lead<:block>" .
+  return "$lead(:divend:)" .
     Keep("<table class='markup' align='center'><tr><td class='markup1'><pre>" .
       wordwrap($text, 70) .  "</pre></td></tr><tr><td class='markup2'>") .
     "\n$text\n(:divend:)</td></tr></table>\n";
