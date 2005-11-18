@@ -152,12 +152,12 @@ Markup("'''''","<'''","/'''''(.*?)'''''/",'<strong><em>$1</em></strong>');
 Markup('@@','inline','/@@(.*?)@@/','<code>$1</code>');
 
 ## '+big+', '-small-'
-Markup("'+",'inline',"/'\\+(.*?)\\+'/",'<big>$1</big>');
-Markup("'-",'inline',"/'\\-(.*?)\\-'/",'<small>$1</small>');
+Markup("'+","<'''''","/'\\+(.*?)\\+'/",'<big>$1</big>');
+Markup("'-","<'''''","/'\\-(.*?)\\-'/",'<small>$1</small>');
 
 ## '^superscript^', '_subscript_'
-Markup("'^",'inline',"/'\\^(.*?)\\^'/",'<sup>$1</sup>');
-Markup("'_",'inline',"/'_(.*?)_'/",'<sub>$1</sub>');
+Markup("'^","<'''''","/'\\^(.*?)\\^'/",'<sup>$1</sup>');
+Markup("'_","<'''''","/'_(.*?)_'/",'<sub>$1</sub>');
 
 ## [+big+], [-small-]
 Markup('[+','inline','/\\[(([-+])+)(.*?)\\1\\]/e',
