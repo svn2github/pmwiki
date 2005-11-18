@@ -811,22 +811,29 @@ function IncludeText($pagename, $inclspec) {
 function Block($b) {
   global $BlockMarkups,$HTMLVSpace,$HTMLPNewline,$MarkupFrame;
   $mf = &$MarkupFrame[0]; $cs = &$mf['cs']; $vspaces = &$mf['vs'];
-  if (!$b) $b='p,1';
+  $out = '';
+  if ($b == 'vspace') {
+    $vspaces .= "\n";
+    while (count($cs)>0 && @$BlockMarkups[@end($cs)][3]==0) 
+      { $c = array_pop($cs); $out .= $BlockMarkups[$c][2]; }
+    return $out;
+  }
   @list($code, $depth, $icol) = explode(',', $b);
-  $out = ($code=='p' && @end($cs)=='p') ? $HTMLPNewline : '';
+  if (!$code) $depth = 1;
   if ($depth == 0) $depth = strlen($depth);
   if ($icol == 0) $icol = strlen($icol);
   if ($depth > 0) $depth += @$mf['idep'];
   if ($icol > 0) $mf['is'][$depth] = $icol + @$mf['icol'];
   @$mf['idep'] = @$mf['icol'] = 0;
-  if ($code=='vspace') { 
-    $vspaces .= "\n"; 
-    if (@end($cs) != 'p') return;
-    $depth = count($cs) - 1;
-  }
   while (count($cs)>$depth) 
     { $c = array_pop($cs); $out .= $BlockMarkups[$c][2]; }
-  if ($code == 'vspace') return $out;
+  if (!$code) { 
+    if (count($cs) < 1) $code='p'; 
+    else {
+      $out .= $HTMLPNewline;
+      $code = (@end($cs)=='p') ? 'p' : 'block';
+    }
+  }
   if ($depth>0 && $depth==count($cs) && $cs[$depth-1]!=$code)
     { $c = array_pop($cs); $out .= $BlockMarkups[$c][2]; }
   while (count($cs)>0 && @end($cs)!=$code &&
