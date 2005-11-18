@@ -20,7 +20,6 @@ foreach(array('text', 'submit', 'hidden', 'password', 'radio', 'checkbox',
 SDVA($InputTags['form'], array(
   ':args' => array('action', 'method'),
   ':html' => "<form \$InputFormArgs>",
-  'action' => FmtPageName('$PageUrl', $pagename),
   'method' => 'post'));
 
 # (:input end:)
@@ -35,7 +34,7 @@ Markup('input', 'directives',
   "InputMarkup(\$pagename, '$1', PSS('$2'))");
 
 function InputMarkup($pagename, $type, $args) {
-  global $InputTags, $InputAttrs, $FmtV;
+  global $InputTags, $InputAttrs, $InputValues, $FmtV;
   if (!@$InputTags[$type]) return "(:input $type $args:)";
   $opt = array_merge($InputTags[$type], ParseArgs($args));
   $args = @$opt[':args'];
@@ -44,6 +43,8 @@ function InputMarkup($pagename, $type, $args) {
     $opt[array_shift($args)] = array_shift($opt['']);
   foreach ((array)@$opt[''] as $a) 
     if (!isset($opt[$a])) $opt[$a] = $a;
+  if (!isset($opt['value']) && isset($InputValues[@$opt['name']])) 
+    $opt['value'] = $InputValues[$opt['name']];
   $attr = array();
   foreach ($InputAttrs as $a) {
     if (!isset($opt[$a])) continue;
@@ -54,10 +55,6 @@ function InputMarkup($pagename, $type, $args) {
   return preg_replace('/<(\\w+\\s)(.*)$/es',"'<$1'.Keep(PSS('$2'))", $out);
 }
 
-## Set uploads to use Site.UploadForm by default
-SDV($PageUploadFmt, 'wiki:$SiteGroup.UploadForm');
-#SDV($HandleUploadFmt, 
-#    array(&$PageStartFmt, 'wiki:$SiteGroup.UploadForm', &$PageEndFmt));
 
 ## The section below handles specialized EditForm pages.
 ## We don't bother to load it if we're not editing.
