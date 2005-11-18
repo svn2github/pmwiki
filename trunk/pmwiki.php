@@ -158,6 +158,7 @@ $ActionTitleFmt = array(
   'attr' => '| $[Attributes]');
 $DefaultPasswords = array('admin'=>'*','read'=>'','edit'=>'','attr'=>'');
 $AuthCascade = array('edit'=>'read', 'attr'=>'edit');
+$AuthList = array('' => 1, 'nopass:' => 1);
 
 $Conditions['false'] = 'false';
 $Conditions['true'] = 'true';
@@ -1248,7 +1249,8 @@ function HandleSource($pagename, $auth = 'read') {
 ## to be able to speed up subsequent calls.
 function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   global $DefaultPasswords, $AllowPassword, $GroupAttributesFmt,
-    $AuthCascade, $FmtV, $AuthPromptFmt, $PageStartFmt, $PageEndFmt, $AuthId;
+    $AuthCascade, $FmtV, $AuthPromptFmt, $PageStartFmt, $PageEndFmt, $AuthId,
+    $AuthList;
   static $grouppasswd, $authpw;
   SDV($GroupAttributesFmt,'$Group/GroupAttributes');
   SDV($AllowPassword,'nopass');
@@ -1259,20 +1261,16 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     $grouppasswd[$groupattr] = array();
     $gp = ReadPage($groupattr, READPAGE_CURRENT);
     foreach($DefaultPasswords as $k=>$v) 
-      if (isset($gp["passwd$k"])) 
-        $grouppasswd[$groupattr][$k] = explode(' ', $gp["passwd$k"]);
+      $grouppasswd[$groupattr][$k] = isset($gp["passwd$k"])
+        ? NormalizeAuth($gp["passwd$k"], 'group')
+        : NormalizeAuth($v, 'site');
   }
   foreach ($DefaultPasswords as $k=>$v) {
-    if (isset($page["passwd$k"])) {
-      $passwd[$k] = explode(' ', $page["passwd$k"]); 
-      $page['=pwsource'][$k] = 'page';
-    } else if (isset($grouppasswd[$groupattr][$k])) {
-      $passwd[$k] = $grouppasswd[$groupattr][$k];
-      $page['=pwsource'][$k] = 'group';
-    } else {
-      $passwd[$k] = $v;
-      if ($v) $page['=pwsource'][$k] = 'site';
-    }
+    $passwd[$k] = isset($page["passwd$k"]) 
+      ? NormalizeAuth($page["passwd$k"], 'page')
+      : $grouppasswd[$groupattr][$k];
+    $page['=pwsource'] = $passwd[$k]['=pwsource'];  
+    unset($passwd[$k]['=pwsource']);
   }
   $page['=passwd'] = $passwd;
   foreach($AuthCascade as $k => $t) {
@@ -1285,25 +1283,23 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     if (@$_POST['authpw']) @$_SESSION['authpw'][$_POST['authpw']]++;
     $authpw = array_keys((array)@$_SESSION['authpw']);
     if (!isset($AuthId)) $AuthId = @$_SESSION['authid'];
+    $AuthList["id:$AuthId"] = 1;
+    $AuthList["id:-$AuthId"] = -1;
     if (!$sid) session_write_close();
   }
   foreach($passwd as $lv => $a) {
     if (!$a) { @$page['=auth'][$lv]++; continue; }
     foreach((array)$a as $pwchal) {
-      if ($AuthId && strncmp($pwchal, 'id:', 3) == 0) {
-        $idlist = explode(',', substr($pwchal, 3));
-        foreach($idlist as $id) {
-          if ($id == $AuthId || $id == '*') 
-            { @$page['=auth'][$lv]++; continue 3; }
-          if ($id == "-$AuthId") { continue 3; }
-        }
+      if (preg_match('/^@|^\\w+:/', $pwchal)) {
+        if (@$AuthList[$pwchal] > 0) { @$page['=auth'][$lv]++; continue 2; }
+        if (@$AuthList[$pwchal] < 0) { continue 2; }
+        continue;
       }
-      if ($pwchal == '' || $pwchal == 'nopass:' 
-          || crypt($AllowPassword, $pwchal) == $pwchal) 
+      if (crypt($AllowPassword, $pwchal) == $pwchal)
         { @$page['=auth'][$lv]++; continue 2; }
       foreach ($authpw as $pwresp)
         if (crypt($pwresp, $pwchal) == $pwchal)
-          { @$page['=auth'][$lv]++; continue 3; }
+          { @$page['=auth'][$lv]++; continue 2; }
     }
   }
   if (@$page['=auth']['admin']) 
@@ -1331,6 +1327,22 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   exit;
 }
 
+function NormalizeAuth($auth, $source) {
+  $alist = array();
+  foreach((array)$auth as $a) {
+    foreach(explode(' ', $a) as $pwchal) {
+      if (!$pwchal) continue;
+      if (!preg_match('/^(\w+:)(.*)$/', $pwchal, $match))
+        { $alist[] = $pwchal; continue; }
+      if ($match[1] == 'group:') $match[1] = '@';
+      foreach(explode(',', $match[2]) as $id) 
+        $alist[] = @($id{0} == '@') ? $id : $match[1].$id;
+    }
+  }
+  $alist['=pwsource'] = $source;
+  return $alist;
+}
+
 function PrintAttrForm($pagename) {
   global $PageAttributes, $PCache, $FmtV;
   echo FmtPageName("<form action='\$PageUrl' method='post'>
@@ -1346,7 +1358,7 @@ function PrintAttrForm($pagename) {
       $a = substr($attr, 6);
       $value = '';
       $setting = implode(' ', 
-        preg_replace('/^(?!\\w+:).+$/', '****', (array)$page['=passwd'][$a]));
+        preg_replace('/^(?!@|\\w+:).+$/', '****', (array)$page['=passwd'][$a]));
       $pwsource = $page['=pwsource'][$a];
       $FmtV['$PWSource'] = $pwsource;
       $FmtV['$PWCascade'] = substr($pwsource, 8);
