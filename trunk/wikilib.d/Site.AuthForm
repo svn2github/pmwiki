@@ -3,7 +3,7 @@ agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.12) Gecko/20050915 
 author=Pm
 host=24.1.26.255
 name=Site.AuthForm
-rev=7
+rev=8
 targets=
-text='''$[Password required]'''%0a(:input auth_form:)%0a(:if enabled EnableAuthUser:)$[Name]: (:input text name=authid:)\\%0a(:if:)$[Password]: (:input password name=authpw:)%0a(:input submit value='OK':)%0a(:input end:)%0a
-time=1132672496
+text='''$[Password required]'''%0a(:messages:)%0a(:input auth_form:)%0a(:if enabled EnableAuthUser:)$[Name]: (:input text name=authid:)\\%0a(:if:)$[Password]: (:input password name=authpw:)%0a(:input submit value='OK':)%0a(:input end:)%0a
+time=1132684476
