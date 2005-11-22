@@ -1278,14 +1278,18 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
       { $passwd[$k] = $passwd[$t]; $page['=pwsource'][$k] = "cascade:$t"; }
   }
   if (!isset($authpw)) {
-    $sid = session_id();
-    @session_start();
-    if (@$_POST['authpw']) @$_SESSION['authpw'][$_POST['authpw']]++;
-    $authpw = array_keys((array)@$_SESSION['authpw']);
-    if (!isset($AuthId)) $AuthId = @$_SESSION['authid'];
-    $AuthList["id:$AuthId"] = 1;
-    $AuthList["id:-$AuthId"] = -1;
-    if (!$sid) session_write_close();
+    if (@$_POST['authpw'] || @$_REQUEST[session_name()]) {
+      $sid = session_id();
+      @session_start();
+      if (@$_POST['authpw']) @$_SESSION['authpw'][$_POST['authpw']]++;
+      $authpw = array_keys((array)@$_SESSION['authpw']);
+      if (!isset($AuthId)) $AuthId = @$_SESSION['authid'];
+      if (!$sid) session_write_close();
+    } else { $authpw = array(); }
+    if (@$AuthId) {
+      $AuthList["id:$AuthId"] = 1;
+      $AuthList["id:-$AuthId"] = -1;
+    }
   }
   foreach($passwd as $lv => $a) {
     if (!$a) { @$page['=auth'][$lv]++; continue; }
