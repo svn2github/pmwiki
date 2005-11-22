@@ -125,10 +125,10 @@ function LinkUpload($pagename, $imap, $path, $title, $txt, $fmt=NULL) {
   $FmtV['$LinkText'] = $txt;
   if (!file_exists($filepath)) 
     return FmtPageName($LinkUploadCreateFmt, $pagename);
-  $path = FmtPageName(IsEnabled($EnableDirectDownload, 1) 
-                          ? "$UploadUrlFmt$UploadPrefixFmt/$upname"
-                          : "\$PageUrl?action=download&amp;upname=$upname",
-                      $pagename);
+  $path = PUE(FmtPageName(IsEnabled($EnableDirectDownload, 1) 
+                            ? "$UploadUrlFmt$UploadPrefixFmt/$upname"
+                            : "\$PageUrl?action=download&amp;upname=$upname",
+                          $pagename));
   return LinkIMap($pagename, $imap, $path, $title, $txt, $fmt);
 }
 
