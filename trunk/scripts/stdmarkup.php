@@ -21,9 +21,9 @@ function PreserveText($sigil, $text, $lead) {
   if ($sigil=='=') return $lead.Keep($text);
   if (strpos($text, "\n")===false) 
     return "$lead<code>".Keep($text)."</code>";
-  $text = preg_replace("/^[^\\S\n]*\n/", "\n", substr($lead,1).$text);
-  $text = preg_replace("/\n[^\\S\n]*$/", "\n", $text);
-  return "<pre>".Keep($text)."</pre>";
+  $text = preg_replace("/\n[^\\S\n]+$/", "\n", $text);
+  if ($lead == "") return "<pre>".Keep($text)."</pre>";
+  return "$lead<:pre,1>".Keep($text);
 }
 
 Markup('[=','_begin',"/(\n[^\\S\n]*)?\\[([=@])(.*?)\\2\\]/se",
