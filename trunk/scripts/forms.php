@@ -55,6 +55,16 @@ function InputMarkup($pagename, $type, $args) {
   return preg_replace('/<(\\w+\\s)(.*)$/es',"'<$1'.Keep(PSS('$2'))", $out);
 }
 
+## Form-based authorization prompts (for use with PmWikiAuth)
+
+SDVA($InputTags['auth_form'], array(
+  ':html' => "<form action='{$_SERVER['REQUEST_URI']}' method='post' 
+    name='authform'>\$PostVars"));
+SDV($AuthPromptFmt, array(&$PageStartFmt, 'wiki:$SiteGroup.AuthForm',
+  "<script language='javascript' type='text/javascript'><!--
+    try { document.authform.authid.focus(); }
+    catch(e) { document.authform.authpw.focus(); } //--></script>",
+  &$PageEndFmt));
 
 ## The section below handles specialized EditForm pages.
 ## We don't bother to load it if we're not editing.
