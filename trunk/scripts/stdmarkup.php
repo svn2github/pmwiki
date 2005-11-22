@@ -225,8 +225,10 @@ Markup('img','<urllink',
     \$GLOBALS['ImgTagFmt']),'L')");
 
 ## bare wikilinks
-Markup('wikilink','>urllink',"/\\b($GroupPattern([\\/.]))?($WikiWordPattern)/e",
-  "Keep(WikiLink(\$pagename,'$0'),'L')");
+Markup('wikilink', '>urllink',
+  "/\\b($GroupPattern([\\/.]))?($WikiWordPattern)/e",
+  "Keep('<span class=\\'wikiword\\'>'.WikiLink(\$pagename,'$0').'</span>',
+        'L')");
 
 ## escaped `WikiWords
 Markup('`wikiword', '<wikilink',
