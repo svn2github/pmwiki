@@ -1289,6 +1289,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     if (@$AuthId) {
       $AuthList["id:$AuthId"] = 1;
       $AuthList["id:-$AuthId"] = -1;
+      $AuthList["id:*"] = 1;
     }
   }
   foreach($passwd as $lv => $a) {
