@@ -1314,7 +1314,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   PCache($pagename, $page);
   $postvars = '';
   foreach($_POST as $k=>$v) {
-    if ($k == 'authpw') continue;
+    if ($k == 'authpw' || $k == 'authid') continue;
     $v = str_replace('$', '&#036;', 
              htmlspecialchars(stripmagic($v), ENT_COMPAT));
     $postvars .= "<input type='hidden' name='$k' value=\"$v\" />\n";
