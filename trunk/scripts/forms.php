@@ -60,7 +60,7 @@ function InputMarkup($pagename, $type, $args) {
 SDVA($InputTags['auth_form'], array(
   ':html' => "<form action='{$_SERVER['REQUEST_URI']}' method='post' 
     name='authform'>\$PostVars"));
-SDV($AuthPromptFmt, array(&$PageStartFmt, 'wiki:$SiteGroup.AuthForm',
+SDV($AuthPromptFmt, array(&$PageStartFmt, 'page:$SiteGroup.AuthForm',
   "<script language='javascript' type='text/javascript'><!--
     try { document.authform.authid.focus(); }
     catch(e) { document.authform.authpw.focus(); } //--></script>",

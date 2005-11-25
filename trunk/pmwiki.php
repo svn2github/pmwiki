@@ -728,17 +728,20 @@ function PrintFmt($pagename,$fmt) {
   }
   if (preg_match("/^markup:(.*)$/",$x,$match))
     { print MarkupToHTML($pagename,$match[1]); return; }
-  if (preg_match('/^wiki:(.+)$/',$x,$match)) 
-    { PrintWikiPage($pagename,$match[1]); return; }
+  if (preg_match('/^wiki:(.+)$/', $x, $match)) 
+    { PrintWikiPage($pagename, $match[1], 'read'); return; }
+  if (preg_match('/^page:(.+)$/', $x, $match)) 
+    { PrintWikiPage($pagename, $match[1], ''); return; }
   echo $x;
 }
 
-function PrintWikiPage($pagename,$wikilist=NULL) {
+function PrintWikiPage($pagename, $wikilist=NULL, $auth='read') {
   if (is_null($wikilist)) $wikilist=$pagename;
   $pagelist = preg_split('/\s+/',$wikilist,-1,PREG_SPLIT_NO_EMPTY);
   foreach($pagelist as $p) {
     if (PageExists($p)) {
-      $page = RetrieveAuthPage($p, 'read', false, READPAGE_CURRENT);
+      $page = ($auth) ? RetrieveAuthPage($p, $auth, false, READPAGE_CURRENT)
+              : ReadPage($p, READPAGE_CURRENT);
       if ($page['text']) 
         echo MarkupToHTML($pagename,$page['text']);
       return;
@@ -1269,7 +1272,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     $passwd[$k] = isset($page["passwd$k"]) 
       ? NormalizeAuth($page["passwd$k"], 'page')
       : $grouppasswd[$groupattr][$k];
-    $page['=pwsource'] = $passwd[$k]['=pwsource'];  
+    $page['=pwsource'][$k] = $passwd[$k]['=pwsource'];  
     unset($passwd[$k]['=pwsource']);
   }
   $page['=passwd'] = $passwd;
@@ -1344,7 +1347,7 @@ function NormalizeAuth($auth, $source) {
         $alist[] = @($id{0} == '@') ? $id : $match[1].$id;
     }
   }
-  $alist['=pwsource'] = $source;
+  if ($alist) $alist['=pwsource'] = $source;
   return $alist;
 }
 
