@@ -160,8 +160,8 @@ $DefaultPasswords = array('admin'=>'*','read'=>'','edit'=>'','attr'=>'');
 $AuthCascade = array('edit'=>'read', 'attr'=>'edit');
 $AuthList = array('' => 1, 'nopass:' => 1);
 
-$Conditions['false'] = 'false';
-$Conditions['true'] = 'true';
+$Conditions['false'] = '$condparm > "" ? !$GLOBALS[$condparm] : false';
+$Conditions['true'] = '$condparm > "" ? (boolean)$GLOBALS[$condparm] : true';
 $Conditions['group'] = "FmtPageName('\$Group',\$pagename)==\$condparm";
 $Conditions['name'] = "FmtPageName('\$Name',\$pagename)==\$condparm";
 $Conditions['match'] = 'preg_match("!$condparm!",$pagename)';
@@ -1287,6 +1287,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
       if (@$_POST['authpw']) @$_SESSION['authpw'][$_POST['authpw']]++;
       $authpw = array_keys((array)@$_SESSION['authpw']);
       if (!isset($AuthId)) $AuthId = @$_SESSION['authid'];
+      $AuthList = array_merge($Authlist, (array)@$_SESSION['authlist']);
       if (!$sid) session_write_close();
     } else { $authpw = array(); }
     if (@$AuthId) {
@@ -1314,6 +1315,8 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     foreach($passwd as $lv=>$a) @$page['=auth'][$lv]++;
   if (@$page['=auth'][$level]) return $page;
   if (!$authprompt) return false;
+  $GLOBALS['AuthNeeded'] = (@$_POST['authpw']) 
+    ? $page['=pwsource'][$level] . ' ' . $level : '';
   PCache($pagename, $page);
   $postvars = '';
   foreach($_POST as $k=>$v) {

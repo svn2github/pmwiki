@@ -28,77 +28,109 @@
         $AuthUser['ldap'] = 'ldap://ldap.example.com/ou=People,o=example?uid';
 */
 
-# Let's set up an authorization prompt that includes usernames.
-SDV($AuthPromptFmt, array(&$PageStartFmt,
-  "<p><b>$[Password required]</b></p>
-    <form name='authform' action='{$_SERVER['REQUEST_URI']}' method='post'>
-      $[Name]: <input tabindex='1' type='text' name='authid' value='' /><br />
-      $[Password]: <input tabindex='2' type='password' name='authpw' value='' />
-      <input type='submit' value='OK' />\$PostVars</form>
-      <script language='javascript' type='text/javascript'><!--
-        document.authform.authid.focus() //--></script>", &$PageEndFmt));
+# let Site.AuthForm know that we're doing user-based authorization
+$EnableAuthUser = 1;
 
-# This is a helper function called when someone meets the
-# authentication credentials:
-function AuthenticateUser($authid) {
-  $GLOBALS['AuthId'] = $authid;
-  @session_start(); $_SESSION['authid'] = $authid;
-}
-
-# If the admin hasn't configured any password entries, just return.
-if (!$AuthUser) return;
-
-# Now, let's get the $id and $pw to be checked -- we'll first take them 
-# from a submitted form, if any; if not there then we'll check and see
-# if they're available from HTTP basic authentication.  If we don't
-# have any $id at all, we just exit since there's nothing to 
-# authenticate here.
 if (@$_POST['authid']) 
-  { $id = $_POST['authid']; $pw = $_POST['authpw']; }
-else if (@$_SERVER['PHP_AUTH_USER']) 
-  { $id = $_SERVER['PHP_AUTH_USER']; $pw = $_SERVER['PHP_AUTH_PW']; }
-else return;
+  AuthUserId($pagename, @$_POST['authid'], @$_POST['authpw']);
 
-# Okay, we have $id and $pw, now let's see if we can find any
-# matching entries.  First, let's check the $AuthUser array directly:
-if (@$AuthUser[$id]) 
-  foreach((array)($AuthUser[$id]) as $c)
-    if (crypt($pw, $c) == $c) { AuthenticateUser($id); return; }
+function AuthUserId($pagename, $id, $pw=NULL) {
+  global $AuthUser, $AuthUserPageFmt, $AuthUserFunctions, 
+    $AuthId, $AuthList, $MessagesFmt;
+  $auth = $AuthUser; $authid = '';
 
-# Now lets check any .htpasswd file equivalents
-foreach((array)($AuthUser['htpasswd']) as $f) {
-  $fp = fopen($f, "r"); if (!$fp) continue;
-  while ($x = fgets($fp, 1024)) {
-    $x = rtrim($x);
-    list($i, $c, $r) = explode(':', $x, 3);
-    if ($i == $id && _crypt($pw, $c) == $c) 
-      { fclose($fp); AuthenticateUser($id); return; }
-  }
-  fclose($fp);
-}
+  # load information from Site.AuthUser (or page in $AuthUserPageFmt)
+  SDV($AuthUserPageFmt, '$SiteGroup.AuthUser');
+  SDVA($AuthUserFunctions, array(
+    'htpasswd' => 'AuthUserHtPasswd',
+    'ldap' => 'AuthUserLDAP',
+#    'mysql' => 'AuthUserMySQL',
+    $id => 'AuthUserConfig'));
 
-# LDAP authentication.  
-if ($AuthUser['ldap'] && $id && $pw 
-    && preg_match('!ldap://([^:]+)(?::(\d+))?/(.+)$!', 
-                  $AuthUser['ldap'], $match)) {
-  list($z, $server, $port, $path) = $match;
-  list($basedn, $attr, $sub) = explode('?', $path);
-  if (!$port) $port=389;
-  if (!$attr) $attr = 'uid';
-  if (!$sub) $sub = 'one';
-  $ds = ldap_connect($server, $port);
-  ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-  if (ldap_bind($ds, @$AuthLDAPBindDN, @$AuthLDAPBindPassword)) {
-    $fn = ($sub == 'sub') ? 'ldap_search' : 'ldap_list';
-    $sr = $fn($ds, $basedn, "($attr=$id)", array($attr));
-    $x = ldap_get_entries($ds, $sr);
-    if ($x['count'] == 1) {
-      $dn = $x[0]['dn'];
-      if (ldap_bind($ds, $dn, $pw)) AuthenticateUser($id);
+  $pn = FmtPageName($AuthUserPageFmt, $pagename);
+  $apage = ReadPage($pn, READPAGE_CURRENT);
+  if ($apage && preg_match_all("/\n\\s*([@\\w][^\\s:]*):(.*)/", 
+                               $apage['text'], $matches, PREG_SET_ORDER)) {
+    foreach($matches as $m) {
+      if (!preg_match_all('/\\bldap:\\S+|[^\\s,]+/', $m[2], $v))
+        continue;
+      if ($m[1]{0} == '@') 
+        foreach($v[0] as $g) $auth[$g][] = $m[1];
+      else $auth[$m[1]] = array_merge((array)@$auth[$m[1]], $v[0]);
     }
   }
-  ldap_close($ds);
+
+  if (is_null($pw)) $authid = $id;
+  else 
+    foreach($AuthUserFunctions as $k => $fn) 
+      if ($auth[$k] && $fn($pagename, $id, $pw, $auth[$k])) 
+        { $authid = $id; break; }
+
+  if (!$authid) { $GLOBALS['InvalidLogin'] = 1; return; }
+  if (!isset($AuthId)) $AuthId = $authid;
+  @session_start(); 
+  $_SESSION['authid'] = $authid; 
+  $_SESSION['authlist']["id:$authid"] = 1;
+  $_SESSION['authlist']["id:-$authid"] = -1;
+  $_SESSION['authlist']["id:*"] = 1;
+  foreach ((array)@$auth[$authid] as $g) 
+    if ($g{0} == '@') @$_SESSION['authlist'][$g] = 1;
+  foreach ((array)@$auth['*'] as $g) 
+    if ($g{0} == '@') @$_SESSION['authlist'][$g] = 1;
+  $AuthList = array_merge($AuthList, $_SESSION['authlist']);
 }
+
+
+function AuthUserConfig($pagename, $id, $pw, $pwlist) {
+  foreach ((array)$pwlist as $chal) 
+    if (crypt($pw, $chal) == $chal) return true;
+  return false;
+}
+
+
+function AuthUserHtPasswd($pagename, $id, $pw, $pwlist) {
+  foreach ((array)$pwlist as $f) {
+    $fp = fopen($f, "r"); if (!$fp) continue;
+    while ($x = fgets($fp, 1024)) {
+      $x = rtrim($x);
+      list($i, $c, $r) = explode(':', $x, 3);
+      if ($i == $id && _crypt($pw, $c) == $c) { fclose($fp); return true; }
+    }
+    fclose($fp);
+  }
+  return false;
+}
+
+
+function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
+  global $AuthLDAPBindDN, $AuthLDAPBindPassword;
+  if (!function_exists('ldap_connect')) return false;
+  foreach ((array)$pwlist as $ldap) {
+    if (!preg_match('!ldap://([^:]+)(?::(\\d+))?/(.+)$!', $ldap, $match))
+      continue;
+    list($z, $server, $port, $path) = $match;
+    list($basedn, $attr, $sub) = explode('?', $path);
+    if (!$port) $port = 389;
+    if (!$attr) $attr = 'uid';
+    if (!$sub) $sub = 'one';
+    $binddn = @$AuthLDAPBindDN;
+    $bindpw = @$AuthLDAPBindPassword;
+    $ds = ldap_connect($server, $port);
+    ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+    if (ldap_bind($ds, $binddn, $bindpw)) {
+      $fn = ($sub == 'sub') ? 'ldap_search' : 'ldap_list';
+      $sr = $fn($ds, $basedn, "($attr=$id)", array($attr));
+      $x = ldap_get_entries($ds, $sr);
+      if ($x['count'] == 1) {
+        $dn = $x[0]['dn'];
+        if (ldap_bind($ds, $dn, $pw)) { ldap_close($ds); return true; }
+      }
+    }
+    ldap_close($ds);
+  }
+  return false;
+}
+
 
 #  The _crypt function provides support for SHA1 encrypted passwords 
 #  (keyed by '{SHA}') and Apache MD5 encrypted passwords (keyed by 
