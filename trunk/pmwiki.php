@@ -1291,7 +1291,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
       if (@$_POST['authpw']) @$_SESSION['authpw'][$_POST['authpw']]++;
       $authpw = array_keys((array)@$_SESSION['authpw']);
       if (!isset($AuthId)) $AuthId = @$_SESSION['authid'];
-      $AuthList = array_merge($Authlist, (array)@$_SESSION['authlist']);
+      $AuthList = array_merge($AuthList, (array)@$_SESSION['authlist']);
       if (!$sid) session_write_close();
     } else { $authpw = array(); }
     if (@$AuthId) {
