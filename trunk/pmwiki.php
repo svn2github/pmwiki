@@ -40,7 +40,7 @@ $WikiWordPattern = '[[:upper:]][[:alnum:]]*(?:[[:upper:]][[:lower:]0-9]|[[:lower
 $WikiDir = new PageStore('wiki.d/$FullName');
 $WikiLibDirs = array(&$WikiDir,new PageStore('$FarmD/wikilib.d/$FullName'));
 $InterMapFiles = array("$FarmD/scripts/intermap.txt",
-  "$FarmD/local/farmmap.txt", 'local/localmap.txt');
+  "$FarmD/local/farmmap.txt", 'Site.InterMap', 'local/localmap.txt');
 $Newline = "\263";                                 # deprecated, 2.0.0
 $KeepToken = "\235\235";  
 $K0=array('='=>'','@'=>'<code>');  $K1=array('='=>'','@'=>'</code>');
@@ -258,15 +258,19 @@ else if ($p && (PageExists($p) || preg_match('/[\\/.]/', $pagename))) {
 if (IsEnabled($EnableStdConfig,1))
   include_once("$FarmD/scripts/stdconfig.php");
 
-
 foreach((array)$InterMapFiles as $f) {
-  if (@!($mapfd=fopen($f,"r"))) continue;
-  while ($mapline=fgets($mapfd,1024)) {
-    if (preg_match('/^\\s*(#|$)/',$mapline)) continue;
-    list($imap,$url) = preg_split('/\\s+/',$mapline);
-    if (strpos($url,'$1')===false) $url.='$1';
-    $LinkFunctions["$imap:"] = 'LinkIMap';
-    $IMap["$imap:"] = FmtPageName($url, $pagename);
+  if (($v = @file($f))) 
+    $v = preg_replace('/^\\s*(?>\\w+)(?!:)/m', '$0:', implode('', $v));
+  else if (PageExists($f)) {
+    $p = ReadPage($f, READPAGE_CURRENT);
+    $v = $p['text'];
+  } else continue;
+  if (!preg_match_all("/^\\s*(\\w+:)[^\\S\n]+(\\S*)/m", $v, 
+                      $match, PREG_SET_ORDER)) continue;
+  foreach($match as $m) {
+    if (strpos($m[2], '$1') === false) $m[2] .= '$1';
+    $LinkFunctions[$m[1]] = 'LinkIMap';
+    $IMap[$m[1]] = FmtPageName($m[2], $pagename);
   }
 }
 
