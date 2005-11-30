@@ -26,6 +26,9 @@ if (!IsEnabled($EnableStdConfig,1)) return;
 if (IsEnabled($EnablePGCust,1))
   include_once("$FarmD/scripts/pgcust.php");
 
+if (IsEnabled($EnableRobotControl,1))
+  include_once("$FarmD/scripts/robots.php");
+
 ## Browser cache-control.  If this is a cacheable action (e.g., browse,
 ## diff), then set the Last-Modified header to the time the site was 
 ## last modified.  If the browser has provided us with a matching 
@@ -79,11 +82,4 @@ if (IsEnabled($EnableUpload,0))
   include_once("$FarmD/scripts/upload.php");      # must come after forms
 if (IsEnabled($EnableDiag,0)) 
   include_once("$FarmD/scripts/diag.php");
-
-SDV($MetaRobots,
-  ($action!='browse' || preg_match('#^PmWiki[./](?!PmWiki$)|^Site[./]#',
-    $pagename)) ? 'noindex,nofollow' : 'index,follow');
-if ($MetaRobots)
-  $HTMLHeaderFmt['robots'] = 
-    "  <meta name='robots' content='\$MetaRobots' />\n";
 
