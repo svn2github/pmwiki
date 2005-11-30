@@ -835,12 +835,10 @@ function Block($b) {
   @$mf['idep'] = @$mf['icol'] = 0;
   while (count($cs)>$depth) 
     { $c = array_pop($cs); $out .= $BlockMarkups[$c][2]; }
-  if (!$code) { 
-    if (count($cs) < 1) $code='p'; 
-    else {
-      $out .= $HTMLPNewline;
-      $code = (@end($cs)=='p') ? 'p' : 'block';
-    }
+  if (!$code) {
+    if (@end($cs) == 'p') { $out .= $HTMLPNewline; $code = 'p'; }
+    else if ($depth < 2) { $code = 'p'; }
+    else { $out .= $HTMLPNewline; $code = 'block'; }
   }
   if ($depth>0 && $depth==count($cs) && $cs[$depth-1]!=$code)
     { $c = array_pop($cs); $out .= $BlockMarkups[$c][2]; }
