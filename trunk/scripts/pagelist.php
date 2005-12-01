@@ -186,7 +186,7 @@ function MakePageList($pagename, $opt) {
     $matches[] = & $PCache[$pn];
   }
   StopWatch('MakePageList sort');
-  SortPageList($matches, $order);
+  if ($order) SortPageList($matches, $order);
   StopWatch('MakePageList update');
   if ($xlist) LinkIndexUpdate($xlist);
   StopWatch('MakePageList end');
