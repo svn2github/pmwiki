@@ -148,11 +148,11 @@ $HandleActions = array(
   'browse' => 'HandleBrowse',
   'edit' => 'HandleEdit', 'source' => 'HandleSource', 
   'attr' => 'HandleAttr', 'postattr' => 'HandlePostAttr',
-  'logout' => 'HandleLogoutA');
+  'logout' => 'HandleLogoutA', 'login' => 'HandleLoginA');
 $HandleAuth = array(
   'browse' => 'read', 'source' => 'read',
   'edit' => 'edit', 'attr' => 'attr', 'postattr' => 'attr',
-  'logout' => 'read');
+  'logout' => 'read', 'login' => 'login');
 $ActionTitleFmt = array(
   'edit' => '| $[Edit]',
   'attr' => '| $[Attributes]');
@@ -1448,5 +1448,14 @@ function HandleLogoutA($pagename, $auth = 'read') {
     if (isset($_COOKIE[$c])) setcookie($c, '', time()-43200, '/');
   session_destroy();
   Redirect(FmtPageName($LogoutRedirectFmt, $pagename));
+}
+
+
+function HandleLoginA($pagename, $auth = 'login') {
+  global $AuthId, $DefaultPasswords;
+  unset($DefaultPasswords['admin']);
+  if (@(!$_POST['authpw'] || ($AuthId != $_POST['authid']))) 
+    $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
+  Redirect($pagename);
 }
 
