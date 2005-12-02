@@ -114,10 +114,11 @@ $FmtP = array(
   );
 
 $WikiTitle = 'PmWiki';
+$Charset = 'ISO-8859-1';
 $HTTPHeaders = array(
   "Expires: Tue, 01 Jan 2002 00:00:00 GMT",
   "Cache-Control: no-store, no-cache, must-revalidate",
-  "Content-type: text/html; charset=iso-8859-1;");
+  "Content-type: text/html; charset=ISO-8859-1;");
 $CacheActions = array('browse','diff','print');
 $HTMLDoctypeFmt = 
   "<!DOCTYPE html 
@@ -1017,7 +1018,7 @@ function MarkupToHTML($pagename,$text) {
   foreach((array)$text as $l) 
     $lines[] = PVS(htmlspecialchars($l, ENT_NOQUOTES));
   $lines[] = '(:closeall:)';
-  $out = array();
+  $out = '';
   while (count($lines)>0) {
     $x = array_shift($lines);
     $RedoMarkupLine=0;
@@ -1027,9 +1028,8 @@ function MarkupToHTML($pagename,$text) {
       if (isset($php_errormsg)) { echo "pat=$p"; unset($php_errormsg); }
       if ($RedoMarkupLine) { $lines=array_merge((array)$x,$lines); continue 2; }
     }
-    if ($x>'') $out[] = "$x\n";
+    if ($x>'') $out .= "$x\n";
   }
-  $out = implode('',(array)$out);
   foreach((array)(@$MarkupFrame[0]['posteval']) as $v) eval($v);
   array_shift($MarkupFrame);
   StopWatch('MarkupToHTML end');
@@ -1274,7 +1274,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     $passwd[$k] = isset($page["passwd$k"]) 
       ? NormalizeAuth($page["passwd$k"], 'page')
       : $grouppasswd[$groupattr][$k];
-    $page['=pwsource'][$k] = $passwd[$k]['=pwsource'];  
+    $page['=pwsource'][$k] = @$passwd[$k]['=pwsource'];  
     unset($passwd[$k]['=pwsource']);
   }
   $page['=passwd'] = $passwd;

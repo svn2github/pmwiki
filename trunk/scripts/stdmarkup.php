@@ -315,27 +315,27 @@ function Cells($name,$attr) {
   $attr = preg_replace('/([a-zA-Z]=)([^\'"]\\S*)/',"\$1'\$2'",$attr);
   $tattr = @$MarkupFrame[0]['tattr'];
   $name = strtolower($name);
-  $out = array('<:block>');
+  $out = '<:block>';
   if (strncmp($name, 'cell', 4) != 0 || @$MarkupFrame[0]['closeall']['div']) {
-    $out[] = @$MarkupFrame[0]['closeall']['div']; 
+    $out .= @$MarkupFrame[0]['closeall']['div']; 
     unset($MarkupFrame[0]['closeall']['div']);
-    $out[] = @$MarkupFrame[0]['closeall']['table']; 
+    $out .= @$MarkupFrame[0]['closeall']['table']; 
     unset($MarkupFrame[0]['closeall']['table']);
   }
   if ($name == 'div') {
     $MarkupFrame[0]['closeall']['div'] = "</div>";
-    $out[] = "<div $attr>";
+    $out .= "<div $attr>";
   }
   if ($name == 'table') $MarkupFrame[0]['tattr'] = $attr;
   if (strncmp($name, 'cell', 4) == 0) {
     if (strpos($attr, "valign=")===false) $attr .= " valign='top'";
     if (!@$MarkupFrame[0]['closeall']['table']) {
        $MarkupFrame[0]['closeall']['table'] = "</td></tr></table>";
-       $out[] = "<table $tattr><tr><td $attr>";
-    } else if ($name == 'cellnr') $out[] = "</td></tr><tr><td $attr>";
-    else $out[] = "</td><td $attr>";
+       $out .= "<table $tattr><tr><td $attr>";
+    } else if ($name == 'cellnr') $out .= "</td></tr><tr><td $attr>";
+    else $out .= "</td><td $attr>";
   }
-  return implode('', $out);
+  return $out;
 }
 
 Markup('table', '<block',

@@ -18,11 +18,10 @@
 
 global $HTTPHeaders, $KeepToken, $pagename,
   $GroupPattern, $NamePattern, $WikiWordPattern, $SuffixPattern,
-  $PageNameChars, $MakePageNamePatterns, $CaseConversions;
+  $PageNameChars, $MakePageNamePatterns, $CaseConversions, $Charset;
 
-$HTTPHeaders[] = 'Content-type: text/html; charset=utf-8';
-
-$KeepToken = "\263\263\263";
+$Charset = 'UTF-8';
+$HTTPHeaders[] = 'Content-type: text/html; charset=UTF-8';
 $pagename = $_REQUEST['n'];
 if (!$pagename) $pagename = $_REQUEST['pagename'];
 if (!$pagename &&

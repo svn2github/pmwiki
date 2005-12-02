@@ -71,17 +71,17 @@ function SearchBox($pagename, $opt) {
     'value' => str_replace("'", "&#039;", $SearchQuery)));
   $opt = array_merge((array)$SearchBoxOpt, (array)$opt);
   $group = $opt['group'];
-  $out[] = FmtPageName("
+  $out = FmtPageName("
     class='wikisearch' action='\$PageUrl' method='get'><input
     type='hidden' name='action' value='search' />", $pagename);
   if (!IsEnabled($EnablePathInfo, 0)) 
-    $out[] = "<input type='hidden' name='n' value='$pagename' />";
+    $out .= "<input type='hidden' name='n' value='$pagename' />";
   if ($group) 
-    $out[] = "<input type='hidden' name='group' value='$group' />";
-  $out[] = "<input type='text' name='q' value='{$opt['value']}' 
+    $out .= "<input type='hidden' name='group' value='$group' />";
+  $out .= "<input type='text' name='q' value='{$opt['value']}' 
     size='{$opt['size']}' /><input class='wikisearchbutton' 
     type='submit' value='{$opt['label']}' /></form>";
-  return "<form ".Keep(implode('', $out));
+  return "<form ".Keep($out);
 }
 
 ## FmtPageList combines options from markup, request form, and url,
@@ -244,13 +244,13 @@ function FPLByGroup($pagename, &$matches, $opt) {
   SDVA($FPLByGroupOpt, array('readf' => 0, 'order' => 'name'));
   $matches = MakePageList($pagename, array_merge((array)$FPLByGroupOpt, $opt));
   if (@$opt['count']) array_splice($matches, $opt['count']);
-  $out = array();
+  $out = '';
   foreach($matches as $pc) {
     $pgroup = FmtPageName($FPLByGroupGFmt, $pc['pagename']);
-    if ($pgroup != @$lgroup) { $out[] = $pgroup; $lgroup = $pgroup; }
-    $out[] = FmtPageName($FPLByGroupIFmt, $pc['pagename']);
+    if ($pgroup != @$lgroup) { $out .= $pgroup; $lgroup = $pgroup; }
+    $out .= FmtPageName($FPLByGroupIFmt, $pc['pagename']);
   }
-  return FmtPageName($FPLByGroupStartFmt, $pagename) . implode('', $out) .
+  return FmtPageName($FPLByGroupStartFmt, $pagename) . $out .
              FmtPageName($FPLByGroupEndFmt, $pagename);
 }
 
@@ -265,10 +265,10 @@ function FPLSimple($pagename, &$matches, $opt) {
   $matches = MakePageList($pagename, 
                  array_merge($topt, (array)$FPLSimpleOpt, $opt));
   if (@$opt['count']) array_splice($matches, $opt['count']);
-  $out = array();
+  $out = '';
   foreach($matches as $pc) 
-    $out[] = FmtPageName($FPLSimpleIFmt, $pc['pagename']);
-  return FmtPageName($FPLSimpleStartFmt, $pagename) . implode('', $out) .
+    $out .= FmtPageName($FPLSimpleIFmt, $pc['pagename']);
+  return FmtPageName($FPLSimpleStartFmt, $pagename) . $out .
              FmtPageName($FPLSimpleEndFmt, $pagename);
 }
    
@@ -280,15 +280,15 @@ function FPLGroup($pagename, &$matches, $opt) {
   SDV($FPLGroupIFmt, "<li><a href='\$ScriptUrl/\$Group'>\$Group</a></li>");
   SDVA($FPLGroupOpt, array('readf' => 0, 'order' => 'name'));
   $matches = MakePageList($pagename, array_merge((array)$FPLGroupOpt, $opt));
-  $out = array();
+  $out = '';
   foreach($matches as $pc) {
     $group = preg_replace('/\\.[^.]+$/', '', $pc['pagename']);
     if (@!$seen[$group]++) {
-      $out[] = FmtPageName($FPLGroupIFmt, $pc['pagename']);
+      $out .= FmtPageName($FPLGroupIFmt, $pc['pagename']);
       if ($opt['count'] && count($out) >= $opt['count']) break;
     }
   }
-  return FmtPageName($FPLGroupStartFmt, $pagename) . implode('', $out) .
+  return FmtPageName($FPLGroupStartFmt, $pagename) . $out .
              FmtPageName($FPLGroupEndFmt, $pagename);
 }
 
