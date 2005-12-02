@@ -88,7 +88,7 @@ function ApplyStyles($x) {
   $x = preg_replace("/\\bhttps?:[^$UrlExcludeChars]+/e", "Keep('$0')", $x);
   $parts = preg_split("/($WikiStylePattern)/",$x,-1,PREG_SPLIT_DELIM_CAPTURE);
   $parts[] = NULL;
-  $out = array();
+  $out = '';
   $style = array();
   $wikicsspat = '/^('.implode('|',(array)$WikiStyleCSS).')$/';
   while ($parts) {
@@ -102,56 +102,59 @@ function ApplyStyles($x) {
         $p, $match, PREG_SET_ORDER);
       while ($match) {
         $m = array_shift($match);
-        if (@$m[2]) 
-          $style[$m[1]][] = preg_replace('/^([\'"])(.*)\\1$/', '$2', $m[3]);
-        else if (!isset($WikiStyle[$m[1]])) $style['class'][] = $m[1];
-        else $style = array_merge_recursive($style, (array)$WikiStyle[$m[1]]);
+        if (@$m[2]) $style[$m[1]]=preg_replace('/^([\'"])(.*)\\1$/','$2',$m[3]);
+        else if (!isset($WikiStyle[$m[1]])) $style['class'] .= ' ' . $m[1];
+        else {
+          $c = @$style['class'];
+          $style=array_merge($style,(array)$WikiStyle[$m[1]]);
+          if ($c) $style['class'] = $c . ' ' . $style['class'];
+        }
       }
       if (@$style['define']) {
-        $d = end($style['define']); unset($style['define']);
+        $d = $style['define']; unset($style['define']);
         $WikiStyle[$d] = $style;
       }
-      $a = $style['apply']; if (is_array($a)) $a = end($a);
-      if ($a && @$WikiStyleApply[$a]) {
-        $apply[$a] = array_merge_recursive((array)@$apply[$a], $style);
-        $style = array();
+      if (@$WikiStyleApply[$style['apply']]) {
+        $apply[$style['apply']] = 
+          array_merge((array)@$apply[$style['apply']],$style);
+        $style=array();
       }
       continue;
     }
     if (is_null($p)) 
-      { $alist=@$apply; unset($alist['']); $p=implode('',$out); $out=array(); }
+      { $alist=@$apply; unset($alist['']); $p=$out; $out=''; }
     elseif ($p=='') continue;
     else { $alist=array(''=>$style); }
     foreach((array)$alist as $a=>$s) {
       $spanattr = ''; $stylev = array(); $id = '';
       foreach((array)$s as $k=>$v) {
-        if ($k == 'class') 
-          { $spanattr = "class='" . implode(' ', (array)$v) . "'"; continue; }
-        if (is_array($v)) $v = end($v);
-        if (($k=='width' || $k=='height') && !@$WikiStyleApply[$a]
+        $v = trim($v);
+        if ($k == 'class' && $v) $spanattr = "class='$v'";
+        elseif ($k=='id') $id = preg_replace('/\W/', '_', $v);
+        elseif (($k=='width' || $k=='height') && !@$WikiStyleApply[$a]
             && preg_match('/\\s*<img\\b/', $p)) 
           $p = preg_replace("/<img(?![^>]*\\s$k=)/", "<img $k='$v'", $p);
         elseif (@$WikiStyleAttr[$k]) 
           $p=preg_replace("/<({$WikiStyleAttr[$k]}(?![^>]*\\s$k=))([^>]*)>/s",
             "<$1 $k='$v' $2>",$p);
-        elseif ($k=='id') $id = preg_replace('/\W/', '_', $v);
         elseif (preg_match($wikicsspat,$k)) $stylev[]="$k: $v;";
       }
-      if ($stylev) $spanattr.=" style='".implode(' ',$stylev)."'";
-      if ($id) $spanattr .=" id='$id'";
+      if ($stylev) $spanattr .= " style='".implode(' ',$stylev)."'";
+      if ($id) $spanattr .= " id='$id'";
       if ($spanattr) {
-        if (!@$WikiStyleApply[$a]) 
-          $p = preg_replace("!^(.*?)($|</?(form|div|table|t[rdh]|p|[uod]l|li|d[dt]|h[1-6]|blockquote|pre|hr))!s", "<span $spanattr>$1</span>$2", $p, 1);
-        elseif (!preg_match('/^(\\s*<[^>]+>)*$/s', $p) 
-                || strpos($p, '<img') !== false) {
+        if (!@$WikiStyleApply[$a]) {
+          $p = preg_replace("!^(.*?)($|</?(form|div|table|tr|td|th|p|ul|ol|dl|li|dt|dd|h[1-6]|blockquote|pre|hr))!s", "<span $spanattr>$1</span>$2", $p, 1);
+}
+        elseif (!preg_match('/^(\\s*<[^>]+>)*$/s',$p) ||
+                strpos($p, '<img')!==false) {
           $p = preg_replace("/<({$WikiStyleApply[$a]})\\b/","<$1 $spanattr",$p);
         }
       }
       if (@$s['color'])
         $p = preg_replace('/<a\\b/', "<a style='color: {$s['color']}'", $p);
     }
-    $out[] = $p;
+    $out .= $p;
   }
-  return implode('',$out);
+  return $out;
 }
 
