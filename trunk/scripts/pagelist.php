@@ -109,7 +109,7 @@ function FmtPageList($fmt, $pagename, $opt) {
   $FmtV['$MatchCount'] = count($matches);
   if ($fmt != '$MatchList') 
     { $FmtV['$MatchList'] = $out; $out = FmtPageName($fmt, $pagename); }
-  if ($out{0} == '<') return '<div>'.Keep($out).'</div>';
+  if ($out && $out{0} == '<') return '<div>'.Keep($out).'</div>';
   PRR(); return $out;
 }
 
@@ -244,6 +244,7 @@ function FPLByGroup($pagename, &$matches, $opt) {
   SDVA($FPLByGroupOpt, array('readf' => 0, 'order' => 'name'));
   $matches = MakePageList($pagename, array_merge((array)$FPLByGroupOpt, $opt));
   if (@$opt['count']) array_splice($matches, $opt['count']);
+  if (count($matches)<1) return '';
   $out = '';
   foreach($matches as $pc) {
     $pgroup = FmtPageName($FPLByGroupGFmt, $pc['pagename']);
@@ -265,6 +266,7 @@ function FPLSimple($pagename, &$matches, $opt) {
   $matches = MakePageList($pagename, 
                  array_merge($topt, (array)$FPLSimpleOpt, $opt));
   if (@$opt['count']) array_splice($matches, $opt['count']);
+  if (count($matches)<1) return '';
   $out = '';
   foreach($matches as $pc) 
     $out .= FmtPageName($FPLSimpleIFmt, $pc['pagename']);
@@ -280,6 +282,7 @@ function FPLGroup($pagename, &$matches, $opt) {
   SDV($FPLGroupIFmt, "<li><a href='\$ScriptUrl/\$Group'>\$Group</a></li>");
   SDVA($FPLGroupOpt, array('readf' => 0, 'order' => 'name'));
   $matches = MakePageList($pagename, array_merge((array)$FPLGroupOpt, $opt));
+  if (count($matches) < 1) return '';
   $out = '';
   foreach($matches as $pc) {
     $group = preg_replace('/\\.[^.]+$/', '', $pc['pagename']);
