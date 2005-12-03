@@ -103,7 +103,7 @@ function ApplyStyles($x) {
       while ($match) {
         $m = array_shift($match);
         if (@$m[2]) $style[$m[1]]=preg_replace('/^([\'"])(.*)\\1$/','$2',$m[3]);
-        else if (!isset($WikiStyle[$m[1]])) $style['class'] .= ' ' . $m[1];
+        else if (!isset($WikiStyle[$m[1]])) @$style['class'] .= ' ' . $m[1];
         else {
           $c = @$style['class'];
           $style=array_merge($style,(array)$WikiStyle[$m[1]]);
