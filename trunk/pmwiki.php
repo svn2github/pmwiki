@@ -526,7 +526,9 @@ function CmpPageAttr($a, $b) {
 ## filesystem.
 class PageStore {
   var $dirfmt;
-  function PageStore($d='$WorkDir/$FullName') { $this->dirfmt=$d; }
+  var $iswrite;
+  function PageStore($d='$WorkDir/$FullName', $w=0) 
+    { $this->dirfmt=$d; $this->iswrite=$w; }
   function pagefile($pagename) {
     global $FarmD;
     $dfmt = $this->dirfmt;
@@ -655,8 +657,14 @@ function ReadPage($pagename, $since=0) {
 }
 
 function WritePage($pagename,$page) {
-  global $WikiDir,$LastModFile;
-  $WikiDir->write($pagename,$page);
+  global $WikiLibDirs,$WikiDir,$LastModFile;
+  $WikiDir->iswrite = 1;
+  for($i=0; $i<count($WikiLibDirs); $i++) {
+    $wd = &$WikiLibDirs[$i];
+    if ($wd->iswrite && $wd->exists($pagename)) break;
+  }
+  if ($i >= count($WikiLibDirs)) $wd = &$WikiDir;
+  $wd->write($pagename,$page);
   if ($LastModFile && !@touch($LastModFile)) 
     { unlink($LastModFile); touch($LastModFile); fixperms($LastModFile); }
 }
