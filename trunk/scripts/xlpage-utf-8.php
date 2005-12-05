@@ -40,7 +40,8 @@ SDV($PageNameChars, '-[:alnum:]\\x80-\\xfe');
 SDV($MakePageNamePatterns, array(
     "/'/" => '',                           # strip single-quotes
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
-    "/(?<=^| )(.)/eu" => "utf8toupper('$1')", 
+    "/(?<=^| )([a-z])/e" => "strtoupper('$1')", 
+    "/(?<=^| )([\\xc0-\\xdf].)/e" => "utf8toupper('$1')", 
     "/ /" => ''));
 
 function utf8toupper($x) {
