@@ -1462,8 +1462,8 @@ function HandleLogoutA($pagename, $auth = 'read') {
 function HandleLoginA($pagename, $auth = 'login') {
   global $AuthId, $DefaultPasswords;
   unset($DefaultPasswords['admin']);
-  if (@(!$_POST['authpw'] || ($AuthId != $_POST['authid']))) 
-    $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
+  $prompt = @(!$_POST['authpw'] || ($AuthId != $_POST['authid']));
+  $page = RetrieveAuthPage($pagename, $auth, $prompt, READPAGE_CURRENT);
   Redirect($pagename);
 }
 
