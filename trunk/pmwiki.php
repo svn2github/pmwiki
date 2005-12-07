@@ -1427,7 +1427,7 @@ function HandlePostAttr($pagename, $auth = 'attr') {
       $a = array();
       preg_match_all('/"[^"]*"|\'[^\']*\'|\\S+/', $v, $match);
       foreach($match[0] as $pw) 
-        $a[] = preg_match('/^\\w+:/', $pw) ? $pw 
+        $a[] = preg_match('/^(@|\\w+:)/', $pw) ? $pw 
                    : crypt(preg_replace('/^([\'"])(.*)\\1$/', '$2', $pw));
       if ($a) $page[$attr] = implode(' ',$a);
     }
