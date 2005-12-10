@@ -34,6 +34,11 @@ Markup('<|','><<|','/&lt;\\|([^|]+|\\[\\[(.+?)\\]\\])\\|&gt;/e',
 Markup('^|','<links','/\\^\\|([^|]+|\\[\\[(.+?)\\]\\])\\|\\^/e',
   "MakeTrailPath(\$pagename,'$1')");
 
+SDVA($SaveAttrPatterns, array(
+   '/&lt;&lt;\\|([^|]+|\\[\\[(.+?)\\]\\])\\|&gt;&gt;/' => '$1',
+   '/&lt;\\|([^|]+|\\[\\[(.+?)\\]\\])\\|&gt;/' => '$1',
+   '/\\^\\|([^|]+|\\[\\[(.+?)\\]\\])\\|\\^/' => '$1'));
+
 function ReadTrail($pagename,$trailname) {
   global $SuffixPattern,$GroupPattern,$WikiWordPattern,$LinkWikiWords;
   if (preg_match('/^\\[\\[(.+?)(-&gt;|\\|)(.+?)\\]\\]$/', $trailname, $m)) 
