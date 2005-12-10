@@ -103,9 +103,12 @@ $WikiTitle = 'PmWiki';
 ##  find missing and orphaned pages.  See PmWiki.RefCount.
 # if ($action == 'refcount') include_once('scripts/refcount.php');
 
-##  The rss.php script enables ?action=rss and ?action=rdf, which
-##  provides RSS feeds for a site based on WikiTrails.  See PmWiki.RSS.
-# if ($action == 'rss' || $action == 'rdf') include_once('scripts/rss.php');
+##  The feeds.php script enables ?action=rss, ?action=atom, ?action=rdf,
+##  and ?action=dc, for generation of syndication feeds in various formats.
+# if ($action == 'rss') include_once('scripts/feeds.php');   # RSS 2.0
+# if ($action == 'atom') include_once('scripts/feeds.php');  # Atom 1.0
+# if ($action == 'dc') include_once('scripts/feeds.php');    # Dublin Core
+# if ($action == 'rdf') include_once('scripts/feeds.php');   # RSS 1.0
 
 ##  PmWiki allows a great deal of flexibility for creating custom markup.
 ##  To add support for '*bold*' and '~italic~' markup (the single quotes
