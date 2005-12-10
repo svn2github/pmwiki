@@ -163,7 +163,7 @@ function MakePageList($pagename, $opt) {
     $linkpat = "/(^|,)$link(,|$)/i";
     $readf++;
     $xlist = BacklinksTo($link, false);
-    $list = array_diff($list, $xlist);
+    $list = array_diff((array)$list, $xlist);
   }
   $xlist = array();
  
