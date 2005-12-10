@@ -5,11 +5,54 @@
     by the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.  See pmwiki.php for full details.
 
-    References:
-      http://dublincore.org/documents/dcmes-xml/
-      http://www.atomenabled.org/developers/syndication/
-*/
+    This script provides a number of syndication feed and xml-based 
+    metadata options to PmWiki, including Atom, RSS 2.0, RSS 1.0 (RDF), 
+    and the Dublin Core Metadata extensions.  This module is typically
+    activated from a local configuration file via a line such as
 
+      if ($action == 'atom') include_once("$FarmD/scripts/feeds.php");
+      if ($action == 'dc') include_once("$FarmD/scripts/feeds.php");
+
+    When enabled, ?action=atom, ?action=rss, and ?action=rdf produce
+    syndication feeds based on any wikitrail contained in the page,
+    or, for Category pages, on the pages in the category.  The feeds
+    are generated using pagelist, thus one can include parameters such
+    as count=, list=, order=, etc. in the url to adjust the feed output.
+
+    ?action=dc will normally generate Dublin Core Metadata for the 
+    current page only, but placing a group=, trail=, or link= argument 
+    in the url causes it to generate metadata for all pages in the
+    associated group, trail, or backlink.
+
+    There are a large number of customizations available, most of which
+    are controlled by the $FeedFmt array.  Elements $FeedFmt look like
+
+        $FeedFmt['atom']['feed']['rights'] = 'All Rights Reserved';
+
+    where the first index corresponds to the action (?action=atom),
+    the second index indicates a per-feed or per-item element, and
+    the third index is the name of the element being generated.
+    The above setting would therefore generate a
+    "<rights>All Rights Reserved</rights>" in the feed for
+    ?action=atom.  If the value of an entry begins with a '<',
+    then feeds.php doesn't automatically add the tag around it.
+    Elements can also be callable functions which are called to
+    generate the appropriate output.
+
+    Feeds.php can also be combined with attachments to support
+    podcasting via ?action=rss.  Any page such as "PageName"
+    that has an mp3 attachment with the same name as the page
+    ("PageName.mp3") will have an appropriate <enclosure> element
+    in the feed output.  The set of allowed attachments can be
+    extended using the $RSSEnclosureFmt array:
+
+        $RSSEnclosureFmt = array('$Name.mp3', '$Name.mp4');
+
+    References:
+      http://www.atomenabled.org/developers/syndication/
+      http://dublincore.org/documents/dcmes-xml/
+      http://en.wikipedia.org/wiki/Podcasting
+*/
 
 ## Settings for ?action=atom
 SDVA($FeedFmt['atom']['feed'], array(
@@ -113,8 +156,8 @@ function HandleFeed($pagename, $auth = 'read') {
   SDV($RSSTimeFmt, 'D, d M Y H:i:s \G\M\T');
   SDV($FeedDescPatterns, 
     array('/<[^>]*$/' => ' ', '/\\w+$/' => '', '/<[^>]+>/' => ''));
-  SDVA($FeedCategoryOpt, array('link' => $pagename));
-  SDVA($FeedTrailOpt, array('trail' => $pagename, 'count' => 10));
+  SDVA($FeedCategoryOpt, array('link' => $pagename, 'readf' => 1));
+  SDVA($FeedTrailOpt, array('trail' => $pagename, 'count' => 10, 'readf' => 1));
 
   $f = $FeedFmt[$action];
   $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
@@ -140,8 +183,8 @@ function HandleFeed($pagename, $auth = 'read') {
   $rdfseq = '';
   foreach($pagelist as $page) {
     $pn = $page['name'];
-    #$page = PageMetadata($pn, ReadPage($pn, READPAGE_CURRENT));
-    $pl[] = $page;
+    if (!PageExists($pn)) continue;
+    $pl[] = $pn;
     $rdfseq .= FmtPageName("<rdf:li resource=\"\$PageUrl\" />\n", $pn);
     if ($page['time'] > $feedtime) $feedtime = $page['time'];
   }
@@ -164,8 +207,8 @@ function HandleFeed($pagename, $auth = 'read') {
   # format items in feed
   if (@$f['feed']['_items']) 
     $out .= FmtPageName($f['feed']['_items'], $pagename);
-  foreach($pagelist as $page) {
-    $pn = $page['name'];
+  foreach($pagelist as $pn) {
+    $page = &$PCache[$pn];
     $FmtV['$ItemDesc'] = (@$page['description']) 
       ? $page['description']
       : trim(preg_replace(array_keys($FeedDescPatterns), 
@@ -201,24 +244,30 @@ function HandleFeed($pagename, $auth = 'read') {
                     array_values($EntitiesTable), $out);
 }
 
-
+## RSSEnclosure is called in ?action=rss to generate <enclosure>
+## tags for any pages that have an attached "PageName.mp3" file.
+## The set of attachments to enclose is given by $RSSEnclosureFmt.
 function RSSEnclosure($pagename, &$page, $k) {
   global $RSSEnclosureFmt, $UploadFileFmt, $UploadExts;
   if (!function_exists('MakeUploadName')) return '';
   SDV($RSSEnclosureFmt, array('$Name.mp3'));
+  $encl = '';
   foreach((array)$RSSEnclosureFmt as $fmt) {
     $path = FmtPageName($fmt, $pagename);
     $upname = MakeUploadName($pagename, $path);
     $filepath = FmtPageName("$UploadFileFmt/$upname", $pagename);
-    if (file_exists($filepath)) break;
+    if (file_exists($filepath)) {
+      $length = filesize($filepath);
+      $type = @$UploadExts[preg_replace('/.*\\./', '', $filepath)];
+      $url = LinkUpload($pagename, 'Attach:', $path, '', '', '$LinkUrl');
+      $encl .= "<$k url='$url' length='$length' type='$type' />";
+    }
   }
-  if (!file_exists($filepath)) return;
-  $length = filesize($filepath);
-  $type = @$UploadExts[preg_replace('/.*\\./', '', $filepath)];
-  $url = LinkUpload($pagename, 'Attach:', $path, '', '', '$LinkUrl');
-  return "<$k url='$url' length='$length' type='$type' />";
+  return $encl;
 }
 
+## Since most feeds don't understand html character entities, we
+## convert the common ones to their numeric form here.
 SDVA($EntitiesTable, array(
   # entities defined in "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent"
   '&nbsp;' => '&#160;', 
