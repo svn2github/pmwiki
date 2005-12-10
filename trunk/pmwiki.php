@@ -1133,14 +1133,22 @@ function ReplaceOnSave($pagename,&$page,&$new) {
 }
 
 function SaveAttributes($pagename,&$page,&$new) {
-  global $EnablePost, $LinkTargets;
+  global $EnablePost, $SaveAttrExcerptLength, $LinkTargets, 
+    $SaveAttrPatterns, $PCache;
   if (!$EnablePost) return;
-  unset($new['title']);
-  $text = preg_replace('/\\[([=@]).*?\\1\\]/s',' ',$new['text']);
-  if (preg_match('/\\(:title\\s(.+?):\\)/',$text,$match))
-    $new['title'] = $match[1];
-  MarkupToHTML($pagename,preg_replace('/\\(:(.*?):\\)/s',' ',$text));
+  SDV($SaveAttrExcerptLength, 600);
+  $text = preg_replace(array_keys($SaveAttrPatterns), 
+                       array_values($SaveAttrPatterns), $new['text']);
+  $html = MarkupToHTML($pagename,$text);
   $new['targets'] = implode(',',array_keys((array)$LinkTargets));
+  $p = & $PCache[$pagename];
+  foreach(array('title', 'description', 'keywords') as $k) {
+    if ($p["=$k"]) $new[$k] = implode("\n", (array)$p["=$k"]);
+    else unset($new[$k]);
+  }
+  if ($SaveAttrExcerptLength) 
+    $new['excerpt'] = substr($html, 0, $SaveAttrExcerptLength);
+  else unset($new['excerpt']);
 }
 
 function PostPage($pagename, &$page, &$new) {

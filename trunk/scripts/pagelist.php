@@ -56,6 +56,8 @@ Markup('searchbox', '>links',
   '/\\(:searchbox(\\s.*?)?:\\)/e',
   "SearchBox(\$pagename, ParseArgs(PSS('$1')))");
 
+SDV($SaveAttrPatterns['/\\(:(searchresults|pagelist)(\\s+.*?)?:\\)/i'], ' ');
+
 SDV($HandleActions['search'], 'HandleSearchA');
 SDV($HandleAuth['search'], 'read');
 
@@ -122,9 +124,9 @@ function MakePageList($pagename, $opt) {
   SDVA($MakePageListOpt, array('list' => 'default'));
 
   $opt = array_merge((array)$MakePageListOpt, $opt);
-  $readf = $opt['readf'];
+  $readf = @$opt['readf'];
   # we have to read the page if order= is anything but name
-  $order = $opt['order'];
+  $order = @$opt['order'];
   $readf |= $order && ($order!='name') && ($order!='-name');
 
   $pats = @(array)$SearchPatterns[$opt['list']];
@@ -148,7 +150,7 @@ function MakePageList($pagename, $opt) {
     }
     foreach($trail as $tstop) 
       $PCache[$tstop['pagename']]['parentnames'][] =
-        $trail[$tstop['parent']]['pagename'];
+        @$trail[$tstop['parent']]['pagename'];
   } else $list = ListPages($pats);
 
   if (IsEnabled($EnablePageListProtect, 0)) $readf = 1000;

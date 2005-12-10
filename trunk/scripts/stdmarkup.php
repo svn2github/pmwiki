@@ -56,6 +56,8 @@ Markup('include', '>if',
   '/\\(:include\\s+(\\S.*?):\\)/ei',
   "PRR().IncludeText(\$pagename, '$1')");
 
+$SaveAttrPatterns['/\\(:(if|include\\s).*?:\\)/i'] = ' ';
+
 ## GroupHeader/GroupFooter handling
 Markup('nogroupheader', '>include',
   '/\\(:nogroupheader:\\)/ei',
@@ -126,17 +128,27 @@ Markup('&','directives','/&amp;(?>([A-Za-z0-9]+|#\\d+|#[xX][A-Fa-f0-9]+));/',
 ## (:title:)
 Markup('title','>&',
   '/\\(:title\\s(.*?):\\)/ei',
-  "PZZ(\$GLOBALS['PCache'][\$pagename]['title']=PSS('$1'))");
+  "PZZ(\$GLOBALS['PCache'][\$pagename]['title']
+       = \$GLOBALS['PCache'][\$pagename]['=title']
+       = PSS('$1'))");
 
-## (:keywords:)
+## (:keywords:), (:description:)
 Markup('keywords', '>&', 
-  "/\\(:keywords?\\s+([^'\n]+?):\\)/ei",
-  "PZZ(\$GLOBALS['HTMLHeaderFmt'][] = 
-    \"<meta name='keywords' content='$1' />\")");
+  "/\\(:keywords?\\s+(.+?):\\)/ei",
+  "PZZ(\$GLOBALS['PCache'][\$pagename]['=keywords'][]=PSS('$1'))");
 Markup('description', '>&',
   "/\\(:description\\s+(.+?):\\)/ei",
-  "PZZ(\$GLOBALS['HTMLHeaderFmt'][] = \"<meta name='description' content='\".
-    str_replace('\\'','&#39;',PSS('$1')).\"' />\")"); 
+  "PZZ(\$GLOBALS['PCache'][\$pagename]['=description'][]=PSS('$1'))");
+$HTMLHeaderFmt['meta'] = 'function:PrintMetaTags';
+function PrintMetaTags($pagename, $args) {
+  global $PCache;
+  foreach(array('keywords', 'description') as $n) {
+    foreach((array)@$PCache[$pagename]["=$n"] as $v) {
+      $v = str_replace("'", '&#039;', $v);
+      print "<meta name='$n' content='$v' />\n";
+    }
+  }
+}
 
 #### inline markups ####
 ## ''emphasis''
