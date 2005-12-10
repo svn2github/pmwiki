@@ -13,16 +13,15 @@
 
 ## Settings for ?action=atom
 SDVA($FeedFmt['atom']['feed'], array(
+  '_header' => 'Content-type: text/xml; charset="$Charset"',
   '_start' => '<?xml version="1.0" encoding="$Charset"?'.'>
-<!DOCTYPE rdf:RDF PUBLIC "-//DUBLIN CORE//DCMES DTD 2002/07/31//EN"
-    "http://dublincore.org/documents/2002/07/31/dcmes-xml/dcmes-xml-dtd.dtd">
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:dc="http://purl.org/dc/elements/1.1/">'."\n",
-  '_end' => "</rdf:RDF>\n",
+<feed xmlns="http://www.w3.org/2005/Atom">'."\n",
+  '_end' => "</feed>\n",
   'title' => '$WikiTitle',
+  'link' => '<link rel="self" href="$PageUrl?action=atom" />',
   'id' => '$PageUrl?action=atom',
   'updated' => '$FeedISOTime',
-  'author' => "<author><name>Patrick R. Michaud</name></author>\n",
+  'author' => "<author><name>$WikiTitle</name></author>\n",
   'generator' => '$Version',
   'logo' => '$PageLogoUrl'));
 SDVA($FeedFmt['atom']['item'], array(
@@ -30,14 +29,15 @@ SDVA($FeedFmt['atom']['item'], array(
   'id' => '$PageUrl',
   'title' => '$Title',
   'updated' => '$ItemISOTime',
-  'link' => '<link rel="alternate" href="$PageUrl" />',
-  'author' => '<author>$LastModifiedBy</author>',
+  'link' => "<link rel=\"alternate\" href=\"\$PageUrl\" />\n",
+  'author' => "<author><name>\$LastModifiedBy</name></author>\n",
   'summary' => '$ItemDesc',
-  'category' => '<category term="$Category" />',
+  'category' => "<category term=\"\$Category\" />\n",
   '_end' => "</entry>\n"));
 
 ## Settings for ?action=dc
 SDVA($FeedFmt['dc']['feed'], array(
+  '_header' => 'Content-type: text/xml; charset="$Charset"',
   '_start' => '<?xml version="1.0" encoding="$Charset"?'.'>
 <!DOCTYPE rdf:RDF PUBLIC "-//DUBLIN CORE//DCMES DTD 2002/07/31//EN"
     "http://dublincore.org/documents/2002/07/31/dcmes-xml/dcmes-xml-dtd.dtd">
@@ -59,6 +59,7 @@ SDVA($FeedFmt['dc']['item'], array(
 
 ## RSS 2.0 settings for ?action=rss
 SDVA($FeedFmt['rss']['feed'], array(
+  '_header' => 'Content-type: text/xml; charset="$Charset"',
   '_start' => '<?xml version="1.0" encoding="$Charset"?'.'>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>'."\n",
@@ -79,6 +80,7 @@ SDVA($FeedFmt['rss']['item'], array(
 
 ## RDF 1.0, for ?action=rdf
 SDVA($FeedFmt['rdf']['feed'], array(
+  '_header' => 'Content-type: text/xml; charset="$Charset"',
   '_start' => '<?xml version="1.0" encoding="$Charset"?'.'>
 <rdf:RDF xmlns="http://purl.org/rss/1.0/"
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -88,8 +90,9 @@ SDVA($FeedFmt['rdf']['feed'], array(
   'link' => '$PageUrl?action=rdf',
   'description' => '$Group.$Title',
   'dc:date' => '$FeedISOTime',
-  '_items' => "<rdf:Seq>\n<items>\n",
-  '_end' => "</items>\n</rdf:Seq>\n</channel>\n</rdf:RDF>\n"));
+  'items' => "<items>\n<rdf:Seq>\n\$FeedRDFSeq</rdf:Seq>\n</items>\n",
+  '_items' => "</channel>\n",
+  '_end' => "</rdf:RDF>\n"));
 SDVA($FeedFmt['rdf']['item'], array(
   '_start' => "<item rdf:about=\"\$PageUrl\">\n",
   '_end' => "</item>\n",
@@ -108,8 +111,10 @@ function HandleFeed($pagename, $auth = 'read') {
     $FeedOpt, $FeedDescPatterns, $CategoryGroup, $EntitiesTable;
   SDV($ISOTimeFmt, '%Y-%m-%dT%H:%M:%SZ');
   SDV($RSSTimeFmt, 'D, d M Y H:i:s \G\M\T');
-  SDVA($FeedOpt, array('count' => 20, 'trail' => $pagename, 'readf' => 1));
-  SDV($FeedDescPatterns, array('/^.*<\\/\\w+>/s' => '$0', '/<[^>]+>/' => ''));
+  SDV($FeedDescPatterns, 
+    array('/<[^>]*$/' => ' ', '/\\w+$/' => '', '/<[^>]+>/' => ''));
+  SDVA($FeedCategoryOpt, array('link' => $pagename));
+  SDVA($FeedTrailOpt, array('trail' => $pagename, 'count' => 10));
 
   $f = $FeedFmt[$action];
   $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
@@ -117,23 +122,32 @@ function HandleFeed($pagename, $auth = 'read') {
   $feedtime = $page['time'];
 
   # determine list of pages to display
-  if ($action=='dc') unset($FeedOpt['trail']);
-  $opt = array_merge($FeedOpt, @$_REQUEST);
-  if ($opt['trail'] || $opt['group'] || $opt['link']) 
-    $pagelist = MakePageList($pagename, $opt);
-  if (!@$pagelist) 
+  if (@($_REQUEST['trail'] || $_REQUEST['group'] || $_REQUEST['link'])) 
+    $opt['readf'] = 1;
+  else if ($action == 'dc') $opt = array();
+  else if (preg_match("/^$CategoryGroup\\./", $pagename)) 
+    $opt = $FeedCategoryOpt;
+  else $opt = $FeedTrailOpt;
+  if (!$opt) 
     { PCache($pagename, $page); $pagelist = array(&$PCache[$pagename]); }
-  if (@$opt['count']) array_splice($pagelist, $opt['count']);
+  else {
+    $opt = array_merge($opt, @$_REQUEST);
+    $pagelist = MakePageList($pagename, $opt);
+    if (@$opt['count']) array_splice($pagelist, $opt['count']);
+  } 
 
   # process list of pages in feed
+  $rdfseq = '';
   foreach($pagelist as $page) {
     $pn = $page['name'];
     #$page = PageMetadata($pn, ReadPage($pn, READPAGE_CURRENT));
     $pl[] = $page;
+    $rdfseq .= FmtPageName("<rdf:li resource=\"\$PageUrl\" />\n", $pn);
     if ($page['time'] > $feedtime) $feedtime = $page['time'];
   }
   $pagelist = $pl;
 
+  $FmtV['$FeedRDFSeq'] = $rdfseq;
   $FmtV['$FeedISOTime'] = gmstrftime($ISOTimeFmt, $feedtime);
   $FmtV['$FeedRSSTime'] = gmdate($RSSTimeFmt, $feedtime);
   # format start of feed
@@ -141,7 +155,7 @@ function HandleFeed($pagename, $auth = 'read') {
 
   # format feed elements
   foreach($f['feed'] as $k => $v) {
-    if ($k{0} == '_') continue;
+    if ($k{0} == '_' || !$v) continue;
     $x = FmtPageName($v, $pagename);
     if (!$x) continue;
     $out .= ($v{0} == '<') ? $x : "<$k>$x</$k>\n";
@@ -154,20 +168,23 @@ function HandleFeed($pagename, $auth = 'read') {
     $pn = $page['name'];
     $FmtV['$ItemDesc'] = (@$page['description']) 
       ? $page['description']
-      : preg_replace(array_keys($FeedDescPatterns), 
-                     array_values($FeedDescPatterns), @$page['excerpt']);
+      : trim(preg_replace(array_keys($FeedDescPatterns), 
+                     array_values($FeedDescPatterns), @$page['excerpt']));
     $FmtV['$ItemISOTime'] = gmstrftime($ISOTimeFmt, $page['time']);
 
     $out .= FmtPageName($f['item']['_start'], $pn);
     foreach((array)@$f['item'] as $k => $v) {
-      if ($k{0} == '_') continue;
+      if ($k{0} == '_' || !$v) continue;
       if (is_callable($v)) { $out .= $v($pn, $page, $k); continue; }
-      if (strpos($v, '$Category') 
-          && preg_match_all("/(?<=^|,)$CategoryGroup\\.([^,]+)/", 
-                            $page['targets'], $match)) {
-        foreach($match[1] as $c) {
-          $FmtV['$Category'] = $c;
-          $out .= FmtPageName($v, $pn);
+      if (strpos($v, '$LastModifiedBy') !== false && !@$page['author']) 
+        continue;
+      if (strpos($v, '$Category') !== false) {
+        if (preg_match_all("/(?<=^|,)$CategoryGroup\\.([^,]+)/", 
+                           @$page['targets'], $match)) {
+          foreach($match[1] as $c) {
+            $FmtV['$Category'] = $c;
+            $out .= FmtPageName($v, $pn);
+          }
         }
         continue;
       }
@@ -178,10 +195,12 @@ function HandleFeed($pagename, $auth = 'read') {
     $out .= FmtPageName($f['item']['_end'], $pn);
   } 
   $out .= FmtPageName($f['feed']['_end'], $pagename);
-  header('Content-type: text/xml');
+  foreach((array)@$f['feed']['_header'] as $fmt)
+    header(FmtPageName($fmt, $pagename));
   print str_replace(array_keys($EntitiesTable),
                     array_values($EntitiesTable), $out);
 }
+
 
 function RSSEnclosure($pagename, &$page, $k) {
   global $RSSEnclosureFmt, $UploadFileFmt, $UploadExts;
