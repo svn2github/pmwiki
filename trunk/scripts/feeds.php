@@ -176,7 +176,6 @@ function HandleFeed($pagename, $auth = 'read') {
   else {
     $opt = array_merge($opt, @$_REQUEST);
     $pagelist = MakePageList($pagename, $opt);
-    if (@$opt['count']) array_splice($pagelist, $opt['count']);
   } 
 
   # process list of pages in feed
@@ -185,6 +184,7 @@ function HandleFeed($pagename, $auth = 'read') {
     $pn = $page['name'];
     if (!PageExists($pn)) continue;
     $pl[] = $pn;
+    if (@$opt['count'] && count($pl) >= $opt['count']) break;
     $rdfseq .= FmtPageName("<rdf:li resource=\"\$PageUrl\" />\n", $pn);
     if ($page['time'] > $feedtime) $feedtime = $page['time'];
   }
