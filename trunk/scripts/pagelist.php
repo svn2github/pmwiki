@@ -200,7 +200,8 @@ function SortPageList(&$matches, $order) {
   foreach(preg_split("/[\\s,|]+/", $order, -1, PREG_SPLIT_NO_EMPTY) as $o) {
     if ($o{0}=='-') { $r = '-'; $o = substr($o, 1); }
     else $r = '';
-    if ($o == 'size' || $o == 'time') $code .= "\$c = @(\$x['$o']-\$y['$o']); ";
+    if ($o == 'size' || $o == 'time' || $o == 'ctime') 
+      $code .= "\$c = @(\$x['$o']-\$y['$o']); ";
     else $code .= "\$c = @strcasecmp(\$x['$o'],\$y['$o']); ";
     $code .= "if (\$c) return $r\$c;\n";
   }

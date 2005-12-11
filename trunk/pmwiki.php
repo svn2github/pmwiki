@@ -652,7 +652,8 @@ function ReadPage($pagename, $since=0) {
     $page = $dir->read($pagename, $since);
     if ($page) break;
   }
-  if (@!$page['time']) $page['time']=$Now;
+  if (@!$page) $page['ctime'] = $Now;
+  if (@!$page['time']) $page['time'] = $Now;
   return $page;
 }
 
@@ -1143,7 +1144,7 @@ function SaveAttributes($pagename,&$page,&$new) {
   $new['targets'] = implode(',',array_keys((array)$LinkTargets));
   $p = & $PCache[$pagename];
   foreach(array('title', 'description', 'keywords') as $k) {
-    if ($p["=$k"]) $new[$k] = implode("\n", (array)$p["=$k"]);
+    if (@$p["=$k"]) $new[$k] = implode("\n", (array)$p["=$k"]);
     else unset($new[$k]);
   }
   if ($SaveAttrExcerptLength) 
