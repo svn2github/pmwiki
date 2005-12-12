@@ -153,7 +153,7 @@ function MakePageList($pagename, $opt) {
         @$trail[$tstop['parent']]['pagename'];
   } else $list = ListPages($pats);
 
-  if (IsEnabled($EnablePageListProtect, 0)) $readf = 1000;
+  if (IsEnabled($EnablePageListProtect, 1)) $readf = 1000;
   $matches = array();
   $FmtV['$MatchSearched'] = count($list);
 
