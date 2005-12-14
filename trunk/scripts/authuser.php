@@ -83,7 +83,7 @@ function AuthUserId($pagename, $id, $pw=NULL) {
 
 function AuthUserConfig($pagename, $id, $pw, $pwlist) {
   foreach ((array)$pwlist as $chal) 
-    if (crypt($pw, $chal) == $chal) return true;
+    if (_crypt($pw, $chal) == $chal) return true;
   return false;
 }
 
