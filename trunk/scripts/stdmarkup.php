@@ -42,8 +42,8 @@ Markup('$[phrase]', '>[=',
 
 # {$var} substitutions
 Markup('{$var}', '>$[phrase]',
-  '/\\{([<>=]|!?[-\\w.\\/]*)(\\$\\w+)\\}/e', 
-  "PageVar(\$pagename, '$2', '$1')");
+  '/\\{(!?[-\\w.\\/]*)(\\$\\w+)\\}/e', 
+  "htmlspecialchars(PageVar(\$pagename, '$2', '$1'), ENT_NOQUOTES)");
 
 Markup('if', 'fulltext',
   "/\\(:(if[^\n]*?):\\)(.*?)(?=\\(:if[^\n]*?:\\)|$)/sei",
