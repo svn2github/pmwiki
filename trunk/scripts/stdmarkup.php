@@ -42,7 +42,8 @@ Markup('$[phrase]', '>[=',
 
 # {$var} substitutions
 Markup('{$var}', '>$[phrase]',
-  '/\\{(\\$\\w+)\\}/e', "PageVar(\$pagename, '$1')");
+  '/\\{([<>=]|!?[-\\w.\\/]*)(\\$\\w+)\\}/e', 
+  "PageVar(\$pagename, '$2', '$1')");
 
 Markup('if', 'fulltext',
   "/\\(:(if[^\n]*?):\\)(.*?)(?=\\(:if[^\n]*?:\\)|$)/sei",
@@ -359,19 +360,19 @@ Markup('^>><<', '<^>>',
 
 #### special stuff ####
 ## (:markup:) for displaying markup examples
-function MarkupMarkup($pagename, $lead, $text) {
-  return "$lead(:divend:)" .
+function MarkupMarkup($pagename, $text) {
+  return "(:divend:)" .
     Keep("<table class='markup' align='center'><tr><td class='markup1'><pre>" .
       wordwrap($text, 70) .  "</pre></td></tr><tr><td class='markup2'>") .
     "\n$text\n(:divend:)</td></tr></table>\n";
 }
 
 Markup('markup', '<[=',
-  "/\\(:markup:\\)[^\\S\n]*\\[([=@])(.*?)\\2\\]/sei",
-  "MarkupMarkup(\$pagename, '$1', PSS('$3'))");
+  "/\\(:markup:\\)[^\\S\n]*\\[([=@])(.*?)\\1\\]/sei",
+  "MarkupMarkup(\$pagename, PSS('$2'))");
 Markup('markupend', '>markup',
   "/\\(:markup:\\)[^\\S\n]*\n(.*?)\\(:markupend:\\)/sei",
-  "MarkupMarkup(\$pagename, '$1', PSS('$2'))");
+  "MarkupMarkup(\$pagename, PSS('$1'))");
 
 $HTMLStylesFmt['markup'] = "
   table.markup { border: 2px dotted #ccf; width:90%; }
