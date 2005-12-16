@@ -51,7 +51,7 @@ Markup('if', 'fulltext',
 ## (:include:)
 Markup('include', '>if',
   '/\\(:include\\s+(\\S.*?):\\)/ei',
-  "PRR().IncludeText(\$pagename, '$1')");
+  "PRR(IncludeText(\$pagename, '$1'))");
 
 $SaveAttrPatterns['/\\(:(if|include\\s).*?:\\)/i'] = ' ';
 
@@ -64,10 +64,10 @@ Markup('nogroupfooter', '>include',
   "PZZ(\$GLOBALS['GroupFooterFmt']='')");
 Markup('groupheader', '>nogroupheader',
   '/\\(:groupheader:\\)/ei',
-  "PRR().FmtPageName(\$GLOBALS['GroupHeaderFmt'],\$pagename)");
+  "PRR(FmtPageName(\$GLOBALS['GroupHeaderFmt'],\$pagename))");
 Markup('groupfooter','>nogroupfooter',
   '/\\(:groupfooter:\\)/ei',
-  "PRR().FmtPageName(\$GLOBALS['GroupFooterFmt'],\$pagename)");
+  "PRR(FmtPageName(\$GLOBALS['GroupFooterFmt'],\$pagename))");
 
 ## (:nl:)
 Markup('nl0','<split',"/([^\n])(?>(?:\\(:nl:\\))+)([^\n])/i","$1\n$2");
@@ -367,10 +367,10 @@ function MarkupMarkup($pagename, $lead, $text) {
 }
 
 Markup('markup', '<[=',
-  "/(^|\\(:nl:\\))\\(:markup:\\)[^\\S\n]*\\[([=@])(.*?)\\2\\]/seim",
+  "/\\(:markup:\\)[^\\S\n]*\\[([=@])(.*?)\\2\\]/sei",
   "MarkupMarkup(\$pagename, '$1', PSS('$3'))");
 Markup('markupend', '>markup',
-  "/(^|\\(:nl:\\))\\(:markup:\\)[^\\S\n]*\n(.*?)\\(:markupend:\\)/seim",
+  "/\\(:markup:\\)[^\\S\n]*\n(.*?)\\(:markupend:\\)/sei",
   "MarkupMarkup(\$pagename, '$1', PSS('$2'))");
 
 $HTMLStylesFmt['markup'] = "
