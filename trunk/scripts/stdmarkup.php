@@ -41,12 +41,9 @@ Markup('$[phrase]', '>[=',
   '/\\$\\[(?>([^\\]]+))\\]/e', "XL(PSS('$1'))");
 
 # {$var} substitutions
-Markup('{$fmt}','>$[phrase]',
-  '/{\\$((Group|Name|Title)(spaced)?|LastModified(By|Host)?|FullName)}/e',
-  "FmtPageName('$$1',\$pagename)");
-Markup('{$var}','>{$fmt}',
-  '/{\\$(Version(Num)?|Auth(or|Id|Needed)|UrlPage|Default(Name|Group)|SiteGroup)}/e',
-  "\$GLOBALS['$1']");
+Markup('{$var}', '>$[phrase]',
+  '/\\{(\\$\\w+)\\}/e', "PageVar(\$pagename, '$1')");
+
 Markup('if', 'fulltext',
   "/\\(:(if[^\n]*?):\\)(.*?)(?=\\(:if[^\n]*?:\\)|$)/sei",
   "CondText(\$pagename,PSS('$1'),PSS('$2'))");

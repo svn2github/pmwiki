@@ -98,19 +98,33 @@ $PageAttributes = array(
 $XLLangs = array('en');
 if (preg_match('/^C$|\.UTF-?8/i',setlocale(LC_ALL,0)))
   setlocale(LC_ALL,'en_US');
-$FmtP = array(
-  '/\\$PageUrl/' => '$ScriptUrl/$Group/$Name',
-  '/\\$FullName/' => '$Group.$Name',
-  '/\\$Titlespaced/e' => '(@$PCache[$pagename]["title"]) ? $PCache[$pagename]["title"] : \'$Namespaced\'',
-  '/\\$Title/e' => '(@$PCache[$pagename]["title"]) ? $PCache[$pagename]["title"] : (($GLOBALS["SpaceWikiWords"]) ? \'$Namespaced\' : \'$Name\')',
-  '/\\$Groupspaced/e' => '$AsSpacedFunction(@$match[1])',
-  '/\\$Group/e' => '@$match[1]',
-  '/\\$Namespaced/e' => '$AsSpacedFunction(@$match[2])',
-  '/\\$Name/e' => '@$match[2]',
-  '/\\$LastModifiedBy/e' => '@$PCache[$pagename]["author"]',
-  '/\\$LastModifiedHost/e' => '@$PCache[$pagename]["host"]',
-  '/\\$LastModified/e' => 
-    'strftime($GLOBALS["TimeFmt"],$PCache[$pagename]["time"])',
+$FmtP = array();
+$FmtPV = array(
+  # '$ScriptUrl'    => 'PUE($ScriptUrl)',   ## $ScriptUrl is special
+  '$PageUrl'      => 
+    'PUE(($EnablePathInfo) 
+         ? "$ScriptUrl/$group/$name"
+         : "$ScriptUrl?n=$group.$name")',
+  '$FullName'     => '$pn',
+  '$Groupspaced'  => '$AsSpacedFunction($group)',
+  '$Namespaced'   => '$AsSpacedFunction($name)',
+  '$Group'        => '$group',
+  '$Name'         => '$name',
+  '$Titlespaced'  => 
+    '$page["title"] ? $page["title"] : $AsSpacedFunction($name)',
+  '$Title'        => 
+    '$page["title"] ? $page["title"] : $GLOBALS["SpaceWikiWords"]
+       ? $AsSpacedFunction($name) : $name',
+  '$LastModifiedBy' => '$page["author"]',
+  '$LastModifiedHost' => '$page["host"]',
+  '$LastModified' => 'strftime($GLOBALS["TimeFmt"], $page["time"])',
+  '$SiteGroup'    => '$GLOBALS["SiteGroup"]',
+  '$VersionNum'   => '$GLOBALS["VersionNum"]',
+  '$Version'      => '$GLOBALS["Version"]',
+  '$Author'       => '$GLOBALS["Author"]',
+  '$AuthId'       => '$GLOBALS["AuthId"]',
+  '$DefaultGroup' => '$GLOBALS["DefaultGroup"]',
+  '$DefaultName' => '$GLOBALS["DefaultName"]',
   );
 
 $WikiTitle = 'PmWiki';
@@ -436,29 +450,43 @@ function MakePageName($basepage,$x) {
 
 ## PCache caches basic information about a page and its attributes--
 ## usually everything except page text and page history.  This makes
-## for quicker access to certain values in FmtPageName below.
+## for quicker access to certain values in PageVar below.
 function PCache($pagename,$page) {
   global $PCache;
   foreach($page as $k=>$v) 
     if ($k!='text' && strpos($k,':')===false) $PCache[$pagename][$k]=$v;
 }
 
+function PageVar($pagename, $var, $pn = '') {
+  global $Cursor, $PCache, $FmtPV, $AsSpacedFunction, $ScriptUrl,
+    $EnablePathInfo;
+  $pn = ($pn) ? MakePageName($pagename, $pn) : $pagename;
+  if (!isset($PCache[$pn])) PCache($pn, ReadPage($pn, READPAGE_CURRENT));
+  $page = &$PCache[$pn];
+  list($group, $name) = explode('.', $pn);
+  if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
+  if ($var == '$ScriptUrl') return PUE($ScriptUrl);
+  return @$page[substr($var, 1)];
+}
   
 ## FmtPageName handles $[internationalization] and $Variable 
 ## substitutions in strings based on the $pagename argument.
-function FmtPageName($fmt, $pagename, $pc=0) {
+function FmtPageName($fmt, $pagename) {
   # Perform $-substitutions on $fmt relative to page given by $pagename
   global $GroupPattern, $NamePattern, $EnablePathInfo, $ScriptUrl,
-    $GCount, $UnsafeGlobals, $FmtV, $FmtP, $PCache, $AsSpacedFunction;
-  if ($pc && !isset($PCache[$pagename]))
-    PCache($pagename, ReadPage($pagename, READPAGE_CURRENT));
+    $GCount, $UnsafeGlobals, $FmtV, $FmtP, $FmtPV, $PCache, $AsSpacedFunction;
   if (strpos($fmt,'$')===false) return $fmt;                  
   $fmt = preg_replace('/\\$([A-Z]\\w*Fmt)\\b/e','$GLOBALS[\'$1\']',$fmt);
   $fmt = preg_replace('/\\$\\[(?>([^\\]]+))\\]/e',"XL(PSS('$1'))",$fmt);
-  $match = array('','$Group','$Name');
-  if (preg_match("/^($GroupPattern)[\\/.]($NamePattern)\$/", $pagename, $m))
-    $match = $m;
-  $fmt = preg_replace(array_keys($FmtP),array_values($FmtP),$fmt);
+  $fmt = str_replace('{$ScriptUrl}', '$ScriptUrl', $fmt);
+  $fmt = preg_replace('/\\{(\\$\\w+)\\}/e', "PageVar(\$pagename, '$1')", $fmt);
+  if ($FmtP) $fmt = preg_replace(array_keys($FmtP), array_values($FmtP), $fmt);
+  static $pv, $pvpat;
+  if ($pv != count($FmtPV)) {
+    $pvpat = str_replace('$', '\\$', implode('|', array_keys($FmtPV)));
+    $pv = count($FmtPV);
+  }
+  $fmt = preg_replace("/$pvpat/e", "PageVar(\$pagename, '$0')", $fmt);
   $fmt = preg_replace('!\\$ScriptUrl/([^?#\'"\\s<>]+)!e', 
     (@$EnablePathInfo) ? "'$ScriptUrl/'.PUE('$1')" :
         "'$ScriptUrl?n='.str_replace('/','.',PUE('$1'))",
