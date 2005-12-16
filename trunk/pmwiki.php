@@ -461,8 +461,10 @@ function PCache($pagename,$page) {
 function PageVar($pagename, $var, $pn = '') {
   global $Cursor, $PCache, $FmtPV, $AsSpacedFunction, $ScriptUrl,
     $EnablePathInfo;
-  $pn = ($pn) ? MakePageName($pagename, $pn) : $pagename;
-  if (!isset($PCache[$pn])) PCache($pn, ReadPage($pn, READPAGE_CURRENT));
+  if ($pn) {
+    $pn = MakePageName($pagename, $pn);
+    if (!isset($PCache[$pn])) PCache($pn, ReadPage($pn, READPAGE_CURRENT));
+  } else $pn = $pagename;
   $page = &$PCache[$pn];
   list($group, $name) = explode('.', $pn);
   if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
