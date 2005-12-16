@@ -461,14 +461,18 @@ function PCache($pagename,$page) {
 function PageVar($pagename, $var, $pn = '') {
   global $Cursor, $PCache, $FmtPV, $AsSpacedFunction, $ScriptUrl,
     $EnablePathInfo;
-  if ($pn) {
-    $pn = MakePageName($pagename, $pn);
-    if (!isset($PCache[$pn])) PCache($pn, ReadPage($pn, READPAGE_CURRENT));
-  } else $pn = $pagename;
-  $page = &$PCache[$pn];
-  list($group, $name) = explode('.', $pn);
-  if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
   if ($var == '$ScriptUrl') return PUE($ScriptUrl);
+  if ($pn) {
+    $pn = isset($Cursor[$pn]) ? $Cursor[$pn] : MakePageName($pagename, $pn);
+  } else $pn = $pagename;
+  if (!$pn) return '';
+  list($group, $name) = explode('.', $pn);
+  if (!isset($PCache[$pn]) 
+      && (!@$FmtPV[$var] || strpos('$page', $FmtPv[$var]) !== false)) {
+    PCache($pn, ReadPage($pn, READPAGE_CURRENT));
+    $page = &$PCache[$pn];
+  }
+  if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
   return @$page[substr($var, 1)];
 }
   
@@ -491,7 +495,7 @@ function FmtPageName($fmt, $pagename) {
     $pvpat = str_replace('$', '\\$', implode('|', array_keys($FmtPV)));
     $pv = count($FmtPV);
   }
-  $fmt = preg_replace("/$pvpat/e", "PageVar(\$pagename, '$0')", $fmt);
+  $fmt = preg_replace("/(?:$pvpat)\\b/e", "PageVar(\$pagename, '$0')", $fmt);
   $fmt = preg_replace('!\\$ScriptUrl/([^?#\'"\\s<>]+)!e', 
     (@$EnablePathInfo) ? "'$ScriptUrl/'.PUE('$1')" :
         "'$ScriptUrl?n='.str_replace('/','.',PUE('$1'))",
