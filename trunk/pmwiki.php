@@ -307,7 +307,8 @@ function PSS($x)
 function PVS($x) 
   { return preg_replace("/\n[^\\S\n]*(?=\n)/", "\n<:vspace>", $x); }
 function PZZ($x,$y='') { return ''; }
-function PRR($x='') { $GLOBALS['RedoMarkupLine']++; return $x; }
+function PRR($x=NULL) 
+  { if ($x || is_null($x)) $GLOBALS['RedoMarkupLine']++; return $x; }
 function PUE($x)
   { return preg_replace('/[\\x80-\\xff ]/e', "'%'.dechex(ord('$0'))", $x); }
 function PQA($x) { 
@@ -460,9 +461,7 @@ function PCache($pagename,$page) {
 function PageVar($pagename, $var, $pn = '') {
   global $Cursor, $PCache, $FmtPV, $AsSpacedFunction, $ScriptUrl,
     $EnablePathInfo;
-  if ($pn) $pn = MakePageName($pagename, $pn);
-  else if ($pagename) $pn = $pagename;
-  else $pn = '$Group.$Name';
+  $pn = ($pn) ? MakePageName($pagename, $pn) : $pagename;
   if (!isset($PCache[$pn])) PCache($pn, ReadPage($pn, READPAGE_CURRENT));
   $page = &$PCache[$pn];
   list($group, $name) = explode('.', $pn);
@@ -653,7 +652,7 @@ class PageStore {
     global $GroupPattern, $NamePattern;
     $pats=(array)$pats; 
     array_unshift($pats, "/^$GroupPattern\.$NamePattern$/");
-    $dir = $this->pagefile('');
+    $dir = $this->pagefile('$Group.$Name');
     $dirlist = array(preg_replace('!/*[^/]*\\$.*$!','',$dir));
     $out = array();
     while (count($dirlist)>0) {
