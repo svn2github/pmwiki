@@ -111,9 +111,9 @@ $FmtPV = array(
   '$Group'        => '$group',
   '$Name'         => '$name',
   '$Titlespaced'  => 
-    '$page["title"] ? $page["title"] : $AsSpacedFunction($name)',
+    '@$page["title"] ? $page["title"] : $AsSpacedFunction($name)',
   '$Title'        => 
-    '$page["title"] ? $page["title"] : $GLOBALS["SpaceWikiWords"]
+    '@$page["title"] ? $page["title"] : $GLOBALS["SpaceWikiWords"]
        ? $AsSpacedFunction($name) : $name',
   '$LastModifiedBy' => '$page["author"]',
   '$LastModifiedHost' => '$page["host"]',
