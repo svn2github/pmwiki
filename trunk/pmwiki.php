@@ -79,8 +79,8 @@ $SuffixPattern = '(?:-?[[:alnum:]]+)*';
 $LinkPageSelfFmt = "<a class='selflink' href='\$LinkUrl'>\$LinkText</a>";
 $LinkPageExistsFmt = "<a class='wikilink' href='\$LinkUrl'>\$LinkText</a>";
 $LinkPageCreateFmt = 
-  "<a class='createlinktext' href='\$PageUrl?action=edit'>\$LinkText</a><a 
-    class='createlink' href='\$PageUrl?action=edit'>?</a>";
+  "<a class='createlinktext' href='{\$PageUrl}?action=edit'>\$LinkText</a><a 
+    class='createlink' href='{\$PageUrl}?action=edit'>?</a>";
 $UrlLinkFmt = 
   "<a class='urllink' href='\$LinkUrl' rel='nofollow'>\$LinkText</a>";
 umask(002);
@@ -88,9 +88,9 @@ $CookiePrefix = '';
 $SiteGroup = 'Site';
 $DefaultGroup = 'Main';
 $DefaultName = 'HomePage';
-$GroupHeaderFmt = '(:include $Group.GroupHeader:)(:nl:)';
-$GroupFooterFmt = '(:nl:)(:include $Group.GroupFooter:)';
-$PagePathFmt = array('$Group.$1','$1.$1','$1.$DefaultName');
+$GroupHeaderFmt = '(:include {$Group}.GroupHeader:)(:nl:)';
+$GroupFooterFmt = '(:nl:)(:include {$Group}.GroupFooter:)';
+$PagePathFmt = array('{$Group}.$1','$1.$1','$1.{$DefaultName}');
 $PageAttributes = array(
   'passwdread' => '$[Set new read password:]',
   'passwdedit' => '$[Set new edit password:]',
@@ -124,7 +124,7 @@ $FmtPV = array(
   '$Author'       => '$GLOBALS["Author"]',
   '$AuthId'       => '$GLOBALS["AuthId"]',
   '$DefaultGroup' => '$GLOBALS["DefaultGroup"]',
-  '$DefaultName' => '$GLOBALS["DefaultName"]',
+  '$DefaultName'  => '$GLOBALS["DefaultName"]',
   );
 
 $WikiTitle = 'PmWiki';
@@ -481,7 +481,9 @@ function FmtPageName($fmt, $pagename) {
   $fmt = preg_replace('/\\$([A-Z]\\w*Fmt)\\b/e','$GLOBALS[\'$1\']',$fmt);
   $fmt = preg_replace('/\\$\\[(?>([^\\]]+))\\]/e',"XL(PSS('$1'))",$fmt);
   $fmt = str_replace('{$ScriptUrl}', '$ScriptUrl', $fmt);
-  $fmt = preg_replace('/\\{(\\$\\w+)\\}/e', "PageVar(\$pagename, '$1')", $fmt);
+  $fmt = 
+    preg_replace('/\\{(\\$[A-Z]\\w+)\\}/e', "PageVar(\$pagename, '$1')", $fmt);
+  if (strpos($fmt,'$')===false) return $fmt;
   if ($FmtP) $fmt = preg_replace(array_keys($FmtP), array_values($FmtP), $fmt);
   static $pv, $pvpat;
   if ($pv != count($FmtPV)) {
@@ -976,7 +978,7 @@ function LinkPage($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
     else $fmt=$LinkPageCreateFmt;
   }
   $fmt = str_replace(array('$LinkUrl', '$LinkText'),
-           array(PUE(FmtPageName("\$PageUrl$qf",$tgtname)), $txt), $fmt);
+           array(PageVar($tgtname, '$PageUrl').PUE($qf), $txt), $fmt);
   return FmtPageName($fmt,$tgtname);
 }
 
@@ -1083,7 +1085,7 @@ function HandleBrowse($pagename, $auth = 'read') {
   if (!$page) Abort('?cannot read $pagename');
   PCache($pagename,$page);
   SDV($PageRedirectFmt,"<p><i>($[redirected from] 
-    <a href='\$PageUrl?action=edit'>\$FullName</a>)</i></p>\$HTMLVSpace\n");
+    <a href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\$HTMLVSpace\n");
   if (isset($page['text'])) $text=$page['text'];
   else $text = FmtPageName($DefaultPageTextFmt,$pagename);
   if (@!$_GET['from']) {
