@@ -471,7 +471,7 @@ function PageVar($pagename, $var, $pn = '') {
       && (!@$FmtPV[$var] || strpos('$page', $FmtPV[$var]) !== false)) {
     PCache($pn, ReadPage($pn, READPAGE_CURRENT));
   }
-  $page = @&$PCache[$pn];
+  $page = &$PCache[$pn];
   if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
   return @$page[substr($var, 1)];
 }
