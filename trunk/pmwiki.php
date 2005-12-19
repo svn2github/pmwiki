@@ -183,7 +183,9 @@ $Conditions['match'] = 'preg_match("!$condparm!",$pagename)';
 $Conditions['auth'] =
   '@$GLOBALS["PCache"][$GLOBALS["pagename"]]["=auth"][trim($condparm)]';
 $Conditions['authid'] = '@$GLOBALS["AuthId"] > ""';
-$Conditions['enabled'] = '(boolean)@$GLOBALS[$condparm]';
+$Conditions['equal'] = 'CompareArgs($condparm) == 0';
+function CompareArgs($arg) 
+  { $arg = ParseArgs($arg); return strcmp(@$arg[''][0], @$arg[''][1]); }
 
 $MarkupTable['_begin']['seq'] = 'B';
 $MarkupTable['_end']['seq'] = 'E';
