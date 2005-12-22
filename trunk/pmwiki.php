@@ -113,8 +113,8 @@ $FmtPV = array(
   '$Titlespaced'  => 
     '@$page["title"] ? $page["title"] : $AsSpacedFunction($name)',
   '$Title'        => 
-    '@$page["title"] ? $page["title"] : $GLOBALS["SpaceWikiWords"]
-       ? $AsSpacedFunction($name) : $name',
+    '@$page["title"] ? $page["title"] : ($GLOBALS["SpaceWikiWords"]
+       ? $AsSpacedFunction($name) : $name)',
   '$LastModifiedBy' => '$page["author"]',
   '$LastModifiedHost' => '$page["host"]',
   '$LastModified' => 'strftime($GLOBALS["TimeFmt"], $page["time"])',
