@@ -34,6 +34,14 @@ if (IsEnabled($EnableLinkIndex, 1)) {
 SDVA($SearchPatterns['all'], array());
 $SearchPatterns['normal'][] = '!\.(All)?Recent(Changes|Uploads)$!';
 $SearchPatterns['normal'][] = '!\.Group(Print)?(Header|Footer|Attributes)$!';
+$SearchPatterns['normal'][] = str_replace('.', '\\.', "!^$pagename$!");
+
+## $FPLFormatOpt is a list of options associated with fmt=
+## values.  'default' is used for any undefined values of fmt=.
+SDVA($FPLFormatOpt, array(
+  'default' => array('fn' => 'FPLTemplate', 'fmt' => '#bygroup'),
+  'foo' => array('order' => '-name'),
+  ));
 
 SDV($SearchResultsFmt, "<div class='wikisearch'>\$[SearchFor]
   $HTMLVSpace\$MatchList
@@ -48,13 +56,13 @@ XLSDV('en', array(
 Markup('pagelist', 'directives',
   '/\\(:pagelist(\\s+.*?)?:\\)/ei',
   "FmtPageList('\$MatchList', \$pagename, array('o' => PSS('$1 ')))");
-Markup('searchresults', 'directives',
-  '/\\(:searchresults(\\s+.*?)?:\\)/ei',
-  "FmtPageList(\$GLOBALS['SearchResultsFmt'], \$pagename,
-       array('o' => PSS('$1'), 'req' => 1))");
 Markup('searchbox', '>links',
   '/\\(:searchbox(\\s.*?)?:\\)/e',
   "SearchBox(\$pagename, ParseArgs(PSS('$1')))");
+Markup('searchresults', 'directives',
+  '/\\(:searchresults(\\s+.*?)?:\\)/ei',
+  "FmtPageList(\$GLOBALS['SearchResultsFmt'], \$pagename, 
+       array('req' => 1, 'o' => PSS('$1'), 'fmt' => '#search'))");
 
 SDV($SaveAttrPatterns['/\\(:(searchresults|pagelist)(\\s+.*?)?:\\)/i'], ' ');
 
@@ -87,37 +95,45 @@ function SearchBox($pagename, $opt) {
 }
 
 ## FmtPageList combines options from markup, request form, and url,
-## calls the appropriate formatting function, and returns the string
-## (calling Keep() or PRR() as appropriate).
-function FmtPageList($fmt, $pagename, $opt) {
-  global $GroupPattern, $FmtV, $FPLFunctions;
-  # if (isset($_REQUEST['q']) && $_REQUEST['q']=='') $_REQUEST['q']="''";
+## calls the appropriate formatting function, and returns the string.
+function FmtPageList($outfmt, $pagename, $opt) {
+  global $GroupPattern, $FmtV, $FPLFormatOpt;
+  # get any form or url-submitted request
   $rq = htmlspecialchars(stripmagic(@$_REQUEST['q']), ENT_NOQUOTES);
+  # build the search string
   $FmtV['$Needle'] = $opt['o'] . ' ' . $rq;
+  # Handle "group/" at the beginning of the form-submitted request
   if (preg_match("!^($GroupPattern(\\|$GroupPattern)*)?/!i", $rq, $match)) {
     $opt['group'] = @$match[1];
     $rq = substr($rq, strlen(@$match[1])+1);
   }
+  # merge markup options with form and url
   $opt = array_merge($opt, ParseArgs($opt['o'] . ' ' . $rq), @$_REQUEST);
+  # non-posted blank search requests return nothing
   if (@($opt['req'] && !$opt['-'] && !$opt[''] && !$opt['+'] && !$opt['q']))
-    return;
+    return '';
+  # terms and group to be included and excluded
   $GLOBALS['SearchIncl'] = array_merge((array)@$opt[''], (array)@$opt['+']);
   $GLOBALS['SearchExcl'] = (array)@$opt['-'];
   $GLOBALS['SearchGroup'] = @$opt['group'];
+  $fmt = @$opt['fmt']; if (!$fmt) $fmt = 'default';
+  $fmtopt = @$FPLFormatOpt[$fmt];
+  if (!$fmtopt) $fmtopt = $FPLFormatOpt['default'];
+  elseif (!is_array($fmtopt)) $fmtopt = array('fn' => $fmtopt);
+  $fmtfn = @$fmtopt['fn'];
+  if (!is_callable($fmtfn)) $fmtfn = $FPLFormatOpt['default']['fn'];
   $matches = array();
-  $fmtfn = @$FPLFunctions[$opt['fmt']];
-  if (!function_exists($fmtfn)) $fmtfn = 'FPLByGroup';
+  $opt = array_merge($fmtopt, $opt);
   $out = $fmtfn($pagename, $matches, $opt);
   $FmtV['$MatchCount'] = count($matches);
-  if ($fmt != '$MatchList') 
-    { $FmtV['$MatchList'] = $out; $out = FmtPageName($fmt, $pagename); }
-  if ($out && $out{0} == '<') return '<div>'.Keep($out).'</div>';
-  PRR(); return $out;
+  if ($outfmt != '$MatchList') 
+    { $FmtV['$MatchList'] = $out; $out = FmtPageName($outfmt, $pagename); }
+  return PRR($out);
 }
 
 ## MakePageList generates a list of pages using the specifications given
 ## by $opt.
-function MakePageList($pagename, $opt) {
+function MakePageList($pagename, $opt, $retpages = 1) {
   global $MakePageListOpt, $SearchPatterns, $EnablePageListProtect, $PCache,
     $FmtV;
   StopWatch('MakePageList begin');
@@ -185,28 +201,34 @@ function MakePageList($pagename, $opt) {
     } else $page = array();
     $page['pagename'] = $page['name'] = $pn;
     PCache($pn, $page);
-    $matches[] = & $PCache[$pn];
+    $matches[] = $pn;
   }
   StopWatch('MakePageList sort');
   if ($order) SortPageList($matches, $order);
   StopWatch('MakePageList update');
   if ($xlist) LinkIndexUpdate($xlist);
   StopWatch('MakePageList end');
+  if ($retpages) 
+    for($i=0; $i<count($matches); $i++)
+      $matches[$i] = &$PCache[$matches[$i]];
   return $matches;
 }
 
 function SortPageList(&$matches, $order) {
+  global $PCache;
   $code = '';
   foreach(preg_split("/[\\s,|]+/", $order, -1, PREG_SPLIT_NO_EMPTY) as $o) {
     if ($o{0}=='-') { $r = '-'; $o = substr($o, 1); }
     else $r = '';
     if ($o == 'size' || $o == 'time' || $o == 'ctime') 
-      $code .= "\$c = @(\$x['$o']-\$y['$o']); ";
-    else $code .= "\$c = @strcasecmp(\$x['$o'],\$y['$o']); ";
+      $code .= "\$c = @(\$PCache[\$x]['$o']-\$PCache[\$y]['$o']); ";
+    else 
+      $code .= "\$c = @strcasecmp(\$PCache[\$x]['$o'],\$PCache[\$y]['$o']); ";
     $code .= "if (\$c) return $r\$c;\n";
   }
   if ($code) 
-    uasort($matches, create_function('$x,$y', "$code return 0;"));
+    uasort($matches, 
+           create_function('$x,$y', "global \$PCache; $code return 0;"));
 }
 
 ## HandleSearchA performs ?action=search.  It's basically the same
@@ -230,72 +252,44 @@ function HandleSearchA($pagename, $level = 'read') {
 ## $FPLFunctions hash.
 ########################################################################
 
-## $FPLFunctions is a list of functions associated with fmt= options
-SDVA($FPLFunctions, array(
-  'bygroup' => 'FPLByGroup',
-  'simple'  => 'FPLSimple',
-  'group'   => 'FPLGroup'));
+function FPLTemplate($pagename, &$matches, $opt) {
+  global $Cursor, $FPLFormatOpt, $FPLTemplatePageFmt;
+  SDV($FPLTemplatePageFmt, '{$SiteGroup}.PageListTemplates');
 
-## FPLByGroup provides a simple listing of pages organized by group
-function FPLByGroup($pagename, &$matches, $opt) {
-  global $FPLByGroupStartFmt, $FPLByGroupEndFmt, $FPLByGroupGFmt,
-    $FPLByGroupIFmt, $FPLByGroupOpt;
-  SDV($FPLByGroupStartFmt,"<dl class='fplbygroup'>");
-  SDV($FPLByGroupEndFmt,'</dl>');
-  SDV($FPLByGroupGFmt,"<dt><a href='\$ScriptUrl/\$Group'>\$Group</a> /</dt>\n");
-  SDV($FPLByGroupIFmt,"<dd><a href='\$PageUrl'>\$Name</a></dd>\n");
-  SDVA($FPLByGroupOpt, array('readf' => 0, 'order' => 'name'));
-  $matches = MakePageList($pagename, array_merge((array)$FPLByGroupOpt, $opt));
-  if (@$opt['count']) array_splice($matches, $opt['count']);
-  if (count($matches)<1) return '';
-  $out = '';
-  foreach($matches as $pc) {
-    $pgroup = FmtPageName($FPLByGroupGFmt, $pc['pagename']);
-    if ($pgroup != @$lgroup) { $out .= $pgroup; $lgroup = $pgroup; }
-    $out .= FmtPageName($FPLByGroupIFmt, $pc['pagename']);
-  }
-  return FmtPageName($FPLByGroupStartFmt, $pagename) . $out .
-             FmtPageName($FPLByGroupEndFmt, $pagename);
-}
+  list($tname, $qf) = explode('#', $opt['fmt'], 2);
+  if ($tname) $tname = MakePageName($pagename, $tname);
+  else $tname = FmtPageName($FPLTemplatePageFmt, $pagename);
+  if ($qf) $tname .= "#$qf";
+  $ttext = IncludeText($pagename, $tname, true);
+  $ttext = preg_replace('/\\[\\[#[A-Za-z][-.:\\w]*\\]\\]/', '', $ttext);
 
-## FPLSimple provides a simple bullet list of pages
-function FPLSimple($pagename, &$matches, $opt) {
-  global $FPLSimpleStartFmt, $FPLSimpleIFmt, $FPLSimpleEndFmt, $FPLSimpleOpt;
-  SDV($FPLSimpleStartFmt, "<ul class='fplsimple'>");
-  SDV($FPLSimpleEndFmt, "</ul>");
-  SDV($FPLSimpleIFmt, "<li><a href='\$PageUrl'>\$FullName</a></li>");
-  SDVA($FPLSimpleOpt, array('readf' => 0));
-  $topt['order'] = (@$opt['trail']) ? '' : 'name';
-  $matches = MakePageList($pagename, 
-                 array_merge($topt, (array)$FPLSimpleOpt, $opt));
+  if (!$opt['order'] && !$opt['trail']) $opt['order'] = 'name';
+  $matches = array_values(MakePageList($pagename, $opt, 0));
   if (@$opt['count']) array_splice($matches, $opt['count']);
-  if (count($matches)<1) return '';
-  $out = '';
-  foreach($matches as $pc) 
-    $out .= FmtPageName($FPLSimpleIFmt, $pc['pagename']);
-  return FmtPageName($FPLSimpleStartFmt, $pagename) . $out .
-             FmtPageName($FPLSimpleEndFmt, $pagename);
-}
-   
-## FPLGroup provides a simple bullet list of groups
-function FPLGroup($pagename, &$matches, $opt) {
-  global $FPLGroupStartFmt, $FPLGroupIFmt, $FPLGroupEndFmt, $FPLGroupOpt;
-  SDV($FPLGroupStartFmt, "<ul class='fplgroup'>");
-  SDV($FPLGroupEndFmt, "</ul>");
-  SDV($FPLGroupIFmt, "<li><a href='\$ScriptUrl/\$Group'>\$Group</a></li>");
-  SDVA($FPLGroupOpt, array('readf' => 0, 'order' => 'name'));
-  $matches = MakePageList($pagename, array_merge((array)$FPLGroupOpt, $opt));
-  if (count($matches) < 1) return '';
-  $out = '';
-  foreach($matches as $pc) {
-    $group = preg_replace('/\\.[^.]+$/', '', $pc['pagename']);
-    if (@!$seen[$group]++) {
-      $out .= FmtPageName($FPLGroupIFmt, $pc['pagename']);
-      if ($opt['count'] && count($out) >= $opt['count']) break;
-    }
+
+  $savecursor = $Cursor;
+  $pagecount = 0; $groupcount = 0; $grouppagecount = 0;
+  $vk = array('{$PageCount}', '{$GroupCount}', '{$GroupPageCount}');
+  $vv = array(&$pagecount, &$groupcount, &$grouppagecount);
+
+  $lgroup = ''; $out = '';
+  foreach($matches as $i => $pn) {
+    $prev = (string)@$matches[$i-1];
+    $next = (string)@$matches[$i+1];
+    $Cursor['<'] = $Cursor['&lt;'] = $prev;
+    $Cursor['='] = $pn;
+    $Cursor['>'] = $Cursor['&gt;'] = $next;
+    $group = PageVar($pn, '$Group');
+    if ($group != $lgroup) { $groupcount++; $grouppagecount = 0; }
+    $grouppagecount++; $pagecount++;
+
+    $item = str_replace($vk, $vv, $ttext);
+    $item = preg_replace('/\\{(=|&[lg]t;)(\\$\\w+)\\}/e',
+                "PageVar(\$pn, '$2', '$1')", $item);
+    $out .= $item;
+    $lgroup = $group;
   }
-  return FmtPageName($FPLGroupStartFmt, $pagename) . $out .
-             FmtPageName($FPLGroupEndFmt, $pagename);
+  return '<div>'.Keep(MarkupToHTML($pagename, $out, false)).'</div>';
 }
 
 
