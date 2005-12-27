@@ -454,7 +454,7 @@ function MakePageName($basepage,$x) {
 ## PCache caches basic information about a page and its attributes--
 ## usually everything except page text and page history.  This makes
 ## for quicker access to certain values in PageVar below.
-function PCache($pagename,$page) {
+function PCache($pagename, &$page) {
   global $PCache;
   foreach($page as $k=>$v) 
     if ($k!='text' && strpos($k,':')===false) $PCache[$pagename][$k]=$v;
@@ -1054,7 +1054,7 @@ function BuildMarkupRules() {
 }
 
 
-function MarkupToHTML($pagename,$text) {
+function MarkupToHTML($pagename, $text, $escape = true) {
   # convert wiki markup text to HTML output
   global $MarkupRules, $MarkupFrame, $MarkupFrameBase, $WikiWordCount,
     $K0, $K1, $RedoMarkupLine;
@@ -1064,7 +1064,7 @@ function MarkupToHTML($pagename,$text) {
   $MarkupFrame[0]['wwcount'] = $WikiWordCount;
   $markrules = BuildMarkupRules();
   foreach((array)$text as $l) 
-    $lines[] = PVS(htmlspecialchars($l, ENT_NOQUOTES));
+    $lines[] = ($escape) ? PVS(htmlspecialchars($l, ENT_NOQUOTES)) : $l;
   $lines[] = '(:closeall:)';
   $out = '';
   while (count($lines)>0) {
