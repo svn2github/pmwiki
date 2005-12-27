@@ -66,7 +66,7 @@ Markup('searchbox', '>links',
 Markup('searchresults', 'directives',
   '/\\(:searchresults(\\s+.*?)?:\\)/ei',
   "FmtPageList(\$GLOBALS['SearchResultsFmt'], \$pagename, 
-       array('req' => 1, 'o' => PSS('$1'), 'fmt' => '#search'))");
+       array('req' => 1, 'o' => PSS('$1')))");
 
 SDV($SaveAttrPatterns['/\\(:(searchresults|pagelist)(\\s+.*?)?:\\)/i'], ' ');
 
@@ -132,6 +132,7 @@ function FmtPageList($outfmt, $pagename, $opt) {
   $FmtV['$MatchCount'] = count($matches);
   if ($outfmt != '$MatchList') 
     { $FmtV['$MatchList'] = $out; $out = FmtPageName($outfmt, $pagename); }
+  $out = preg_replace('/^(<[^>]+>)(.*)/esm', "PSS('$1').Keep(PSS('$2'))", $out);
   return PRR($out);
 }
 
@@ -305,7 +306,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
     $out .= $item;
     $lgroup = $group;
   }
-  return '<div>'.Keep(MarkupToHTML($pagename, $out, false)).'</div>';
+  return '<div>'.MarkupToHTML($pagename, $out, false).'</div>';
 }
 
 
