@@ -39,8 +39,12 @@ $SearchPatterns['normal'][] = str_replace('.', '\\.', "!^$pagename$!");
 ## $FPLFormatOpt is a list of options associated with fmt=
 ## values.  'default' is used for any undefined values of fmt=.
 SDVA($FPLFormatOpt, array(
-  'default' => array('fn' => 'FPLTemplate', 'fmt' => '#bygroup'),
-  'foo' => array('order' => '-name'),
+  'default' => array('fn' => 'FPLTemplate', 'fmt' => '#default'),
+  'bygroup' => array('fn' => 'FPLTemplate', 'template' => '#bygroup'),
+  'simple'  => array('fn' => 'FPLTemplate', 'template' => '#simple'),
+  'group'   => array('fn' => 'FPLTemplate', 'template' => '#group'),
+  'title'   => array('fn' => 'FPLTemplate', 'template' => '#title',
+                     'order' => 'title'),
   ));
 
 SDV($SearchResultsFmt, "<div class='wikisearch'>\$[SearchFor]
@@ -220,10 +224,19 @@ function SortPageList(&$matches, $order) {
   foreach(preg_split("/[\\s,|]+/", $order, -1, PREG_SPLIT_NO_EMPTY) as $o) {
     if ($o{0}=='-') { $r = '-'; $o = substr($o, 1); }
     else $r = '';
-    if ($o == 'size' || $o == 'time' || $o == 'ctime') 
-      $code .= "\$c = @(\$PCache[\$x]['$o']-\$PCache[\$y]['$o']); ";
-    else 
-      $code .= "\$c = @strcasecmp(\$PCache[\$x]['$o'],\$PCache[\$y]['$o']); ";
+    switch ($o) {
+      case 'size':
+      case 'time':
+      case 'ctime':
+        $code .= "\$c = @(\$PCache[\$x]['$o']-\$PCache[\$y]['$o']); ";
+        break;
+      case 'title':
+        foreach($matches as $pn) 
+          if (!isset($PCache[$pn]['title'])) 
+            $PCache[$pn]['title'] = PageVar($pn, '$Title');
+      default:
+        $code .= "\$c = @strcasecmp(\$PCache[\$x]['$o'],\$PCache[\$y]['$o']); ";
+    }
     $code .= "if (\$c) return $r\$c;\n";
   }
   if ($code) 
@@ -256,7 +269,10 @@ function FPLTemplate($pagename, &$matches, $opt) {
   global $Cursor, $FPLFormatOpt, $FPLTemplatePageFmt;
   SDV($FPLTemplatePageFmt, '{$SiteGroup}.PageListTemplates');
 
-  list($tname, $qf) = explode('#', $opt['fmt'], 2);
+  $template = @$opt['template'];
+  if (!$template) $template = @$opt['fmt'];
+
+  list($tname, $qf) = explode('#', $template, 2);
   if ($tname) $tname = MakePageName($pagename, $tname);
   else $tname = FmtPageName($FPLTemplatePageFmt, $pagename);
   if ($qf) $tname .= "#$qf";
