@@ -163,6 +163,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
 
   if (@$opt['trail']) {
     $trail = ReadTrail($pagename, $opt['trail']);
+    $list = array();
     foreach($trail as $tstop) {
       $pn = $tstop['pagename'];
       $list[] = $pn;
