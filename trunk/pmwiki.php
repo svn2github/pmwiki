@@ -475,7 +475,8 @@ function PageVar($pagename, $var, $pn = '') {
   }
   $page = &$PCache[$pn];
   if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
-  return @$page[substr($var, 1)];
+  return '';
+  #return @$page[substr($var, 1)];
 }
   
 ## FmtPageName handles $[internationalization] and $Variable 
