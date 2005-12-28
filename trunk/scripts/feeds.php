@@ -175,14 +175,15 @@ function HandleFeed($pagename, $auth = 'read') {
     { PCache($pagename, $page); $pagelist = array(&$PCache[$pagename]); }
   else {
     $opt = array_merge($opt, @$_REQUEST);
-    $pagelist = MakePageList($pagename, $opt);
+    $pagelist = MakePageList($pagename, $opt, 0);
   } 
 
   # process list of pages in feed
   $rdfseq = '';
-  foreach($pagelist as $page) {
-    $pn = $page['name'];
+  $pl = array();
+  foreach($pagelist as $pn) {
     if (!PageExists($pn)) continue;
+    $page = & $PCache[$pn];
     $pl[] = $pn;
     if (@$opt['count'] && count($pl) >= $opt['count']) break;
     $rdfseq .= FmtPageName("<rdf:li resource=\"\$PageUrl\" />\n", $pn);
