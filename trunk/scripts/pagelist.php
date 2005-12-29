@@ -101,7 +101,7 @@ function SearchBox($pagename, $opt) {
 ## FmtPageList combines options from markup, request form, and url,
 ## calls the appropriate formatting function, and returns the string.
 function FmtPageList($outfmt, $pagename, $opt) {
-  global $GroupPattern, $FmtV, $FPLFormatOpt;
+  global $GroupPattern, $FmtV, $FPLFormatOpt, $FPLFunctions;
   # get any form or url-submitted request
   $rq = htmlspecialchars(stripmagic(@$_REQUEST['q']), ENT_NOQUOTES);
   # build the search string
@@ -122,8 +122,12 @@ function FmtPageList($outfmt, $pagename, $opt) {
   $GLOBALS['SearchGroup'] = @$opt['group'];
   $fmt = @$opt['fmt']; if (!$fmt) $fmt = 'default';
   $fmtopt = @$FPLFormatOpt[$fmt];
-  if (!$fmtopt) $fmtopt = $FPLFormatOpt['default'];
-  elseif (!is_array($fmtopt)) $fmtopt = array('fn' => $fmtopt);
+  if (!is_array($fmtopt)) {
+    if ($fmtopt) $fmtopt = array('fn' => $fmtopt);
+    elseif (@$FPLFunctions[$fmt]) 
+      $fmtopt = array('fn' => $FPLFunctions[$fmt]);
+    else $fmtopt = $FPLFormatOpt['default'];
+  }
   $fmtfn = @$fmtopt['fn'];
   if (!is_callable($fmtfn)) $fmtfn = $FPLFormatOpt['default']['fn'];
   $matches = array();
@@ -264,7 +268,7 @@ function HandleSearchA($pagename, $level = 'read') {
 ########################################################################
 ## The functions below provide different formatting options for
 ## the output list, controlled by the fmt= parameter and the
-## $FPLFunctions hash.
+## $FPLFormatOpt hash.
 ########################################################################
 
 function FPLTemplate($pagename, &$matches, $opt) {
