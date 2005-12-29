@@ -1,9 +1,10 @@
-version=pmwiki-2.1.beta4 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.12) Gecko/20050915 Firefox/1.0.7
-author=Pm
-host=24.1.26.255
+version=pmwiki-2.1.beta14 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5
+author=
+excerpt=%3cp>%3cspan class='audience'> administrators (basic)%3c/span>%0a%3c/p>%0a%3cp class='vspace'>%3c/p>%3cp>Prerequisites for running the %3cspan class='wikiword'>PmWiki%3c/span> wiki engine:%0a%3c/p>%3col>%3cli>%3ca class='urllink' href='http://www.php.net/' rel='nofollow'>PHP%3c/a> 4.1 or later%0a%3c/li>%3cli>Some sort of webserver that can run PHP scripts.%0a%3c/li>%3c/ol>%3cp class='vspace'>%3c/p>%3cp>%3cspan class='wikiword'>PmWiki%3c/span> has been reported to work with the following OS/webserver combinations:%0a%3c/p>%3cul>%3cli>Apache 1.3 or 2.0, on roughly anything (Unix, Linux, Windows, and Mac OS/X)%0a%3c/li>%3cli>Microsoft Internet Information Server, o
+host=12.151.118.98
 name=PmWiki.Requirements
-rev=23
+rev=24
 targets=PmWiki.DocumentationIndex
-text=%25audience%25 administrators (basic)%0a%0aPrerequisites for running the PmWiki wiki engine:%0a# [[http://www.php.net/ | PHP]] 4.1 or later%0a# Some sort of webserver that can run PHP scripts.%0a%0aPmWiki has been reported to work with the following OS/webserver combinations:%0a* Apache 1.3 or 2.0, on roughly anything (Unix, Linux, Windows, and Mac OS/X)%0a* Microsoft Internet Information Server, on Windows%0a%0a* I got it to work on appWeb (a very small, php-enabled webserver) executing on a Linksys %0a NSLU2 Network Storage Link device (runs Unslung 5.5 beta which is a Linux derivate for embedded systems). Still have to work out why file-uploads does not seem to work, however. --Hans-Göran Puke%0a%0aPmWiki has been reported not to work on:%0a* `MacOS 8.6 (this is just hearsay and rumors, so we'd be glad to hear something definite)%0a* MacOS 9%0a%0aThe [[(Cookbook:)Standalone]] recipe provides a special, bare-bones webserver application that can be used to run PmWiki in places where another webserver isn't available.%0a%0a%3c%3c|[[DocumentationIndex]]|>>
-time=1132945825
+text=%25audience%25 administrators (basic)%0a%0aPrerequisites for running the PmWiki wiki engine:%0a# [[http://www.php.net/ | PHP]] 4.1 or later%0a# Some sort of webserver that can run PHP scripts.%0a%0aPmWiki has been reported to work with the following OS/webserver combinations:%0a* Apache 1.3 or 2.0, on roughly anything (Unix, Linux, Windows, and Mac OS/X)%0a* Microsoft Internet Information Server, on Windows%0a%0a* I got it to work on appWeb (a very small, php-enabled webserver) executing on a Linksys NSLU2 Network Storage Link device (runs Unslung 5.5 beta which is a Linux derivate for embedded systems). Still have to work out why file-uploads does not seem to work, however. --Hans-Göran Puke%0a%0aPmWiki has been reported not to work on:%0a* `MacOS 8.6 (this is just hearsay and rumors, so we'd be glad to hear something definite)%0a* MacOS 9%0a%0aThe [[(Cookbook:)Standalone]] recipe provides a special, bare-bones webserver application that can be used to run PmWiki in places where another webserver isn't available.%0a%0a%3c%3c|[[DocumentationIndex]]|>>
+time=1135025334

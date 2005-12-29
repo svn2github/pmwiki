@@ -1,0 +1,11 @@
+version=pmwiki-2.1.beta14 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5
+author=Pm
+ctime=1135725585
+excerpt=%3cp>This page contains "templates" for %3cspan class='wikiword'>PmWiki%3c/span>'s %3ccode> %3c/code> directive.%0a%3c/p>%0a%3cp class='vspace'>%3c/p>%3chr />%0a%3ch3>fmt=#default%3c/h3>%0a%3cp class='vspace'>%3c/p>%3cp>The default template for pagelists when %3ccode>fmt=%3c/code> isn't specified.%0a%3c/p>%0a%3cp class='vspace'>%3c/p>%3cpre>%0a[[#default]]%0a%0a%0a:[[{=$Group}]] /:%0a%0a: :[[{=$Group}/{=$Name}]]%0a[[#defaultend]]%0a%0a%3c/pre>%0a%3cp class='vspace'>%3c/p>%3chr />%0a%3ch3>fmt=#bygroup%3c/h3>%0a%3cp class='vspace'>%3c/p>%3cp>Display pages by group/name.%0a%3c/p>%0a%3cp class='vspace'>%3c/p>%3cpre>%0a[[#bygroup]]%0a%0a%0a:[[{=$Group}]] /:%0a%0a: :[[{=$Group}/{=$Name}]]%0a[[#bygroupend]]%0a%0a%3c/pre>%0a%3cp
+host=24.1.26.255
+name=Site.PageListTemplates
+rev=2
+targets=
+text=This page contains "templates" for PmWiki's [@(:pagelist:)@] directive.%0a%0a----%0a!!!fmt=#default%0a%0aThe default template for pagelists when [@fmt=@] isn't specified.%0a%0a[@%0a[[#default]]%0a(:if ! equal {=$Group} {%3c$Group}:)%0a%0a:[[{=$Group}]] /:%0a(:if:)%0a: :[[{=$Group}/{=$Name}]]%0a[[#defaultend]]%0a@]%0a%0a----%0a!!!fmt=#bygroup%0a%0aDisplay pages by group/name.%0a%0a[@%0a[[#bygroup]]%0a(:if ! equal {=$Group} {%3c$Group}:)%0a%0a:[[{=$Group}]] /:%0a(:if:)%0a: :[[{=$Group}/{=$Name}]]%0a[[#bygroupend]]%0a@]%0a%0a----%0a!!!fmt=#simple%0a%0aA simple bullet list of page names.%0a%0a[@%0a[[#simple]]%0a* [[{=$FullName}]]%0a[[#simpleend]]%0a@]%0a%0a----%0a!!!fmt=#title%0a%0aA simple bullet list of page titles.  Use [@order=title@] to have them sorted by title (the default sort is by name).%0a%0a[@%0a[[#title]]%0a* [[{=$FullName}|+]]%0a[[#titleend]]%0a@]%0a%0a----%0a!!!fmt=#group%0a%0aA bullet list of groups.%0a%0a[@%0a[[#group]]%0a(:if ! equal {=$Group} {%3c$Group}:)%0a* [[{=$Group}]]%0a[[#groupend]]%0a@]%0a
+time=1135725719
