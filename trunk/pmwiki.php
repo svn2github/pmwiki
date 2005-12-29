@@ -470,7 +470,7 @@ function PageVar($pagename, $var, $pn = '') {
   if (!$pn) return '';
   list($group, $name) = explode('.', $pn);
   if (!isset($PCache[$pn]) 
-      && (!@$FmtPV[$var] || strpos('$page', $FmtPV[$var]) !== false)) {
+      && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) {
     PCache($pn, ReadPage($pn, READPAGE_CURRENT));
   }
   $page = &$PCache[$pn];
