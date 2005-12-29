@@ -79,7 +79,8 @@ $SuffixPattern = '(?:-?[[:alnum:]]+)*';
 $LinkPageSelfFmt = "<a class='selflink' href='\$LinkUrl'>\$LinkText</a>";
 $LinkPageExistsFmt = "<a class='wikilink' href='\$LinkUrl'>\$LinkText</a>";
 $LinkPageCreateFmt = 
-  "<a class='createlinktext' href='{\$PageUrl}?action=edit'>\$LinkText</a><a 
+  "<a class='createlinktext' rel='nofollow' 
+    href='{\$PageUrl}?action=edit'>\$LinkText</a><a rel='nofollow' 
     class='createlink' href='{\$PageUrl}?action=edit'>?</a>";
 $UrlLinkFmt = 
   "<a class='urllink' href='\$LinkUrl' rel='nofollow'>\$LinkText</a>";
@@ -455,7 +456,7 @@ function MakePageName($basepage,$x) {
 ## PCache caches basic information about a page and its attributes--
 ## usually everything except page text and page history.  This makes
 ## for quicker access to certain values in PageVar below.
-function PCache($pagename, &$page) {
+function PCache($pagename, $page) {
   global $PCache;
   foreach($page as $k=>$v) 
     if ($k!='text' && strpos($k,':')===false) $PCache[$pagename][$k]=$v;
@@ -1093,7 +1094,7 @@ function HandleBrowse($pagename, $auth = 'read') {
   if (!$page) Abort('?cannot read $pagename');
   PCache($pagename,$page);
   SDV($PageRedirectFmt,"<p><i>($[redirected from] 
-    <a href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\$HTMLVSpace\n");
+    <a rel='nofollow' href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\$HTMLVSpace\n");
   if (isset($page['text'])) $text=$page['text'];
   else $text = FmtPageName($DefaultPageTextFmt,$pagename);
   if (@!$_GET['from']) {
@@ -1278,7 +1279,7 @@ function HandleEdit($pagename, $auth = 'edit') {
   }
   SDV($PageEditFmt, "<div id='wikiedit'>
     <h1 class='wikiaction'>$[Editing {\$FullName}]</h1>
-    <form method='post' action='\$PageUrl?action=edit'>
+    <form method='post' rel='nofollow' action='\$PageUrl?action=edit'>
     <input type='hidden' name='action' value='edit' />
     <input type='hidden' name='n' value='\$FullName' />
     <input type='hidden' name='basetime' value='\$EditBaseTime' />
