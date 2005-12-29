@@ -97,9 +97,9 @@ Markup('e_preview', 'directives',
 Markup('e_guibuttons', 'directives', '/\\(:e_guibuttons:\\)/', '');
 
 SDVA($InputTags['e_form'], array(
-  ':html' => "<form action='\$PageUrl?action=edit' method='post'><input 
+  ':html' => "<form action='{\$PageUrl}?action=edit' method='post'><input 
     type='hidden' name='action' value='edit' /><input 
-    type='hidden' name='n' value='\$FullName' /><input 
+    type='hidden' name='n' value='{\$FullName}' /><input 
     type='hidden' name='basetime' value='\$EditBaseTime' />"));
 SDVA($InputTags['e_textarea'], array(
   ':html' => "<textarea \$InputFormArgs 

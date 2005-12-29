@@ -46,7 +46,7 @@
     in the feed output.  The set of allowed attachments can be
     extended using the $RSSEnclosureFmt array:
 
-        $RSSEnclosureFmt = array('$Name.mp3', '$Name.mp4');
+        $RSSEnclosureFmt = array('{$Name}.mp3', '{$Name}.mp4');
 
     References:
       http://www.atomenabled.org/developers/syndication/
@@ -61,19 +61,19 @@ SDVA($FeedFmt['atom']['feed'], array(
 <feed xmlns="http://www.w3.org/2005/Atom">'."\n",
   '_end' => "</feed>\n",
   'title' => '$WikiTitle',
-  'link' => '<link rel="self" href="$PageUrl?action=atom" />',
-  'id' => '$PageUrl?action=atom',
+  'link' => '<link rel="self" href="{$PageUrl}?action=atom" />',
+  'id' => '{$PageUrl}?action=atom',
   'updated' => '$FeedISOTime',
   'author' => "<author><name>$WikiTitle</name></author>\n",
   'generator' => '$Version',
   'logo' => '$PageLogoUrl'));
 SDVA($FeedFmt['atom']['item'], array(
   '_start' => "<entry>\n",
-  'id' => '$PageUrl',
-  'title' => '$Title',
+  'id' => '{$PageUrl}',
+  'title' => '{$Title}',
   'updated' => '$ItemISOTime',
-  'link' => "<link rel=\"alternate\" href=\"\$PageUrl\" />\n",
-  'author' => "<author><name>\$LastModifiedBy</name></author>\n",
+  'link' => "<link rel=\"alternate\" href=\"{\$PageUrl}\" />\n",
+  'author' => "<author><name>{\$LastModifiedBy}</name></author>\n",
   'summary' => '$ItemDesc',
   'category' => "<category term=\"\$Category\" />\n",
   '_end' => "</entry>\n"));
@@ -88,16 +88,16 @@ SDVA($FeedFmt['dc']['feed'], array(
          xmlns:dc="http://purl.org/dc/elements/1.1/">'."\n",
   '_end' => "</rdf:RDF>\n"));
 SDVA($FeedFmt['dc']['item'], array(
-  '_start' => "<rdf:Description rdf:about=\"\$PageUrl\">\n",
-  'dc:title' => '$Title',
-  'dc:identifier' => '$PageUrl',
+  '_start' => "<rdf:Description rdf:about=\"{\$PageUrl}\">\n",
+  'dc:title' => '{$Title}',
+  'dc:identifier' => '{$PageUrl}',
   'dc:date' => '$ItemISOTime',
   'dc:type' => 'Text',
   'dc:format' => 'text/html',
   'dc:description' => '$ItemDesc',
   'dc:subject' => "<dc:subject>\$Category</dc:subject>\n",
   'dc:publisher' => '$WikiTitle',
-  'dc:author' => '$LastModifiedBy',
+  'dc:author' => '{$LastModifiedBy}',
   '_end' => "</rdf:Description>\n"));
 
 ## RSS 2.0 settings for ?action=rss
@@ -107,17 +107,17 @@ SDVA($FeedFmt['rss']['feed'], array(
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>'."\n",
   '_end' => "</channel>\n</rss>\n",
-  'title' => '$WikiTitle | $Group / $Title',
-  'link' => '$PageUrl?action=rss',
-  'description' => '$Group.$Title',
+  'title' => '$WikiTitle | {$Group} / {$Title}',
+  'link' => '{$PageUrl}?action=rss',
+  'description' => '{$Group}.{$Title}',
   'lastBuildDate' => '$FeedRSSTime'));
 SDVA($FeedFmt['rss']['item'], array(
   '_start' => "<item>\n",
   '_end' => "</item>\n",
-  'title' => '$Group / $Title',
-  'link' => '$PageUrl',
+  'title' => '{$Group} / {$Title}',
+  'link' => '{$PageUrl}',
   'description' => '$ItemDesc',
-  'dc:contributor' => '$LastModifiedBy',
+  'dc:contributor' => '{$LastModifiedBy}',
   'dc:date' => '$ItemISOTime',
   'enclosure' => 'RSSEnclosure'));
 
@@ -128,19 +128,19 @@ SDVA($FeedFmt['rdf']['feed'], array(
 <rdf:RDF xmlns="http://purl.org/rss/1.0/"
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <channel rdf:about="$PageUrl?action=rdf">'."\n",
-  'title' => '$WikiTitle | $Group / $Title',
-  'link' => '$PageUrl?action=rdf',
-  'description' => '$Group.$Title',
+  <channel rdf:about="{$PageUrl}?action=rdf">'."\n",
+  'title' => '$WikiTitle | {$Group} / {$Title}',
+  'link' => '{$PageUrl}?action=rdf',
+  'description' => '{$Group}.{$Title}',
   'dc:date' => '$FeedISOTime',
   'items' => "<items>\n<rdf:Seq>\n\$FeedRDFSeq</rdf:Seq>\n</items>\n",
   '_items' => "</channel>\n",
   '_end' => "</rdf:RDF>\n"));
 SDVA($FeedFmt['rdf']['item'], array(
-  '_start' => "<item rdf:about=\"\$PageUrl\">\n",
+  '_start' => "<item rdf:about=\"{\$PageUrl}\">\n",
   '_end' => "</item>\n",
-  'title' => '$WikiTitle | $Group / $Title',
-  'link' => '$PageUrl',
+  'title' => '$WikiTitle | {$Group} / {$Title}',
+  'link' => '{$PageUrl}',
   'description' => '$ItemDesc',
   'dc:date' => '$ItemISOTime'));
   
@@ -186,7 +186,7 @@ function HandleFeed($pagename, $auth = 'read') {
     $page = & $PCache[$pn];
     $pl[] = $pn;
     if (@$opt['count'] && count($pl) >= $opt['count']) break;
-    $rdfseq .= FmtPageName("<rdf:li resource=\"\$PageUrl\" />\n", $pn);
+    $rdfseq .= FmtPageName("<rdf:li resource=\"{\$PageUrl}\" />\n", $pn);
     if ($page['time'] > $feedtime) $feedtime = $page['time'];
   }
   $pagelist = $pl;
@@ -251,7 +251,7 @@ function HandleFeed($pagename, $auth = 'read') {
 function RSSEnclosure($pagename, &$page, $k) {
   global $RSSEnclosureFmt, $UploadFileFmt, $UploadExts;
   if (!function_exists('MakeUploadName')) return '';
-  SDV($RSSEnclosureFmt, array('$Name.mp3'));
+  SDV($RSSEnclosureFmt, array('{$Name}.mp3'));
   $encl = '';
   foreach((array)$RSSEnclosureFmt as $fmt) {
     $path = FmtPageName($fmt, $pagename);

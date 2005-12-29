@@ -60,10 +60,10 @@ SDV($LinkUploadCreateFmt, "<a class='createlinktext' href='\$LinkUpload'>\$LinkT
 
 SDV($PageUploadFmt,array("
   <div id='wikiupload'>
-  <h2 class='wikiaction'>$[Attachments for] \$FullName</h2>
+  <h2 class='wikiaction'>$[Attachments for] {\$FullName}</h2>
   <h3>\$UploadResult</h3>
-  <form enctype='multipart/form-data' action='\$PageUrl' method='post'>
-  <input type='hidden' name='n' value='\$FullName' />
+  <form enctype='multipart/form-data' action='{\$PageUrl}' method='post'>
+  <input type='hidden' name='n' value='{\$FullName}' />
   <input type='hidden' name='action' value='postupload' />
   <table border='0'>
     <tr><td align='right'>$[File to upload:]</td><td><input
@@ -127,7 +127,7 @@ function LinkUpload($pagename, $imap, $path, $title, $txt, $fmt=NULL) {
     return FmtPageName($LinkUploadCreateFmt, $pagename);
   $path = PUE(FmtPageName(IsEnabled($EnableDirectDownload, 1) 
                             ? "$UploadUrlFmt$UploadPrefixFmt/$upname"
-                            : "\$PageUrl?action=download&amp;upname=$upname",
+                            : "{\$PageUrl}?action=download&amp;upname=$upname",
                           $pagename));
   return LinkIMap($pagename, $imap, $path, $title, $txt, $fmt);
 }
@@ -198,7 +198,7 @@ function HandlePostUpload($pagename, $auth = 'upload') {
     if ($LastModFile) { touch($LastModFile); fixperms($LastModFile); }
     $result = "upresult=success";
   }
-  Redirect($pagename,"\$PageUrl?action=upload&uprname=$upname&$result");
+  Redirect($pagename,"{\$PageUrl}?action=upload&uprname=$upname&$result");
 }
 
 function UploadVerifyBasic($pagename,$uploadfile,$filepath) {

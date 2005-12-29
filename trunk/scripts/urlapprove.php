@@ -33,7 +33,7 @@ $LinkFunctions['http:'] = 'LinkHTTP';
 $LinkFunctions['https:'] = 'LinkHTTP';
 SDV($ApprovedUrlPagesFmt, array('$SiteGroup.ApprovedUrls'));
 SDV($UnapprovedLinkFmt,
-  "\$LinkText<a class='apprlink' href='\$PageUrl?action=approvesites'>$[(approve sites)]</a>");
+  "\$LinkText<a class='apprlink' href='{\$PageUrl}?action=approvesites'>$[(approve sites)]</a>");
 $HTMLStylesFmt['urlapprove'] = '.apprlink { font-size:smaller; }';
 SDV($ApproveUrlPattern,
   "\\bhttps?:[^\\s$UrlExcludeChars]*[^\\s.,?!$UrlExcludeChars]");

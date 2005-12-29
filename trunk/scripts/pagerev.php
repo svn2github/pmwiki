@@ -15,12 +15,12 @@ function LinkSuppress($pagename,$imap,$path,$title,$txt,$fmt=NULL)
 SDV($DiffShow['minor'],(@$_REQUEST['minor']!='n')?'y':'n');
 SDV($DiffShow['source'],(@$_REQUEST['source']=='y')?'y':'n');
 SDV($DiffMinorFmt, ($DiffShow['minor']=='y') ?
-  "<a href='\$PageUrl?action=diff&amp;source=".$DiffShow['source']."&amp;minor=n'>$[Hide minor edits]</a>" :
-  "<a href='\$PageUrl?action=diff&amp;source=".$DiffShow['source']."&amp;minor=y'>$[Show minor edits]</a>" );
+  "<a href='{\$PageUrl}?action=diff&amp;source=".$DiffShow['source']."&amp;minor=n'>$[Hide minor edits]</a>" :
+  "<a href='{\$PageUrl}?action=diff&amp;source=".$DiffShow['source']."&amp;minor=y'>$[Show minor edits]</a>" );
 SDV($DiffSourceFmt, ($DiffShow['source']=='y') ?
-  "<a href='\$PageUrl?action=diff&amp;source=n&amp;minor=".$DiffShow['minor']."'>$[Show changes to output]</a>" :
-  "<a href='\$PageUrl?action=diff&amp;source=y&amp;minor=".$DiffShow['minor']."'>$[Show changes to markup]</a>");
-SDV($PageDiffFmt,"<h2 class='wikiaction'>$[\$FullName History]</h2>
+  "<a href='{\$PageUrl}?action=diff&amp;source=n&amp;minor=".$DiffShow['minor']."'>$[Show changes to output]</a>" :
+  "<a href='{\$PageUrl}?action=diff&amp;source=y&amp;minor=".$DiffShow['minor']."'>$[Show changes to markup]</a>");
+SDV($PageDiffFmt,"<h2 class='wikiaction'>$[{\$FullName} History]</h2>
   <p>$DiffMinorFmt - $DiffSourceFmt</p>
   ");
 SDV($DiffStartFmt,"
@@ -41,9 +41,9 @@ SDV($DiffAddFmt['c'],"</div>
 SDV($DiffEndDelAddFmt,"</div>");
 SDV($DiffEndFmt,"</div>");
 SDV($DiffRestoreFmt,"
-      <div class='diffrestore'><a href='\$PageUrl?action=edit&amp;restore=\$DiffId&amp;preview=y'>$[Restore]</a></div>");
+      <div class='diffrestore'><a href='{\$PageUrl}?action=edit&amp;restore=\$DiffId&amp;preview=y'>$[Restore]</a></div>");
 SDV($DiffAuthorPageExistsFmt,"<a class='authorlink'
-   href='\$ScriptUrl/\$DiffAuthorPage'>\$DiffAuthor</a>");
+   href='{\$ScriptUrl}/\$DiffAuthorPage'>\$DiffAuthor</a>");
 SDV($DiffAuthorPageMissingFmt,"\$DiffAuthor");
 
 SDV($HandleActions['diff'], 'HandleDiff');
