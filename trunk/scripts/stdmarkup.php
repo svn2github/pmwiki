@@ -214,9 +214,9 @@ Markup('[[|#', '<[[|',
 ## [[target |+]] title links
 Markup('[[|+', '<[[|',
   "/(?>\\[\\[([^|\\]]+))\\|\\s*\\+\\s*]]/e",
-  "Keep(MakeLink(\$pagename,PSS('$1'),
-                 FmtPageName('\$Title',MakePageName(\$pagename,PSS('$1')),1),
-                 '$2'),'L')");
+  "Keep(MakeLink(\$pagename, PSS('$1'),
+                 PageVar(MakePageName(\$pagename,PSS('$1')), '\$Title')
+                ),'L')");
 
 ## bare urllinks 
 Markup('urllink','>[[',
