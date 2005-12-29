@@ -37,8 +37,8 @@ define('PmWiki',1);
 $GroupPattern = '[[:upper:]][\\w]*(?:-\\w+)*';
 $NamePattern = '[[:upper:]\\d][\\w]*(?:-\\w+)*';
 $WikiWordPattern = '[[:upper:]][[:alnum:]]*(?:[[:upper:]][[:lower:]0-9]|[[:lower:]0-9][[:upper:]])[[:alnum:]]*';
-$WikiDir = new PageStore('wiki.d/$FullName');
-$WikiLibDirs = array(&$WikiDir,new PageStore('$FarmD/wikilib.d/$FullName'));
+$WikiDir = new PageStore('wiki.d/{$FullName}');
+$WikiLibDirs = array(&$WikiDir,new PageStore('$FarmD/wikilib.d/{$FullName}'));
 $InterMapFiles = array("$FarmD/scripts/intermap.txt",
   "$FarmD/local/farmmap.txt", 'Site.InterMap', 'local/localmap.txt');
 $Newline = "\263";                                 # deprecated, 2.0.0
@@ -60,9 +60,9 @@ $LinkWikiWords = 0;
 $RCDelimPattern = '  ';
 $RecentChangesFmt = array(
   '$SiteGroup.AllRecentChanges' => 
-    '* [[$Group.$Name]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]',
+    '* [[{$Group}.{$Name}]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]',
   '$Group.RecentChanges' =>
-    '* [[$Group/$Name]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]');
+    '* [[{$Group}/{$Name}]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]');
 $DefaultPageTextFmt = '$[Describe $Name here.]';
 $ScriptUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 $PubDirUrl = preg_replace('#/[^/]*$#','/pub',$ScriptUrl,1);
@@ -177,8 +177,8 @@ $AuthList = array('' => 1, 'nopass:' => 1);
 
 $Conditions['false'] = '$condparm > "" ? !$GLOBALS[$condparm] : false';
 $Conditions['true'] = '$condparm > "" ? (boolean)$GLOBALS[$condparm] : true';
-$Conditions['group'] = "FmtPageName('\$Group',\$pagename)==\$condparm";
-$Conditions['name'] = "FmtPageName('\$Name',\$pagename)==\$condparm";
+$Conditions['group'] = "PageVar(\$pagename, '\$Group') == \$condparm";
+$Conditions['name'] = "PageVar(\$pagename, '\$Name') == \$condparm";
 $Conditions['match'] = 'preg_match("!$condparm!",$pagename)';
 $Conditions['auth'] =
   '@$GLOBALS["PCache"][$GLOBALS["pagename"]]["=auth"][trim($condparm)]';
@@ -398,7 +398,7 @@ function mkdirp($dir) {
     before it can continue.  You can create the directory manually 
     by executing the following commands on your server:
     <pre>    mkdir $parent/$dir\n    chmod 777 $parent/$dir</pre>
-    Then, <a href='$ScriptUrl'>reload this page</a>.";
+    Then, <a href='{$ScriptUrl}'>reload this page</a>.";
   $safemode = ini_get('safe_mode');
   if (!$safemode) $msg .= "<br /><br />Or, for a slightly more 
     secure installation, try executing <pre>    chmod 2777 $parent</pre> 
@@ -574,11 +574,11 @@ class PageStore {
     $dfmt = $this->dirfmt;
     if ($pagename > '') {
       $pagename = str_replace('/', '.', $pagename);
-      if ($dfmt == 'wiki.d/$FullName')                 # optimizations for
+      if ($dfmt == 'wiki.d/{$FullName}')               # optimizations for
         return "wiki.d/$pagename";                     # standard locations
-      if ($dfmt == '$FarmD/wikilib.d/$FullName')       # 
+      if ($dfmt == '$FarmD/wikilib.d/{$FullName}')     # 
         return "$FarmD/wikilib.d/$pagename";           #
-      if ($dfmt == 'wiki.d/$Group/$FullName')
+      if ($dfmt == 'wiki.d/{$Group}/{$FullName}')
         return preg_replace('/([^.]+).*/', 'wiki.d/$1/$0', $pagename);
     }
     return FmtPageName($dfmt, $pagename);
@@ -614,7 +614,7 @@ class PageStore {
     return @$page;
   }
   function write($pagename,$page) {
-    global $Now, $Version, $NewlineXXX;
+    global $Now, $Version;
     $page['name'] = $pagename;
     $page['time'] = $Now;
     $page['host'] = $_SERVER['REMOTE_ADDR'];
@@ -631,7 +631,6 @@ class PageStore {
       $r0 = array('%', "\n", '<');
       $r1 = array('%25', '%0a', '%3c');
       $x = "version=$Version ordered=1 urlencoded=1\n";
-      if ($NewlineXXX) { $r1[1] = $NewlineXXX; $x .= "newline=$NewlineXXX\n"; }
       $s = true && fputs($fp, $x); $sz = strlen($x);
       foreach($page as $k=>$v) 
         if ($k > '' && $k{0} != '=') {
@@ -1194,12 +1193,11 @@ function SaveAttributes($pagename,&$page,&$new) {
 
 function PostPage($pagename, &$page, &$new) {
   global $DiffKeepDays, $DiffFunction, $DeleteKeyPattern, $EnablePost,
-    $Now, $Author, $WikiDir, $IsPagePosted, $NewlineXXX;
+    $Now, $Author, $WikiDir, $IsPagePosted;
   SDV($DiffKeepDays,3650);
   SDV($DeleteKeyPattern,"^\\s*delete\\s*$");
   $IsPagePosted = false;
   if ($EnablePost) {
-    if (@$NewlineXXX) $new['text']=str_replace($NewlineXXX,"\n",$new['text']);
     if ($new['text']==@$page['text']) { $IsPagePosted=true; return; }
     $new["author"]=@$Author;
     $new["author:$Now"] = @$Author;
