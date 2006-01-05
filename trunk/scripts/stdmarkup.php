@@ -54,7 +54,7 @@ Markup('include', '>if',
   '/\\(:include\\s+(\\S.*?):\\)/ei',
   "PRR(IncludeText(\$pagename, '$1'))");
 
-$SaveAttrPatterns['/\\(:(if|include\\s).*?:\\)/i'] = ' ';
+$SaveAttrPatterns['/\\(:(if|include)(\\s.*?)?:\\)/i'] = ' ';
 
 ## GroupHeader/GroupFooter handling
 Markup('nogroupheader', '>include',
