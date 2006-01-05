@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2005 Patrick R. Michaud
+    Copyright 2001-2006 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
@@ -40,7 +40,7 @@ $WikiWordPattern = '[[:upper:]][[:alnum:]]*(?:[[:upper:]][[:lower:]0-9]|[[:lower
 $WikiDir = new PageStore('wiki.d/{$FullName}');
 $WikiLibDirs = array(&$WikiDir,new PageStore('$FarmD/wikilib.d/{$FullName}'));
 $InterMapFiles = array("$FarmD/scripts/intermap.txt",
-  "$FarmD/local/farmmap.txt", 'Site.InterMap', 'local/localmap.txt');
+  "$FarmD/local/farmmap.txt", '$SiteGroup.InterMap', 'local/localmap.txt');
 $Newline = "\263";                                 # deprecated, 2.0.0
 $KeepToken = "\235\235";  
 $K0=array('='=>'','@'=>'<code>');  $K1=array('='=>'','@'=>'</code>');
@@ -116,8 +116,8 @@ $FmtPV = array(
   '$Title'        => 
     '@$page["title"] ? $page["title"] : ($GLOBALS["SpaceWikiWords"]
        ? $AsSpacedFunction($name) : $name)',
-  '$LastModifiedBy' => '$page["author"]',
-  '$LastModifiedHost' => '$page["host"]',
+  '$LastModifiedBy' => '@$page["author"]',
+  '$LastModifiedHost' => '@$page["host"]',
   '$LastModified' => 'strftime($GLOBALS["TimeFmt"], $page["time"])',
   '$SiteGroup'    => '$GLOBALS["SiteGroup"]',
   '$VersionNum'   => '$GLOBALS["VersionNum"]',
