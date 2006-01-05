@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2002-2005 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2002-2006 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -34,13 +34,14 @@ if (IsEnabled($EnableRobotControl,1))
 ## last modified.  If the browser has provided us with a matching 
 ## If-Modified-Since request header, we can return 304 Not Modified.
 SDV($LastModFile,"$WorkDir/.lastmod");
-if (@$EnableIMSCaching && in_array($action,(array)$CacheActions)) {
+if (in_array($action,(array)$CacheActions)) {
   $v = @filemtime($LastModFile);
   if ($v) {
-    $HTTPLastMod=gmdate('D, d M Y H:i:s \G\M\T',$v);
-    $HTTPHeaders[] = "Cache-Control: no-cache";
+    $HTTPLastMod = gmdate('D, d M Y H:i:s \G\M\T',$v);
     $HTTPHeaders[] = "Last-Modified: $HTTPLastMod";
-    if (@$_SERVER['HTTP_IF_MODIFIED_SINCE']==$HTTPLastMod) 
+    $HTTPHeaders[] = "Cache-Control: no-cache";
+    if (@$EnableIMSCaching 
+        && (@$_SERVER['HTTP_IF_MODIFIED_SINCE']==$HTTPLastMod))
       { header("HTTP/1.0 304 Not Modified"); exit(); }
   }
 }
