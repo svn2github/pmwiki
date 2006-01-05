@@ -113,6 +113,7 @@ function HandleRefCount($pagename, $auth='read') {
   global $HandleRefCountFmt,$PageStartFmt,$PageEndFmt;
   $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
   if (!$page) Abort('?unauthorized');
+  PCache($pagename, $page);
   SDV($HandleRefCountFmt,array(&$PageStartFmt,
     'function:PrintRefCount',&$PageEndFmt));
   PrintFmt($pagename,$HandleRefCountFmt);
