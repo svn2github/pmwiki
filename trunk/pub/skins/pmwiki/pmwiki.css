@@ -51,7 +51,8 @@ h5 { font-size:100%; font-weight:normal; font-style:italic; }
   font-size:80%; white-space:nowrap; }
 #wikicmds ul { list-style:none; }
 #wikicmds li { display:inline; margin:0px 5px; }
-#wikicmds li a { text-decoration:none; color:black; }
+#wikicmds li a { text-decoration:none; color:black; border:none; }
+#wikicmds li a.createlink { display:none; }
 #wikicmds li a:hover { text-decoration:underline; color:blue; }
 
 #wikibody { padding:0px 10px 10px 10px; background-color:white; }
