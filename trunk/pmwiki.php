@@ -231,12 +231,9 @@ if ($q != @$_SERVER['QUERY_STRING']) {
   $_REQUEST = array_merge($_REQUEST, $_GET, $_POST);
 }
 
-foreach(array('action','text') as $v) {
-  if (isset($_GET[$v])) $$v=$_GET[$v];
-  elseif (isset($_POST[$v])) $$v=$_POST[$v];
-  else $$v='';
-}
-if ($action=='') $action='browse';
+if (isset($_GET['action'])) $action = $_GET['action'];
+elseif (isset($_POST['action'])) $action = $_POST['action'];
+else $action = 'browse';
 
 $pagename = $_REQUEST['n'];
 if (!$pagename) $pagename = $_REQUEST['pagename'];
@@ -469,8 +466,8 @@ function PageVar($pagename, $var, $pn = '') {
   if ($pn) {
     $pn = isset($Cursor[$pn]) ? $Cursor[$pn] : MakePageName($pagename, $pn);
   } else $pn = $pagename;
-  if (!$pn) return '';
-  list($group, $name) = explode('.', $pn);
+  if (!$pn || !preg_match('/^(.*)[.\\/]([^.\\/]+)$/', $pn, $match)) return '';
+  list($d, $group, $name) = $match;
   if (!isset($PCache[$pn]) 
       && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) {
     PCache($pn, ReadPage($pn, READPAGE_CURRENT));
@@ -1188,9 +1185,7 @@ function SaveAttributes($pagename,&$page,&$new) {
     if (@$p["=$k"]) $new[$k] = implode("\n", (array)$p["=$k"]);
     else unset($new[$k]);
   }
-  if ($SaveAttrExcerptLength) 
-    $new['excerpt'] = substr($html, 0, $SaveAttrExcerptLength);
-  else unset($new['excerpt']);
+  unset($new['excerpt']);
 }
 
 function PostPage($pagename, &$page, &$new) {
