@@ -33,8 +33,8 @@ if (IsEnabled($EnableRobotControl,1))
 ## diff), then set the Last-Modified header to the time the site was 
 ## last modified.  If the browser has provided us with a matching 
 ## If-Modified-Since request header, we can return 304 Not Modified.
-SDV($LastModFile,"$WorkDir/.lastmod");
-if (in_array($action,(array)$CacheActions)) {
+if (@$EnableIMSCaching) SDV($LastModFile,"$WorkDir/.lastmod");
+if (@$LastModFile && in_array($action,(array)$CacheActions)) {
   $v = @filemtime($LastModFile);
   if ($v) {
     $HTTPLastMod = gmdate('D, d M Y H:i:s \G\M\T',$v);
