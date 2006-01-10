@@ -43,7 +43,7 @@ if ($MetaRobots)
     "  <meta name='robots' content='\$MetaRobots' />\n";
 
 ## $RobotPattern is used to identify robots.
-SDV($RobotPattern,'Googlebot|Slurp|msnbot|Teoma|BecomeBot|HTTrack');
+SDV($RobotPattern,'Googlebot|Slurp|msnbot|Teoma|ia_archiver|BecomeBot|HTTrack');
 SDV($IsRobotAgent, 
   $RobotPattern && preg_match("!$RobotPattern!", @$_SERVER['HTTP_USER_AGENT']));
 if (!$IsRobotAgent) return;
