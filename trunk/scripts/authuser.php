@@ -72,6 +72,8 @@ function AuthUserId($pagename, $id, $pw=NULL) {
   $authlist["id:-$authid"] = -1;
   foreach(preg_grep('/^@/', (array)@$auth[$authid]) as $g) 
     $authlist[$g] = 1;
+  foreach(preg_grep('/^@/', (array)@$auth['*']) as $g) 
+    $authlist[$g] = 1;
   SessionAuth($pagename, array('authid' => $authid, 'authlist' => $authlist));
 }
 
