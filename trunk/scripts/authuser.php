@@ -36,7 +36,7 @@ if (@$_POST['authid'])
 
 function AuthUserId($pagename, $id, $pw=NULL) {
   global $AuthUser, $AuthUserPageFmt, $AuthUserFunctions, 
-    $AuthId, $AuthList, $MessagesFmt;
+    $AuthId, $MessagesFmt;
   $auth = $AuthUser; $authid = '';
 
   # load information from Site.AuthUser (or page in $AuthUserPageFmt)
@@ -49,7 +49,7 @@ function AuthUserId($pagename, $id, $pw=NULL) {
 
   $pn = FmtPageName($AuthUserPageFmt, $pagename);
   $apage = ReadPage($pn, READPAGE_CURRENT);
-  if ($apage && preg_match_all("/\n\\s*([@\\w][^\\s:]*):(.*)/", 
+  if ($apage && preg_match_all("/^\\s*([@\\w][^\\s:]*):(.*)/m", 
                                $apage['text'], $matches, PREG_SET_ORDER)) {
     foreach($matches as $m) {
       if (!preg_match_all('/\\bldap:\\S+|[^\\s,]+/', $m[2], $v))
@@ -68,16 +68,11 @@ function AuthUserId($pagename, $id, $pw=NULL) {
 
   if (!$authid) { $GLOBALS['InvalidLogin'] = 1; return; }
   if (!isset($AuthId)) $AuthId = $authid;
-  @session_start(); 
-  $_SESSION['authid'] = $authid; 
-  $_SESSION['authlist']["id:$authid"] = 1;
-  $_SESSION['authlist']["id:-$authid"] = -1;
-  $_SESSION['authlist']["id:*"] = 1;
-  foreach ((array)@$auth[$authid] as $g) 
-    if ($g{0} == '@') @$_SESSION['authlist'][$g] = 1;
-  foreach ((array)@$auth['*'] as $g) 
-    if ($g{0} == '@') @$_SESSION['authlist'][$g] = 1;
-  $AuthList = array_merge($AuthList, $_SESSION['authlist']);
+  $authlist["id:$authid"] = 1;
+  $authlist["id:-$authid"] = -1;
+  foreach(preg_grep('/^@/', (array)@$auth[$authid]) as $g) 
+    $authlist[$g] = 1;
+  SessionAuth($pagename, array('authid' => $authid, 'authlist' => $authlist));
 }
 
 

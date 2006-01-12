@@ -1302,17 +1302,26 @@ function HandleSource($pagename, $auth = 'read') {
 ## PmWikiAuth provides password-protection of pages using PHP sessions.
 ## It is normally called from RetrieveAuthPage.  Since RetrieveAuthPage
 ## can be called a lot within a single page execution (i.e., for every
-## page accessed), we do a lot of caching of intermediate results here
+## page accessed), we cache the results of GroupAttribute pages
 ## to be able to speed up subsequent calls.
 function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   global $DefaultPasswords, $AllowPassword, $GroupAttributesFmt,
-    $AuthCascade, $FmtV, $AuthPromptFmt, $PageStartFmt, $PageEndFmt, $AuthId,
-    $AuthList;
-  static $grouppasswd, $authpw;
+    $AuthCascade, $FmtV, $AuthPromptFmt, $PageStartFmt, $PageEndFmt, 
+    $AuthId, $AuthList, $AuthPw;
+  static $grouppasswd;
   SDV($GroupAttributesFmt,'$Group/GroupAttributes');
   SDV($AllowPassword,'nopass');
   $page = ReadPage($pagename, $since);
   if (!$page) { return false; }
+  if (!isset($grouppasswd)) 
+    SessionAuth($pagename, (@$_POST['authpw']) 
+                           ? array('authpw' => array($_POST['authpw'] => 1))
+                           : '');
+  if (@$AuthId) {
+    $AuthList["id:$AuthId"] = 1;
+    $AuthList["id:-$AuthId"] = -1;
+    $AuthList["id:*"] = 1;
+  }
   $groupattr = FmtPageName($GroupAttributesFmt, $pagename);
   if (!isset($grouppasswd[$groupattr])) {
     $grouppasswd[$groupattr] = array();
@@ -1334,22 +1343,6 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     if (!$passwd[$k] && $passwd[$t]) 
       { $passwd[$k] = $passwd[$t]; $page['=pwsource'][$k] = "cascade:$t"; }
   }
-  if (!isset($authpw)) {
-    if (@$_POST['authpw'] || @$_REQUEST[session_name()]) {
-      $sid = session_id();
-      @session_start();
-      if (@$_POST['authpw']) @$_SESSION['authpw'][$_POST['authpw']]++;
-      $authpw = array_keys((array)@$_SESSION['authpw']);
-      if (!isset($AuthId)) $AuthId = @$_SESSION['authid'];
-      $AuthList = array_merge($AuthList, (array)@$_SESSION['authlist']);
-      if (!$sid) session_write_close();
-    } else { $authpw = array(); }
-    if (@$AuthId) {
-      $AuthList["id:$AuthId"] = 1;
-      $AuthList["id:-$AuthId"] = -1;
-      $AuthList["id:*"] = 1;
-    }
-  }
   foreach($passwd as $lv => $a) {
     if (!$a) { @$page['=auth'][$lv]++; continue; }
     foreach((array)$a as $pwchal) {
@@ -1360,7 +1353,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
       }
       if (crypt($AllowPassword, $pwchal) == $pwchal)
         { @$page['=auth'][$lv]++; continue 2; }
-      foreach ($authpw as $pwresp)
+      foreach ((array)$AuthPw as $pwresp)
         if (crypt($pwresp, $pwchal) == $pwchal)
           { @$page['=auth'][$lv]++; continue 2; }
     }
@@ -1407,6 +1400,30 @@ function NormalizeAuth($auth, $source) {
   if ($alist) $alist['=pwsource'] = $source;
   return $alist;
 }
+
+
+## SessionAuth works with PmWikiAuth to manage authorizations
+## as stored in sessions.  First, it can be used to set session
+## variables by calling it with an $auth argument.  It then
+## uses the authid, authpw, and authlist session variables
+## to set the corresponding values of $AuthId, $AuthPw, and $AuthList
+## as needed.
+function SessionAuth($pagename, $auth = NULL) {
+  global $AuthId, $AuthList, $AuthPw;
+
+  if (!$auth && !$_REQUEST[session_name()]) return;
+
+  $sid = session_id();
+  @session_start();
+  foreach((array)$auth as $k => $v)
+    if ($k) $_SESSION[$k] = array_merge((array)$_SESSION[$k], (array)$v);
+
+  if (!isset($AuthId)) $AuthId = @end($_SESSION['authid']);
+  $AuthPw = array_keys((array)@$_SESSION['authpw']);
+  $AuthList = array_merge($AuthList, (array)@$_SESSION['authlist']);
+  if (!$sid) session_write_close();
+}
+
 
 function PrintAttrForm($pagename) {
   global $PageAttributes, $PCache, $FmtV;

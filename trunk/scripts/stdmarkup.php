@@ -406,4 +406,9 @@ function CondDate($condparm) {
   if ($Now >= $g1) return false;
   return true;
 }
-  
+
+
+# This pattern enables the (:encrypt <phrase>:) markup/replace-on-save
+# pattern.
+SDV($ROSPatterns['/\\(:encrypt\\s+([^\\s:=]+).*?:\\)/e'], "crypt(PSS('$1'))");
+
