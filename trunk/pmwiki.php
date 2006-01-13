@@ -466,16 +466,14 @@ function PageVar($pagename, $var, $pn = '') {
   if ($pn) {
     $pn = isset($Cursor[$pn]) ? $Cursor[$pn] : MakePageName($pagename, $pn);
   } else $pn = $pagename;
-  if (!$pn || !preg_match('/^(.*)[.\\/]([^.\\/]+)$/', $pn, $match)) return '';
-  list($d, $group, $name) = $match;
-  if (!isset($PCache[$pn]) 
-      && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) {
+  if (preg_match('/^(.+)[.\\/]([^.\\/]+)$/', $pn, $match)
+      && !isset($PCache[$pn]) 
+      && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) 
     PCache($pn, ReadPage($pn, READPAGE_CURRENT));
-  }
+  @list($d, $group, $name) = $match;
   $page = &$PCache[$pn];
   if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
   return '';
-  #return @$page[substr($var, 1)];
 }
   
 ## FmtPageName handles $[internationalization] and $Variable 
