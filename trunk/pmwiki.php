@@ -106,7 +106,7 @@ $FmtPV = array(
     'PUE(($EnablePathInfo) 
          ? "$ScriptUrl/$group/$name"
          : "$ScriptUrl?n=$group.$name")',
-  '$FullName'     => '$pn',
+  '$FullName'     => '"$group.$name"',
   '$Groupspaced'  => '$AsSpacedFunction($group)',
   '$Namespaced'   => '$AsSpacedFunction($name)',
   '$Group'        => '$group',
@@ -466,6 +466,7 @@ function PageVar($pagename, $var, $pn = '') {
   if ($pn) {
     $pn = isset($Cursor[$pn]) ? $Cursor[$pn] : MakePageName($pagename, $pn);
   } else $pn = $pagename;
+  if ($pn == '') $pn = '_Group._Name';
   if (preg_match('/^(.+)[.\\/]([^.\\/]+)$/', $pn, $match)
       && !isset($PCache[$pn]) 
       && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) 
