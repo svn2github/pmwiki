@@ -468,7 +468,7 @@ function PageVar($pagename, $var, $pn = '') {
   } else $pn = $pagename;
   if ($pn == '') $pn = '_Group._Name';
   if (preg_match('/^(.+)[.\\/]([^.\\/]+)$/', $pn, $match)
-      && !isset($PCache[$pn]) 
+      && !isset($PCache[$pn]['time']) 
       && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) 
     PCache($pn, ReadPage($pn, READPAGE_CURRENT));
   @list($d, $group, $name) = $match;
