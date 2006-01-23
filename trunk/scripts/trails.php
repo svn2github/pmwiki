@@ -51,13 +51,14 @@ function ReadTrail($pagename,$trailname) {
   foreach(explode("\n",@$trailpage['text']) as $x) {
     $x = preg_replace("/\\[\\[([^\\]]*)->([^\\]]*)\\]\\]/",'[[$2|$1]]',$x);
     if (!preg_match("/^([#*:]+) \\s* 
-          (\\[\\[([^|]*?)(\\|.*?)?\\]\\]($SuffixPattern)
+          (\\[\\[([^:#!|][^|:]*?)(\\|.*?)?\\]\\]($SuffixPattern)
           | (($GroupPattern([\\/.]))?$WikiWordPattern))/x",$x,$match))
        continue;
     if (@$match[6]) {
        if (!$LinkWikiWords) continue;
-       $tgt = MakePageName($trailname,$match[6]);
-    } else $tgt = MakePageName($trailname,$match[3]);
+       $tgt = MakePageName($trailname, $match[6]);
+    } else $tgt = MakePageName($trailname,
+                               preg_replace('/[#?].+/', '', $match[3]));
     $t[$n]['depth'] = $depth = strlen($match[1]);
     $t[$n]['pagename'] = $tgt;
     $t[$n]['markup'] = $match[2];
