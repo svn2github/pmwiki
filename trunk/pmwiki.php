@@ -466,7 +466,7 @@ function PageVar($pagename, $var, $pn = '') {
   if ($pn) {
     $pn = isset($Cursor[$pn]) ? $Cursor[$pn] : MakePageName($pagename, $pn);
   } else $pn = $pagename;
-  if ($pn == '') $pn = '_Group._Name';
+  if ($pn == '') return '';
   if (preg_match('/^(.+)[.\\/]([^.\\/]+)$/', $pn, $match)
       && !isset($PCache[$pn]['time']) 
       && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) 
@@ -968,11 +968,12 @@ function LinkPage($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
     $LinkPageCreateSpaceFmt,$LinkPageCreateFmt,$FmtV,$LinkTargets;
   if (!$fmt && $path{0} == '#') {
     $path = preg_replace("/[^-.:\\w]/", '', $path);
-    return "<a href='#$path'>$txt</a>";
+    return ($path) ? "<a href='#$path'>$txt</a>" : '';
   }
-  if (!preg_match("/^([^#?]+)($QueryFragPattern)?$/",$path,$match))
+  if (!preg_match("/^\\s*([^#?]+)($QueryFragPattern)?$/",$path,$match))
     return '';
-  $tgtname = MakePageName($pagename,$match[1]); 
+  $tgtname = MakePageName($pagename, $match[1]); 
+  if (!$tgtname) return '';
   $qf = @$match[2];
   @$LinkTargets[$tgtname]++;
   if (!$fmt) {
