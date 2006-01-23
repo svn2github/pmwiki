@@ -183,7 +183,7 @@ Markup('[[<<]]','inline','/\\[\\[&lt;&lt;\\]\\]/',"<br clear='all' />");
 
 ###### Links ######
 ## [[free links]]
-Markup('[[','links',"/(?>\\[\\[\\s*)(\\S.*?)\\]\\]($SuffixPattern)/e",
+Markup('[[','links',"/(?>\\[\\[\\s*)(.*?)\\]\\]($SuffixPattern)/e",
   "Keep(MakeLink(\$pagename,PSS('$1'),NULL,'$2'),'L')");
 
 ## [[!Category]]
@@ -194,12 +194,12 @@ Markup('[[!','<[[','/\\[\\[!(.*?)\\]\\]/e',
 
 ## [[target | text]]
 Markup('[[|','<[[',
-  "/(?>\\[\\[([^|\\]]+)\\|\\s*)(.*?)\\s*\\]\\]($SuffixPattern)/e",
+  "/(?>\\[\\[([^|\\]]*)\\|\\s*)(.*?)\\s*\\]\\]($SuffixPattern)/e",
   "Keep(MakeLink(\$pagename,PSS('$1'),PSS('$2'),'$3'),'L')");
 
 ## [[text -> target ]]
 Markup('[[->','>[[|',
-  "/(?>\\[\\[([^\\]]+?)\\s*-+&gt;\\s*)(\\S.+?)\\]\\]($SuffixPattern)/e",
+  "/(?>\\[\\[([^\\]]+?)\\s*-+&gt;\\s*)(.*?)\\]\\]($SuffixPattern)/e",
   "Keep(MakeLink(\$pagename,PSS('$2'),PSS('$1'),'$3'),'L')");
 
 ## [[#anchor]]
