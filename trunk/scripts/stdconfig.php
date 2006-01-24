@@ -18,8 +18,7 @@
     in config.php.
 */
 
-SDV($DefaultPage,"$DefaultGroup.$DefaultName");
-if ($pagename=='') $pagename=$DefaultPage;
+$pagename = ResolvePageName($pagename);
 
 if (!IsEnabled($EnableStdConfig,1)) return;
 

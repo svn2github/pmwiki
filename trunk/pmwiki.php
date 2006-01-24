@@ -66,7 +66,6 @@ $RecentChangesFmt = array(
     '* [[{$Group}.{$Name}]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]',
   '$Group.RecentChanges' =>
     '* [[{$Group}/{$Name}]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]');
-$DefaultPageTextFmt = '$[Describe $Name here.]';
 $ScriptUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 $PubDirUrl = preg_replace('#/[^/]*$#','/pub',$ScriptUrl,1);
 $HTMLVSpace = "<p class='vspace'></p>";
@@ -247,6 +246,7 @@ if (!$pagename &&
 if (preg_match('/[\\x80-\\xbf]/',$pagename)) 
   $pagename=utf8_decode($pagename);
 $pagename = preg_replace('![^[:alnum:]\\x80-\\xff]+$!','',$pagename);
+$FmtPV['$RequestedPage'] = "'".htmlspecialchars($pagename, ENT_QUOTES)."'";
 
 if (file_exists("$FarmD/local/farmconfig.php")) 
   include_once("$FarmD/local/farmconfig.php");
@@ -258,21 +258,6 @@ if (IsEnabled($EnableLocalConfig,1)) {
 }
 
 SDV($CurrentTime,strftime($TimeFmt,$Now));
-SDV($DefaultPage,"$DefaultGroup.$DefaultName");
-SDV($UrlPage,'{$UrlPage}');
-$p = MakePageName($DefaultPage, $pagename);
-if (!$pagename) $pagename = $DefaultPage;
-else if (preg_match("/^$GroupPattern([\\/.])$NamePattern$/i", $pagename)) 
-  { $pagename = $p; }
-else if ($p && (PageExists($p) || preg_match('/[\\/.]/', $pagename))) { 
-  $pagename = $p;
-  if (IsEnabled($EnableFixedUrlRedirect,1)) { Redirect($p); exit(); }
-} else {
-  $UrlPage = preg_replace('/^.*[\\/.]/', '', $p);
-  SDV($PageNotFound, "$SiteGroup.PageNotFound");
-  $pagename = $PageNotFound;
-  SDV($MetaRobots, "noindex,nofollow");
-}
 
 if (IsEnabled($EnableStdConfig,1))
   include_once("$FarmD/scripts/stdconfig.php");
@@ -421,6 +406,23 @@ function fixperms($fname, $add = 0) {
   $bp |= $add;
   if ($bp && (fileperms($fname) & $bp) != $bp)
     @chmod($fname,fileperms($fname)|$bp);
+}
+
+## ResolvePageName "normalizes" a pagename based on the current
+## settings of $DefaultPage and $PagePathFmt.  It's normally used
+## during initialization to fix up any missing or partial pagenames.
+function ResolvePageName($pagename) {
+  global $DefaultPage, $DefaultGroup, $DefaultName,
+    $GroupPattern, $NamePattern, $EnableFixedUrlRedirect;
+  SDV($DefaultPage, "$DefaultGroup.$DefaultName");
+  if ($pagename == '') return $DefaultPage;
+  if (preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $pagename))
+    return $pagename;
+  $p = MakePageName($DefaultPage, $pagename);
+  if (IsEnabled($EnableFixedUrlRedirect, 1)
+      && $p && (PageExists($p) || preg_match('/[\\/.]/', $pagename)))
+    { Redirect($p); exit(); }
+  return $p;
 }
 
 ## MakePageName is used to convert a string into a valid pagename.
@@ -1088,15 +1090,20 @@ function MarkupToHTML($pagename, $text, $escape = true) {
    
 function HandleBrowse($pagename, $auth = 'read') {
   # handle display of a page
-  global $DefaultPageTextFmt, $FmtV, $HandleBrowseFmt, $PageStartFmt,
-    $PageEndFmt, $PageRedirectFmt;
+  global $DefaultPageTextFmt, $PageNotFoundHeaderFmt, $HTTPHeaders,
+    $FmtV, $HandleBrowseFmt, $PageStartFmt, $PageEndFmt, $PageRedirectFmt;
   $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
   if (!$page) Abort('?cannot read $pagename');
   PCache($pagename,$page);
+  if (PageExists($pagename)) $text = @$page['text'];
+  else {
+    SDV($DefaultPageTextFmt,'(:include $[{$SiteGroup}.PageNotFound]:)');
+    $text = FmtPageName($DefaultPageTextFmt, $pagename);
+    SDV($PageNotFoundHeaderFmt, 'HTTP/1.1 404 Not Found');
+    SDV($HTTPHeaders['status'], $PageNotFoundHeaderFmt);
+  }
   SDV($PageRedirectFmt,"<p><i>($[redirected from] 
     <a rel='nofollow' href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\$HTMLVSpace\n");
-  if (isset($page['text'])) $text=$page['text'];
-  else $text = FmtPageName($DefaultPageTextFmt,$pagename);
   if (@!$_GET['from']) {
     $PageRedirectFmt = '';
     if (preg_match('/\\(:redirect\\s+(.+?):\\)/',$text,$match)) {
