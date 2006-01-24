@@ -28,7 +28,10 @@
 error_reporting(E_ALL ^ E_NOTICE);
 StopWatch('PmWiki');
 if (ini_get('register_globals')) 
-  foreach($_REQUEST as $k=>$v) { unset(${$k}); }
+  foreach($_REQUEST as $k=>$v) { 
+    if (preg_match('/^(GLOBALS|_SERVER|_GET|_POST|_COOKIE|_FILES|_ENV|_REQUEST|_SESSION)$/i', $k)) exit();
+    unset(${$k}); 
+  }
 $UnsafeGlobals = array_keys($GLOBALS); $GCount=0; $FmtV=array();
 SDV($FarmD,dirname(__FILE__));
 SDV($WorkDir,'wiki.d');
