@@ -191,6 +191,12 @@ SDV($CategoryGroup,'Category');
 SDV($LinkCategoryFmt,"<a class='categorylink' href='\$LinkUrl'>\$LinkText</a>");
 Markup('[[!','<[[','/\\[\\[!(.*?)\\]\\]/e',
   "Keep(MakeLink(\$pagename,PSS('$CategoryGroup/$1'),NULL,'',\$GLOBALS['LinkCategoryFmt']),'L')");
+# This is a temporary workaround for blank category pages.
+# It may be removed in a future release (Pm, 2006-01-24)
+if (preg_match("/^$CategoryGroup\\./", $pagename)) {
+  SDV($DefaultPageTextFmt, '');
+  SDV($PageNotFoundHeaderFmt, 'HTTP/1.1 200 Ok');
+}
 
 ## [[target | text]]
 Markup('[[|','<[[',
