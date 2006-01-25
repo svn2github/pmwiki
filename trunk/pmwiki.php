@@ -416,9 +416,9 @@ function ResolvePageName($pagename) {
     $GroupPattern, $NamePattern, $EnableFixedUrlRedirect;
   SDV($DefaultPage, "$DefaultGroup.$DefaultName");
   if ($pagename == '') return $DefaultPage;
-  if (preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $pagename))
-    return $pagename;
   $p = MakePageName($DefaultPage, $pagename);
+  if (preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $pagename))
+    return $p;
   if (IsEnabled($EnableFixedUrlRedirect, 1)
       && $p && (PageExists($p) || preg_match('/[\\/.]/', $pagename)))
     { Redirect($p); exit(); }
