@@ -181,8 +181,10 @@ $AuthList = array('' => 1, 'nopass:' => 1);
 $Conditions['enabled'] = '(boolean)@$GLOBALS[$condparm]';
 $Conditions['false'] = 'false';
 $Conditions['true'] = 'true';
-$Conditions['group'] = "PageVar(\$pagename, '\$Group') == \$condparm";
-$Conditions['name'] = "PageVar(\$pagename, '\$Name') == \$condparm";
+$Conditions['group'] = 
+  "(boolean)MatchPageNames(\$pagename, FixGlob(\$condparm, '$1$2.*'))";
+$Conditions['name'] = 
+  "(boolean)MatchPageNames(\$pagename, FixGlob(\$condparm, '$1*.$2'))";
 $Conditions['match'] = 'preg_match("!$condparm!",$pagename)';
 $Conditions['auth'] =
   '@$GLOBALS["PCache"][$GLOBALS["pagename"]]["=auth"][trim($condparm)]';
@@ -408,6 +410,40 @@ function fixperms($fname, $add = 0) {
     @chmod($fname,fileperms($fname)|$bp);
 }
 
+## MatchPageNames
+function MatchPageNames($pagelist, $pat) {
+  $pagelist = (array)$pagelist;
+  foreach((array)$pat as $p) {
+    if (count($pagelist) < 1) break;
+    switch ($p{0}) {
+      case '/': 
+        $pagelist = preg_grep($p, $pagelist); 
+        continue;
+      case '!':
+        $pagelist = array_diff($pagelist, preg_grep($p, $pagelist)); 
+        continue;
+      default:
+        $p = preg_quote($p, '/');
+        $p = str_replace(array('/', '\\*', '\\?', '\\[', '\\]', '\\^'),
+                         array('.', '.*', '.', '[', ']', '^'), $p);
+        $excl = array(); $incl = array();
+        foreach(preg_split('/[\\s,]+/', $p, -1, PREG_SPLIT_NO_EMPTY) as $q) {
+          if ($q{0} == '-' || $q{0} == '!') $excl[] = '^'.substr($q, 1).'$';
+          else $incl[] = "^$q$";
+        }
+        if ($excl) 
+          $pagelist = array_diff($pagelist, 
+                          preg_grep('/' . join('|', $excl) . '/i', $pagelist));
+        if ($incl)
+          $pagelist = preg_grep('/' . join('|', $incl) . '/i', $pagelist);
+    }
+  }
+  return $pagelist;
+}
+function FixGlob($x, $rep = '$1*.$2') {
+  return preg_replace('/([\\s,][-!]?)([^.\\s,]+)(?=[\\s,])/', $rep, " $x ");
+}
+  
 ## ResolvePageName "normalizes" a pagename based on the current
 ## settings of $DefaultPage and $PagePathFmt.  It's normally used
 ## during initialization to fix up any missing or partial pagenames.
@@ -662,26 +698,24 @@ class PageStore {
   function ls($pats=NULL) {
     global $GroupPattern, $NamePattern;
     $pats=(array)$pats; 
-    array_unshift($pats, "/^$GroupPattern\.$NamePattern$/");
+    array_push($pats, "/^$GroupPattern\.$NamePattern$/");
     $dir = $this->pagefile('$Group.$Name');
     $dirlist = array(preg_replace('!/*[^/]*\\$.*$!','',$dir));
     $out = array();
     while (count($dirlist)>0) {
       $dir = array_shift($dirlist);
       $dfp = opendir($dir); if (!$dfp) { continue; }
+      $o = array();
       while ( ($pagefile = readdir($dfp)) !== false) {
         if ($pagefile{0} == '.') continue;
         if (is_dir("$dir/$pagefile"))
           { array_push($dirlist,"$dir/$pagefile"); continue; }
+        
         if (@$seen[$pagefile]++) continue;
-        foreach($pats as $p) {
-          if ($p{0} == '!') {
-           if (preg_match($p,$pagefile)) continue 2;
-          } else if (!preg_match($p,$pagefile)) continue 2;
-        }
-        $out[] = $pagefile;
+        $o[] = $pagefile;
       }
       closedir($dfp);
+      $out = array_merge($out, MatchPageNames($o, $pats));
     }
     return $out;
   }

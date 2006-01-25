@@ -159,7 +159,8 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   $readf |= $order && ($order!='name') && ($order!='-name');
 
   $pats = @(array)$SearchPatterns[$opt['list']];
-  if (@$opt['group']) array_unshift($pats, "/^({$opt['group']})\./i");
+  if (@$opt['group']) $pats[] = FixGlob($opt['group'], '$1$2.*');
+  if (@$opt['name']) $pats[] = FixGlob($opt['name'], '$1*.$2');
 
   # inclp/exclp contain words to be included/excluded.  
   $inclp = array(); $exclp = array();
