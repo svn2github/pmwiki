@@ -923,7 +923,7 @@ function Block($b) {
     { $c = array_pop($cs); $out .= $BlockMarkups[$c][2]; }
   if (!$code) {
     if (@end($cs) == 'p') { $out .= $HTMLPNewline; $code = 'p'; }
-    else if ($depth < 2) { $code = 'p'; }
+    else if ($depth < 2) { $code = 'p'; $mf['is'][$depth] = 0; }
     else { $out .= $HTMLPNewline; $code = 'block'; }
   }
   if ($depth>0 && $depth==count($cs) && $cs[$depth-1]!=$code)
