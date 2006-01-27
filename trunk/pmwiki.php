@@ -458,7 +458,7 @@ function ResolvePageName($pagename) {
   if (IsEnabled($EnableFixedUrlRedirect, 1)
       && $p && (PageExists($p) || preg_match('/[\\/.]/', $pagename)))
     { Redirect($p); exit(); }
-  return $p;
+  return MakePageName($DefaultPage, "$pagename.$pagename");
 }
 
 ## MakePageName is used to convert a string into a valid pagename.
