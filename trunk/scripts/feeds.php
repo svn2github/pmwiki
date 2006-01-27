@@ -119,6 +119,7 @@ SDVA($FeedFmt['rss']['item'], array(
   'description' => '$ItemDesc',
   'dc:contributor' => '{$LastModifiedBy}',
   'dc:date' => '$ItemISOTime',
+  'pubDate' => '$ItemRSSTime',
   'enclosure' => 'RSSEnclosure'));
 
 ## RDF 1.0, for ?action=rdf
@@ -215,6 +216,7 @@ function HandleFeed($pagename, $auth = 'read') {
       : trim(preg_replace(array_keys($FeedDescPatterns), 
                      array_values($FeedDescPatterns), @$page['excerpt']));
     $FmtV['$ItemISOTime'] = gmstrftime($ISOTimeFmt, $page['time']);
+    $FmtV['$ItemRSSTime'] = gmdate($RSSTimeFmt, $page['time']);
 
     $out .= FmtPageName($f['item']['_start'], $pn);
     foreach((array)@$f['item'] as $k => $v) {
