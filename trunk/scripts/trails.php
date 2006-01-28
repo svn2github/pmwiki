@@ -62,7 +62,7 @@ function ReadTrail($pagename,$trailname) {
     $t[$n]['depth'] = $depth = strlen($match[1]);
     $t[$n]['pagename'] = $tgt;
     $t[$n]['markup'] = $match[2];
-    $t[$n]['_detail'] = $match[9];
+    $t[$n]['detail'] = $match[9];
     for($i=$depth;$i<10;$i++) $d[$i]=$n;
     if ($depth>1) $t[$n]['parent']=@$d[$depth-1];
     $n++;
