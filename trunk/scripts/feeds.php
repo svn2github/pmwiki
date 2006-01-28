@@ -173,7 +173,7 @@ function HandleFeed($pagename, $auth = 'read') {
     $opt = $FeedCategoryOpt;
   else $opt = $FeedTrailOpt;
   if (!$opt) 
-    { PCache($pagename, $page); $pagelist = array(&$PCache[$pagename]); }
+    { PCache($pagename, $page); $pagelist = array($pagename); }
   else {
     $opt = array_merge($opt, @$_REQUEST);
     $pagelist = MakePageList($pagename, $opt, 0);
