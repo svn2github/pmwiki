@@ -52,7 +52,7 @@ function ReadTrail($pagename,$trailname) {
     $x = preg_replace("/\\[\\[([^\\]]*)->([^\\]]*)\\]\\]/",'[[$2|$1]]',$x);
     if (!preg_match("/^([#*:]+) \\s* 
           (\\[\\[([^:#!|][^|:]*?)(\\|.*?)?\\]\\]($SuffixPattern)
-          | (($GroupPattern([\\/.]))?$WikiWordPattern))/x",$x,$match))
+          | (($GroupPattern([\\/.]))?$WikiWordPattern)) (.*)/x",$x,$match))
        continue;
     if (@$match[6]) {
        if (!$LinkWikiWords) continue;
@@ -62,6 +62,7 @@ function ReadTrail($pagename,$trailname) {
     $t[$n]['depth'] = $depth = strlen($match[1]);
     $t[$n]['pagename'] = $tgt;
     $t[$n]['markup'] = $match[2];
+    $t[$n]['_detail'] = $match[9];
     for($i=$depth;$i<10;$i++) $d[$i]=$n;
     if ($depth>1) $t[$n]['parent']=@$d[$depth-1];
     $n++;
