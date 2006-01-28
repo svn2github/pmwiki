@@ -1,9 +1,9 @@
-version=pmwiki-2.1.beta20 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (X11; U; Linux i686 (x86_64); en-US; rv:1.8) Gecko/20051128 SUSE/1.5-0.1 Firefox/1.5
-author=Pm
-host=24.1.26.255
+version=pmwiki-2.1.beta21 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.7.12) Gecko/20050915 Firefox/1.0.7
+author=HaganFox
+host=216.161.175.221
 name=Site.PageNotFound
-rev=32
+rev=36
 targets=Site.PageNotFound
-text=(:if name Site.PageNotFound:)%0a-> %25green font-style:italic%25 This page contains the text to be displayed when PmWiki is unable to locate a requested page.  Administrators can edit this page to change the message.%0a(:if:)%0a%0a(:if !group Category:)"{$RequestedPage}" doesn't exist.  %0a(:if auth edit:)%25rel=nofollow%25 ([[{$FullName}?action=edit | Create {$FullName}]]) %0a(:if:)%0a%0a
-time=1138385759
+text=(:nolinkwikiwords:)%0a(:if name {$SiteGroup}.PageNotFound:)%0a-> %25green font-style:italic%25 This page contains the text to be displayed when PmWiki is unable to locate a requested page.  Administrators can edit this page to change the message.%0a(:if:)%0a%0a(:if !group Category:)"{$RequestedPage}" doesn't exist.  %0a(:if auth edit:)%25rel=nofollow%25 ([[{$FullName}?action=edit | Create {$FullName}]]) %0a(:if:)%0a%0a
+time=1138476323
