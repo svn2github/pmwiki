@@ -42,9 +42,6 @@ SDV($DiffEndDelAddFmt,"</div>");
 SDV($DiffEndFmt,"</div>");
 SDV($DiffRestoreFmt,"
       <div class='diffrestore'><a href='{\$PageUrl}?action=edit&amp;restore=\$DiffId&amp;preview=y'>$[Restore]</a></div>");
-SDV($DiffAuthorPageExistsFmt,"<a class='authorlink'
-   href='{\$ScriptUrl}/\$DiffAuthorPage'>\$DiffAuthor</a>");
-SDV($DiffAuthorPageMissingFmt,"\$DiffAuthor");
 
 SDV($HandleActions['diff'], 'HandleDiff');
 SDV($HandleAuth['diff'], 'read');
