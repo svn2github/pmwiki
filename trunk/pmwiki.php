@@ -265,6 +265,7 @@ if (IsEnabled($EnableStdConfig,1))
   include_once("$FarmD/scripts/stdconfig.php");
 
 foreach((array)$InterMapFiles as $f) {
+  $f = FmtPageName($f, $pagename);
   if (($v = @file($f))) 
     $v = preg_replace('/^\\s*(?>\\w+)(?!:)/m', '$0:', implode('', $v));
   else if (PageExists($f)) {
@@ -687,6 +688,7 @@ class PageStore {
     PCache($pagename, $page);
   }
   function exists($pagename) {
+    if (!$pagename) return false;
     $pagefile = $this->pagefile($pagename);
     return ($pagefile && file_exists($pagefile));
   }
