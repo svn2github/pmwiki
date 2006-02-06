@@ -1242,7 +1242,6 @@ function PostPage($pagename, &$page, &$new) {
   SDV($DeleteKeyPattern,"^\\s*delete\\s*$");
   $IsPagePosted = false;
   if ($EnablePost) {
-    if ($new['text']==@$page['text']) { $IsPagePosted=true; return; }
     $new["author"]=@$Author;
     $new["author:$Now"] = @$Author;
     $new["host:$Now"] = $_SERVER['REMOTE_ADDR'];
@@ -1307,7 +1306,7 @@ function HandleEdit($pagename, $auth = 'edit') {
     if (isset($_POST[$k])) $new[$k]=str_replace("\r",'',stripmagic($_POST[$k]));
   $new['csum'] = $ChangeSummary;
   if ($ChangeSummary) $new["csum:$Now"] = $ChangeSummary;
-  $EnablePost &= (@$_POST['post'] || @$_POST['postedit']);
+  $EnablePost &= preg_grep('/^post/', array_keys(@$_POST));
   foreach((array)$EditFunctions as $fn) $fn($pagename,$page,$new);
   Lock(0);
   if ($IsPagePosted && !@$_POST['postedit']) { Redirect($pagename); return; }
