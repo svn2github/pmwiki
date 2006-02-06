@@ -7,6 +7,8 @@
 */
 
 array_unshift($EditFunctions, 'EditDraft');
+SDV($DraftSuffix, '-Draft');
+if ($DraftSuffix) $SearchPatterns['normal'][] = "!$DraftSuffix\$";
 
 if ($action == 'edit') 
   SDVA($InputTags['e_savedraftbutton'], array(
@@ -17,7 +19,6 @@ if ($action == 'edit')
 function EditDraft(&$pagename, &$page, &$new) {
   global $WikiDir, $DraftSuffix, $DeleteKeyPattern;
   SDV($DeleteKeyPattern, "^\\s*delete\\s*$");
-  SDV($DraftSuffix, '-Draft');
   $basename = preg_replace("/$DraftSuffix\$/", '', $pagename);
   $draftname = $basename . $DraftSuffix;
   if ($_POST['postdraft']) 
