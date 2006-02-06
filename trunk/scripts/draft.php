@@ -15,9 +15,10 @@ if ($action == 'edit')
     'accesskey' => XL('ak_savedraft')));
 
 function EditDraft(&$pagename, &$page, &$new) {
-  global $WikiDir;
-  $basename = preg_replace('/-Draft$/', '', $pagename);
-  $draftname = $basename . '-Draft';
+  global $WikiDir, $DraftSuffix;
+  SDV($DraftSuffix, '-Draft');
+  $basename = preg_replace("/$DraftSuffix\$/", '', $pagename);
+  $draftname = $basename . $DraftSuffix;
   if ($_POST['postdraft']) 
     { $pagename = $draftname; return; }
   if ($_POST['post']) { 
