@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2006 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -127,6 +127,7 @@ SDVA($InputTags['e_saveeditbutton'], array(
   ':html' => "<input type='submit' \$InputFormArgs />",
   'name' => 'postedit', 'value' => ' '.XL('Save and edit').' ',
   'accesskey' => XL('ak_saveedit')));
+SDVA($InputTags['e_savedraftbutton'], array(':html' => ''));
 SDVA($InputTags['e_previewbutton'], array(
   ':html' => "<input type='submit' \$InputFormArgs />",
   'name' => 'preview', 'value' => ' '.XL('Preview').' ', 
