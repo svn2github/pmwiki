@@ -40,8 +40,9 @@ function Merge($newtext,$oldtext,$pagetext) {
 function MergeSimulEdits($pagename,&$page,&$new) {
   global $EnablePost, $MessagesFmt, $WorkDir, $SysMergeCmd;
   SDV($SysMergeCmd,"/usr/bin/diff3 -L '' -L '' -L '' -m -E");
-  if (@!$_POST['basetime'] || !PageExists($pagename) ||
-    $_POST['basetime']>=$page['time']) return;
+  if (@!$_POST['basetime'] || !PageExists($pagename) 
+      || $_POST['basetime']>=$page['time']
+      || $page['text'] == $new['text']) return;
   $EnablePost = 0;
   XLSDV('en', array(
     'EditConflict' => "The page you are
