@@ -15,13 +15,14 @@ if ($action == 'edit')
     'accesskey' => XL('ak_savedraft')));
 
 function EditDraft(&$pagename, &$page, &$new) {
-  global $WikiDir, $DraftSuffix;
+  global $WikiDir, $DraftSuffix, $DeleteKeyPattern;
+  SDV($DeleteKeyPattern, "^\\s*delete\\s*$");
   SDV($DraftSuffix, '-Draft');
   $basename = preg_replace("/$DraftSuffix\$/", '', $pagename);
   $draftname = $basename . $DraftSuffix;
   if ($_POST['postdraft']) 
     { $pagename = $draftname; return; }
-  if ($_POST['post']) { 
+  if ($_POST['post'] && !preg_match("/$DeleteKeyPattern/", $new['text'])) { 
     $pagename = $basename; 
     $page = ReadPage($basename);
     $WikiDir->delete($draftname);

@@ -50,10 +50,12 @@ if (@$EnableIMSCaching && in_array($action, (array)$CacheActions)) {
 ## Scripts that are part of a standard PmWiki distribution.
 if (IsEnabled($EnableAuthorTracking,1)) 
   include_once("$FarmD/scripts/author.php");
-if (IsEnabled($EnableSimulEdit,1))
-  include_once("$FarmD/scripts/simuledit.php");
 if (IsEnabled($EnablePrefs, 1))
   include_once("$FarmD/scripts/prefs.php");
+if (IsEnabled($EnableSimulEdit, 1))
+  include_once("$FarmD/scripts/simuledit.php");
+if (IsEnabled($EnableDrafts, 0))
+  include_once("$FarmD/scripts/draft.php");        # after simuledit + prefs
 if (IsEnabled($EnableSkinLayout,1))
   include_once("$FarmD/scripts/skins.php");        # must come after prefs
 if (IsEnabled($EnableTransitions,1))
