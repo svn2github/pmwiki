@@ -34,7 +34,6 @@ if (IsEnabled($EnableLinkIndex, 1)) {
 SDVA($SearchPatterns['all'], array());
 $SearchPatterns['normal'][] = '!\.(All)?Recent(Changes|Uploads)$!';
 $SearchPatterns['normal'][] = '!\.Group(Print)?(Header|Footer|Attributes)$!';
-$SearchPatterns['normal'][] = "!$DraftSuffix\$!";
 $SearchPatterns['normal'][] = str_replace('.', '\\.', "!^$pagename$!");
 
 ## $FPLFormatOpt is a list of options associated with fmt=
