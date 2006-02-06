@@ -121,6 +121,7 @@ $FmtPV = array(
   '$LastModifiedBy' => '@$page["author"]',
   '$LastModifiedHost' => '@$page["host"]',
   '$LastModified' => 'strftime($GLOBALS["TimeFmt"], $page["time"])',
+  '$LastModifiedSummary' => '@$page["csum"]',
   '$SiteGroup'    => '$GLOBALS["SiteGroup"]',
   '$VersionNum'   => '$GLOBALS["VersionNum"]',
   '$Version'      => '$GLOBALS["Version"]',
@@ -1304,6 +1305,7 @@ function HandleEdit($pagename, $auth = 'edit') {
   $new = $page;
   foreach((array)$EditFields as $k) 
     if (isset($_POST[$k])) $new[$k]=str_replace("\r",'',stripmagic($_POST[$k]));
+  $new['csum'] = $ChangeSummary;
   if ($ChangeSummary) $new["csum:$Now"] = $ChangeSummary;
   $EnablePost &= (@$_POST['post'] || @$_POST['postedit']);
   foreach((array)$EditFunctions as $fn) $fn($pagename,$page,$new);
