@@ -76,6 +76,7 @@ SDV($SaveAttrPatterns['/\\(:(searchresults|pagelist)(\\s+.*?)?:\\)/i'], ' ');
 
 SDV($HandleActions['search'], 'HandleSearchA');
 SDV($HandleAuth['search'], 'read');
+SDV($ActionTitleFmt['search'], '| $[Search Results]');
 
 ## SearchBox generates the output of the (:searchbox:) markup.
 ## If $SearchBoxFmt is defined, that is used, otherwise a searchbox
