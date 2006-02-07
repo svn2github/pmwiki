@@ -29,7 +29,7 @@ For information about running PmWiki in standalone mode without
 requiring a webserver, visit
   http://pmwiki.org/wiki/Cookbook/Standalone
 
-PmWiki is Copyright 2001-2005 Patrick R. Michaud
+PmWiki is Copyright 2001-2006 Patrick R. Michaud
 pmichaud@pobox.com
 http://www.pmichaud.com/
 
