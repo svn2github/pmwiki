@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2005 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2006 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -214,7 +214,7 @@ Markup('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/e',
 
 ## [[target |#]] reference links
 Markup('[[|#', '<[[|',
-  "/(?>\\[\\[([^|\\]]+))\\|#\\]\\]/e",  
+  "/(?>\\[\\[([^|\\]]+))\\|\\s*#\\s*\\]\\]/e",  
   "Keep(MakeLink(\$pagename,PSS('$1'),'['.++\$MarkupFrame[0]['ref'].']'),'L')");
 
 ## [[target |+]] title links
