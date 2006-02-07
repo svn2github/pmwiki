@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2005 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2006 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -55,7 +55,8 @@ foreach($UploadExts as $k=>$v)
 SDV($UploadDir,'uploads');
 SDV($UploadPrefixFmt,'/$Group');
 SDV($UploadFileFmt,"$UploadDir$UploadPrefixFmt");
-SDV($UploadUrlFmt,preg_replace('#/[^/]*$#',"/$UploadDir",$ScriptUrl,1));
+$v = preg_replace('#^/(.*/)#', '', $UploadDir);
+SDV($UploadUrlFmt,preg_replace('#/[^/]*$#', "/$v", $PubDirUrl, 1));
 SDV($LinkUploadCreateFmt, "<a class='createlinktext' href='\$LinkUpload'>\$LinkText</a><a class='createlink' href='\$LinkUpload'>&nbsp;&Delta;</a>");
 
 SDV($PageUploadFmt,array("
