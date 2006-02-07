@@ -38,9 +38,10 @@ function Merge($newtext,$oldtext,$pagetext) {
 }
 
 function MergeSimulEdits($pagename,&$page,&$new) {
-  global $EnablePost, $MessagesFmt, $WorkDir, $SysMergeCmd;
+  global $Now, $EnablePost, $MessagesFmt, $WorkDir, $SysMergeCmd;
   SDV($SysMergeCmd,"/usr/bin/diff3 -L '' -L '' -L '' -m -E");
   if (@!$_POST['basetime'] || !PageExists($pagename) 
+      || $page['time'] >= $Now
       || $_POST['basetime']>=$page['time']
       || $page['text'] == $new['text']) return;
   $EnablePost = 0;
