@@ -98,8 +98,8 @@ function SearchBox($pagename, $opt) {
   if ($group) 
     $out .= "<input type='hidden' name='group' value='$group' />";
   $out .= "<input type='text' name='q' value='{$opt['value']}' 
-    size='{$opt['size']}' /><input class='wikisearchbutton' 
-    type='submit' value='{$opt['label']}' /></form>";
+    class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
+    class='inputbox searchbutton' value='{$opt['label']}' /></form>";
   return "<form ".Keep($out);
 }
 
