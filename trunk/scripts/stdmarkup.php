@@ -367,10 +367,11 @@ Markup('^>><<', '<^>>',
 #### special stuff ####
 ## (:markup:) for displaying markup examples
 function MarkupMarkup($pagename, $text) {
-  return "(:divend:)" .
+  $html = MarkupToHTML($pagename, $text, false);
+  return 
     Keep("<table class='markup' align='center'><tr><td class='markup1'><pre>" .
-      wordwrap($text, 70) .  "</pre></td></tr><tr><td class='markup2'>") .
-    "\n$text\n(:divend:)</td></tr></table>\n";
+      wordwrap($text, 70) .  "</pre></td></tr><tr><td class='markup2'>
+      $html</td></tr></table>");
 }
 
 Markup('markup', '<[=',
