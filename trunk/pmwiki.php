@@ -91,8 +91,8 @@ $CookiePrefix = '';
 $SiteGroup = 'Site';
 $DefaultGroup = 'Main';
 $DefaultName = 'HomePage';
-$GroupHeaderFmt = '(:include {$Group}.GroupHeader:)(:nl:)';
-$GroupFooterFmt = '(:nl:)(:include {$Group}.GroupFooter:)';
+$GroupHeaderFmt = '(:include {$Group}.GroupHeader self=0:)(:nl:)';
+$GroupFooterFmt = '(:nl:)(:include {$Group}.GroupFooter self=0:)';
 $PagePathFmt = array('{$Group}.$1','$1.$1','$1.{$DefaultName}');
 $PageAttributes = array(
   'passwdread' => '$[Set new read password:]',
@@ -868,7 +868,7 @@ function IncludeText($pagename, $inclspec) {
   SDV($MaxIncludes,50);
   $npat = '[[:alpha:]][-\\w]*';
   if ($InclCount++>=$MaxIncludes) return Keep($inclspec);
-  $args = ParseArgs($inclspec);
+  $args = array_merge(array('self' => 1), ParseArgs($inclspec));
   while (count($args['#'])>0) {
     $k = array_shift($args['#']); $v = array_shift($args['#']);
     if ($k=='') {
@@ -876,6 +876,7 @@ function IncludeText($pagename, $inclspec) {
       if ($match[1]) {                                 # include a page
         if (isset($itext)) continue;
         $iname = MakePageName($pagename, $match[1]);
+        if (!$args['self'] && $iname == $pagename) continue;
         if (!PageExists($iname)) continue;
         $ipage = RetrieveAuthPage($iname, 'read', false, READPAGE_CURRENT);
         $itext = @$ipage['text'];
