@@ -9,7 +9,7 @@
     Simply set variables for the features to be enabled/disabled in config.php
     before including this file.  For example:
         $EnableQAMarkup=0;                      #disable Q: and A: tags
-        $EnableDefaultWikiStyles=1;             #include default wikistyles
+        $EnableWikiStyles=1;                    #include default wikistyles
     Each feature has a default setting, if the corresponding $Enable
     variable is not set then you get the default.
 
@@ -66,7 +66,7 @@ if ($action=='diff' && @!$HandleActions['diff'])
   include_once("$FarmD/scripts/pagerev.php");
 if (IsEnabled($EnableWikiTrails,1))
   include_once("$FarmD/scripts/trails.php");
-if (IsEnabled($EnableStdWikiStyles,1))
+if (IsEnabled($EnableWikiStyles,1))
   include_once("$FarmD/scripts/wikistyles.php");
 if (IsEnabled($EnableMailPosts,0))
   include_once("$FarmD/scripts/mailposts.php");
