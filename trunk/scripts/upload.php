@@ -106,7 +106,9 @@ SDVA($HandleAuth, array('upload' => 'upload',
 SDV($UploadVerifyFunction, 'UploadVerifyBasic');
 
 function MakeUploadName($pagename,$x) {
-  $x = preg_replace('/[^-\\w. ]/', '', $x);
+  global $UploadNameChars;
+  SDV($UploadNameChars, "-\\w. ");
+  $x = preg_replace("/[^$UploadNameChars]/", '', $x);
   $x = preg_replace('/\\.[^.]*$/e', "strtolower('$0')", $x);
   $x = preg_replace('/^[^[:alnum:]]+/', '', $x);
   return preg_replace('/[^[:alnum:]]+$/', '', $x);
