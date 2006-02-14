@@ -1020,9 +1020,8 @@ function LinkPage($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
   $qf = @$match[2];
   @$LinkTargets[$tgtname]++;
   if (!$fmt) {
-    if (PageExists($tgtname)) 
-      $fmt = ($tgtname==$pagename && $qf=='') ?  $LinkPageSelfFmt 
-        : $LinkPageExistsFmt;
+    if ($tgtname==$pagename && $qf=='') $fmt = $LinkPageSelfFmt;
+    elseif (PageExists($tgtname) || $qf > '') $fmt = $LinkPageExistsFmt;
     elseif (preg_match('/\\s/',$txt)) $fmt=$LinkPageCreateSpaceFmt;
     else $fmt=$LinkPageCreateFmt;
   }
