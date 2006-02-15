@@ -885,9 +885,11 @@ function IncludeText($pagename, $inclspec) {
         @list($x, $aa, $dots, $b, $bb) = $m;
         if (!$dots && !$b) $bb = $npat;
         if ($aa)
-          $itext=preg_replace("/^.*?([^\n]*\\[\\[#$aa\\]\\])/s",'$1',$itext,1);
+          $itext=preg_replace("/^.*?\n([^\n]*\\[\\[#$aa\\]\\])/s",
+                              '$1', $itext, 1);
         if ($bb)
-          $itext=preg_replace("/(.)[^\n]*\\[\\[#$bb\\]\\].*$/s",'$1',$itext,1);
+          $itext=preg_replace("/(^|\n)[^\n]*\\[\\[#$bb\\]\\].*$/s",
+                              '$1', $itext, 1);
       }
       continue;
     }
