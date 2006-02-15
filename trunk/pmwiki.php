@@ -888,7 +888,7 @@ function IncludeText($pagename, $inclspec) {
           $itext=preg_replace("/^.*?\n([^\n]*\\[\\[#$aa\\]\\])/s",
                               '$1', $itext, 1);
         if ($bb)
-          $itext=preg_replace("/(^|\n)[^\n]*\\[\\[#$bb\\]\\].*$/s",
+          $itext=preg_replace("/(\n)[^\n]*\\[\\[#$bb\\]\\].*$/s",
                               '$1', $itext, 1);
       }
       continue;
