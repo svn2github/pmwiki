@@ -12,6 +12,19 @@
     simple switch (?trans=0 in the url) can tell the admin if his site 
     is relying on an outdated feature or way of doing things.
 
+    Transitions defined in this script:
+
+      $Transition['fplbygroup']         - restore FPLByGroup function
+
+      $Transition['version'] < 2000915  - all transitions listed above
+    
+      $Transition['mainrc']             - keep using Main.AllRecentChanges
+      $Transition['mainapprovedurls']   - keep using Main.ApprovedUrls
+      $Transition['pageeditfmt']        - default $PageEditFmt value
+      $Transition['mainpages']          - other default pages in Main
+
+      $Transition['version'] < 1999944  - all transitions listed above
+
     To get all of the transitions for compatibility with a previous
     version of PmWiki, simply set $Transition['version'] in a local
     configuration file to the version number you want compatibility
@@ -33,7 +46,40 @@
 ## if ?trans=0 is specified, then we don't do any fixups.
 if (@$_REQUEST['trans']==='0') return;
 
-## Transitions for 2.0.beta44
+## Transitions from 2.1.beta15
+
+if (@$Transition['version'] < 2000915) 
+  SDVA($Transition, array('fplbygroup' => 1));
+
+## fplbygroup:
+##   The FPLByGroup function was removed in 2.1.beta15, this restores it.
+if (@$Transition['fplbygroup'] && !function_exists('FPLByGroup')) {
+  SDV($FPLFormatOpt['bygroup'], array('fn' => 'FPLByGroup'));
+  function FPLByGroup($pagename, &$matches, $opt) {
+    global $FPLByGroupStartFmt, $FPLByGroupEndFmt, $FPLByGroupGFmt,
+      $FPLByGroupIFmt, $FPLByGroupOpt;
+    SDV($FPLByGroupStartFmt,"<dl class='fplbygroup'>");
+    SDV($FPLByGroupEndFmt,'</dl>');
+    SDV($FPLByGroupGFmt,"<dt><a href='\$ScriptUrl/\$Group'>\$Group</a> /</dt>\n");
+    SDV($FPLByGroupIFmt,"<dd><a href='\$PageUrl'>\$Name</a></dd>\n");
+    SDVA($FPLByGroupOpt, array('readf' => 0, 'order' => 'name'));
+    $matches = MakePageList($pagename, 
+                            array_merge((array)$FPLByGroupOpt, $opt), 0);
+    if (@$opt['count']) array_splice($matches, $opt['count']);
+    if (count($matches)<1) return '';
+    $out = '';
+    foreach($matches as $pn) {
+      $pgroup = FmtPageName($FPLByGroupGFmt, $pn);
+      if ($pgroup != @$lgroup) { $out .= $pgroup; $lgroup = $pgroup; }
+      $out .= FmtPageName($FPLByGroupIFmt, $pn);
+    }
+    return FmtPageName($FPLByGroupStartFmt, $pagename) . $out .
+           FmtPageName($FPLByGroupEndFmt, $pagename);
+  }
+}
+
+## Transitions from 2.0.beta44
+
 if (@$Transition['version'] < 1999944) 
   SDVA($Transition, array('mainrc' => 1, 'mainapprovedurls' => 1,
     'pageeditfmt' => 1, 'mainpages' => 1));
@@ -45,6 +91,7 @@ if (@$Transition['version'] < 1999944)
 if (@$Transition['mainrc'] && PageExists('Main.AllRecentChanges')) {
   SDV($RecentChangesFmt['Main.AllRecentChanges'],
     '* [[$Group.$Name]]  . . . $CurrentTime $[by] $AuthorLink');
+}
 
 ## siteapprovedurls:
 ##   2.0.beta44 switched Main.ApprovedUrls to be $SiteGroup.ApprovedUrls .
@@ -110,5 +157,4 @@ if ($Transition['mainpages']) {
     'PmWiki.UploadQuickReference' => XL('Site/UploadQuickReference'),
     ));
 }
-
 

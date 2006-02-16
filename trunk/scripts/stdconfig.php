@@ -58,7 +58,7 @@ if (IsEnabled($EnableDrafts, 0))
   include_once("$FarmD/scripts/draft.php");        # after simuledit + prefs
 if (IsEnabled($EnableSkinLayout,1))
   include_once("$FarmD/scripts/skins.php");        # must come after prefs
-if (@$Transitions || IsEnabled($EnableTransitions, 0))
+if (@$Transition || IsEnabled($EnableTransitions, 0))
   include_once("$FarmD/scripts/transition.php");   # must come after skins
 if (IsEnabled($EnableStdMarkup,1))
   include_once("$FarmD/scripts/stdmarkup.php");
