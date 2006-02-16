@@ -237,6 +237,9 @@ function SortPageList(&$matches, $order) {
     if ($o{0}=='-') { $r = '-'; $o = substr($o, 1); }
     else $r = '';
     switch ($o) {
+      case 'random':
+        foreach($matches as $pn) $PCache[$pn]['random'] = rand();
+        /* fall through */
       case 'size':
       case 'time':
       case 'ctime':
@@ -246,6 +249,7 @@ function SortPageList(&$matches, $order) {
         foreach($matches as $pn) 
           if (!isset($PCache[$pn]['title'])) 
             $PCache[$pn]['title'] = PageVar($pn, '$Title');
+        /* fall through */
       default:
         $code .= "\$c = @strcasecmp(\$PCache[\$x]['$o'],\$PCache[\$y]['$o']); ";
     }
