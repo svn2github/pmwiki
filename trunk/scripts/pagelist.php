@@ -24,10 +24,10 @@
     as markup) as appropriate for the output being returned.
 */
 
-## $LinkIndexFile is the index file for backlinks and link= option
-if (IsEnabled($EnableLinkIndex, 1)) {
-  SDV($LinkIndexFile, "$WorkDir/.linkindex");
-  $EditFunctions[] = 'PostLinkIndex';
+## $PageIndexFile is the index file for term searches and link= option
+if (IsEnabled($EnablePageIndex, 1)) {
+  SDV($PageIndexFile, "$WorkDir/.pageindex");
+  $EditFunctions[] = 'PostPageIndex';
 }
 
 ## $SearchPatterns holds patterns for list= option
@@ -164,11 +164,14 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   if (@$opt['name']) $pats[] = FixGlob($opt['name'], '$1*.$2');
 
   # inclp/exclp contain words to be included/excluded.  
-  $inclp = array(); $exclp = array();
-  foreach((array)@$opt[''] as $i)  { $inclp[] = '/'.preg_quote($i, '/').'/i'; }
-  foreach((array)@$opt['+'] as $i) { $inclp[] = '/'.preg_quote($i, '/').'/i'; }
-  foreach((array)@$opt['-'] as $i) { $exclp[] = '/'.preg_quote($i, '/').'/i'; }
-  $searchterms = count($inclp) + count($exclp);
+  $incl = array(); $excl = array(); $inclp = ''; $exclp = '';
+  foreach((array)@$opt[''] as $i) { $incl[] = $i; }
+  foreach((array)@$opt['+'] as $i) { $incl[] = $i; }
+  foreach((array)@$opt['-'] as $i) { $excl[] = $i; }
+  if ($incl) $inclp = '$'.implode('|', array_map('preg_quote', $incl)).'$i';
+  if ($excl) $exclp = '$'.implode('|', array_map('preg_quote', $excl)).'$i';
+
+  $searchterms = count($incl) + count($excl);
   $readf += $searchterms;                         # forced read if incl/excl
 
   if (@$opt['trail']) {
@@ -185,33 +188,41 @@ function MakePageList($pagename, $opt, $retpages = 1) {
         @$trail[$tstop['parent']]['pagename'];
   } else $list = ListPages($pats);
 
-  if (IsEnabled($EnablePageListProtect, 1)) $readf = 1000;
+  if (IsEnabled($EnablePageListProtect, 0)) $readf = 1000;
   $matches = array();
   $FmtV['$MatchSearched'] = count($list);
 
-  # link= (backlinks)
+  $terms = ($incl) ? PageIndexTerms($incl) : array();
   if (@$opt['link']) { 
     $link = MakePageName($pagename, $opt['link']);
-    $linkpat = "/(^|,)$link(,|$)/i";
+    $linkp = "/(^|,)$link(,|$)/i";
+    $terms[] = " $link ";
     $readf++;
-    $xlist = BacklinksTo($link, false);
-    $list = array_diff((array)$list, $xlist);
+  }
+  if ($terms) {
+    $xlist = PageIndexGrep($terms, true);
+    $a = count($list);
+    $list = array_diff($list, $xlist);
+    $a -= count($list);
+    StopWatch("MakePageList: PageIndex filtered $a pages");
   }
   $xlist = array();
- 
-  StopWatch('MakePageList scan');
+  $inclx = !preg_match('/[^\\w\\x80-\\xff|$]/', $inclp);
+
+  StopWatch('MakePageList scanning '.count($list)." pages, readf=$readf");
   foreach((array)$list as $pn) {
     if ($readf) {
       $page = ($readf >= 1000) 
               ? RetrieveAuthPage($pn, 'read', false, READPAGE_CURRENT)
               : ReadPage($pn, READPAGE_CURRENT);
       if (!$page) continue;
-      if (@$linkpat && !preg_match($linkpat, @$page['targets'])) 
-        { $PCache[$pn]['targets'] = @$page['targets']; $xlist[]=$pn; continue; }
+      if (@$linkp && !preg_match($linkp, @$page['targets']))
+        { $xlist[] = $pn; continue; }
       if ($searchterms) {
         $text = $pn."\n".@$page['targets']."\n".@$page['text'];
-        foreach($inclp as $i) if (!preg_match($i, $text)) continue 2;
-        foreach($exclp as $i) if (preg_match($i, $text)) continue 2;
+        if ($inclp && !preg_match($inclp, $text)) 
+          { if ($inclx) $xlist[] = $pn; continue; }
+        if ($exclp && preg_match($exclp, $text)) continue;
       }
       $page['size'] = strlen(@$page['text']);
     } else $page = array();
@@ -221,8 +232,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   }
   StopWatch('MakePageList sort');
   if ($order) SortPageList($matches, $order);
-  StopWatch('MakePageList update');
-  if ($xlist) LinkIndexUpdate($xlist);
+  if ($xlist) PageIndexUpdate($xlist);
   StopWatch('MakePageList end');
   if ($retpages) 
     for($i=0; $i<count($matches); $i++)
@@ -328,89 +338,103 @@ function FPLTemplate($pagename, &$matches, $opt) {
 
 
 ########################################################################
-## The functions below optimize backlinks by maintaining an index
-## file of link cross references (the "link index").
+## The functions below optimize searches by maintaining a file of
+## words and link cross references (the "page index").
 ########################################################################
 
-## The BacklinksTo($pagename, $incl) function reads the current
-## linkindex file and returns all listed pages that have $pagename
-## as a target.  If $incl is false, then BacklinksTo returns
-## the pages in the linkindex that *don't* have $pagename as a target.
-## Note that if the linkindex is incomplete then so is the returned list.
-function BacklinksTo($pagename, $incl=true) {
-  global $LinkIndexFile;
-  if (!$LinkIndexFile) return array();
-  StopWatch('BacklinksTo begin');
-  $excl = ! $incl;
-  $pagelist = array();
-  $fp = @fopen($LinkIndexFile, 'r');
-  if ($fp) {
-    $linkpat = "/[=,]{$pagename}[\n,]/i";
-    while (!feof($fp)) {
-      $line = fgets($fp, 4096);
-      while (substr($line, -1, 1) != "\n" && !feof($fp)) 
-        $line .= fgets($fp, 4096);
-      if (strpos($line, '=') === false) continue;
-      if (preg_match($linkpat, $line) xor $excl) {
-        list($n,$t) = explode('=', $line, 2);
-        $pagelist[] = $n;
-      }
-    }
-    fclose($fp);
+## PageIndexTerms($terms) takes an array of strings and returns a
+## normalized list of associated search terms.  This reduces the
+## size of the index and speeds up searches.
+function PageIndexTerms($terms) {
+  $w = array();
+  foreach((array)$terms as $t) {
+    $w = array_merge($w, preg_split('/[^\\w\\x80-\\xff]+/', 
+                                    strtolower($t), -1, PREG_SPLIT_NO_EMPTY));
   }
-  StopWatch('BacklinksTo end');
-  return $pagelist;
+ return $w;
 }
 
-## The LinkIndexUpdate($pagelist) function updates the linkindex
-## file with the target information for the pages in $pagelist.
-## If the targets are cached then LinkIndexUpdate uses that,
-## otherwise the pages are read to get the current targets.
-function LinkIndexUpdate($pagelist) {
-  global $LinkIndexFile, $PCache, $LinkIndexTime;
-  SDV($LinkIndexTime, 10);
-  if (!$pagelist || !$LinkIndexFile) return;
-  StopWatch('LinkIndexUpdate begin');
+## The PageIndexUpdate($pagelist) function updates the page index
+## file with terms and target links for the pages in $pagelist.
+function PageIndexUpdate($pagelist) {
+  global $PageIndexFile, $PageIndexTime, $Now;
+  SDV($PageIndexTime, 10);
+  if (!$pagelist || !$PageIndexFile) return;
+  $c = count($pagelist);
+  StopWatch("PageIndexUpdate begin ($c pages to update)");
   $pagelist = (array)$pagelist;
+  $timeout = time() + $PageIndexTime;
+  $cmpfn = create_function('$a,$b', 'return strlen($b)-strlen($a);');
   Lock(2);
-  $ofp = fopen("$LinkIndexFile,new", 'w');
-  $timeout = time() + $LinkIndexTime;
-  foreach($pagelist as $n) {
+  $ofp = fopen("$PageIndexFile,new", 'w');
+  foreach($pagelist as $pn) {
     if (time() > $timeout) break;
-    if (isset($PCache[$n]['targets'])) $targets=$PCache[$n]['targets'];
-    else {
-      $page = ReadPage($n, READPAGE_CURRENT);
-      if (!$page) continue;
-      $targets = @$page['targets'];
+    $page = ReadPage($pn, READPAGE_CURRENT);
+    if ($page) {
+      $targets = str_replace(',', ' ', @$page['targets']);
+      $terms = PageIndexTerms(array(@$page['text'], $targets));
+      usort($terms, $cmpfn);
+      $x = '';
+      foreach($terms as $t) { if (strpos($x, $t) === false) $x .= " $t"; }
+      fputs($ofp, "$pn:$Now: $targets :$x\n");
     }
-    fputs($ofp, "$n=$targets\n");
+    $updated[$pn]++;
   }
-  $ifp = @fopen($LinkIndexFile, 'r');
+  $ifp = @fopen($PageIndexFile, 'r');
   if ($ifp) {
     while (!feof($ifp)) {
       $line = fgets($ifp, 4096);
       while (substr($line, -1, 1) != "\n" && !feof($ifp)) 
         $line .= fgets($ifp, 4096);
-      $i = strpos($line, '=');
+      $i = strpos($line, ':');
       if ($i === false) continue;
       $n = substr($line, 0, $i);
-      if (in_array($n, $pagelist)) continue;
+      if (@$updated[$n]) continue;
       fputs($ofp, $line);
     }
     fclose($ifp);
   }
   fclose($ofp);
-  if (file_exists($LinkIndexFile)) unlink($LinkIndexFile); 
-  rename("$LinkIndexFile,new", $LinkIndexFile);
-  fixperms($LinkIndexFile);
-  StopWatch('LinkIndexUpdate end');
+  if (file_exists($PageIndexFile)) unlink($PageIndexFile); 
+  rename("$PageIndexFile,new", $PageIndexFile);
+  fixperms($PageIndexFile);
+  $c = count($updated);
+  StopWatch("PageIndexUpdate end ($c updated)");
 }
 
-## PostLinkIndex is inserted into $EditFunctions to update
+## PageIndexGrep returns a list of pages that match the strings
+## provided.  Note that some search terms may need to be normalized
+## in order to get the desired results (see PageIndexTerms above).
+## Also note that this just works for the index; if the index is
+## incomplete, then so are the results returned by this list.
+## (MakePageList above already knows how to deal with this.)
+function PageIndexGrep($terms, $invert = false) {
+  global $PageIndexFile;
+  if (!$PageIndexFile) return array();
+  StopWatch('PageIndexGrep begin');
+  $pagelist = array();
+  $fp = @fopen($PageIndexFile, 'r');
+  if ($fp) {
+    $terms = (array)$terms;
+    while (!feof($fp)) {
+      $line = fgets($fp, 4096);
+      while (substr($line, -1, 1) != "\n" && !feof($fp))
+        $line .= fgets($fp, 4096);
+      $i = strpos($line, ':');
+      if (!$i) continue;
+      foreach($terms as $t) 
+        if ((boolean)strpos($line, $t) == $invert) continue 2;   # XXX
+      $pagelist[] = substr($line, 0, $i);
+    }
+    fclose($fp);
+  }
+  StopWatch('PageIndexGrep end');
+  return $pagelist;
+}
+  
+## PostPageIndex is inserted into $EditFunctions to update
 ## the linkindex whenever a page is saved.
-function PostLinkIndex($pagename, &$page, &$new) {
-  global $IsPagePosted, $PCache;
-  if (!$IsPagePosted) return;
-  $PCache[$pagename]['targets'] = $new['targets'];
-  LinkIndexUpdate($pagename);
+function PostPageIndex($pagename, &$page, &$new) {
+  global $IsPagePosted;
+  if ($IsPagePosted) PageIndexUpdate($pagename);
 }
