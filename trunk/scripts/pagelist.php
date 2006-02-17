@@ -422,9 +422,10 @@ function PageIndexGrep($terms, $invert = false) {
         $line .= fgets($fp, 4096);
       $i = strpos($line, ':');
       if (!$i) continue;
+      $add = true;
       foreach($terms as $t) 
-        if ((boolean)strpos($line, $t) == $invert) continue 2;   # XXX
-      $pagelist[] = substr($line, 0, $i);
+        if (strpos($line, $t) === false) { $add = false; break; }
+      if ($add xor $invert) $pagelist[] = substr($line, 0, $i);
     }
     fclose($fp);
   }
