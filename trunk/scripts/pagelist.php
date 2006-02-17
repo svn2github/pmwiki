@@ -232,7 +232,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   }
   StopWatch('MakePageList sort');
   if ($order) SortPageList($matches, $order);
-  if ($xlist) PageIndexUpdate($xlist);
+  if ($xlist) register_shutdown_function('PageIndexUpdate', $xlist, getcwd());
   StopWatch('MakePageList end');
   if ($retpages) 
     for($i=0; $i<count($matches); $i++)
@@ -356,8 +356,14 @@ function PageIndexTerms($terms) {
 
 ## The PageIndexUpdate($pagelist) function updates the page index
 ## file with terms and target links for the pages in $pagelist.
-function PageIndexUpdate($pagelist) {
+## The optional $dir parameter allows this function to be called
+## via register_shutdown_function (which sometimes changes directories
+## on us).
+function PageIndexUpdate($pagelist, $dir = '') {
   global $PageIndexFile, $PageIndexTime, $Now;
+  $abort = ignore_user_abort(true);
+  if ($dir) chdir($dir);
+  flush();
   SDV($PageIndexTime, 10);
   if (!$pagelist || !$PageIndexFile) return;
   $c = count($pagelist);
@@ -400,6 +406,7 @@ function PageIndexUpdate($pagelist) {
   fixperms($PageIndexFile);
   $c = count($updated);
   StopWatch("PageIndexUpdate end ($c updated)");
+  ignore_user_abort($abort);
 }
 
 ## PageIndexGrep returns a list of pages that match the strings
