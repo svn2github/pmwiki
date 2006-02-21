@@ -27,6 +27,8 @@
 */
 error_reporting(E_ALL ^ E_NOTICE);
 StopWatch('PmWiki');
+@ini_set('magic_quotes_runtime', 0);
+@ini_set('magic_quotes_sybase', 0);
 if (ini_get('register_globals')) 
   foreach($_REQUEST as $k=>$v) { 
     if (preg_match('/^(GLOBALS|_SERVER|_GET|_POST|_COOKIE|_FILES|_ENV|_REQUEST|_SESSION)$/i', $k)) exit();
@@ -896,7 +898,7 @@ function IncludeText($pagename, $inclspec) {
     if (in_array($k, array('line', 'lines', 'para', 'paras'))) {
       preg_match('/^(\\d*)(\\.\\.(\\d*))?$/', $v, $match);
       @list($x, $a, $dots, $b) = $match;
-      $upat = ($k{0} == 'p') ? ".*?(\n\\s*\n|$)" : "[^\n]*\n";
+      $upat = ($k{0} == 'p') ? ".*?(\n\\s*\n|$)" : "[^\n]*(?:\n|$)";
       if (!$dots) { $b=$a; $a=0; }
       if ($a>0) $a--;
       $itext=preg_replace("/^(($upat){0,$b}).*$/s",'$1',$itext,1);
@@ -1022,11 +1024,12 @@ function LinkPage($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
   $qf = @$match[2];
   @$LinkTargets[$tgtname]++;
   if (!$fmt) {
-    if ($qf > '') $fmt = $LinkPageExistsFmt;
-    elseif (PageExists($tgtname)) 
-      $fmt = ($tgtname == $pagename) ? $LinkPageSelfFmt : $LinkPageExistsFmt;
-    elseif (preg_match('/\\s/',$txt)) $fmt=$LinkPageCreateSpaceFmt;
-    else $fmt=$LinkPageCreateFmt;
+    if (!PageExists($tgtname) && !preg_match('/[&?]action=/', $qf))
+      $fmt = preg_match('/\\s/', $txt) 
+             ? $LinkPageCreateSpaceFmt : $LinkPageCreateFmt;
+    else
+      $fmt = ($tgtname == $pagename && $qf == '') 
+             ? $LinkPageSelfFmt : $LinkPageExistsFmt;
   }
   $fmt = str_replace(array('$LinkUrl', '$LinkText'),
            array(PageVar($tgtname, '$PageUrl').PUE($qf), $txt), $fmt);
