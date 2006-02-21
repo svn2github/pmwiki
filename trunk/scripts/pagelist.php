@@ -255,13 +255,16 @@ function SortPageList(&$matches, $order) {
       case 'ctime':
         $code .= "\$c = @(\$PCache[\$x]['$o']-\$PCache[\$y]['$o']); ";
         break;
-      case 'title':
-        foreach($matches as $pn) 
-          if (!isset($PCache[$pn]['title'])) 
-            $PCache[$pn]['title'] = PageVar($pn, '$Title');
-        /* fall through */
       default:
+        if ($o == 'title') 
+          foreach($matches as $pn) 
+            if (!isset($PCache[$pn]['title'])) 
+              $PCache[$pn]['title'] = PageVar($pn, '$Title');
+        if ($o == 'group') 
+          foreach($matches as $pn) 
+            $PCache[$pn]['group'] = PageVar($pn, '$Group');
         $code .= "\$c = @strcasecmp(\$PCache[\$x]['$o'],\$PCache[\$y]['$o']); ";
+        break;
     }
     $code .= "if (\$c) return $r\$c;\n";
   }
