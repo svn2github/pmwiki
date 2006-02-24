@@ -1464,8 +1464,10 @@ function NormalizeAuth($auth, $source) {
 ## as needed.
 function SessionAuth($pagename, $auth = NULL) {
   global $AuthId, $AuthList, $AuthPw;
+  static $called;
 
-  if (!$auth && !@$_REQUEST[session_name()]) return;
+  @$called++;
+  if (!$auth && ($called > 1 || !@$_REQUEST[session_name()])) return;
 
   $sid = session_id();
   @session_start();

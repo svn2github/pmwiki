@@ -33,6 +33,7 @@ $EnableAuthUser = 1;
 
 if (@$_POST['authid']) 
   AuthUserId($pagename, @$_POST['authid'], @$_POST['authpw']);
+else SessionAuth($pagename);
 
 function AuthUserId($pagename, $id, $pw=NULL) {
   global $AuthUser, $AuthUserPageFmt, $AuthUserFunctions, 
