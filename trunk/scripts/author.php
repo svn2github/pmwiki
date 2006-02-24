@@ -25,7 +25,7 @@ if (!isset($Author)) {
     setcookie($AuthorCookie, $x, $AuthorCookieExpires, $AuthorCookieDir);
   } elseif (@$_COOKIE[$AuthorCookie]) {
     $x = stripmagic(@$_COOKIE[$AuthorCookie]);
-  } else $Author = @$AuthId;
+  } else $x = @$AuthId;
   $Author = htmlspecialchars(preg_replace("/[^$AuthorNameChars]/", '', $x), 
                 ENT_QUOTES);
 }
