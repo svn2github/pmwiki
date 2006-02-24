@@ -39,6 +39,17 @@
     Elements can also be callable functions which are called to
     generate the appropriate output.
 
+    For example, to set the RSS 2.0 <author> element to the
+    value of the last author to modify a page, one can set 
+    (in local/config.php):
+
+        $FeedFmt['rss']['item']['author'] = '$LastModifiedBy';
+
+    To use the RSS 2.0 <description> element to contain the
+    change summary of the most recent edit, set
+
+        $FeedFmt['rss']['item']['description'] = '$LastModifiedSummary';
+
     Feeds.php can also be combined with attachments to support
     podcasting via ?action=rss.  Any page such as "PageName"
     that has an mp3 attachment with the same name as the page
