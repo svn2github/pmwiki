@@ -702,6 +702,7 @@ class PageStore {
   }
   function ls($pats=NULL) {
     global $GroupPattern, $NamePattern;
+    StopWatch("PageStore::ls begin {$this->dir}");
     $pats=(array)$pats; 
     array_push($pats, "/^$GroupPattern\.$NamePattern$/");
     $dir = $this->pagefile('$Group.$Name');
@@ -715,13 +716,13 @@ class PageStore {
         if ($pagefile{0} == '.') continue;
         if (is_dir("$dir/$pagefile"))
           { array_push($dirlist,"$dir/$pagefile"); continue; }
-        
-        if (@$seen[$pagefile]++) continue;
         $o[] = $pagefile;
       }
       closedir($dfp);
+      StopWatch("PageStore::ls merge {$this->dir}");
       $out = array_merge($out, MatchPageNames($o, $pats));
     }
+    StopWatch("PageStore::ls end {$this->dir}");
     return $out;
   }
 }
