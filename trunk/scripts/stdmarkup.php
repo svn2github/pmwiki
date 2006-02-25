@@ -78,6 +78,9 @@ Markup('nl1','>nl0',"/\\(:nl:\\)/i",'');
 Markup('\\$','>nl1',"/\\\\(?>(\\\\*))\n/e",
   "str_repeat('<br />',strlen('$1'))");
 
+## Remove one <:vspace> after !headings
+Markup('!vspace', '>\\$', "/^(!(?>[^\n]+)\n)<:vspace>/m", '$1');
+
 ## (:noheader:),(:nofooter:),(:notitle:)...
 Markup('noheader', 'directives',
   '/\\(:noheader:\\)/ei',
