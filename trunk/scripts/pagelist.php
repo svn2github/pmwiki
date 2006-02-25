@@ -96,7 +96,7 @@ function SearchBox($pagename, $opt) {
   $opt['n'] = IsEnabled($EnablePathInfo, 0) ? '' : $target;
   $out .= "<input type='text' name='q' value='{$opt['value']}' 
     class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
-    class='inputbox searchbutton' value='{$opt['label']}' />";
+    class='inputbutton searchbutton' value='{$opt['label']}' />";
   foreach($opt as $k => $v) {
     if ($v == '') continue;
     if ($k == 'q' || $k == 'label' || $k == 'value' || $k == 'size') continue;
