@@ -89,9 +89,11 @@ function SearchBox($pagename, $opt) {
     'value' => str_replace("'", "&#039;", $SearchQuery)));
   $opt = array_merge((array)$SearchBoxOpt, @$_GET, (array)$opt);
   $opt['action'] = 'search';
+  $target = ($opt['target']) 
+            ? MakePageName($pagename, $opt['target']) : $pagename;
   $out = FmtPageName(" class='wikisearch' action='\$PageUrl' method='get'>",
-                     $pagename);
-  $opt['n'] = IsEnabled($EnablePathInfo, 0) ? '' : $pagename;
+                     $target);
+  $opt['n'] = IsEnabled($EnablePathInfo, 0) ? '' : $target;
   $out .= "<input type='text' name='q' value='{$opt['value']}' 
     class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
     class='inputbox searchbutton' value='{$opt['label']}' />";
