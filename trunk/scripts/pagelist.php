@@ -64,7 +64,7 @@ XLSDV('en', array(
 Markup('pagelist', 'directives',
   '/\\(:pagelist(\\s+.*?)?:\\)/ei',
   "FmtPageList('\$MatchList', \$pagename, array('o' => PSS('$1 ')))");
-Markup('searchbox', '>links',
+Markup('searchbox', 'directives',
   '/\\(:searchbox(\\s.*?)?:\\)/e',
   "SearchBox(\$pagename, ParseArgs(PSS('$1')))");
 Markup('searchresults', 'directives',
@@ -86,21 +86,23 @@ function SearchBox($pagename, $opt) {
   if (isset($SearchBoxFmt)) return FmtPageName($SearchBoxFmt, $pagename);
   SDVA($SearchBoxOpt, array('size' => '40', 
     'label' => FmtPageName('$[Search]', $pagename),
-    'group' => @$_REQUEST['group'],
     'value' => str_replace("'", "&#039;", $SearchQuery)));
-  $opt = array_merge((array)$SearchBoxOpt, (array)$opt);
-  $group = $opt['group'];
-  $out = FmtPageName("
-    class='wikisearch' action='\$PageUrl' method='get'><input
-    type='hidden' name='action' value='search' />", $pagename);
-  if (!IsEnabled($EnablePathInfo, 0)) 
-    $out .= "<input type='hidden' name='n' value='$pagename' />";
-  if ($group) 
-    $out .= "<input type='hidden' name='group' value='$group' />";
+  $opt = array_merge((array)$SearchBoxOpt, @$_GET, (array)$opt);
+  $opt['action'] = 'search';
+  $out = FmtPageName(" class='wikisearch' action='\$PageUrl' method='get'>",
+                     $pagename);
+  $opt['n'] = IsEnabled($EnablePathInfo, 0) ? '' : $pagename;
   $out .= "<input type='text' name='q' value='{$opt['value']}' 
     class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
-    class='inputbox searchbutton' value='{$opt['label']}' /></form>";
-  return "<form ".Keep($out);
+    class='inputbox searchbutton' value='{$opt['label']}' />";
+  foreach($opt as $k => $v) {
+    if ($v == '') continue;
+    if ($k == 'q' || $k == 'label' || $k == 'value' || $k == 'size') continue;
+    $k = str_replace("'", "&#039;", $k);
+    $v = str_replace("'", "&#039;", $v);
+    $out .= "<input type='hidden' name='$k' value='$v' />";
+  }
+  return '<form '.Keep($out).'</form>';
 }
 
 ## FmtPageList combines options from markup, request form, and url,
