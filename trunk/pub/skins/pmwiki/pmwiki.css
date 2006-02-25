@@ -18,7 +18,7 @@ body {
 textarea, pre, code { font-size:0.9em; }
 pre, code { font-family:'Lucida Console','Andale Mono','Courier New',Courier; }
 pre { line-height:1.2em; }
-pre code { font-size:100%; }
+pre code, code code, pre pre { font-size:100%; }
 
 /* These primarily adjust the size and spacing of heading elements,
 ** most browsers have atrocious defaults for these. */
