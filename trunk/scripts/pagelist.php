@@ -83,7 +83,7 @@ SDV($ActionTitleFmt['search'], '| $[Search Results]');
 ## is generated.  Options include group=, size=, label=.
 function SearchBox($pagename, $opt) {
   global $SearchBoxFmt, $SearchBoxOpt, $SearchQuery, $EnablePathInfo;
-  if (isset($SearchBoxFmt)) return FmtPageName($SearchBoxFmt, $pagename);
+  if (isset($SearchBoxFmt)) return Keep(FmtPageName($SearchBoxFmt, $pagename));
   SDVA($SearchBoxOpt, array('size' => '40', 
     'label' => FmtPageName('$[Search]', $pagename),
     'value' => str_replace("'", "&#039;", $SearchQuery)));
