@@ -284,8 +284,13 @@ function HandleSearchA($pagename, $level = 'read') {
     $PageStartFmt, $PageEndFmt;
   SDV($HandleSearchFmt,array(&$PageStartFmt, '$PageText', &$PageEndFmt));
   SDV($PageSearchForm, '$[$SiteGroup/Search]');
-  PCache($pagename, RetrieveAuthPage($pagename, 'read'));
-  $form = ReadPage(FmtPageName($PageSearchForm, $pagename), READPAGE_CURRENT);
+  $form = RetrieveAuthPage($pagename, 'read', true, READPAGE_CURRENT);
+  PCache($pagename, $form);
+  if (!preg_match('/\\(:searchresults(\\s.*?)?:\\)/', $form['text']))
+    foreach((array)$PageSearchForm as $formfmt) {
+      $form = ReadPage(FmtPageName($formfmt, $pagename), READPAGE_CURRENT);
+      if ($form['text']) break;
+    }
   $text = @$form['text'];
   if (!$text) $text = '(:searchresults:)';
   $FmtV['$PageText'] = MarkupToHTML($pagename,$text);
