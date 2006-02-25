@@ -390,7 +390,7 @@ function PageIndexUpdate($pagelist, $dir = '') {
     $page = ReadPage($pn, READPAGE_CURRENT);
     if ($page) {
       $targets = str_replace(',', ' ', @$page['targets']);
-      $terms = PageIndexTerms(array(@$page['text'], $targets));
+      $terms = PageIndexTerms(array(@$page['text'], $targets, $pn));
       usort($terms, $cmpfn);
       $x = '';
       foreach($terms as $t) { if (strpos($x, $t) === false) $x .= " $t"; }
