@@ -43,7 +43,7 @@ function SetSkin($pagename, $skin) {
     $FarmPubDirUrl, $FarmD;
   unset($Skin);
   foreach((array)$skin as $s) {
-    $sd = FmtPageName("pub/skins/$s", $pagename);
+    $sd = FmtPageName("./pub/skins/$s", $pagename);
     if (is_dir($sd)) 
       { $Skin=$s; $SkinDirUrl="$PubDirUrl/skins/$Skin"; break; }
     $sd = FmtPageName("$FarmD/pub/skins/$s", $pagename);
