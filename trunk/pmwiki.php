@@ -1489,7 +1489,7 @@ function PrintAttrForm($pagename) {
     <table>",$pagename);
   $page = $PCache[$pagename];
   foreach($PageAttributes as $attr=>$p) {
-    $prompt = FmtPageName($p, $pagename);
+    if (!$p) continue;
     $setting = @$page[$attr];
     $value = @$page[$attr];
     if (strncmp($attr, 'passwd', 6) == 0) {
