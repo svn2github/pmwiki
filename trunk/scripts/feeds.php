@@ -85,7 +85,7 @@ SDVA($FeedFmt['atom']['item'], array(
   'updated' => '$ItemISOTime',
   'link' => "<link rel=\"alternate\" href=\"{\$PageUrl}\" />\n",
   'author' => "<author><name>{\$LastModifiedBy}</name></author>\n",
-  'summary' => '$ItemDesc',
+  'summary' => '{$Description}',
   'category' => "<category term=\"\$Category\" />\n",
   '_end' => "</entry>\n"));
 
@@ -105,7 +105,7 @@ SDVA($FeedFmt['dc']['item'], array(
   'dc:date' => '$ItemISOTime',
   'dc:type' => 'Text',
   'dc:format' => 'text/html',
-  'dc:description' => '$ItemDesc',
+  'dc:description' => '{$Description}',
   'dc:subject' => "<dc:subject>\$Category</dc:subject>\n",
   'dc:publisher' => '$WikiTitle',
   'dc:author' => '{$LastModifiedBy}',
@@ -127,7 +127,7 @@ SDVA($FeedFmt['rss']['item'], array(
   '_end' => "</item>\n",
   'title' => '{$Group} / {$Title}',
   'link' => '{$PageUrl}',
-  'description' => '$ItemDesc',
+  'description' => '{$Description}',
   'dc:contributor' => '{$LastModifiedBy}',
   'dc:date' => '$ItemISOTime',
   'pubDate' => '$ItemRSSTime',
@@ -153,7 +153,7 @@ SDVA($FeedFmt['rdf']['item'], array(
   '_end' => "</item>\n",
   'title' => '$WikiTitle | {$Group} / {$Title}',
   'link' => '{$PageUrl}',
-  'description' => '$ItemDesc',
+  'description' => '{$Description}',
   'dc:date' => '$ItemISOTime'));
   
 foreach(array_keys($FeedFmt) as $k) {
