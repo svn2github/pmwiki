@@ -236,7 +236,10 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   }
   StopWatch('MakePageList sort');
   if ($order) SortPageList($matches, $order);
-  if ($xlist) register_shutdown_function('PageIndexUpdate', $xlist, getcwd());
+  if ($xlist) {
+    register_shutdown_function('flush');
+    register_shutdown_function('PageIndexUpdate', $xlist, getcwd());
+  }
   StopWatch('MakePageList end');
   if ($retpages) 
     for($i=0; $i<count($matches); $i++)
@@ -375,7 +378,6 @@ function PageIndexUpdate($pagelist, $dir = '') {
   global $PageIndexFile, $PageIndexTime, $Now;
   $abort = ignore_user_abort(true);
   if ($dir) chdir($dir);
-  flush();
   SDV($PageIndexTime, 10);
   if (!$pagelist || !$PageIndexFile) return;
   $c = count($pagelist);
