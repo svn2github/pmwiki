@@ -1302,8 +1302,9 @@ function HandleEdit($pagename, $auth = 'edit') {
   global $IsPagePosted, $EditFields, $ChangeSummary, $EditFunctions, 
     $EnablePost, $FmtV, $Now, $EditRedirectFmt, 
     $PageEditForm, $HandleEditFmt, $PageStartFmt, $PageEditFmt, $PageEndFmt;
-  SDV($EditRedirectFmt, '$PageUrl');
-  if (@$_POST['cancel']) { Redirect($pagename, $EditRedirectFmt); return; }
+  SDV($EditRedirectFmt, '$FullName');
+  if (@$_POST['cancel']) 
+    { Redirect(FmtPageName($EditRedirectFmt, $pagename)); return; }
   Lock(2);
   $IsPagePosted = false;
   $page = RetrieveAuthPage($pagename, $auth, true);
@@ -1318,7 +1319,7 @@ function HandleEdit($pagename, $auth = 'edit') {
   foreach((array)$EditFunctions as $fn) $fn($pagename,$page,$new);
   Lock(0);
   if ($IsPagePosted && !@$_POST['postedit']) 
-    { Redirect($pagename, $EditRedirectFmt); return; }
+    { Redirect(FmtPageName($EditRedirectFmt, $pagename)); return; }
   $FmtV['$DiffClassMinor'] = 
     (@$_POST['diffclass']=='minor') ?  "checked='checked'" : '';
   $FmtV['$EditText'] = 
