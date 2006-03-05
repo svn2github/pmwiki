@@ -1403,7 +1403,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     $AuthList["id:*"] = 1;
   }
   $gn = FmtPageName($GroupAttributesFmt, $pagename);
-  if (!isset($acache[$gn])) $gp = ReadPage($groupattr, READPAGE_CURRENT);
+  if (!isset($acache[$gn])) $gp = ReadPage($gn, READPAGE_CURRENT);
   foreach($DefaultPasswords as $k => $v) {
     if (isset($gp)) {
       $x = array(2, array(), '');
