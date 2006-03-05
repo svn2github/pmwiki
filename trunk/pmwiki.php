@@ -180,7 +180,7 @@ $ActionTitleFmt = array(
   'attr' => '| $[Attributes]');
 $DefaultPasswords = array('admin'=>'*','read'=>'','edit'=>'','attr'=>'');
 $AuthCascade = array('edit'=>'read', 'attr'=>'edit');
-$AuthList = array('' => 1, 'nopass:' => 1);
+$AuthList = array('' => 1, 'nopass:' => 1, '@nopass' => 1);
 
 $Conditions['enabled'] = '(boolean)@$GLOBALS[$condparm]';
 $Conditions['false'] = 'false';
@@ -1382,18 +1382,18 @@ function HandleSource($pagename, $auth = 'read') {
 ## PmWikiAuth provides password-protection of pages using PHP sessions.
 ## It is normally called from RetrieveAuthPage.  Since RetrieveAuthPage
 ## can be called a lot within a single page execution (i.e., for every
-## page accessed), we cache the results of GroupAttribute pages
-## to be able to speed up subsequent calls.
+## page accessed), we cache the results of site passwords and 
+## GroupAttribute pages to be able to speed up subsequent calls.
 function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
-  global $DefaultPasswords, $AllowPassword, $GroupAttributesFmt,
+  global $DefaultPasswords, $GroupAttributesFmt,
     $AuthCascade, $FmtV, $AuthPromptFmt, $PageStartFmt, $PageEndFmt, 
-    $AuthId, $AuthList, $AuthPw;
-  static $grouppasswd;
+    $AuthId, $AuthList;
+  static $acache;
   SDV($GroupAttributesFmt,'$Group/GroupAttributes');
   SDV($AllowPassword,'nopass');
   $page = ReadPage($pagename, $since);
   if (!$page) { return false; }
-  if (!isset($grouppasswd)) 
+  if (!isset($acache)) 
     SessionAuth($pagename, (@$_POST['authpw']) 
                            ? array('authpw' => array($_POST['authpw'] => 1))
                            : '');
@@ -1402,44 +1402,27 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     $AuthList["id:-$AuthId"] = -1;
     $AuthList["id:*"] = 1;
   }
-  $groupattr = FmtPageName($GroupAttributesFmt, $pagename);
-  if (!isset($grouppasswd[$groupattr])) {
-    $grouppasswd[$groupattr] = array();
-    $gp = ReadPage($groupattr, READPAGE_CURRENT);
-    foreach($DefaultPasswords as $k=>$v) 
-      $grouppasswd[$groupattr][$k] = isset($gp["passwd$k"])
-        ? NormalizeAuth($gp["passwd$k"], 'group')
-        : NormalizeAuth($v, 'site');
+  $gn = FmtPageName($GroupAttributesFmt, $pagename);
+  if (!isset($acache[$gn])) $gp = ReadPage($groupattr, READPAGE_CURRENT);
+  foreach($DefaultPasswords as $k => $v) {
+    if (isset($gp)) {
+      $x = array(2, array(), '');
+      $acache['@site'][$k] = IsAuthorized($v, 'site', $x);
+      $AuthList["@_site_$k"] = $acache['@site'][$k][0] ? 1 : 0;
+      $acache[$gn][$k] = IsAuthorized($gp["passwd$k"], 'group', 
+                                      $acache['@site'][$k]);
+    }
+    list($page['=auth'][$k], $page['=passwd'][$k], $page['=pwsource'][$k]) =
+      IsAuthorized($page["passwd$k"], 'page', $acache[$gn][$k]);
   }
-  foreach ($DefaultPasswords as $k=>$v) {
-    $passwd[$k] = isset($page["passwd$k"]) 
-      ? NormalizeAuth($page["passwd$k"], 'page')
-      : $grouppasswd[$groupattr][$k];
-    $page['=pwsource'][$k] = @$passwd[$k]['=pwsource'];  
-    unset($passwd[$k]['=pwsource']);
-  }
-  $page['=passwd'] = $passwd;
   foreach($AuthCascade as $k => $t) {
-    if (!$passwd[$k] && $passwd[$t]) 
-      { $passwd[$k] = $passwd[$t]; $page['=pwsource'][$k] = "cascade:$t"; }
-  }
-  foreach($passwd as $lv => $a) {
-    if (!$a) { @$page['=auth'][$lv]++; continue; }
-    foreach((array)$a as $pwchal) {
-      if (preg_match('/^@|^\\w+:/', $pwchal)) {
-        if (@$AuthList[$pwchal] > 0) { @$page['=auth'][$lv]++; continue 2; }
-        if (@$AuthList[$pwchal] < 0) { continue 2; }
-        continue;
-      }
-      if (crypt($AllowPassword, $pwchal) == $pwchal)
-        { @$page['=auth'][$lv]++; continue 2; }
-      foreach ((array)$AuthPw as $pwresp)
-        if (crypt($pwresp, $pwchal) == $pwchal)
-          { @$page['=auth'][$lv]++; continue 2; }
+    if ($page['=auth'][$k]+0 == 2) {
+      $page['=auth'][$k] = $page['=auth'][$t];
+      $page['=pwsource'][$k] = "cascade:$t";
     }
   }
   if (@$page['=auth']['admin']) 
-    foreach($passwd as $lv=>$a) @$page['=auth'][$lv]++;
+    foreach($page['=auth'] as $lv=>$a) @$page['=auth'][$lv] = 3;
   if (@$page['=auth'][$level]) return $page;
   if (!$authprompt) return false;
   $GLOBALS['AuthNeeded'] = (@$_POST['authpw']) 
@@ -1465,20 +1448,33 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   exit;
 }
 
-function NormalizeAuth($auth, $source) {
-  $alist = array();
-  foreach((array)$auth as $a) {
-    foreach(explode(' ', $a) as $pwchal) {
+function IsAuthorized($chal, $source, &$from) {
+  global $AuthList, $AuthPw;
+  if (!$chal) return $from;
+  $auth = 0; 
+  $passwd = array();
+  foreach((array)$chal as $c) {
+    foreach(explode(' ', $c) as $pwchal) {
       if (!$pwchal) continue;
-      if (!preg_match('/^(\w+:)(.*)$/', $pwchal, $match))
-        { $alist[] = $pwchal; continue; }
-      if ($match[1] == 'group:') $match[1] = '@';
-      foreach(explode(',', $match[2]) as $id) 
-        $alist[] = @($id{0} == '@') ? $id : $match[1].$id;
+      $passwd[] = $pwchal;
+      if ($auth < 0) continue;                                 # rejected
+      if ($pwchal{0} == '@')                                   # groups
+        { $auth = $AuthList[$pwchal]; continue; }
+      if (preg_match('/^(\\w+:)(.*)$/', $pwchal, $match)) {    # id:...
+        foreach(explode(',', $match[2]) as $id) 
+          if ($auth >= 0 && @$AuthList[$match[1].$id])
+            $auth = $AuthList[$match[1].$id];
+        continue;
+      }
+      if (crypt($AllowPassword, $pwchal) == $pwchal)           # nopass
+        { $auth=1; continue; }
+      foreach((array)$AuthPw as $pwresp)                       # password
+        if (crypt($pwresp, $pwchal) == $pwchal) { $auth=1; continue 2; }
     }
   }
-  if ($alist) $alist['=pwsource'] = $source;
-  return $alist;
+  if (!$passwd) return $from;
+  if ($auth < 0) $auth = 0;
+  return array($auth, $passwd, $source);
 }
 
 
