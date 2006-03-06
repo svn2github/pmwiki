@@ -193,6 +193,7 @@ $Conditions['match'] = 'preg_match("!$condparm!",$pagename)';
 $Conditions['auth'] =
   '@$GLOBALS["PCache"][$GLOBALS["pagename"]]["=auth"][trim($condparm)]';
 $Conditions['authid'] = '@$GLOBALS["AuthId"] > ""';
+$Conditions['exists'] = 'PageExists(MakePageName(\$pagename, \$condparm))';
 $Conditions['equal'] = 'CompareArgs($condparm) == 0';
 function CompareArgs($arg) 
   { $arg = ParseArgs($arg); return strcmp(@$arg[''][0], @$arg[''][1]); }
@@ -1449,7 +1450,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
 }
 
 function IsAuthorized($chal, $source, &$from) {
-  global $AuthList, $AuthPw;
+  global $AuthList, $AuthPw, $AllowPassword;
   if (!$chal) return $from;
   $auth = 0; 
   $passwd = array();
