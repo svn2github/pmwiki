@@ -534,8 +534,10 @@ function PCache($pagename, $page) {
 ## then $value is appended to the current property (with $sep as
 ## as separator) instead of replacing it.
 function SetProperty($pagename, $prop, $value, $sep = NULL) {
-  global $PCache;
+  global $PCache, $KeepToken;
   $prop = "=p_$prop";
+  $value = preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", 
+                        "\$GLOBALS['KPV']['$1']", $value);
   if (!is_null($sep) && isset($PCache[$pagename][$prop]))
     $value = $PCache[$pagename][$prop] . $sep . $value;
   $PCache[$pagename][$prop] = $value;
