@@ -129,22 +129,21 @@ Markup('&','directives','/&amp;(?>([A-Za-z0-9]+|#\\d+|#[xX][A-Fa-f0-9]+));/',
 ## (:title:)
 Markup('title','>&',
   '/\\(:title\\s(.*?):\\)/ei',
-  "PZZ(\$GLOBALS['PCache'][\$pagename]['title']
-       = \$GLOBALS['PCache'][\$pagename]['=title']
-       = PSS('$1'))");
+  "PZZ(PCache(\$pagename, 
+         array('title' => SetProperty(\$pagename, 'title', PSS('$1')))))");
 
 ## (:keywords:), (:description:)
 Markup('keywords', '>&', 
   "/\\(:keywords?\\s+(.+?):\\)/ei",
-  "PZZ(\$GLOBALS['PCache'][\$pagename]['=keywords'][]=PSS('$1'))");
+  "PZZ(SetProperty(\$pagename, 'keywords', PSS('$1'), ', '))");
 Markup('description', '>&',
   "/\\(:description\\s+(.+?):\\)/ei",
-  "PZZ(\$GLOBALS['PCache'][\$pagename]['=description'][]=PSS('$1'))");
+  "PZZ(SetProperty(\$pagename, 'description', PSS('$1'), '\n'))");
 $HTMLHeaderFmt['meta'] = 'function:PrintMetaTags';
 function PrintMetaTags($pagename, $args) {
   global $PCache;
   foreach(array('keywords', 'description') as $n) {
-    foreach((array)@$PCache[$pagename]["=$n"] as $v) {
+    foreach((array)@$PCache[$pagename]["=p_$n"] as $v) {
       $v = str_replace("'", '&#039;', $v);
       print "<meta name='$n' content='$v' />\n";
     }

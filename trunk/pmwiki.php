@@ -133,6 +133,7 @@ $FmtPV = array(
   '$DefaultGroup' => '$GLOBALS["DefaultGroup"]',
   '$DefaultName'  => '$GLOBALS["DefaultName"]',
   );
+$SaveProperties = array('title', 'description', 'keywords');
 
 $WikiTitle = 'PmWiki';
 $Charset = 'ISO-8859-1';
@@ -527,6 +528,20 @@ function PCache($pagename, $page) {
   foreach($page as $k=>$v) 
     if ($k!='text' && strpos($k,':')===false) $PCache[$pagename][$k]=$v;
 }
+
+## SetProperty saves a page property into $PCache.  For convenience
+## it returns the $value of the property just set.  If $sep is supplied,
+## then $value is appended to the current property (with $sep as
+## as separator) instead of replacing it.
+function SetProperty($pagename, $prop, $value, $sep = NULL) {
+  global $PCache;
+  $prop = "=p_$prop";
+  if (!is_null($sep) && isset($PCache[$pagename][$prop]))
+    $value = $PCache[$pagename][$prop] . $sep . $value;
+  $PCache[$pagename][$prop] = $value;
+  return $value;
+}
+
 
 function PageVar($pagename, $var, $pn = '') {
   global $Cursor, $PCache, $FmtPV, $AsSpacedFunction, $ScriptUrl,
@@ -1250,17 +1265,16 @@ function ReplaceOnSave($pagename,&$page,&$new) {
 }
 
 function SaveAttributes($pagename,&$page,&$new) {
-  global $EnablePost, $SaveAttrExcerptLength, $LinkTargets, 
-    $SaveAttrPatterns, $PCache;
+  global $EnablePost, $LinkTargets, $SaveAttrPatterns, $PCache,
+    $SaveProperties;
   if (!$EnablePost) return;
-  SDV($SaveAttrExcerptLength, 600);
   $text = preg_replace(array_keys($SaveAttrPatterns), 
                        array_values($SaveAttrPatterns), $new['text']);
   $html = MarkupToHTML($pagename,$text);
   $new['targets'] = implode(',',array_keys((array)$LinkTargets));
   $p = & $PCache[$pagename];
-  foreach(array('title', 'description', 'keywords') as $k) {
-    if (@$p["=$k"]) $new[$k] = implode("\n", (array)$p["=$k"]);
+  foreach((array)$SaveProperties as $k) {
+    if (@$p["=p_$k"]) $new[$k] = $p["=p_$k"];
     else unset($new[$k]);
   }
   unset($new['excerpt']);
