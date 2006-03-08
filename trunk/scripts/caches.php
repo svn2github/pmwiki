@@ -26,11 +26,11 @@ if (@$EnableIMSCaching && in_array($action, (array)$CacheActions)) {
     { header("HTTP/1.0 304 Not Modified"); exit(); }
 }
 
-if ($NoBrowseCache 
+if ($NoHTMLCache 
     || !@$PageCacheDir
     || count($_POST) > 0
     || count($_GET) > 2
-    || (count($_GET) == 1 && !$_GET['n'])) { $NoBrowseCache |= 1; return; }
+    || (count($_GET) == 1 && !$_GET['n'])) { $NoHTMLCache |= 1; return; }
 
 mkdirp($PageCacheDir);
 if (!file_exists("$PageCacheDir/.htaccess") 

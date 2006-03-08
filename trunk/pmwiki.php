@@ -142,8 +142,8 @@ $HTTPHeaders = array(
   "Cache-Control: no-store, no-cache, must-revalidate",
   "Content-type: text/html; charset=ISO-8859-1;");
 $CacheActions = array('browse','diff','print');
-$EnableBrowseCache = 0;
-$NoBrowseCache = 0;
+$EnableHTMLCache = 0;
+$NoHTMLCache = 0;
 $HTMLDoctypeFmt = 
   "<!DOCTYPE html 
     PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
@@ -342,7 +342,7 @@ function IsEnabled(&$var,$f=0)
   { return (isset($var)) ? $var : $f; }
 function SetTmplDisplay($var, $val) 
   { NoCache(); $GLOBALS['TmplDisplay'][$var] = $val; }
-function NoCache($x = '') { $GLOBALS['NoBrowseCache'] |= 1; return $x; }
+function NoCache($x = '') { $GLOBALS['NoHTMLCache'] |= 1; return $x; }
 function ParseArgs($x) {
   $z = array();
   preg_match_all('/([-+]|(?>(\\w+)[:=]))?("[^"]*"|\'[^\']*\'|\\S+)/',
@@ -1181,7 +1181,7 @@ function MarkupToHTML($pagename, $text, $escape = true) {
 function HandleBrowse($pagename, $auth = 'read') {
   # handle display of a page
   global $DefaultPageTextFmt, $PageNotFoundHeaderFmt, $HTTPHeaders,
-    $EnableBrowseCache, $NoBrowseCache, $PageCacheFile, $LastModTime,
+    $EnableHTMLCache, $NoHTMLCache, $PageCacheFile, $LastModTime, $IsHTMLCached,
     $FmtV, $HandleBrowseFmt, $PageStartFmt, $PageEndFmt, $PageRedirectFmt;
   $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
   if (!$page) Abort('?cannot read $pagename');
@@ -1202,19 +1202,27 @@ function HandleBrowse($pagename, $auth = 'read') {
       if (PageExists($rname)) Redirect($rname,"\$PageUrl?from=$pagename");
     }
   } else $PageRedirectFmt=FmtPageName($PageRedirectFmt,$_GET['from']);
-  if (@$EnableBrowseCache && !$NoBrowseCache && $PageCacheFile && 
-      @filemtime($PageCacheFile) > $LastModTime) 
-    $FmtV['$PageText'] = '<!--cached-->'.file_get_contents($PageCacheFile);
-  else {
+  if (@$EnableHTMLCache && !$NoHTMLCache && $PageCacheFile && 
+      @filemtime($PageCacheFile) > $LastModTime) {
+    StopWatch('HandleBrowse readcache start');
+    list($ctext) = unserialize(file_get_contents($PageCacheFile));
+    $FmtV['$PageText'] = "<!--cached-->$ctext";
+    $IsHTMLCached = 1;
+    StopWatch('HandleBrowse readcache end');
+  } else {
+    $IsHTMLCached = 0;
     $text = '(:groupheader:)'.@$text.'(:groupfooter:)';
+    $t1 = time();
     $FmtV['$PageText'] = MarkupToHTML($pagename,$text);
-    if (@$EnableBrowseCache && !$NoBrowseCache && $PageCacheFile) {
-      Lock(2);
-      $fp = @fopen("$PageCacheFile,new", "w");
+    if (@$EnableHTMLCache > 0 && !$NoHTMLCache && $PageCacheFile
+        && (time() - $t1 + 1) >= $EnableHTMLCache) {
+      StopWatch('HandleBrowse writecache start');
+      $fp = @fopen("$PageCacheFile,new", "x");
       if ($fp) { 
-        fwrite($fp, $FmtV['$PageText']); fclose($fp);
+        fwrite($fp, serialize(array($FmtV['$PageText']))); fclose($fp);
         rename("$PageCacheFile,new", $PageCacheFile);
       }
+      StopWatch('HandleBrowse writecache end');
     }
   }
   SDV($HandleBrowseFmt,array(&$PageStartFmt,&$PageRedirectFmt,'$PageText',
@@ -1423,7 +1431,7 @@ function HandleSource($pagename, $auth = 'read') {
 function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   global $DefaultPasswords, $GroupAttributesFmt,
     $AuthCascade, $FmtV, $AuthPromptFmt, $PageStartFmt, $PageEndFmt, 
-    $AuthId, $AuthList, $NoBrowseCache;
+    $AuthId, $AuthList, $NoHTMLCache;
   static $acache;
   SDV($GroupAttributesFmt,'$Group/GroupAttributes');
   SDV($AllowPassword,'nopass');
@@ -1459,7 +1467,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   }
   if (@$page['=auth']['admin']) 
     foreach($page['=auth'] as $lv=>$a) @$page['=auth'][$lv] = 3;
-  if (@$page['=passwd']['read']) $NoBrowseCache |= 2;
+  if (@$page['=passwd']['read']) $NoHTMLCache |= 2;
   if (@$page['=auth'][$level]) return $page;
   if (!$authprompt) return false;
   $GLOBALS['AuthNeeded'] = (@$_POST['authpw']) 
