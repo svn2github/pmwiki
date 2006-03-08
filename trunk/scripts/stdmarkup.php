@@ -38,7 +38,7 @@ Markup('\\r','<[=','/\\r/','');
 
 # $[phrase] substitutions
 Markup('$[phrase]', '>[=',
-  '/\\$\\[(?>([^\\]]+))\\]/e', "XL(PSS('$1'))");
+  '/\\$\\[(?>([^\\]]+))\\]/e', "NoCache(XL(PSS('$1')))");
 
 # {$var} substitutions
 Markup('{$var}', '>$[phrase]',
@@ -398,6 +398,7 @@ $Conditions['date'] = "CondDate(\$condparm)";
 
 function CondDate($condparm) {
   global $Now;
+  NoCache();
   if (!preg_match('/^(.*?)(\\.\\.(.*))?$/', $condparm, $match)) return false;
   if ($match[2]) {
     $t0 = $match[1];  if ($t0 == '') $t0 = '19700101';

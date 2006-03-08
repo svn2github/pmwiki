@@ -128,8 +128,8 @@ $FmtPV = array(
   '$SiteGroup'    => '$GLOBALS["SiteGroup"]',
   '$VersionNum'   => '$GLOBALS["VersionNum"]',
   '$Version'      => '$GLOBALS["Version"]',
-  '$Author'       => '$GLOBALS["Author"]',
-  '$AuthId'       => '$GLOBALS["AuthId"]',
+  '$Author'       => 'NoCache($GLOBALS["Author"])',
+  '$AuthId'       => 'NoCache($GLOBALS["AuthId"])',
   '$DefaultGroup' => '$GLOBALS["DefaultGroup"]',
   '$DefaultName'  => '$GLOBALS["DefaultName"]',
   );
@@ -142,6 +142,8 @@ $HTTPHeaders = array(
   "Cache-Control: no-store, no-cache, must-revalidate",
   "Content-type: text/html; charset=ISO-8859-1;");
 $CacheActions = array('browse','diff','print');
+$EnableBrowseCache = 0;
+$NoBrowseCache = 0;
 $HTMLDoctypeFmt = 
   "<!DOCTYPE html 
     PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
@@ -192,8 +194,8 @@ $Conditions['name'] =
   "(boolean)MatchPageNames(\$pagename, FixGlob(\$condparm, '$1*.$2'))";
 $Conditions['match'] = 'preg_match("!$condparm!",$pagename)';
 $Conditions['auth'] =
-  '@$GLOBALS["PCache"][$GLOBALS["pagename"]]["=auth"][trim($condparm)]';
-$Conditions['authid'] = '@$GLOBALS["AuthId"] > ""';
+  'NoCache(@$GLOBALS["PCache"][$GLOBALS["pagename"]]["=auth"][trim($condparm)])';
+$Conditions['authid'] = 'NoCache(@$GLOBALS["AuthId"] > "")';
 $Conditions['exists'] = 'PageExists(MakePageName(\$pagename, \$condparm))';
 $Conditions['equal'] = 'CompareArgs($condparm) == 0';
 function CompareArgs($arg) 
@@ -338,7 +340,9 @@ function SDVA(&$var,$val)
   { foreach($val as $k=>$v) if (!isset($var[$k])) $var[$k]=$v; }
 function IsEnabled(&$var,$f=0)
   { return (isset($var)) ? $var : $f; }
-function SetTmplDisplay($var, $val) { $GLOBALS['TmplDisplay'][$var] = $val; }
+function SetTmplDisplay($var, $val) 
+  { NoCache(); $GLOBALS['TmplDisplay'][$var] = $val; }
+function NoCache($x = '') { $GLOBALS['NoBrowseCache'] |= 1; return $x; }
 function ParseArgs($x) {
   $z = array();
   preg_match_all('/([-+]|(?>(\\w+)[:=]))?("[^"]*"|\'[^\']*\'|\\S+)/',
@@ -535,6 +539,7 @@ function PCache($pagename, $page) {
 ## as separator) instead of replacing it.
 function SetProperty($pagename, $prop, $value, $sep = NULL) {
   global $PCache, $KeepToken;
+  NoCache();
   $prop = "=p_$prop";
   $value = preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", 
                         "\$GLOBALS['KPV']['$1']", $value);
@@ -1176,6 +1181,7 @@ function MarkupToHTML($pagename, $text, $escape = true) {
 function HandleBrowse($pagename, $auth = 'read') {
   # handle display of a page
   global $DefaultPageTextFmt, $PageNotFoundHeaderFmt, $HTTPHeaders,
+    $EnableBrowseCache, $NoBrowseCache, $PageCacheFile, $LastModTime,
     $FmtV, $HandleBrowseFmt, $PageStartFmt, $PageEndFmt, $PageRedirectFmt;
   $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
   if (!$page) Abort('?cannot read $pagename');
@@ -1196,8 +1202,21 @@ function HandleBrowse($pagename, $auth = 'read') {
       if (PageExists($rname)) Redirect($rname,"\$PageUrl?from=$pagename");
     }
   } else $PageRedirectFmt=FmtPageName($PageRedirectFmt,$_GET['from']);
-  $text = '(:groupheader:)'.@$text.'(:groupfooter:)';
-  $FmtV['$PageText'] = MarkupToHTML($pagename,$text);
+  if (@$EnableBrowseCache && !$NoBrowseCache && $PageCacheFile && 
+      @filemtime($PageCacheFile) > $LastModTime) 
+    $FmtV['$PageText'] = '<!--cached-->'.file_get_contents($PageCacheFile);
+  else {
+    $text = '(:groupheader:)'.@$text.'(:groupfooter:)';
+    $FmtV['$PageText'] = MarkupToHTML($pagename,$text);
+    if (@$EnableBrowseCache && !$NoBrowseCache && $PageCacheFile) {
+      Lock(2);
+      $fp = @fopen("$PageCacheFile,new", "w");
+      if ($fp) { 
+        fwrite($fp, $FmtV['$PageText']); fclose($fp);
+        rename("$PageCacheFile,new", $PageCacheFile);
+      }
+    }
+  }
   SDV($HandleBrowseFmt,array(&$PageStartFmt,&$PageRedirectFmt,'$PageText',
     &$PageEndFmt));
   PrintFmt($pagename,$HandleBrowseFmt);
@@ -1404,7 +1423,7 @@ function HandleSource($pagename, $auth = 'read') {
 function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   global $DefaultPasswords, $GroupAttributesFmt,
     $AuthCascade, $FmtV, $AuthPromptFmt, $PageStartFmt, $PageEndFmt, 
-    $AuthId, $AuthList;
+    $AuthId, $AuthList, $NoBrowseCache;
   static $acache;
   SDV($GroupAttributesFmt,'$Group/GroupAttributes');
   SDV($AllowPassword,'nopass');
@@ -1440,6 +1459,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   }
   if (@$page['=auth']['admin']) 
     foreach($page['=auth'] as $lv=>$a) @$page['=auth'][$lv] = 3;
+  if (@$page['=passwd']['read']) $NoBrowseCache |= 2;
   if (@$page['=auth'][$level]) return $page;
   if (!$authprompt) return false;
   $GLOBALS['AuthNeeded'] = (@$_POST['authpw']) 
