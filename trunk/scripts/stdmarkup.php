@@ -373,28 +373,40 @@ Markup('^>><<', '<^>>',
 
 #### special stuff ####
 ## (:markup:) for displaying markup examples
-function MarkupMarkup($pagename, $text) {
+function MarkupMarkup($pagename, $text, $opt = '') {
+  $MarkupMarkupOpt = array('class' => 'vert');
+  $opt = array_merge($MarkupMarkupOpt, ParseArgs($opt));
   $html = MarkupToHTML($pagename, $text, array('escape' => 0));
+  if (@$opt['caption']) 
+    $caption = str_replace("'", '&#039;', 
+                           "<caption>{$opt['caption']}</caption>");
+  $class = preg_replace('/[^-\\s\\w]+/', ' ', @$opt['class']);
+  if (strpos($class, 'horiz') !== false) 
+    { $sep = ''; $pretext = wordwrap($text, 40); } 
+  else 
+    { $sep = '</tr><tr>'; $pretext = wordwrap($text, 80); }
   return 
-    Keep("<table class='markup' align='center'><tr><td class='markup1'><pre>" .
-      wordwrap($text, 70) .  "</pre></td></tr><tr><td class='markup2'>
-      $html</td></tr></table>");
+    Keep("<table class='markup $class' align='center'>$caption
+      <tr><td class='markup1' valign='top'><pre>$pretext</pre></td>$sep<td 
+        class='markup2' valign='top'>$html</td></tr></table>");
 }
 
 Markup('markup', '<[=',
-  "/\\(:markup:\\)[^\\S\n]*\\[([=@])(.*?)\\1\\]/sei",
-  "MarkupMarkup(\$pagename, PSS('$2'))");
+  "/\\(:markup(\\s+([^\n]*?))?:\\)[^\\S\n]*\\[([=@])(.*?)\\3\\]/sei",
+  "MarkupMarkup(\$pagename, PSS('$4'), PSS('$2'))");
 Markup('markupend', '>markup',
-  "/\\(:markup:\\)[^\\S\n]*\n(.*?)\\(:markupend:\\)/sei",
-  "MarkupMarkup(\$pagename, PSS('$1'))");
+  "/\\(:markup(\\s+([^\n]*?))?:\\)[^\\S\n]*\n(.*?)\\(:markupend:\\)/sei",
+  "MarkupMarkup(\$pagename, PSS('$3'), PSS('$1'))");
 
 $HTMLStylesFmt['markup'] = "
-  table.markup { border: 2px dotted #ccf; width:90%; }
+  table.markup { border:2px dotted #ccf; width:90%; }
   td.markup1, td.markup2 { padding-left:10px; padding-right:10px; }
-  td.markup1 { border-bottom: 1px solid #ccf; }
+  table.vert td.markup1 { border-bottom:1px solid #ccf; }
+  table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; }
+  table.markup caption { text-align:left; }
   div.faq { margin-left:2em; }
-  div.faq p.question { margin: 1em 0 0.75em -2em; font-weight:bold; }
-  div.faq hr { margin-left: -2em; }
+  div.faq p.question { margin:1em 0 0.75em -2em; font-weight:bold; }
+  div.faq hr { margin-left:-2em; }
   ";
 
 #### Special conditions ####
