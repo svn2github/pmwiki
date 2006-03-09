@@ -37,6 +37,7 @@ if (IsEnabled($EnableStdWikiStyles,1)) {
     'item' => 'li|dt',
     'list' => 'ul|ol|dl',
     'div' => 'div',
+    'pre' => 'pre',
     'img' => 'img',
     'block' => 'p(?!\\sclass=)|div|ul|ol|dl|li|dt|pre|h[1-6]',
     'p' => 'p(?!\\sclass=)'));
