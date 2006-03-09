@@ -57,7 +57,7 @@ Markup('include', '>if',
 ## (:redirect:)
 Markup('redirect', '<include',
   '/\\(:redirect\\s+(\\S.*?):\\)/ei',
-  "NoCache(RedirectMarkup(\$pagename, PSS('$1')))");
+  "RedirectMarkup(\$pagename, PSS('$1'))");
 
 $SaveAttrPatterns['/\\(:(if|include|redirect)(\\s.*?)?:\\)/i'] = ' ';
 

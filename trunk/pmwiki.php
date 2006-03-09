@@ -958,19 +958,21 @@ function IncludeText($pagename, $inclspec) {
 }
 
 
-function RedirectMarkup($pagename, $args) {
-  $k = Keep("(:redirect $args:)");
+function RedirectMarkup($pagename, $opt) {
+  $k = Keep("(:redirect $opt:)");
   global $MarkupFrame;
   if (!@$MarkupFrame[0]['redirect']) return $k;
-  $args = ParseArgs($args);
-  $to = @$args['to']; if (!$to) $to = @$args[''][0];
+  $opt = ParseArgs($opt);
+  $to = @$opt['to']; if (!$to) $to = @$opt[''][0];
   if (!$to) return $k;
   $to = MakePageName($pagename, $to);
   if (!PageExists($to)) return $k;
   if ($to == $pagename) return '';
-  if (@$args['from'] 
-      && !MatchPageNames($pagename, FixGlob($args['from'], '$1*.$2')))
+  if (@$opt['from'] 
+      && !MatchPageNames($pagename, FixGlob($opt['from'], '$1*.$2')))
     return '';
+  if (preg_match('/^30[1237]$/', @$opt['status'])) 
+     header("HTTP/1.1 {$opt['status']}");
   Redirect($to, "{\$PageUrl}?from=$pagename");
   exit();
 }
