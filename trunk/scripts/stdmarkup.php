@@ -54,7 +54,12 @@ Markup('include', '>if',
   '/\\(:include\\s+(\\S.*?):\\)/ei',
   "PRR(IncludeText(\$pagename, '$1'))");
 
-$SaveAttrPatterns['/\\(:(if|include)(\\s.*?)?:\\)/i'] = ' ';
+## (:redirect:)
+Markup('redirect', '<include',
+  '/\\(:redirect\\s+(\\S.*?):\\)/ei',
+  "NoCache(RedirectMarkup(\$pagename, PSS('$1')))");
+
+$SaveAttrPatterns['/\\(:(if|include|redirect)(\\s.*?)?:\\)/i'] = ' ';
 
 ## GroupHeader/GroupFooter handling
 Markup('nogroupheader', '>include',
@@ -369,7 +374,7 @@ Markup('^>><<', '<^>>',
 #### special stuff ####
 ## (:markup:) for displaying markup examples
 function MarkupMarkup($pagename, $text) {
-  $html = MarkupToHTML($pagename, $text, false);
+  $html = MarkupToHTML($pagename, $text, array('escape' => 0));
   return 
     Keep("<table class='markup' align='center'><tr><td class='markup1'><pre>" .
       wordwrap($text, 70) .  "</pre></td></tr><tr><td class='markup2'>

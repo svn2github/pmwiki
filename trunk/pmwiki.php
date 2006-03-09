@@ -74,7 +74,8 @@ $HTMLVSpace = "<p class='vspace'></p>";
 $HTMLPNewline = '';
 $MarkupFrame = array();
 $MarkupFrameBase = array('cs' => array(), 'vs' => '', 'ref' => 0,
-  'closeall' => array('block' => '<:block>'), 'is' => array());
+  'closeall' => array('block' => '<:block>'), 'is' => array(),
+  'escape' => 1);
 $WikiWordCountMax = 1000000;
 $WikiWordCount['PmWiki'] = 1;
 $UrlExcludeChars = '<>"{}|\\\\^`()[\\]\'';
@@ -957,6 +958,24 @@ function IncludeText($pagename, $inclspec) {
 }
 
 
+function RedirectMarkup($pagename, $args) {
+  $k = Keep("(:redirect $args:)");
+  global $MarkupFrame;
+  if (!@$MarkupFrame[0]['redirect']) return $k;
+  $args = ParseArgs($args);
+  $to = @$args['to']; if (!$to) $to = @$args[''][0];
+  if (!$to) return $k;
+  $to = MakePageName($pagename, $to);
+  if (!PageExists($to)) return $k;
+  if ($to == $pagename) return '';
+  if (@$args['from'] 
+      && !MatchPageNames($pagename, FixGlob($args['from'], '$1*.$2')))
+    return '';
+  Redirect($to, "{\$PageUrl}?from=$pagename");
+  exit();
+}
+   
+
 function Block($b) {
   global $BlockMarkups,$HTMLVSpace,$HTMLPNewline,$MarkupFrame;
   $mf = &$MarkupFrame[0]; $cs = &$mf['cs']; $vspaces = &$mf['vs'];
@@ -1148,17 +1167,18 @@ function BuildMarkupRules() {
 }
 
 
-function MarkupToHTML($pagename, $text, $escape = true) {
+function MarkupToHTML($pagename, $text, $opt = NULL) {
   # convert wiki markup text to HTML output
   global $MarkupRules, $MarkupFrame, $MarkupFrameBase, $WikiWordCount,
     $K0, $K1, $RedoMarkupLine;
 
   StopWatch('MarkupToHTML begin');
-  array_unshift($MarkupFrame,$MarkupFrameBase);
+  array_unshift($MarkupFrame, array_merge($MarkupFrameBase, (array)$opt));
   $MarkupFrame[0]['wwcount'] = $WikiWordCount;
   $markrules = BuildMarkupRules();
   foreach((array)$text as $l) 
-    $lines[] = ($escape) ? PVS(htmlspecialchars($l, ENT_NOQUOTES)) : $l;
+    $lines[] = $MarkupFrame[0]['escape'] 
+               ? PVS(htmlspecialchars($l, ENT_NOQUOTES)) : $l;
   $lines[] = '(:closeall:)';
   $out = '';
   while (count($lines)>0) {
@@ -1193,39 +1213,31 @@ function HandleBrowse($pagename, $auth = 'read') {
     SDV($PageNotFoundHeaderFmt, 'HTTP/1.1 404 Not Found');
     SDV($HTTPHeaders['status'], $PageNotFoundHeaderFmt);
   }
-  SDV($PageRedirectFmt,"<p><i>($[redirected from] 
-    <a rel='nofollow' href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\$HTMLVSpace\n");
-  if (@!$_GET['from']) {
-    $PageRedirectFmt = '';
-    if (preg_match('/\\(:redirect\\s+(.+?):\\)/',$text,$match)) {
-      $rname = MakePageName($pagename,$match[1]);
-      if (PageExists($rname)) Redirect($rname,"\$PageUrl?from=$pagename");
-    }
-  } else $PageRedirectFmt=FmtPageName($PageRedirectFmt,$_GET['from']);
+  $opt = array();
+  SDV($PageRedirectFmt,"<p><i>($[redirected from] <a rel='nofollow' 
+    href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\$HTMLVSpace\n");
+  if (@!$_GET['from']) { $opt['redirect'] = 1; $PageRedirectFmt = ''; }
+  else $PageRedirectFmt = FmtPageName($PageRedirectFmt, $_GET['from']);
   if (@$EnableHTMLCache && !$NoHTMLCache && $PageCacheFile && 
       @filemtime($PageCacheFile) > $LastModTime) {
-    StopWatch('HandleBrowse readcache start');
     list($ctext) = unserialize(file_get_contents($PageCacheFile));
     $FmtV['$PageText'] = "<!--cached-->$ctext";
     $IsHTMLCached = 1;
-    StopWatch('HandleBrowse readcache end');
   } else {
     $IsHTMLCached = 0;
     $text = '(:groupheader:)'.@$text.'(:groupfooter:)';
     $t1 = time();
-    $FmtV['$PageText'] = MarkupToHTML($pagename,$text);
+    $FmtV['$PageText'] = MarkupToHTML($pagename, $text, $opt);
     if (@$EnableHTMLCache > 0 && !$NoHTMLCache && $PageCacheFile
         && (time() - $t1 + 1) >= $EnableHTMLCache) {
-      StopWatch('HandleBrowse writecache start');
       $fp = @fopen("$PageCacheFile,new", "x");
       if ($fp) { 
         fwrite($fp, serialize(array($FmtV['$PageText']))); fclose($fp);
         rename("$PageCacheFile,new", $PageCacheFile);
       }
-      StopWatch('HandleBrowse writecache end');
     }
   }
-  SDV($HandleBrowseFmt,array(&$PageStartFmt,&$PageRedirectFmt,'$PageText',
+  SDV($HandleBrowseFmt,array(&$PageStartFmt, &$PageRedirectFmt, '$PageText',
     &$PageEndFmt));
   PrintFmt($pagename,$HandleBrowseFmt);
 }
