@@ -290,7 +290,8 @@ function HandleSearchA($pagename, $level = 'read') {
   $form = RetrieveAuthPage($pagename, $level, true, READPAGE_CURRENT);
   if (!$form) Abort("?unable to read $pagename");
   PCache($pagename, $form);
-  if (!preg_match('/\\(:searchresults(\\s.*?)?:\\)/', $form['text']))
+  $text = preg_replace('/\\[([=@])(.*?)\\1\\]/s', ' ', $form['text']);
+  if (!preg_match('/\\(:searchresults(\\s.*?)?:\\)/', $text))
     foreach((array)$PageSearchForm as $formfmt) {
       $form = ReadPage(FmtPageName($formfmt, $pagename), READPAGE_CURRENT);
       if ($form['text']) break;
