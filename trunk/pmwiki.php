@@ -986,7 +986,7 @@ function Block($b) {
   $out = '';
   if ($b == 'vspace') {
     $vspaces .= "\n";
-    while (count($cs)>0 && @$BlockMarkups[@end($cs)][3]==0) 
+    while (count($cs)>0 && @end($cs)!='pre' && @$BlockMarkups[@end($cs)][3]==0) 
       { $c = array_pop($cs); $out .= $BlockMarkups[$c][2]; }
     return $out;
   }

@@ -22,7 +22,7 @@ function PreserveText($sigil, $text, $lead) {
   if (strpos($text, "\n")===false) 
     return "$lead<code>".Keep($text)."</code>";
   $text = preg_replace("/\n[^\\S\n]+$/", "\n", $text);
-  if ($lead == "") return "<pre>".Keep($text)."</pre>";
+  if ($lead == "" || $lead == "\n") return "$lead<pre>".Keep($text)."</pre>";
   return "$lead<:pre,1>".Keep($text);
 }
 
