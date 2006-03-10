@@ -222,10 +222,7 @@ function HandleFeed($pagename, $auth = 'read') {
     $out .= FmtPageName($f['feed']['_items'], $pagename);
   foreach($pagelist as $pn) {
     $page = &$PCache[$pn];
-    $FmtV['$ItemDesc'] = (@$page['description']) 
-      ? $page['description']
-      : trim(preg_replace(array_keys($FeedDescPatterns), 
-                     array_values($FeedDescPatterns), @$page['excerpt']));
+    $FmtV['$ItemDesc'] = @$page['description'];
     $FmtV['$ItemISOTime'] = gmstrftime($ISOTimeFmt, $page['time']);
     $FmtV['$ItemRSSTime'] = gmdate($RSSTimeFmt, $page['time']);
 
