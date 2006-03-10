@@ -286,7 +286,7 @@ function HandleSearchA($pagename, $level = 'read') {
   global $PageSearchForm, $FmtV, $HandleSearchFmt, 
     $PageStartFmt, $PageEndFmt;
   SDV($HandleSearchFmt,array(&$PageStartFmt, '$PageText', &$PageEndFmt));
-  SDV($PageSearchForm, '$[$SiteGroup/Search]');
+  SDV($PageSearchForm, '$[{$SiteGroup}/Search]');
   $form = RetrieveAuthPage($pagename, $level, true, READPAGE_CURRENT);
   if (!$form) Abort("?unable to read $pagename");
   PCache($pagename, $form);

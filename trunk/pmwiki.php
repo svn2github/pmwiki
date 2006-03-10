@@ -1606,7 +1606,7 @@ function HandleAttr($pagename, $auth = 'attr') {
     will leave the attribute unchanged.  To clear an attribute, enter
     'clear'."));
   SDV($PageAttrFmt,"<div class='wikiattr'>
-    <h2 class='wikiaction'>$[\$FullName Attributes]</h1>
+    <h2 class='wikiaction'>$[{\$FullName} Attributes]</h1>
     <p>$[EnterAttributes]</p></div>");
   SDV($HandleAttrFmt,array(&$PageStartFmt,&$PageAttrFmt,
     'function:PrintAttrForm',&$PageEndFmt));
