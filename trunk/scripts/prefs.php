@@ -32,11 +32,14 @@ if (isset($_GET['setprefs'])) {
 if ($sp && PageExists($sp)) XLPage('prefs', $sp);
 
 XLSDV('en', array(
+  'ak_view' => '',
   'ak_edit' => 'e',
   'ak_history' => 'h',
+  'ak_print' => '',
   'ak_recentchanges' => 'c',
   'ak_save' => 's',
   'ak_saveedit' => 'u',
   'ak_savedraft' => 'd',
-  'ak_preview' => 'p'));
+  'ak_preview' => 'p',
+  ));
 
