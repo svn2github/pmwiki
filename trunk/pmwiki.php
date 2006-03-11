@@ -1593,7 +1593,8 @@ function PrintAttrForm($pagename) {
       <td><input type='text' name='$attr' value='$value' /></td>
       <td>$setting</td></tr>";
   }
-  echo "</table><input type='submit' /></form>";
+  echo FmtPageName("</table><input type='submit' value='$[Save]' /></form>",
+         $pagename);
 }
 
 function HandleAttr($pagename, $auth = 'attr') {
