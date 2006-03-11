@@ -384,7 +384,7 @@ function MarkupMarkup($pagename, $text, $opt = '') {
   if (strpos($class, 'horiz') !== false) 
     { $sep = ''; $pretext = wordwrap($text, 40); } 
   else 
-    { $sep = '</tr><tr>'; $pretext = wordwrap($text, 80); }
+    { $sep = '</tr><tr>'; $pretext = wordwrap($text, 70); }
   return 
     Keep("<table class='markup $class' align='center'>$caption
       <tr><td class='markup1' valign='top'><pre>$pretext</pre></td>$sep<td 
