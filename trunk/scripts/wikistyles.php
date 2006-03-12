@@ -85,7 +85,7 @@ $WikiStyleCSS[] = 'font-size|font-family|font-weight|font-style';
 
 function ApplyStyles($x) {
   global $UrlExcludeChars, $WikiStylePattern, $WikiStyleRepl, $WikiStyle,
-    $WikiStyleAttr, $WikiStyleCSS, $WikiStyleApply, $KeepToken, $KPV;
+    $WikiStyleAttr, $WikiStyleCSS, $WikiStyleApply, $BlockPattern;
   $x = preg_replace("/\\bhttps?:[^$UrlExcludeChars]+/e", "Keep('$0')", $x);
   $parts = preg_split("/($WikiStylePattern)/",$x,-1,PREG_SPLIT_DELIM_CAPTURE);
   $parts[] = NULL;
@@ -144,7 +144,8 @@ function ApplyStyles($x) {
       if ($id) $spanattr .= " id='$id'";
       if ($spanattr) {
         if (!@$WikiStyleApply[$a]) {
-          $p = preg_replace("!^(.*?)($|</?(form|div|table|tr|td|th|p|ul|ol|dl|li|dt|dd|h[1-6]|blockquote|pre|hr))!s", "<span $spanattr>$1</span>$2", $p, 1);
+          $p = preg_replace("!^(.*?)($|</?($BlockPattern))!s", 
+                            "<span $spanattr>$1</span>$2", $p, 1);
 }
         elseif (!preg_match('/^(\\s*<[^>]+>)*$/s',$p) ||
                 strpos($p, '<img')!==false) {

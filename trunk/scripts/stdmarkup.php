@@ -269,7 +269,7 @@ Markup('^<:','>block','/^(?=\\s*\\S)(<:([^>]+)>)?/e',"Block('$2')");
 
 ## unblocked lines w/block markup become anonymous <:block>
 Markup('^!<:', '<^<:',
-  '/^(?!<:)(?=.*<\\/?(form|div|table|p|ul|ol|dl|h[1-6]|blockquote|pre|hr|textarea)\\b)/',
+  "/^(?!<:)(?=.*(<\\/?($BlockPattern)\\b)|$KeepToken\\d+B$KeepToken)/",
   '<:block>');
 
 ## Lines that begin with displayed images receive their own block.  A
@@ -387,7 +387,7 @@ function MarkupMarkup($pagename, $text, $opt = '') {
     { $sep = ''; $pretext = wordwrap($text, 40); } 
   else 
     { $sep = '</tr><tr>'; $pretext = wordwrap($text, 75); }
-  return '<table '. Keep("class='markup $class' align='center'>$caption
+  return Keep("<table class='markup $class' align='center'>$caption
       <tr><td class='markup1' valign='top'><pre>$pretext</pre></td>$sep<td 
         class='markup2' valign='top'>$html</td></tr></table>");
 }

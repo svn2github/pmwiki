@@ -41,6 +41,7 @@ define('PmWiki',1);
 @include_once("$FarmD/scripts/version.php");
 $GroupPattern = '[[:upper:]][\\w]*(?:-\\w+)*';
 $NamePattern = '[[:upper:]\\d][\\w]*(?:-\\w+)*';
+$BlockPattern = 'form|div|table|t[rdh]|p|[uo]l|d[ltd]|h[1-6r]|pre|blockquote';
 $WikiWordPattern = '[[:upper:]][[:alnum:]]*(?:[[:upper:]][[:lower:]0-9]|[[:lower:]0-9][[:upper:]])[[:alnum:]]*';
 $WikiDir = new PageStore('wiki.d/{$FullName}');
 $WikiLibDirs = array(&$WikiDir,new PageStore('$FarmD/wikilib.d/{$FullName}'));
@@ -891,10 +892,11 @@ function PrintWikiPage($pagename, $wikilist=NULL, $auth='read') {
   }
 }
 
-function Keep($x,$pool='') {
+function Keep($x, $pool=NULL) {
   # Keep preserves a string from being processed by wiki markups
-  global $KeepToken,$KPV,$KPCount;
+  global $BlockPattern, $KeepToken, $KPV, $KPCount;
   $x = preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", "\$KPV['\$1']", $x);
+  if (is_null($pool) && preg_match("/<($BlockPattern)\\b/", $x)) $pool = 'B';
   $KPCount++; $KPV[$KPCount.$pool]=$x;
   return $KeepToken.$KPCount.$pool.$KeepToken;
 }
