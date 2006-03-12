@@ -87,7 +87,7 @@ XLSDV('en', array(
   'ak_saveedit' => 'u',
   'ak_preview' => 'p',
   'ak_textedit' => ',',
-  'e_rows' => '25',
+  'e_rows' => '23',
   'e_cols' => '60'));
 
 # (:e_preview:) displays the preview of formatted text.
