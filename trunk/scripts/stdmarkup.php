@@ -218,7 +218,8 @@ Markup('[[->','>[[|',
 
 ## [[#anchor]]
 Markup('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/e',
-  "Keep(\"<a name='$1' id='$1'></a>\",'L')");
+  "Keep(TrackAnchors('$1') ? '' : \"<a name='$1' id='$1'></a>\", 'L')");
+function TrackAnchors($x) { global $SeenAnchor; return @$SeenAnchor[$x]++; }
 
 ## [[target |#]] reference links
 Markup('[[|#', '<[[|',
