@@ -41,5 +41,7 @@ XLSDV('en', array(
   'ak_saveedit' => 'u',
   'ak_savedraft' => 'd',
   'ak_preview' => 'p',
+  'ak_em' => '',
+  'ak_strong' => '',
   ));
 
