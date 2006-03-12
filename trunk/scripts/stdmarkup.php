@@ -20,9 +20,10 @@
 function PreserveText($sigil, $text, $lead) {
   if ($sigil=='=') return $lead.Keep($text);
   if (strpos($text, "\n")===false) 
-    return "$lead<code>".Keep($text)."</code>";
+    return "$lead<code class='escaped'>".Keep($text)."</code>";
   $text = preg_replace("/\n[^\\S\n]+$/", "\n", $text);
-  if ($lead == "" || $lead == "\n") return "$lead<pre>".Keep($text)."</pre>";
+  if ($lead == "" || $lead == "\n") 
+    return "$lead<pre class='escaped'>".Keep($text)."</pre>";
   return "$lead<:pre,1>".Keep($text);
 }
 
