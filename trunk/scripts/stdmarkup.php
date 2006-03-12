@@ -404,9 +404,8 @@ $HTMLStylesFmt['markup'] = "
   table.vert td.markup1 { border-bottom:1px solid #ccf; }
   table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; }
   table.markup caption { text-align:left; }
-  div.faq { margin-left:2em; }
-  div.faq p.question { margin:1em 0 0.75em -2em; font-weight:bold; }
-  div.faq hr { margin-left:-2em; }
+  div.faq p, div.faq pre { margin-left:2em; }
+  div.faq p.question { margin:1em 0 0.75em 0; font-weight:bold; }
   ";
 
 #### Special conditions ####
