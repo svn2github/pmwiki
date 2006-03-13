@@ -1520,7 +1520,7 @@ function IsAuthorized($chal, $source, &$from) {
       if (!$pwchal) continue;
       $passwd[] = $pwchal;
       if ($auth < 0) continue;                                 # rejected
-      if ($pwchal{0} == '@')                                   # groups
+      if ($pwchal{0} == '@' && @$AuthList[$pwchal])            # groups
         { $auth = $AuthList[$pwchal]; continue; }
       if (preg_match('/^(\\w+:)(.*)$/', $pwchal, $match)) {    # id:...
         foreach(explode(',', $match[2]) as $id) 
