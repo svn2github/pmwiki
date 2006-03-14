@@ -1479,7 +1479,8 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   foreach($AuthCascade as $k => $t) {
     if ($page['=auth'][$k]+0 == 2) {
       $page['=auth'][$k] = $page['=auth'][$t];
-      $page['=pwsource'][$k] = "cascade:$t";
+      if ($page['=passwd'][$k] = $page['=passwd'][$t])         # assign
+        $page['=pwsource'][$k] = "cascade:$t";
     }
   }
   if (@$page['=auth']['admin']) 
@@ -1516,22 +1517,24 @@ function IsAuthorized($chal, $source, &$from) {
   $auth = 0; 
   $passwd = array();
   foreach((array)$chal as $c) {
-    foreach(explode(' ', $c) as $pwchal) {
-      if (!$pwchal) continue;
-      $passwd[] = $pwchal;
-      if ($auth < 0) continue;                                 # rejected
-      if ($pwchal{0} == '@' && @$AuthList[$pwchal])            # groups
-        { $auth = $AuthList[$pwchal]; continue; }
-      if (preg_match('/^(\\w+:)(.*)$/', $pwchal, $match)) {    # id:...
-        foreach(explode(',', $match[2]) as $id) 
-          if ($auth >= 0 && @$AuthList[$match[1].$id])
-            $auth = $AuthList[$match[1].$id];
+    $x = '';
+    $pwchal = preg_split('/([, ]|\\w+:)/', $c, -1, PREG_SPLIT_DELIM_CAPTURE);
+    foreach($pwchal as $pw) {
+      if ($pw == ',') continue;
+      else if ($pw == ' ') { $x = ''; continue; }
+      else if (substr($pw, -1, 1) == ':') { $x = $pw; continue; }
+      else if ($pw{0} != '@' && $x > '') $pw = $x . $pw;
+      if (!$pw) continue;
+      $passwd[] = $pw;
+      if ($auth < 0) continue;
+      if ($x || $pw{0} == '@') {
+        if (@$AuthList[$pw]) $auth = $AuthList[$pw];
         continue;
       }
-      if (crypt($AllowPassword, $pwchal) == $pwchal)           # nopass
+      if (crypt($AllowPassword, $pw) == $pw)           # nopass
         { $auth=1; continue; }
       foreach((array)$AuthPw as $pwresp)                       # password
-        if (crypt($pwresp, $pwchal) == $pwchal) { $auth=1; continue 2; }
+        if (crypt($pwresp, $pw) == $pw) { $auth=1; continue; }
     }
   }
   if (!$passwd) return $from;
@@ -1639,6 +1642,7 @@ function HandlePostAttr($pagename, $auth = 'attr') {
   if (IsEnabled($EnablePostAttrClearSession, 1)) {
     @session_start();
     unset($_SESSION['authid']);
+    unset($_SESSION['authlist']);
     $_SESSION['authpw'] = array();
   }
   Redirect($pagename);
