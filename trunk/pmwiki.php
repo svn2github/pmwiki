@@ -1414,7 +1414,7 @@ function HandleEdit($pagename, $auth = 'edit') {
     $FmtV['$EditForm'] = MarkupToHTML($pagename, $form['text']);
   }
   SDV($PageEditFmt, "<div id='wikiedit'>
-    <h2 class='wikiaction'>$[Editing {\$FullName}]</h1>
+    <h2 class='wikiaction'>$[Editing {\$FullName}]</h2>
     <form method='post' rel='nofollow' action='\$PageUrl?action=edit'>
     <input type='hidden' name='action' value='edit' />
     <input type='hidden' name='n' value='\$FullName' />
@@ -1611,7 +1611,7 @@ function HandleAttr($pagename, $auth = 'attr') {
     will leave the attribute unchanged.  To clear an attribute, enter
     'clear'."));
   SDV($PageAttrFmt,"<div class='wikiattr'>
-    <h2 class='wikiaction'>$[{\$FullName} Attributes]</h1>
+    <h2 class='wikiaction'>$[{\$FullName} Attributes]</h2>
     <p>$[EnterAttributes]</p></div>");
   SDV($HandleAttrFmt,array(&$PageStartFmt,&$PageAttrFmt,
     'function:PrintAttrForm',&$PageEndFmt));
