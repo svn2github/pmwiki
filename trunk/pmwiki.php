@@ -1446,7 +1446,7 @@ function HandleSource($pagename, $auth = 'read') {
 ## page accessed), we cache the results of site passwords and 
 ## GroupAttribute pages to be able to speed up subsequent calls.
 function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
-  global $DefaultPasswords, $GroupAttributesFmt,
+  global $DefaultPasswords, $GroupAttributesFmt, $AllowPassword,
     $AuthCascade, $FmtV, $AuthPromptFmt, $PageStartFmt, $PageEndFmt, 
     $AuthId, $AuthList, $NoHTMLCache;
   static $acache;
