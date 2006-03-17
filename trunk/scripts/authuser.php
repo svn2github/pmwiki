@@ -102,6 +102,7 @@ function AuthUserHtPasswd($pagename, $id, $pw, $pwlist) {
 
 function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
   global $AuthLDAPBindDN, $AuthLDAPBindPassword;
+  if (!$pw) return false;
   if (!function_exists('ldap_connect')) return false;
   foreach ((array)$pwlist as $ldap) {
     if (!preg_match('!ldap://([^:]+)(?::(\\d+))?/(.+)$!', $ldap, $match))
