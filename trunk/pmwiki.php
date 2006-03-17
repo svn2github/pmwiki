@@ -950,8 +950,8 @@ function IncludeText($pagename, $inclspec) {
       $upat = ($k{0} == 'p') ? ".*?(\n\\s*\n|$)" : "[^\n]*(?:\n|$)";
       if (!$dots) { $b=$a; $a=0; }
       if ($a>0) $a--;
-      $itext=preg_replace("/^(($upat)\{0,$b}).*$/s",'$1',$itext,1);
-      $itext=preg_replace("/^($upat)\{0,$a}/s",'',$itext,1);
+      $itext=preg_replace("/^(($upat){0,$b}).*$/s",'$1',$itext,1);
+      $itext=preg_replace("/^($upat){0,$a}/s",'',$itext,1);
       continue;
     }
   }
