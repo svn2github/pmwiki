@@ -133,6 +133,7 @@ $FmtPV = array(
   '$AuthId'       => 'NoCache($GLOBALS["AuthId"])',
   '$DefaultGroup' => '$GLOBALS["DefaultGroup"]',
   '$DefaultName'  => '$GLOBALS["DefaultName"]',
+  '$Action'       => "'$action'",
   );
 $SaveProperties = array('title', 'description', 'keywords');
 
