@@ -33,7 +33,7 @@ $EnableAuthUser = 1;
 
 if (@$_POST['authid']) 
   AuthUserId($pagename, stripmagic(@$_POST['authid']), 
-             stripmagic(@$_POST['authpw']);
+             stripmagic(@$_POST['authpw']));
 else SessionAuth($pagename);
 
 function AuthUserId($pagename, $id, $pw=NULL) {
