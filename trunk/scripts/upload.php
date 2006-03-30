@@ -271,7 +271,7 @@ function FmtUploadList($pagename, $args) {
   }
   closedir($dirp);
   $out = array();
-  asort($filelist);
+  natcasesort($filelist);
   $overwrite = '';
   foreach($filelist as $file=>$x) {
     $name = PUE("$uploadurl$file");
