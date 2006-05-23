@@ -304,12 +304,12 @@ if (IsEnabled($EnableStdConfig,1))
 foreach((array)$InterMapFiles as $f) {
   $f = FmtPageName($f, $pagename);
   if (($v = @file($f))) 
-    $v = preg_replace('/^\\s*(?>\\w+)(?!:)/m', '$0:', implode('', $v));
+    $v = preg_replace('/^\\s*(?>\\w[-\\w]*)(?!:)/m', '$0:', implode('', $v));
   else if (PageExists($f)) {
     $p = ReadPage($f, READPAGE_CURRENT);
     $v = $p['text'];
   } else continue;
-  if (!preg_match_all("/^\\s*(\\w+:)[^\\S\n]+(\\S*)/m", $v, 
+  if (!preg_match_all("/^\\s*(\\w[-\\w]*:)[^\\S\n]+(\\S*)/m", $v, 
                       $match, PREG_SET_ORDER)) continue;
   foreach($match as $m) {
     if (strpos($m[2], '$1') === false) $m[2] .= '$1';
