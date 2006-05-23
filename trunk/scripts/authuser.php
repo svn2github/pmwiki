@@ -123,7 +123,7 @@ function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
       $x = ldap_get_entries($ds, $sr);
       if ($x['count'] == 1) {
         $dn = $x[0]['dn'];
-        if (ldap_bind($ds, $dn, $pw)) { ldap_close($ds); return true; }
+        if (@ldap_bind($ds, $dn, $pw)) { ldap_close($ds); return true; }
       }
     }
     ldap_close($ds);
