@@ -86,8 +86,8 @@ h6 { font-size:1.0em; }
 #wikitext table { font-size:100%; line-height:1.33em; } /* For MSIE 5.5 */
 
 /* These are for the edit form. */
-#wikiedit form { margin:0px; }
-#wikiedit textarea { width:98%; }
+#wikiedit form { margin:0px; width:100%; }
+#wikiedit textarea { width:100%; }
 .wikimessage { margin-top:4px; margin-bottom:4px; font-style:italic; }
 
 /* These affect the lines at the very bottom. */
