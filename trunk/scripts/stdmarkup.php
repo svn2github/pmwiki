@@ -32,7 +32,10 @@ Markup('[=','_begin',"/(\n[^\\S\n]*)?\\[([=@])(.*?)\\2\\]/se",
 Markup('restore','<_end',"/$KeepToken(\\d.*?)$KeepToken/e",
     '$GLOBALS[\'KPV\'][\'$1\']');
 Markup('<:', '>restore',
-  "/<:[^>]*>/", "");
+  '/<:[^>]*>/', '');
+Markup('div-vspace', '<restore',
+  "/<div class='vspace'><\\/div><p\\b(([^>]*)(\\s)class=(['\"])([^>]*?)\\4)?/",
+  "<p$2 class='vspace$3$5'");
 
 ## remove carriage returns before preserving text
 Markup('\\r','<[=','/\\r/','');

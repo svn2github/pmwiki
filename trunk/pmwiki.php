@@ -70,7 +70,7 @@ $RecentChangesFmt = array(
     '* [[{$Group}/{$Name}]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]');
 $ScriptUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 $PubDirUrl = preg_replace('#/[^/]*$#','/pub',$ScriptUrl,1);
-$HTMLVSpace = "<p class='vspace'></p>";
+$HTMLVSpace = "<div class='vspace'></div>";
 $HTMLPNewline = '';
 $MarkupFrame = array();
 $MarkupFrameBase = array('cs' => array(), 'vs' => '', 'ref' => 0,
