@@ -518,14 +518,18 @@ function MakePageName($basepage,$x) {
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
     "/((^|[^-\\w])\\w)/e" => "strtoupper('$1')",
     "/ /" => ''));
-  if (!preg_match('/(?:([^.\\/]+)[.\\/])?([^.\\/]+)$/',$x,$m)) return '';
-  $name = preg_replace(array_keys($MakePageNamePatterns),
-            array_values($MakePageNamePatterns), $m[2]);
-  if ($m[1]) {
+  $m = preg_split('/[.\\/]/', $x);
+  if (count($m)<1 || count($m)>2 || $m[0]=='') return '';
+  if ($m[1] > '') {
     $group = preg_replace(array_keys($MakePageNamePatterns),
-               array_values($MakePageNamePatterns), $m[1]);
+               array_values($MakePageNamePatterns), $m[0]);
+    $name = preg_replace(array_keys($MakePageNamePatterns),
+              array_values($MakePageNamePatterns), $m[1]);
     return "$group.$name";
   }
+  $name = preg_replace(array_keys($MakePageNamePatterns),
+            array_values($MakePageNamePatterns), $m[0]);
+  if (count($m)>1) { $basepage = "$name.$name"; }
   foreach((array)$PagePathFmt as $pg) {
     $pn = FmtPageName(str_replace('$1',$name,$pg),$basepage);
     if (PageExists($pn)) return $pn;
@@ -1128,8 +1132,10 @@ function MakeLink($pagename,$tgt,$txt=NULL,$suffix=NULL,$fmt=NULL) {
   else {
     if (is_null($txt)) {
       $txt = preg_replace('/\\([^)]*\\)/','',$tgt);
-      if ($m[1]=='<:page>') $txt = preg_replace('!^.*[^<]/!','',$txt);
-      $txt = $txt;
+      if ($m[1]=='<:page>') {
+        $txt = preg_replace('!/\\s*$!', '', $txt);
+        $txt = preg_replace('!^.*[^<]/!', '', $txt);
+      }
     }
     $txt .= $suffix;
   }
