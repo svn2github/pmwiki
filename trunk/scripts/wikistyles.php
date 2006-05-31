@@ -39,8 +39,8 @@ if (IsEnabled($EnableStdWikiStyles,1)) {
     'div' => 'div',
     'pre' => 'pre',
     'img' => 'img',
-    'block' => "(?:p|div)(?!\\sclass='vspace')|ul|ol|dl|li|dt|pre|h[1-6]",
-    'p' => "p(?!\\sclass='vspace')"));
+    'block' => 'p(?!\\sclass=)|div|ul|ol|dl|li|dt|pre|h[1-6]',
+    'p' => 'p(?!\\sclass=)'));
   foreach(array('item', 'list', 'block', 'p', 'div') as $c)
     SDV($WikiStyle[$c],array('apply'=>$c));
   ## block justifications
