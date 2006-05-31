@@ -70,7 +70,7 @@ $RecentChangesFmt = array(
     '* [[{$Group}/{$Name}]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]');
 $ScriptUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 $PubDirUrl = preg_replace('#/[^/]*$#','/pub',$ScriptUrl,1);
-$HTMLVSpace = "<div class='vspace'></div>";
+$HTMLVSpace = "<vspace>";
 $HTMLPNewline = '';
 $MarkupFrame = array();
 $MarkupFrameBase = array('cs' => array(), 'vs' => '', 'ref' => 0,
@@ -339,7 +339,7 @@ function PZZ($x,$y='') { return ''; }
 function PRR($x=NULL) 
   { if ($x || is_null($x)) $GLOBALS['RedoMarkupLine']++; return $x; }
 function PUE($x)
-  { return preg_replace('/[\\x80-\\xff ]/e', "'%'.dechex(ord('$0'))", $x); }
+  { return preg_replace('/[\\x80-\\xff \'"]/e', "'%'.dechex(ord('$0'))", $x); }
 function PQA($x) { 
   return preg_replace('/([a-zA-Z])\\s*=\\s*([^\'">][^\\s>]*)/', "$1='$2'", $x);
 }
