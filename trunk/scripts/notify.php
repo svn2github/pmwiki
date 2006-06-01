@@ -103,8 +103,7 @@ function NotifyUpdate($pagename, $dir='') {
   $pn = FmtPageName($NotifyListPageFmt, $pagename);
   $npage = ReadPage($pn, READPAGE_CURRENT);
   preg_match_all('/^[\s*:#->]*(notify[:=].*)/m', $npage['text'], $nlist);
-  $nlist = array_merge((array)$NotifyList, (array)$nlist);
-  print count($nlist);
+  $nlist = array_merge((array)@$NotifyList, (array)@$nlist[1]);
   if (!$nlist) return;
 
   ##   make sure other processes are locked out
@@ -132,7 +131,7 @@ function NotifyUpdate($pagename, $dir='') {
     if ($firstpost < 1) $firstpost = $Now;
   }
 
-  foreach($nlist[1] as $n) {
+  foreach($nlist as $n) {
     $opt = ParseArgs($n);
     $mailto = preg_split('/[\s,]+/', $opt['notify']);
     if (!$mailto) continue;
