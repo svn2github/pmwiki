@@ -32,7 +32,7 @@
         Site.NotifyList can override this value via a custom "squelch="
         parameter.
     $NotifyFile - scratchpad file used to keep track of pending emails.
-    $NotifyListFmt - name of the NotifyList configuration page.
+    $NotifyListPageFmt - name of the NotifyList configuration page.
     $NotifySubjectFmt - subject line for sent messages.
     $NotifyBodyFmt - body of message to be sent.  The string '$NotifyItems'
         is replaced with the list of posts in the email.
@@ -47,7 +47,7 @@
 SDV($NotifyDelay, 0);
 SDV($NotifySquelch, 10800);
 SDV($NotifyFile, "$WorkDir/.notifylist");
-SDV($NotifyListFmt, '{$SiteGroup}.NotifyList');
+SDV($NotifyListPageFmt, '{$SiteGroup}.NotifyList');
 SDV($NotifySubjectFmt, '[$WikiTitle] recent notify posts');
 SDV($NotifyBodyFmt, 
   "Recent \$WikiTitle posts:\n" 
@@ -89,7 +89,7 @@ function PostNotify($pagename, &$page, &$new) {
 
 
 function NotifyUpdate($pagename, $dir='') {
-  global $NotifyListFmt, $NotifyFile, $IsPagePosted,
+  global $NotifyList, $NotifyListPageFmt, $NotifyFile, $IsPagePosted,
     $FmtV, $NotifyTimeFmt, $NotifyItemFmt, $SearchPatterns,
     $NotifySquelch, $NotifyDelay, $Now,
     $NotifySubjectFmt, $NotifyBodyFmt, $NotifyHeaders, $NotifyParameters;
@@ -100,11 +100,12 @@ function NotifyUpdate($pagename, $dir='') {
   $GLOBALS['EnableRedirect'] = 0;
 
   ##   Read in the current notify configuration
-  $pn = FmtPageName($NotifyListFmt, $pagename);
+  $pn = FmtPageName($NotifyListPageFmt, $pagename);
   $npage = ReadPage($pn, READPAGE_CURRENT);
-  if (!$npage) return false;
-  if (!preg_match_all('/^[\s*:#->]*(notify[:=].*)/m', $npage['text'], $nlist))
-    return false;
+  preg_match_all('/^[\s*:#->]*(notify[:=].*)/m', $npage['text'], $nlist);
+  $nlist = array_merge((array)$NotifyList, (array)$nlist);
+  print count($nlist);
+  if (!$nlist) return;
 
   ##   make sure other processes are locked out
   Lock(2);
