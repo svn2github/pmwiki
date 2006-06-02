@@ -1,7 +1,7 @@
 This is the README.txt file for PmWiki, a wiki-based system for
 collaborative creation and maintenance of websites.
 
-Alice was here.  GO away alice.
+Alice was here.  Alice was here again.
 
 PmWiki is distributed with the following directories:
 
