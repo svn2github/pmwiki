@@ -1,6 +1,8 @@
 This is the README.txt file for PmWiki, a wiki-based system for
 collaborative creation and maintenance of websites.
 
+Here is a change demonstrating subversion.
+
 PmWiki is distributed with the following directories:
 
   docs/           Brief documentation, sample configuration scripts
