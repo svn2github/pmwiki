@@ -314,16 +314,24 @@ function HandleSearchA($pagename, $level = 'read') {
 
 function FPLTemplate($pagename, &$matches, $opt) {
   global $Cursor, $FPLFormatOpt, $FPLTemplatePageFmt;
-  SDV($FPLTemplatePageFmt, '{$SiteGroup}.PageListTemplates');
+  SDV($FPLTemplatePageFmt, 
+    array('{$SiteGroup}.LocalTemplates','{$SiteGroup}.PageListTemplates'));
 
   $template = @$opt['template'];
   if (!$template) $template = @$opt['fmt'];
 
   list($tname, $qf) = explode('#', $template, 2);
-  if ($tname) $tname = MakePageName($pagename, $tname);
-  else $tname = FmtPageName($FPLTemplatePageFmt, $pagename);
-  if ($qf) $tname .= "#$qf";
-  $ttext = IncludeText($pagename, $tname, true);
+  if ($tname) $tname = array(MakePageName($pagename, $tname));
+  else $tname = (array)$FPLTemplatePageFmt;
+  foreach ($tname as $t) {
+    $t = FmtPageName($t, $pagename);
+    if (!PageExists($t)) continue;
+    if ($qf) $t .= "#$qf";
+    $ttext = IncludeText($pagename, $t, true);
+    if (!$qf || strpos($ttext, "[[#$qf]]") !== false) break;
+  }
+
+  ##   remove any anchor markups to avoid duplications
   $ttext = preg_replace('/\\[\\[#[A-Za-z][-.:\\w]*\\]\\]/', '', $ttext);
 
   if (!@$opt['order'] && !@$opt['trail']) $opt['order'] = 'name';
