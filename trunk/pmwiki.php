@@ -133,7 +133,7 @@ $FmtPV = array(
   '$AuthId'       => 'NoCache($GLOBALS["AuthId"])',
   '$DefaultGroup' => '$GLOBALS["DefaultGroup"]',
   '$DefaultName'  => '$GLOBALS["DefaultName"]',
-  '$Action'       => "'$action'",
+  '$Action'       => '$GLOBALS["action"]',
   );
 $SaveProperties = array('title', 'description', 'keywords');
 
@@ -321,7 +321,7 @@ foreach((array)$InterMapFiles as $f) {
 $LinkPattern = implode('|',array_keys($LinkFunctions));
 SDV($LinkPageCreateSpaceFmt,$LinkPageCreateFmt);
 
-$Action = FmtPageName(@$ActionTitleFmt[$action],$pagename);
+$ActionTitle = FmtPageName(@$ActionTitleFmt[$action],$pagename);
 if (!function_exists(@$HandleActions[$action])) $action='browse';
 SDV($HandleAuth[$action], 'read');
 $HandleActions[$action]($pagename, $HandleAuth[$action]);
