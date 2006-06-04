@@ -314,8 +314,8 @@ function HandleSearchA($pagename, $level = 'read') {
 
 function FPLTemplate($pagename, &$matches, $opt) {
   global $Cursor, $FPLFormatOpt, $FPLTemplatePageFmt;
-  SDV($FPLTemplatePageFmt, 
-    array('{$SiteGroup}.LocalTemplates','{$SiteGroup}.PageListTemplates'));
+  SDV($FPLTemplatePageFmt, array('{$FullName}',
+    '{$SiteGroup}.LocalTemplates','{$SiteGroup}.PageListTemplates'));
 
   $template = @$opt['template'];
   if (!$template) $template = @$opt['fmt'];
