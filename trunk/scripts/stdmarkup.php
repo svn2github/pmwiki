@@ -109,6 +109,9 @@ Markup('noleft', 'directives',
 Markup('noright', 'directives',
   '/\\(:noright:\\)/ei',
   "SetTmplDisplay('PageRightFmt',0)");
+Markup('noaction', 'directives',
+  '/\\(:noaction:\\)/ei',
+  "SetTmplDisplay('PageActionFmt',0)");
 
 ## (:spacewikiwords:)
 Markup('spacewikiwords', 'directives',
@@ -281,7 +284,7 @@ Markup('^!<:', '<^<:',
 ## Lines that begin with displayed images receive their own block.  A
 ## pipe following the image indicates a "caption" (generates a linebreak).
 Markup('^img', 'block',
-  "/^((?>(\\s+|%%|%[A-Za-z][-,=:#\\w\\s'\"]*%)*)$KeepToken(\\d+L)$KeepToken)(\\s*\\|\\s?)?(.*)$/e",
+  "/^((?>(\\s+|%%|%[A-Za-z][-,=:#\\w\\s'\".]*%)*)$KeepToken(\\d+L)$KeepToken)(\\s*\\|\\s?)?(.*)$/e",
   "PSS((strpos(\$GLOBALS['KPV']['$3'],'<img')===false) ? '$0' : 
        '<:block,1><div>$1' . ('$4' ? '<br />' : '') .'$5</div>')");
 
