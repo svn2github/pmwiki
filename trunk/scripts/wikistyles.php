@@ -33,6 +33,7 @@ if (IsEnabled($EnableStdWikiStyles,1)) {
   ## display, margin, padding, and border css properties
   $WikiStyleCSS[] = 
     'float|display|(margin|padding|border)(-(left|right|top|bottom))?';
+  $WikiStyleCSS[] = 'white-space';
   ## list-styles
   $WikiStyleCSS[] = 'list-style';
   $WikiStyleCSS[] = 'width|height';
@@ -137,7 +138,7 @@ function ApplyStyles($x) {
       foreach((array)$s as $k=>$v) {
         $v = trim($v);
         if ($k == 'class' && $v) $spanattr = "class='$v'";
-        elseif ($k=='id') $id = preg_replace('/\W/', '_', $v);
+        elseif ($k=='id') $id = preg_replace('/[^-A-Za-z0-9:_.]+/', '_', $v);
         elseif (($k=='width' || $k=='height') && !@$WikiStyleApply[$a]
             && preg_match('/\\s*<img\\b/', $p)) 
           $p = preg_replace("/<img(?![^>]*\\s$k=)/", "<img $k='$v'", $p);
