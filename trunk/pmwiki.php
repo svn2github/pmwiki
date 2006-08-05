@@ -74,7 +74,7 @@ $HTMLVSpace = "<vspace>";
 $HTMLPNewline = '';
 $MarkupFrame = array();
 $MarkupFrameBase = array('cs' => array(), 'vs' => '', 'ref' => 0,
-  'closeall' => array('block' => '<:block>'), 'is' => array(),
+  'closeall' => array(), 'is' => array(),
   'escape' => 1);
 $WikiWordCountMax = 1000000;
 $WikiWordCount['PmWiki'] = 1;
@@ -242,7 +242,7 @@ Markup('block','>links');
 Markup('style','>block');
 Markup('closeall', '_begin',
   '/^\\(:closeall:\\)$/e', 
-  "implode('', (array)\$GLOBALS['MarkupFrame'][0]['closeall'])");
+  "'<:block>' . MarkupClose()");
 
 $ImgExtPattern="\\.(?:gif|jpg|jpeg|png|GIF|JPG|JPEG|PNG)";
 $ImgTagFmt="<img src='\$LinkUrl' alt='\$LinkAlt' title='\$LinkAlt' />";
@@ -1039,6 +1039,22 @@ function Block($b) {
   }
   return $out;
 }
+
+
+function MarkupClose($key = '') {
+  global $MarkupFrame;
+  $cf = & $MarkupFrame[0]['closeall'];
+  $out = '';
+  if ($key == '' || isset($cf[$key])) {
+    $k = array_keys((array)$cf);
+    while ($k) { 
+      $x = array_pop($k); $out .= $cf[$x]; unset($cf[$x]);
+      if ($x == $key) break;
+    }
+  }
+  return $out;
+}
+
 
 function FormatTableRow($x) {
   global $Block, $TableCellAttrFmt, $MarkupFrame, $TableRowAttrFmt, 
