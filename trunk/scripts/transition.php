@@ -50,6 +50,50 @@
 ## if ?trans=0 is specified, then we don't do any fixups.
 if (@$_REQUEST['trans']==='0') return;
 
+
+## Transitions from 2.1.12
+
+if (@$Transition['version'] < 2001012) 
+  SDVA($Transition, array('nodivnest' => 1));
+
+## nodivnest:
+##   This restores the PmWiki 2.1.11 behavior that doesn't
+##   allow nesting of divs and tables.
+if (@$Transition['nodivnest']) {
+  function TCells($name,$attr) {
+    global $MarkupFrame;
+    $attr = preg_replace('/([a-zA-Z]=)([^\'"]\\S*)/',"\$1'\$2'",$attr);
+    $tattr = @$MarkupFrame[0]['tattr'];
+    $name = strtolower($name);
+    $out = '<:block>';
+    if (strncmp($name, 'cell', 4) != 0 || @$MarkupFrame[0]['closeall']['div']) {
+      $out .= @$MarkupFrame[0]['closeall']['div'];
+      unset($MarkupFrame[0]['closeall']['div']);
+      $out .= @$MarkupFrame[0]['closeall']['table'];
+      unset($MarkupFrame[0]['closeall']['table']);
+    }
+    if ($name == 'div') {
+      $MarkupFrame[0]['closeall']['div'] = "</div>";
+      $out .= "<div $attr>";
+    }
+    if ($name == 'table') $MarkupFrame[0]['tattr'] = $attr;
+    if (strncmp($name, 'cell', 4) == 0) {
+      if (strpos($attr, "valign=")===false) $attr .= " valign='top'";
+      if (!@$MarkupFrame[0]['closeall']['table']) {
+        $MarkupFrame[0]['closeall']['table'] = "</td></tr></table>";
+        $out .= "<table $tattr><tr><td $attr>";
+      } else if ($name == 'cellnr') $out .= "</td></tr><tr><td $attr>";
+      else $out .= "</td><td $attr>";
+    }
+    return $out;
+  }
+
+  Markup('table', '<block',
+    '/^\\(:(table|cell|cellnr|tableend|div|divend)(\\s.*?)?:\\)/ie',
+    "TCells('$1',PSS('$2'))");
+}
+
+
 ## Transitions from 2.1.7
 
 if (@$Transition['version'] < 2001007)
