@@ -1590,7 +1590,7 @@ function SessionAuth($pagename, $auth = NULL) {
   $sid = session_id();
   @session_start();
   foreach((array)$auth as $k => $v)
-    if ($k) $_SESSION[$k] = array_merge((array)$_SESSION[$k], (array)$v);
+    if ($k) $_SESSION[$k] = (array)$v + (array)$_SESSION[$k];
 
   if (!isset($AuthId)) $AuthId = @end($_SESSION['authid']);
   $AuthPw = array_keys((array)@$_SESSION['authpw']);
