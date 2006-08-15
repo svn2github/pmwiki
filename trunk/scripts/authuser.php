@@ -55,7 +55,7 @@ function AuthUserId($pagename, $id, $pw=NULL) {
   if ($apage && preg_match_all("/^\\s*([@\\w][^\\s:]*):(.*)/m", 
                                $apage['text'], $matches, PREG_SET_ORDER)) {
     foreach($matches as $m) {
-      if (!preg_match_all('/\\bldap:\\S+|[^\\s,]+/', $m[2], $v))
+      if (!preg_match_all('/\\bldaps?:\\S+|[^\\s,]+/', $m[2], $v))
         continue;
       if ($m[1]{0} == '@') 
         foreach($v[0] as $g) $auth[$g][] = $m[1];
@@ -107,16 +107,15 @@ function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
   if (!$pw) return false;
   if (!function_exists('ldap_connect')) return false;
   foreach ((array)$pwlist as $ldap) {
-    if (!preg_match('!ldap://([^:]+)(?::(\\d+))?/(.+)$!', $ldap, $match))
+    if (!preg_match('!(ldaps?://([^/]+))?/(.+)$!', $ldap, $match))
       continue;
-    list($z, $server, $port, $path) = $match;
+    list($z, $server, $path) = $match;
     list($basedn, $attr, $sub) = explode('?', $path);
-    if (!$port) $port = 389;
     if (!$attr) $attr = 'uid';
     if (!$sub) $sub = 'one';
     $binddn = @$AuthLDAPBindDN;
     $bindpw = @$AuthLDAPBindPassword;
-    $ds = ldap_connect($server, $port);
+    $ds = ldap_connect($server);
     ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
     if (ldap_bind($ds, $binddn, $bindpw)) {
       $fn = ($sub == 'sub') ? 'ldap_search' : 'ldap_list';
