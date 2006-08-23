@@ -1495,18 +1495,19 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     $AuthList["id:*"] = 1;
   }
   $gn = FmtPageName($GroupAttributesFmt, $pagename);
-  if (!isset($acache[$gn])) $gp = ReadPage($gn, READPAGE_CURRENT);
-  foreach($DefaultPasswords as $k => $v) {
-    if (isset($gp)) {
+  if (!isset($acache[$gn])) {
+    $gp = ReadPage($gn, READPAGE_CURRENT);
+    foreach($DefaultPasswords as $k => $v) {
       $x = array(2, array(), '');
       $acache['@site'][$k] = IsAuthorized($v, 'site', $x);
       $AuthList["@_site_$k"] = $acache['@site'][$k][0] ? 1 : 0;
       $acache[$gn][$k] = IsAuthorized($gp["passwd$k"], 'group', 
                                       $acache['@site'][$k]);
     }
+  }
+  foreach($DefaultPasswords as $k => $v) 
     list($page['=auth'][$k], $page['=passwd'][$k], $page['=pwsource'][$k]) =
       IsAuthorized($page["passwd$k"], 'page', $acache[$gn][$k]);
-  }
   foreach($AuthCascade as $k => $t) {
     if ($page['=auth'][$k]+0 == 2) {
       $page['=auth'][$k] = $page['=auth'][$t];
