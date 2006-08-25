@@ -45,6 +45,7 @@ $BlockPattern = 'form|div|table|t[rdh]|p|[uo]l|d[ltd]|h[1-6r]|pre|blockquote';
 $WikiWordPattern = '[[:upper:]][[:alnum:]]*(?:[[:upper:]][[:lower:]0-9]|[[:lower:]0-9][[:upper:]])[[:alnum:]]*';
 $WikiDir = new PageStore('wiki.d/{$FullName}');
 $WikiLibDirs = array(&$WikiDir,new PageStore('$FarmD/wikilib.d/{$FullName}'));
+$LocalDir = 'local';
 $InterMapFiles = array("$FarmD/scripts/intermap.txt",
   "$FarmD/local/farmmap.txt", '$SiteGroup.InterMap', 'local/localmap.txt');
 $Newline = "\263";                                 # deprecated, 2.0.0
@@ -290,8 +291,8 @@ $FmtPV['$RequestedPage'] = "'".htmlspecialchars($pagename, ENT_QUOTES)."'";
 if (file_exists("$FarmD/local/farmconfig.php")) 
   include_once("$FarmD/local/farmconfig.php");
 if (IsEnabled($EnableLocalConfig,1)) {
-  if (file_exists('local/config.php')) 
-    include_once('local/config.php');
+  if (file_exists("$LocalDir/config.php")) 
+    include_once("$LocalDir/config.php");
   elseif (file_exists('config.php'))
     include_once('config.php');
 }

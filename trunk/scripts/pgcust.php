@@ -6,11 +6,11 @@
     (at your option) any later version.  See pmwiki.php for full details.
 
     This script enables per-page and per-group customizations in the
-    local/ subdirectory.  For example, to create customizations for
-    the 'Demo' group, place them in a file called local/Demo.php.
-    To customize a single page, use the full page name (e.g., 
-    local/Demo.MyPage.php).  Per-page/per-group customizations can be 
-    handled at any time by adding
+    local/ subdirectory (or whatever directory is given by $LocalDir).  
+    For example, to create customizations for the 'Demo' group, place 
+    them in a file called local/Demo.php.  To customize a single page, 
+    use the full page name (e.g., local/Demo.MyPage.php).  
+    Per-page/per-group customizations can be handled at any time by adding
 	include_once("scripts/pgcust.php");
     to config.php.  It is automatically included by scripts/stdconfig.php
     unless $EnablePGCust is set to zero in config.php.
@@ -26,15 +26,14 @@
     
 */
 
-SDV($DefaultPage,"$DefaultGroup.$DefaultName");
-if ($pagename=='') $pagename=$DefaultPage;
-
 $f = 1;
 for($p=$pagename;$p;$p=preg_replace('/\\.*[^.]*$/','',$p)) {
   if (!IsEnabled($EnablePGCust,1)) return;
-  if (file_exists("local/$p.php")) { include_once("local/$p.php"); $f=0; }
+  if (file_exists("$LocalDir/$p.php")) 
+    { include_once("$LocalDir/$p.php"); $f=0; }
 }
 
-if ($f && IsEnabled($EnablePGCust,1) && file_exists('local/default.php'))
-  include_once('local/default.php');
+if ($f && IsEnabled($EnablePGCust,1) && file_exists("$LocalDir/default.php"))
+  include_once("$LocalDir/default.php");
+
 
