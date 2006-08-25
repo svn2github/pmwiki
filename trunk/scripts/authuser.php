@@ -110,16 +110,17 @@ function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
     if (!preg_match('!(ldaps?://[^/]+)/(.+)$!', $ldap, $match))
       continue;
     list($z, $url, $path) = $match;
-    list($basedn, $attr, $sub) = explode('?', $path);
+    list($basedn, $attr, $sub, $filter) = explode('?', $path);
     if (!$attr) $attr = 'uid';
     if (!$sub) $sub = 'one';
+    if (!$filter) $filter = '(objectClass=*)';
     $binddn = @$AuthLDAPBindDN;
     $bindpw = @$AuthLDAPBindPassword;
     $ds = ldap_connect($url);
     ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
     if (ldap_bind($ds, $binddn, $bindpw)) {
       $fn = ($sub == 'sub') ? 'ldap_search' : 'ldap_list';
-      $sr = $fn($ds, $basedn, "($attr=$id)", array($attr));
+      $sr = $fn($ds, $basedn, "(&$filter($attr=$id))", array($attr));
       $x = ldap_get_entries($ds, $sr);
       if ($x['count'] == 1) {
         $dn = $x[0]['dn'];
