@@ -44,8 +44,8 @@ function SetSkin($pagename, $skin) {
   SDV($SkinLibDirs, array(
     "./pub/skins/\$Skin"      => "$PubDirUrl/skins/\$Skin",
     "$FarmD/pub/skins/\$Skin" => "$FarmPubDirUrl/skins/\$Skin"));
-  foreach((array)$skin as $s) {
-    $Skin = $s;
+  foreach((array)$skin as $sfmt) {
+    $Skin = FmtPageName($sfmt, $pagename);
     foreach($SkinLibDirs as $dirfmt => $urlfmt) {
       $SkinDir = FmtPageName($dirfmt, $pagename);
       if (is_dir($SkinDir)) 
@@ -81,7 +81,7 @@ function SetSkin($pagename, $skin) {
 
 # LoadPageTemplate loads a template into $TmplFmt
 function LoadPageTemplate($pagename,$tfilefmt) {
-  global $PageStartFmt, $PageEndFmt, $HTMLHeaderFmt,
+  global $PageStartFmt, $PageEndFmt, $HTMLHeaderFmt, $HTMLFooterFmt,
     $IsTemplateLoaded, $TmplFmt, $TmplDisplay,
     $PageTextStartFmt, $PageTextEndFmt;
 
@@ -95,8 +95,9 @@ function LoadPageTemplate($pagename,$tfilefmt) {
 
   $sddef = array('PageEditFmt' => 0);
   $k = implode('',file(FmtPageName($tfilefmt,$pagename)));
-  $sect = preg_split('#[[<]!--(/?(?:Page[A-Za-z]+Fmt|PageText|HeaderText)\\s?.*?)--[]>]#',
-    $k,0,PREG_SPLIT_DELIM_CAPTURE);
+  $sect = preg_split(
+    '#[[<]!--(/?(?:Page[A-Za-z]+Fmt|HTML(?:Head|Foot)er|HeaderText|PageText).*?)--[]>]#',
+    $k, 0, PREG_SPLIT_DELIM_CAPTURE);
   $TmplFmt['Start'] = array_merge(array('headers:'),
     preg_split('/[[<]!--((?:wiki|file|function|markup):.*?)--[]>]/s',
       array_shift($sect),0,PREG_SPLIT_DELIM_CAPTURE));
@@ -113,6 +114,9 @@ function LoadPageTemplate($pagename,$tfilefmt) {
     $GLOBALS[$var] = (count($v) > 1) ? $v : $v[0];
     if ($sd > '') $sddef[$var] = $sd;
     if ($var == 'PageText') { $ps = 'End'; }
+    if ($var == 'HTMLHeader') { $TmplFmt[$ps][] = &$HTMLHeaderFmt; }
+    if ($var == 'HTMLFooter') { $TmplFmt[$ps][] = &$HTMLFooterFmt; }
+    ##   <!--HeaderText--> deprecated, 2.1.16
     if ($var == 'HeaderText') { $TmplFmt[$ps][] = &$HTMLHeaderFmt; }
     $TmplFmt[$ps][$var] =& $GLOBALS[$var];
   }
