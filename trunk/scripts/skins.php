@@ -39,20 +39,23 @@ foreach((array)$PageCSSListFmt as $k=>$v)
 # SetSkin changes the current skin to the first available skin from 
 # the $skin array.
 function SetSkin($pagename, $skin) {
-  global $Skin, $SkinDir, $SkinDirUrl, $IsTemplateLoaded, $PubDirUrl,
-    $FarmPubDirUrl, $FarmD;
-  unset($Skin);
+  global $Skin, $SkinLibDirs, $SkinDir, $SkinDirUrl, 
+    $IsTemplateLoaded, $PubDirUrl, $FarmPubDirUrl, $FarmD;
+  SDV($SkinLibDirs, array(
+    "./pub/skins/\$Skin"      => "$PubDirUrl/skins/\$Skin",
+    "$FarmD/pub/skins/\$Skin" => "$FarmPubDirUrl/skins/\$Skin"));
   foreach((array)$skin as $s) {
-    $sd = FmtPageName("./pub/skins/$s", $pagename);
-    if (is_dir($sd)) 
-      { $Skin=$s; $SkinDirUrl="$PubDirUrl/skins/$Skin"; break; }
-    $sd = FmtPageName("$FarmD/pub/skins/$s", $pagename);
-    if (is_dir($sd)) 
-      { $Skin=$s; $SkinDirUrl="$FarmPubDirUrl/skins/$Skin"; break; }
+    $Skin = $s;
+    foreach($SkinLibDirs as $dirfmt => $urlfmt) {
+      $SkinDir = FmtPageName($dirfmt, $pagename);
+      if (is_dir($SkinDir)) 
+        { $SkinDirUrl = FmtPageName($urlfmt, $pagename); break 2; }
+    }
   }
-  if (!is_dir($sd)) 
+  if (!is_dir($SkinDir)) {
+    unset($Skin);
     Abort("?unable to find skin from list ".implode(' ',(array)$skin));
-  $SkinDir = $sd;
+  }
   $IsTemplateLoaded = 0;
   if (file_exists("$SkinDir/$Skin.php"))
     include_once("$SkinDir/$Skin.php");
