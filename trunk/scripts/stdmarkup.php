@@ -346,7 +346,7 @@ Markup('^----','>^->','/^----+/','<:block,1><hr />');
 
 function Cells($name,$attr) {
   global $MarkupFrame;
-  $attr = preg_replace('/([a-zA-Z]=)([^\'"]\\S*)/',"\$1'\$2'",$attr);
+  $attr = PQA($attr);
   $tattr = @$MarkupFrame[0]['tattr'];
   $name = strtolower($name);
   $key = preg_replace('/end$/', '', $name);

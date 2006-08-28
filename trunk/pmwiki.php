@@ -342,7 +342,18 @@ function PRR($x=NULL)
 function PUE($x)
   { return preg_replace('/[\\x80-\\xff \'"]/e', "'%'.dechex(ord('$0'))", $x); }
 function PQA($x) { 
-  return preg_replace('/([a-zA-Z])\\s*=\\s*([^\'">][^\\s>]*)/', "$1='$2'", $x);
+  $out = '';
+  if (preg_match_all('/([a-zA-Z]+)\\s*=\\s*("[^"]*"|\'[^\']*\'|\\S+)/',
+                     $x, $attr, PREG_SET_ORDER)) {
+    foreach($attr as $a) {
+      if (preg_match('/^on/i', $a[1])) continue;
+      $out .= $a[1] . '=' 
+              . preg_replace( '/^[^\'"].*$/e', 
+                  "\"'\".str_replace(\"'\", '&#39;', PSS('$0')).\"'\"", $a[2])
+              . ' ';
+    }
+  }
+  return $out;
 }
 function SDV(&$v,$x) { if (!isset($v)) $v=$x; }
 function SDVA(&$var,$val) 
