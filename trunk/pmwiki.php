@@ -173,7 +173,7 @@ $PageStartFmt = array(&$HTMLStartFmt,"\n<div id='contents'>\n");
 $PageEndFmt = array('</div>',&$HTMLEndFmt);
 
 $HandleActions = array(
-  'browse' => 'HandleBrowse', 'print' => 'HandleBrowse'
+  'browse' => 'HandleBrowse', 'print' => 'HandleBrowse',
   'edit' => 'HandleEdit', 'source' => 'HandleSource', 
   'attr' => 'HandleAttr', 'postattr' => 'HandlePostAttr',
   'logout' => 'HandleLogoutA', 'login' => 'HandleLoginA');
