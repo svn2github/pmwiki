@@ -9,15 +9,16 @@
 # $InputAttrs are the attributes we allow in output tags
 SDV($InputAttrs, array('name', 'value', 'id', 'class', 'rows', 'cols', 
   'size', 'maxlength', 'action', 'method', 'accesskey', 
-  'checked', 'disabled', 'readonly', 'enctype'));
+  'checked', 'disabled', 'readonly', 'enctype', 'src', 'alt'));
 
 # Set up formatting for text, submit, hidden, radio, etc. types
 foreach(array('text', 'submit', 'hidden', 'password', 'radio', 'checkbox',
-              'reset', 'file') as $t) 
+              'reset', 'file', 'image') as $t) 
   SDV($InputTags[$t][':html'], "<input type='$t' \$InputFormArgs />");
 SDV($InputTags['text']['class'], 'inputbox');
 SDV($InputTags['password']['class'], 'inputbox');
 SDV($InputTags['submit']['class'], 'inputbutton');
+SDV($InputTags['reset']['class'], 'inputbutton');
 
 # (:input form:)
 SDVA($InputTags['form'], array(
@@ -31,6 +32,9 @@ SDV($InputTags['end'][':html'], '</form>');
 # (:input textarea:)
 SDVA($InputTags['textarea'], array(
   ':html' => "<textarea \$InputFormArgs></textarea>"));
+
+# (:input image:)
+SDV($InputTags['image'][':args'], array('name', 'src', 'alt'));
 
 Markup('input', 'directives', 
   '/\\(:input\\s+(\\w+)(.*?):\\)/ei',
