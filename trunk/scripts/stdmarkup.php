@@ -331,7 +331,7 @@ Markup('^||||', 'block',
   "FormatTableRow(PSS('$0'))");
 ## ||table attributes
 Markup('^||','>^||||','/^\\|\\|(.*)$/e',
-  "PZZ(\$GLOBALS['BlockMarkups']['table'][0] = PQA(PSS('<table $1>')))
+  "PZZ(\$GLOBALS['BlockMarkups']['table'][0] = '<table '.PQA(PSS('$1')).'>')
     .'<:block,1>'");
 
 ## headings
