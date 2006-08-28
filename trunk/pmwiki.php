@@ -173,12 +173,12 @@ $PageStartFmt = array(&$HTMLStartFmt,"\n<div id='contents'>\n");
 $PageEndFmt = array('</div>',&$HTMLEndFmt);
 
 $HandleActions = array(
-  'browse' => 'HandleBrowse',
+  'browse' => 'HandleBrowse', 'print' => 'HandleBrowse'
   'edit' => 'HandleEdit', 'source' => 'HandleSource', 
   'attr' => 'HandleAttr', 'postattr' => 'HandlePostAttr',
   'logout' => 'HandleLogoutA', 'login' => 'HandleLoginA');
 $HandleAuth = array(
-  'browse' => 'read', 'source' => 'read',
+  'browse' => 'read', 'source' => 'read', 'print' => 'read',
   'edit' => 'edit', 'attr' => 'attr', 'postattr' => 'attr',
   'logout' => 'read', 'login' => 'login');
 $ActionTitleFmt = array(
