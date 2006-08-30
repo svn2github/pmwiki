@@ -332,6 +332,8 @@ return;
 ## helper functions
 function stripmagic($x) 
   { return get_magic_quotes_gpc() ? stripslashes($x) : $x; }
+function pre_r(&$x)
+  { return '<pre>'.htmlspecialchars(print_r($x, true)).'</pre>'; }
 function PSS($x) 
   { return str_replace('\\"','"',$x); }
 function PVS($x) 
