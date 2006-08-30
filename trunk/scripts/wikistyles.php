@@ -90,7 +90,7 @@ $WikiStyleCSS[] = 'color|background-color';
 $WikiStyleCSS[] = 'text-align|text-decoration';
 $WikiStyleCSS[] = 'font-size|font-family|font-weight|font-style';
 
-SDV($imgTag, 'img');  SDV($aTag, 'a'); SDV($spanTag, 'span');
+SDV($imgTag, '(?:img|object|embed)');  SDV($aTag, 'a'); SDV($spanTag, 'span');
 
 function ApplyStyles($x) {
   global $UrlExcludeChars, $WikiStylePattern, $WikiStyleRepl, $WikiStyle,
@@ -146,8 +146,8 @@ function ApplyStyles($x) {
         elseif ($k=='id') $id = preg_replace('/[^-A-Za-z0-9:_.]+/', '_', $v);
         elseif (($k=='width' || $k=='height') && !@$WikiStyleApply[$a]
             && preg_match("/\\s*<$imgTag\\b/", $p)) 
-          $p = preg_replace("/<$imgTag(?![^>]*\\s$k=)/", 
-                 "$ws<$imgTag $ns$k='$v'", $p);
+          $p = preg_replace("/<($imgTag)\\b(?![^>]*\\s$k=)/", 
+                 "$ws<$1 $ns$k='$v'", $p);
         elseif (@$WikiStyleAttr[$k]) 
           $p = preg_replace(
                  "/<({$WikiStyleAttr[$k]}(?![^>]*\\s(?:$ns)?$k=))([^>]*)>/s",
@@ -163,7 +163,7 @@ function ApplyStyles($x) {
                             "$ws<$spanTag $spanattr>$1</$spanTag>$2", $p, 1);
 }
         elseif (!preg_match('/^(\\s*<[^>]+>)*$/s',$p) ||
-                strpos($p, "<$imgTag")!==false) {
+                preg_match("/<$imgTag\\b/", $p)) {
           $p = preg_replace("/<({$WikiStyleApply[$a]})\\b/",
                  "$ws<$1 $spanattr", $p);
         }
