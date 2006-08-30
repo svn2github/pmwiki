@@ -59,7 +59,7 @@ function InputMarkup($pagename, $type, $args) {
   }
   $FmtV['$InputFormArgs'] = implode(' ', $attr);
   $out = FmtPageName($opt[':html'], $pagename);
-  return preg_replace('/<(\\w+\\s)(.*)$/es',"'<$1'.Keep(PSS('$2'))", $out);
+  return Keep($out);
 }
 
 ## Form-based authorization prompts (for use with PmWikiAuth)
