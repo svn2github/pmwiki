@@ -355,7 +355,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
     $grouppagecount++; $pagecount++;
 
     $item = str_replace($vk, $vv, $ttext);
-    $item = preg_replace('/\\{(=|&[lg]t;)(\\$\\w+)\\}/e',
+    $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
                 "PageVar(\$pn, '$2', '$1')", $item);
     $out .= $item;
     $lgroup = $group;
