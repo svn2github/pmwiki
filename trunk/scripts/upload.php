@@ -90,7 +90,7 @@ SDV($PageAttributes['passwdupload'],'$[Set new upload password:]');
 SDV($DefaultPasswords['upload'],'*');
 SDV($AuthCascade['upload'], 'read');
 
-Markup('attachlist', '<block', 
+Markup('attachlist', 'directives', 
   '/\\(:attachlist\\s*(.*?):\\)/ei',
   "Keep('<ul>'.FmtUploadList('$pagename',PSS('$1')).'</ul>')");
 SDV($GUIButtons['attach'], array(220, 'Attach:', '', '$[file.ext]',
