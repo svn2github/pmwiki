@@ -31,8 +31,8 @@ StopWatch('PmWiki');
 @ini_set('magic_quotes_sybase', 0);
 if (ini_get('register_globals')) 
   foreach($_REQUEST as $k=>$v) { 
-    if (preg_match('/^(GLOBALS|_SERVER|_GET|_POST|_COOKIE|_FILES|_ENV|_REQUEST|_SESSION)$/i', $k)) exit();
-    unset(${$k}); 
+    if (preg_match('/^(GLOBALS|_SERVER|_GET|_POST|_COOKIE|_FILES|_ENV|_REQUEST|_SESSION|FarmD|WikiDir)$/i', $k)) exit();
+    ${$k}=''; unset(${$k}); 
   }
 $UnsafeGlobals = array_keys($GLOBALS); $GCount=0; $FmtV=array();
 SDV($FarmD,dirname(__FILE__));
@@ -555,7 +555,7 @@ function MakePageName($basepage,$x) {
 ## PCache caches basic information about a page and its attributes--
 ## usually everything except page text and page history.  This makes
 ## for quicker access to certain values in PageVar below.
-function PCache($pagename, &$page) {
+function PCache($pagename, $page) {
   global $PCache;
   foreach($page as $k=>$v) 
     if ($k!='text' && strpos($k,':')===false) $PCache[$pagename][$k]=$v;
