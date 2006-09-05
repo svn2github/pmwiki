@@ -198,8 +198,8 @@ function HandleFeed($pagename, $auth = 'read') {
   $pl = array();
   foreach($pagelist as $pn) {
     if (!PageExists($pn)) continue;
-    if (!isset($PCache[$pn]['time']))
-      PCache($pn, ReadPage($pn, READPAGE_CURRENT));
+    if (!isset($PCache[$pn]['time'])) 
+      { $page = ReadPage($pn, READPAGE_CURRENT)); PCache($pn, $page); }
     $page = & $PCache[$pn];
     $pl[] = $pn;
     if (@$opt['count'] && count($pl) >= $opt['count']) break;

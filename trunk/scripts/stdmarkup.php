@@ -145,7 +145,7 @@ Markup('&','directives','/&amp;(?>([A-Za-z0-9]+|#\\d+|#[xX][A-Fa-f0-9]+));/',
 Markup('title','>&',
   '/\\(:title\\s(.*?):\\)/ei',
   "PZZ(PCache(\$pagename, 
-         array('title' => SetProperty(\$pagename, 'title', PSS('$1')))))");
+         \$zz=array('title' => SetProperty(\$pagename, 'title', PSS('$1')))))");
 
 ## (:keywords:), (:description:)
 Markup('keywords', '>&', 

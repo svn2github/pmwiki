@@ -555,7 +555,7 @@ function MakePageName($basepage,$x) {
 ## PCache caches basic information about a page and its attributes--
 ## usually everything except page text and page history.  This makes
 ## for quicker access to certain values in PageVar below.
-function PCache($pagename, $page) {
+function PCache($pagename, &$page) {
   global $PCache;
   foreach($page as $k=>$v) 
     if ($k!='text' && strpos($k,':')===false) $PCache[$pagename][$k]=$v;
@@ -589,7 +589,7 @@ function PageVar($pagename, $var, $pn = '') {
   if (preg_match('/^(.+)[.\\/]([^.\\/]+)$/', $pn, $match)
       && !isset($PCache[$pn]['time']) 
       && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) 
-    PCache($pn, ReadPage($pn, READPAGE_CURRENT));
+    { $page = ReadPage($pn, READPAGE_CURRENT); PCache($pn, $page); }
   @list($d, $group, $name) = $match;
   $page = &$PCache[$pn];
   if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
