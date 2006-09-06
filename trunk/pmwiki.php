@@ -716,7 +716,7 @@ class PageStore {
         if ($k == 'version') { 
           $ordered = (strpos($v, 'ordered=1') !== false); 
           $urlencoded = (strpos($v, 'urlencoded=1') !== false); 
-          if (strpos($v, 'pmwiki-0.')) $newline="\262";
+          if (strpos($v, 'pmwiki-0.')!==false) $newline="\262";
         }
         if ($k == 'newline') { $newline = $v; continue; }
         if ($since > 0 && preg_match('/:(\\d+)/', $k, $m) && $m[1] < $since) {
