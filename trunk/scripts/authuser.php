@@ -40,7 +40,9 @@ else SessionAuth($pagename);
 function AuthUserId($pagename, $id, $pw=NULL) {
   global $AuthUser, $AuthUserPageFmt, $AuthUserFunctions, 
     $AuthId, $MessagesFmt;
-  $auth = $AuthUser; $authid = '';
+
+  foreach($AuthUser as $k=>$v) $auth[$k] = (array)$v;
+  $authid = '';
 
   # load information from Site.AuthUser (or page in $AuthUserPageFmt)
   SDV($AuthUserPageFmt, '$SiteGroup.AuthUser');
