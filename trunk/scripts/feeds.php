@@ -163,11 +163,13 @@ foreach(array_keys($FeedFmt) as $k) {
 
 function HandleFeed($pagename, $auth = 'read') {
   global $FeedFmt, $action, $PCache, $FmtV, $ISOTimeFmt, $RSSTimeFmt,
-    $FeedOpt, $FeedDescPatterns, $CategoryGroup, $EntitiesTable;
+    $FeedOpt, $FeedPageListOpt, $FeedCategoryOpt, $FeedTrailOpt,
+    $FeedDescPatterns, $CategoryGroup, $EntitiesTable;
   SDV($ISOTimeFmt, '%Y-%m-%dT%H:%M:%SZ');
   SDV($RSSTimeFmt, 'D, d M Y H:i:s \G\M\T');
   SDV($FeedDescPatterns, 
     array('/<[^>]*$/' => ' ', '/\\w+$/' => '', '/<[^>]+>/' => ''));
+  SDVA($FeedOpt, array());
   SDVA($FeedPageListOpt, array());
   SDVA($FeedCategoryOpt, array('link' => $pagename));
   SDVA($FeedTrailOpt, array('trail' => $pagename, 'count' => 10));
@@ -188,6 +190,7 @@ function HandleFeed($pagename, $auth = 'read') {
     PCache($pagename, $page); 
     $pagelist = array($pagename); 
   }
+  $opt = array_merge($opt, $FeedOpt);
   if (!$pagelist) {
     $opt = array_merge($opt, @$_REQUEST);
     $pagelist = MakePageList($pagename, $opt, 0);
