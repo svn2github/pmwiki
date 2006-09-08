@@ -96,7 +96,7 @@ function LoadPageTemplate($pagename,$tfilefmt) {
   $sddef = array('PageEditFmt' => 0);
   $k = implode('',file(FmtPageName($tfilefmt,$pagename)));
   $sect = preg_split(
-    '#[[<]!--(/?(?:Page[A-Za-z]+Fmt|HTML(?:Head|Foot)er|HeaderText|PageText).*?)--[]>]#',
+    '#[[<]!--(/?(?:Page[A-Za-z]+Fmt|(?:HT|X)ML(?:Head|Foot)er|HeaderText|PageText).*?)--[]>]#',
     $k, 0, PREG_SPLIT_DELIM_CAPTURE);
   $TmplFmt['Start'] = array_merge(array('headers:'),
     preg_split('/[[<]!--((?:wiki|file|function|markup):.*?)--[]>]/s',
@@ -114,8 +114,10 @@ function LoadPageTemplate($pagename,$tfilefmt) {
     $GLOBALS[$var] = (count($v) > 1) ? $v : $v[0];
     if ($sd > '') $sddef[$var] = $sd;
     if ($var == 'PageText') { $ps = 'End'; }
-    if ($var == 'HTMLHeader') { $TmplFmt[$ps][] = &$HTMLHeaderFmt; }
-    if ($var == 'HTMLFooter') { $TmplFmt[$ps][] = &$HTMLFooterFmt; }
+    if ($var == 'HTMLHeader' || $var == 'XMLHeader') 
+      $TmplFmt[$ps][] = &$HTMLHeaderFmt; 
+    if ($var == 'HTMLFooter' || $var == 'XMLFooter') 
+      $TmplFmt[$ps][] = &$HTMLFooterFmt; 
     ##   <!--HeaderText--> deprecated, 2.1.16
     if ($var == 'HeaderText') { $TmplFmt[$ps][] = &$HTMLHeaderFmt; }
     $TmplFmt[$ps][$var] =& $GLOBALS[$var];
