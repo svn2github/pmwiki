@@ -828,14 +828,13 @@ function WritePage($pagename,$page) {
 }
 
 function PageExists($pagename) {
-  global $WikiLibDirs;
-  static $pe;
-  if (!isset($pe[$pagename])) {
-    $pe[$pagename] = false;
+  ##  note:  $PageExistsCache might change or disappear someday
+  global $WikiLibDirs, $PageExistsCache;
+  if (!isset($PageExistsCache[$pagename])) {
     foreach((array)$WikiLibDirs as $dir)
-      if ($dir->exists($pagename)) { $pe[$pagename] = true; break; }
+      if ($PageExistsCache[$pagename] = $dir->exists($pagename)) break;
   }
-  return $pe[$pagename];
+  return $PageExistsCache[$pagename];
 }
 
 function ListPages($pat=NULL) {
