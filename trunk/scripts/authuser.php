@@ -41,7 +41,7 @@ function AuthUserId($pagename, $id, $pw=NULL) {
   global $AuthUser, $AuthUserPageFmt, $AuthUserFunctions, 
     $AuthId, $MessagesFmt;
 
-  foreach($AuthUser as $k=>$v) $auth[$k] = (array)$v;
+  foreach((array)$AuthUser as $k=>$v) $auth[$k] = (array)$v;
   $authid = '';
 
   # load information from Site.AuthUser (or page in $AuthUserPageFmt)
