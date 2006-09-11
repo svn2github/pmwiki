@@ -200,11 +200,11 @@ function HandleFeed($pagename, $auth = 'read') {
     if (!PageExists($pn)) continue;
     if (!isset($PCache[$pn]['time'])) 
       { $page = ReadPage($pn, READPAGE_CURRENT); PCache($pn, $page); }
-    $page = & $PCache[$pn];
+    $pc = & $PCache[$pn];
     $pl[] = $pn;
     if (@$opt['count'] && count($pl) >= $opt['count']) break;
     $rdfseq .= FmtPageName("<rdf:li resource=\"{\$PageUrl}\" />\n", $pn);
-    if ($page['time'] > $feedtime) $feedtime = $page['time'];
+    if ($pc['time'] > $feedtime) $feedtime = $pc['time'];
   }
   $pagelist = $pl;
 
