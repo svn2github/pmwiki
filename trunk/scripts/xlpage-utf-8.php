@@ -38,11 +38,12 @@ $SuffixPattern = '(?:-?[[:alnum:]\\x80-\\xd6]+)*';
 
 SDV($PageNameChars, '-[:alnum:]\\x80-\\xfe');
 SDV($MakePageNamePatterns, array(
+    '/[?#].*$/' => '',                     # strip everything after ? or #
     "/'/" => '',                           # strip single-quotes
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
-    "/(?<=^| )([a-z])/e" => "strtoupper('$1')", 
-    "/(?<=^| )([\\xc0-\\xdf].)/e" => "utf8toupper('$1')", 
-    "/ /" => ''));
+    '/(?<=^| )([a-z])/e' => "strtoupper('$1')", 
+    '/(?<=^| )([\\xc0-\\xdf].)/e' => "utf8toupper('$1')", 
+    '/ /' => ''));
 
 function utf8toupper($x) {
   global $CaseConversions;

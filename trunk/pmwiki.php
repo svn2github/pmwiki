@@ -529,10 +529,11 @@ function MakePageName($basepage,$x) {
   if (@$MakePageNameFunction) return $MakePageNameFunction($basepage,$x);
   SDV($PageNameChars,'-[:alnum:]');
   SDV($MakePageNamePatterns, array(
+    '/[#?].*$/' => '',                     # strip everything after ? or #
     "/'/" => '',			   # strip single-quotes
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
-    "/((^|[^-\\w])\\w)/e" => "strtoupper('$1')",
-    "/ /" => ''));
+    '/((^|[^-\\w])\\w)/e' => "strtoupper('$1')",
+    '/ /' => ''));
   $m = preg_split('/[.\\/]/', $x);
   if (count($m)<1 || count($m)>2 || $m[0]=='') return '';
   if ($m[1] > '') {
