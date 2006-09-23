@@ -288,6 +288,7 @@ if (preg_match('/[\\x80-\\xbf]/',$pagename))
   $pagename=utf8_decode($pagename);
 $pagename = preg_replace('![^[:alnum:]\\x80-\\xff]+$!','',$pagename);
 $FmtPV['$RequestedPage'] = "'".htmlspecialchars($pagename, ENT_QUOTES)."'";
+$Cursor['.'] = &$pagename;
 
 if (file_exists("$FarmD/local/farmconfig.php")) 
   include_once("$FarmD/local/farmconfig.php");
@@ -914,7 +915,7 @@ function PrintWikiPage($pagename, $wikilist=NULL, $auth='read') {
       $page = ($auth) ? RetrieveAuthPage($p, $auth, false, READPAGE_CURRENT)
               : ReadPage($p, READPAGE_CURRENT);
       if ($page['text']) 
-        echo MarkupToHTML($pagename,$page['text']);
+        echo MarkupToHTML($pagename,Qualify($p, $page['text']));
       return;
     }
   }
@@ -928,6 +929,20 @@ function Keep($x, $pool=NULL) {
   $KPCount++; $KPV[$KPCount.$pool]=$x;
   return $KeepToken.$KPCount.$pool.$KeepToken;
 }
+
+##  Qualify() applies $QualifyPatterns to convert relative links
+##  and references into absolute equivalents.
+function Qualify($pagename, $text) {
+  global $EscapePattern, $QualifyPatterns, $KeepToken, $KPV;
+  SDV($EscapePattern, '\\[([@=]).*?\\1\\]');
+  $text = preg_replace("/$EscapePattern/e", "Keep(PSS('$0'))", $text);
+  $group = PageVar($pagename, '$Group');
+  $name = PageVar($pagename, '$Name');
+  foreach((array)$QualifyPatterns as $pat => $rep) 
+    $text = preg_replace($pat, $rep, $text);
+  return preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", "\$KPV['$1']", $text);
+}
+
 
 function CondText($pagename,$condspec,$condtext) {
   global $Conditions;
@@ -983,7 +998,8 @@ function IncludeText($pagename, $inclspec) {
       continue;
     }
   }
-  return PVS(htmlspecialchars(@$itext, ENT_NOQUOTES));
+  $itext = Qualify(@$iname, @$itext);
+  return PVS(htmlspecialchars($itext, ENT_NOQUOTES));
 }
 
 
