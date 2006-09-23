@@ -934,6 +934,7 @@ function Keep($x, $pool=NULL) {
 ##  and references into absolute equivalents.
 function Qualify($pagename, $text) {
   global $EscapePattern, $QualifyPatterns, $KeepToken, $KPV;
+  return $text;
   SDV($EscapePattern, '\\[([@=]).*?\\1\\]');
   $text = preg_replace("/$EscapePattern/e", "Keep(PSS('$0'))", $text);
   $group = PageVar($pagename, '$Group');

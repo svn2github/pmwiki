@@ -49,11 +49,11 @@ Markup('$[phrase]', '>[=',
 
 # {$var} substitutions
 Markup('{$var}', '>$[phrase]',
-  '/\\{(!?[-\\w.\\/]*)(\\$\\w+)\\}/e', 
+  '/\\{(!?[-\\w.\\/\\x80-\\xff]*)(\\$\\w+)\\}/e', 
   "htmlspecialchars(PageVar(\$pagename, '$2', '$1'), ENT_NOQUOTES)");
 
-$QualifyPatterns["/\\{([-\\w]*)(\\$:?\\w+\\})/e"] = 
-  "'{' . ('$1' ? MakePageName(\$pagename, '$1') : \$pagename) . '$2'";
+SDV($QualifyPatterns["/\\{([-\\w\\x80-\\xfe]*)(\\$:?\\w+\\})/e"], 
+  "'{' . ('$1' ? MakePageName(\$pagename, '$1') : \$pagename) . '$2'");
 
 Markup('if', 'fulltext',
   "/\\(:(if[^\n]*?):\\)(.*?)(?=\\(:if[^\n]*?:\\)|$)/sei",
@@ -228,7 +228,7 @@ Markup('[[->','>[[|',
   "/(?>\\[\\[([^\\]]+?)\\s*-+&gt;\\s*)(.*?)\\]\\]($SuffixPattern)/e",
   "Keep(MakeLink(\$pagename,PSS('$2'),PSS('$1'),'$3'),'L')");
 
-$QualifyPatterns['/(\\[\\[(?>[^\\]]+?->)?\\s*)([^!][^.\\/|:]*?(\\|.*?)?\\]\\])/e'] = "PSS('$1').\$group.PSS('/$2')";
+SDV($QualifyPatterns['/(\\[\\[(?>[^\\]]+?->)?\\s*)([^!{][^.\\/{|:#?]*?([|#?].*?)?\\]\\])/e'], "PSS('$1').\$group.PSS('/$2')");
 
 ## [[#anchor]]
 Markup('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/e',
