@@ -96,8 +96,8 @@ $CookiePrefix = '';
 $SiteGroup = 'Site';
 $DefaultGroup = 'Main';
 $DefaultName = 'HomePage';
-$GroupHeaderFmt = '(:include {$Group}.GroupHeader self=0:)(:nl:)';
-$GroupFooterFmt = '(:nl:)(:include {$Group}.GroupFooter self=0:)';
+$GroupHeaderFmt = '(:include {$Group}.GroupHeader self=0 basepage={*$FullName}:)(:nl:)';
+$GroupFooterFmt = '(:nl:)(:include {$Group}.GroupFooter self=0 basepage={*$FullName}:)';
 $PagePathFmt = array('{$Group}.$1','$1.$1','$1.{$DefaultName}');
 $PageAttributes = array(
   'passwdread' => '$[Set new read password:]',
@@ -949,6 +949,7 @@ function MarkupRestore($text) {
 ##  and references into absolute equivalents.
 function Qualify($pagename, $text) {
   global $QualifyPatterns, $KeepToken, $KPV;
+  if (!@$QualifyPatterns) return $text;
   $text = MarkupEscape($text);
   $group = PageVar($pagename, '$Group');
   $name = PageVar($pagename, '$Name');
@@ -972,11 +973,12 @@ function CondText($pagename,$condspec,$condtext) {
 
 
 function IncludeText($pagename, $inclspec) {
-  global $MaxIncludes, $InclCount;
+  global $MaxIncludes, $IncludeOpt, $InclCount;
   SDV($MaxIncludes,50);
+  SDVA($IncludeOpt, array('self'=>1));
   $npat = '[[:alpha:]][-\\w]*';
   if ($InclCount++>=$MaxIncludes) return Keep($inclspec);
-  $args = array_merge(array('self' => 1), ParseArgs($inclspec));
+  $args = array_merge($IncludeOpt, ParseArgs($inclspec));
   while (count($args['#'])>0) {
     $k = array_shift($args['#']); $v = array_shift($args['#']);
     if ($k=='') {
@@ -1012,7 +1014,10 @@ function IncludeText($pagename, $inclspec) {
       continue;
     }
   }
-  $itext = Qualify(@$iname, @$itext);
+  $basepage = isset($args['basepage']) 
+              ? MakePageName($pagename, $args['basepage'])
+              : $iname;
+  if ($basepage) $itext = Qualify(@$basepage, @$itext);
   return PVS(htmlspecialchars($itext, ENT_NOQUOTES));
 }
 

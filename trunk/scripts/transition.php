@@ -16,7 +16,7 @@
 
       $Transition['abslinks']           - absolute links/page vars
 
-      $Transition['version'] < 2001900  - all transitions listed above
+      $Transition['version'] < 2001901  - all transitions listed above
 
       $Transition['vspace']             - restore <p class='vspace'></p>
 
@@ -55,7 +55,7 @@
 if (@$_REQUEST['trans']==='0') return;
 
 ## Transitions from 2.2.0-beta1
-if (@$Transition['version'] < 2001900) 
+if (@$Transition['version'] < 2001901) 
   SDVA($Transition, array('abslinks' => 1));
 
 if (@$Transition['abslinks']) {
