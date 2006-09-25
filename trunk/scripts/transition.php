@@ -14,6 +14,10 @@
 
     Transitions defined in this script:
 
+      $Transition['abslinks']           - absolute links/page vars
+
+      $Transition['version'] < 2001900  - all transitions listed above
+
       $Transition['vspace']             - restore <p class='vspace'></p>
 
       $Transition['version'] < 2001006  - all transitions listed above
@@ -50,6 +54,14 @@
 ## if ?trans=0 is specified, then we don't do any fixups.
 if (@$_REQUEST['trans']==='0') return;
 
+## Transitions from 2.2.0-beta1
+if (@$Transition['version'] < 2001900) 
+  SDVA($Transition, array('abslinks' => 1));
+
+if (@$Transition['abslinks']) {
+  SDV($EnableRelativePageLinks, 0);
+  SDV($EnableRelativePageVars, 0);
+}
 
 ## Transitions from 2.1.12
 
