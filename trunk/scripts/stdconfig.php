@@ -45,7 +45,7 @@ if (IsEnabled($EnableSkinLayout,1))
 if (@$Transition || IsEnabled($EnableTransitions, 0))
   include_once("$FarmD/scripts/transition.php");   # must come after skins
 if (IsEnabled($EnableStdMarkup,1))
-  include_once("$FarmD/scripts/stdmarkup.php");
+  include_once("$FarmD/scripts/stdmarkup.php");    # must come after transition
 if ($action=='diff' && @!$HandleActions['diff'])
   include_once("$FarmD/scripts/pagerev.php");
 if (IsEnabled($EnableWikiTrails,1))
