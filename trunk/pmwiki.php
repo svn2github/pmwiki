@@ -288,7 +288,7 @@ if (preg_match('/[\\x80-\\xbf]/',$pagename))
   $pagename=utf8_decode($pagename);
 $pagename = preg_replace('![^[:alnum:]\\x80-\\xff]+$!','',$pagename);
 $FmtPV['$RequestedPage'] = "'".htmlspecialchars($pagename, ENT_QUOTES)."'";
-$Cursor['.'] = &$pagename;
+$Cursor['*'] = &$pagename;
 
 if (file_exists("$FarmD/local/farmconfig.php")) 
   include_once("$FarmD/local/farmconfig.php");
@@ -930,17 +930,31 @@ function Keep($x, $pool=NULL) {
   return $KeepToken.$KPCount.$pool.$KeepToken;
 }
 
+
+##  MarkupEscape examines markup source and escapes any [@...@]
+##  and [=...=] sequences using Keep().  MarkupRestore undoes the
+##  effect of any MarkupEscape().
+function MarkupEscape($text) {
+  global $EscapePattern;
+  SDV($EscapePattern, '\\[([=@]).*?\\1\\]');
+  return preg_replace("/$EscapePattern/es", "Keep(PSS('$0'))", $text);
+}
+function MarkupRestore($text) {
+  global $KeepToken, $KPV;
+  return preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", "\$KPV['$1']", $text);
+}
+
+
 ##  Qualify() applies $QualifyPatterns to convert relative links
 ##  and references into absolute equivalents.
 function Qualify($pagename, $text) {
-  global $EscapePattern, $QualifyPatterns, $KeepToken, $KPV;
-  SDV($EscapePattern, '\\[([@=]).*?\\1\\]');
-  $text = preg_replace("/$EscapePattern/e", "Keep(PSS('$0'))", $text);
+  global $QualifyPatterns, $KeepToken, $KPV;
+  $text = MarkupEscape($text);
   $group = PageVar($pagename, '$Group');
   $name = PageVar($pagename, '$Name');
   foreach((array)$QualifyPatterns as $pat => $rep) 
     $text = preg_replace($pat, $rep, $text);
-  return preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", "\$KPV['$1']", $text);
+  return MarkupRestore($text);
 }
 
 

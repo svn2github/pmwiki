@@ -354,10 +354,10 @@ function FPLTemplate($pagename, &$matches, $opt) {
     if ($group != $lgroup) { $groupcount++; $grouppagecount = 0; }
     $grouppagecount++; $pagecount++;
 
-    $item = str_replace($vk, $vv, $ttext);
+    $item = str_replace($vk, $vv, MarkupEscape($ttext));
     $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
                 "PageVar(\$pn, '$2', '$1')", $item);
-    $out .= $item;
+    $out .= MarkupRestore($item);
     $lgroup = $group;
   }
   $class = preg_replace('/[^-a-zA-Z0-9\\x80-\\xff]/', ' ', @$opt['class']);
