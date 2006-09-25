@@ -581,6 +581,26 @@ function SetProperty($pagename, $prop, $value, $sep = NULL) {
 }
 
 
+## PageTextVar loads a page's text variables (defined by
+## $PageTextVarPatterns) into a page's $PCache entry, and returns
+## the property associated with $var.
+function PageTextVar($pagename, $var) {
+  global $PCache, $PageTextVarPatterns;
+  if (!@$PCache[$pagename]['=pagetextvars']) {
+    $pc = &$PCache[$pagename];
+    $pc['=pagetextvars'] = 1;
+    $page = RetrieveAuthPage($pagename, 'read', false, READPAGE_CURRENT);
+    if ($page) {
+      foreach((array)$PageTextVarPatterns as $pat) 
+        if (preg_match_all($pat, $page['text'], $match, PREG_SET_ORDER))
+          foreach($match as $m)  
+            $pc["=p_{$m[1]}"] = Qualify($pagename, $m[2]);
+    }
+  }
+  return $PCache[$pagename]["=p_$var"];
+}
+
+
 function PageVar($pagename, $var, $pn = '') {
   global $Cursor, $PCache, $FmtPV, $AsSpacedFunction, $ScriptUrl,
     $EnablePathInfo;
@@ -596,8 +616,10 @@ function PageVar($pagename, $var, $pn = '') {
   @list($d, $group, $name) = $match;
   $page = &$PCache[$pn];
   if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
+  if (strncmp($var, '$:', 2)==0) return PageTextVar($pn, substr($var, 2));
   return '';
 }
+
   
 ## FmtPageName handles $[internationalization] and $Variable 
 ## substitutions in strings based on the $pagename argument.

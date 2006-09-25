@@ -49,9 +49,19 @@ Markup('$[phrase]', '>[=',
 
 # {$var} substitutions
 Markup('{$var}', '>$[phrase]',
-  '/\\{(\\*|!?[-\\w.\\/\\x80-\\xff]*)(\\$\\w+)\\}/e', 
+  '/\\{(\\*|!?[-\\w.\\/\\x80-\\xff]*)(\\$:?\\w+)\\}/e', 
   "htmlspecialchars(PageVar(\$pagename, '$2', '$1'), ENT_NOQUOTES)");
 
+# invisible (:textvar:...:) definition
+Markup('textvar:', '<restore',
+  '/\\(:\\w[-\\w]*:.*?:\\)/s', '');
+
+## patterns recognized as text vars
+SDV($PageTextVarPatterns, array(
+  '/^:*(\\w[-\\w]*):\\s?(.*)$/m',
+  '/\\(:(\\w[-\\w]*):\\s?(.*?):\\)/s'));
+
+## handle relative text vars in includes
 if (IsEnabled($EnableRelativePageVars, 0)) 
   SDV($QualifyPatterns["/\\{([-\\w\\x80-\\xfe]*)(\\$:?\\w+\\})/e"], 
     "'{' . ('$1' ? MakePageName(\$pagename, '$1') : \$pagename) . '$2'");
