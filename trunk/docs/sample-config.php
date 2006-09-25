@@ -110,6 +110,12 @@ $WikiTitle = 'PmWiki';
 # if ($action == 'dc') include_once('scripts/feeds.php');    # Dublin Core
 # if ($action == 'rdf') include_once('scripts/feeds.php');   # RSS 1.0
 
+##  In the 2.2.0-beta series, {$var} page variables are absolute by
+##  default, but a future version will make them relative.  This setting
+##  sets them out as relative to begin with.  (If you're starting a new
+##  site, it's probably best to leave this setting alone.)
+$EnableRelativePageVars = 1;
+
 ##  PmWiki allows a great deal of flexibility for creating custom markup.
 ##  To add support for '*bold*' and '~italic~' markup (the single quotes
 ##  are part of the markup), uncomment the following lines. 
