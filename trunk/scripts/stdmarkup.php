@@ -378,7 +378,7 @@ function Cells($name,$attr) {
     if (!@$cf['table']) {
        $tattr = @$MarkupFrame[0]['tattr'];
        $out .= "<table $tattr><tr><td $attr>";
-       $cf['table'] = '</td></tr></table><!---->';
+       $cf['table'] = '</td></tr></table>';
     } else if ($name == 'cellnr') $out .= "</td></tr><tr><td $attr>";
     else $out .= "</td><td $attr>";
     $cf['cell'] = '';
