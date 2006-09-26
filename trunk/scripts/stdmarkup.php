@@ -53,7 +53,7 @@ Markup('{$var}', '>$[phrase]',
   "htmlspecialchars(PageVar(\$pagename, '$2', '$1'), ENT_NOQUOTES)");
 
 # invisible (:textvar:...:) definition
-Markup('textvar:', '<restore',
+Markup('textvar:', 'directives',
   '/\\(:\\w[-\\w]*:.*?:\\)/s', '');
 
 ## patterns recognized as text vars
