@@ -225,7 +225,7 @@ function PageListSources(&$list, &$opt, $pagename, &$page) {
      array_merge(@$opt['=pnfilter'], $SearchPatterns[$opt['list']]);
 
   if (@$opt['group']) $opt['=pnfilter'][] = FixGlob($opt['group'], '$1$2.*');
-  if (@$opt['name']) $opt['=pnfilter'][] = FixGlob($opt['group'], '$1$2.*');
+  if (@$opt['name']) $opt['=pnfilter'][] = FixGlob($opt['name'], '$1*.$2');
 
   if (@$opt['trail']) {
     $trail = ReadTrail($pagename, $opt['trail']);
