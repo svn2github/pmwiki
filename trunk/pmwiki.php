@@ -520,14 +520,14 @@ function ResolvePageName($pagename) {
   return MakePageName($DefaultPage, "$pagename.$pagename");
 }
 
-## MakePageName is used to convert a string into a valid pagename.
-## If no group is supplied, then it uses $PagePathFmt to look
-## for the page in other groups, or else uses the group of the
-## pagename passed as an argument.
-function MakePageName($basepage,$x) {
+## MakePageName is used to convert a string $str into a fully-qualified
+## pagename.  If $str doesn't contain a group qualifier, then 
+## MakePageName uses $basepage and $PagePathFmt to determine the 
+## group of the returned pagename.
+function MakePageName($basepage, $str) {
   global $MakePageNameFunction, $PageNameChars, $PagePathFmt,
     $MakePageNamePatterns;
-  if (@$MakePageNameFunction) return $MakePageNameFunction($basepage,$x);
+  if (@$MakePageNameFunction) return $MakePageNameFunction($basepage, $str);
   SDV($PageNameChars,'-[:alnum:]');
   SDV($MakePageNamePatterns, array(
     '/[#?].*$/' => '',                     # strip everything after ? or #
@@ -535,7 +535,7 @@ function MakePageName($basepage,$x) {
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
     '/((^|[^-\\w])\\w)/e' => "strtoupper('$1')",
     '/ /' => ''));
-  $m = preg_split('/[.\\/]/', $x);
+  $m = preg_split('/[.\\/]/', $str);
   if (count($m)<1 || count($m)>2 || $m[0]=='') return '';
   if ($m[1] > '') {
     $group = preg_replace(array_keys($MakePageNamePatterns),
