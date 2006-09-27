@@ -168,7 +168,7 @@ function HandleFeed($pagename, $auth = 'read') {
   SDV($RSSTimeFmt, 'D, d M Y H:i:s \G\M\T');
   SDV($FeedDescPatterns, 
     array('/<[^>]*$/' => ' ', '/\\w+$/' => '', '/<[^>]+>/' => ''));
-  SDVA($FeedPageListOpt, array());
+  $FeedPageListOpt = (array)@$FeedPageListOpt;
   SDVA($FeedCategoryOpt, array('link' => $pagename));
   SDVA($FeedTrailOpt, array('trail' => $pagename, 'count' => 10));
 
