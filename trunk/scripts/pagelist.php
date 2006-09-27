@@ -172,7 +172,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   StopWatch('MakePageList pre');
   SDV($EnablePageListProtect, 1);
   SDVA($MakePageListOpt, array('list' => 'default'));
-  $opt = array_merge((array)$MakePageListOpt, $opt);
+  $opt = array_merge((array)$MakePageListOpt, (array)$opt);
 
   if (IsEnabled($EnablePageListProtect, 1)) $opt['readf'] = 1000;
   else @$opt['readf'] += 0;
@@ -221,8 +221,8 @@ function PageListSources(&$list, &$opt, $pagename, &$page) {
 
   StopWatch('PageListSources begin');
   ## add the list= option to our list of pagename filter patterns
-  $opt['=pnfilter'] = 
-     array_merge(@$opt['=pnfilter'], $SearchPatterns[$opt['list']]);
+  $opt['=pnfilter'] = array_merge((array)@$opt['=pnfilter'], 
+                                  (array)$SearchPatterns[$opt['list']]);
 
   if (@$opt['group']) $opt['=pnfilter'][] = FixGlob($opt['group'], '$1$2.*');
   if (@$opt['name']) $opt['=pnfilter'][] = FixGlob($opt['name'], '$1*.$2');
