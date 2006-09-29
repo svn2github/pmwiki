@@ -301,10 +301,8 @@ function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
       return 1;
 
     case PAGELIST_POST:
-      if (@$opt['=reindex']) {
-        register_shutdown_function('flush');
+      if (@$opt['=reindex']) 
         register_shutdown_function('PageIndexUpdate',$opt['=reindex'],getcwd());
-      }
       return 0;
   }
 }
@@ -460,7 +458,7 @@ function PageIndexTerms($terms) {
 function PageIndexUpdate($pagelist, $dir = '') {
   global $PageIndexFile, $PageIndexTime, $Now;
   $abort = ignore_user_abort(true);
-  if ($dir) chdir($dir);
+  if ($dir) { flush(); chdir($dir); }
   SDV($PageIndexTime, 10);
   if (!$pagelist || !$PageIndexFile) return;
   $c = count($pagelist);
@@ -541,8 +539,6 @@ function PageIndexGrep($terms, $invert = false) {
 ## the linkindex whenever a page is saved.
 function PostPageIndex($pagename, &$page, &$new) {
   global $IsPagePosted;
-  if ($IsPagePosted) {
-    register_shutdown_function('flush');
-    register_shutdown_function('PageIndexUpdate',$pagename,getcwd());
-  }
+  if ($IsPagePosted) 
+    register_shutdown_function('PageIndexUpdate', $pagename, getcwd());
 }
