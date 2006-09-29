@@ -139,7 +139,7 @@ function Blocklist($pagename, $text) {
   ##  we'll even tell the author why.  :-)
   if (@$WhyBlockedFmt) {
     $MessagesFmt[] = $BlocklistMessageFmt;
-    if (IsEnabled($EnabledWhyBlocked, 0)) 
+    if (IsEnabled($EnableWhyBlocked, 0)) 
       foreach((array)$WhyBlockedFmt as $why) 
         $MessagesFmt[] = "<pre class='blocklistmessage'>$why</pre>\n";
   }
