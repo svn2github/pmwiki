@@ -74,17 +74,14 @@ function NotifyCheck($pagename) {
   $nextevent = fgets($nfp);
   fclose($nfp);
   if ($Now < $nextevent && $LastModTime < filemtime($NotifyFile)) return;
-  register_shutdown_function('flush');
   register_shutdown_function('NotifyUpdate', $pagename, getcwd());
 }
 
     
 function PostNotify($pagename, &$page, &$new) {
   global $IsPagePosted;
-  if ($IsPagePosted) {
-    register_shutdown_function('flush');
+  if ($IsPagePosted) 
     register_shutdown_function('NotifyUpdate', $pagename, getcwd());
-  }
 }
 
 
@@ -95,7 +92,7 @@ function NotifyUpdate($pagename, $dir='') {
     $NotifySubjectFmt, $NotifyBodyFmt, $NotifyHeaders, $NotifyParameters;
 
   $abort = ignore_user_abort(true);
-  if ($dir) chdir($dir);
+  if ($dir) { flush(); chdir($dir); }
 
   $GLOBALS['EnableRedirect'] = 0;
 
