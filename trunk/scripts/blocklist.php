@@ -72,7 +72,7 @@ if ($EnableBlocklist >= 10) {
 ##   "update a page cycle"
 array_unshift($EditFunctions, 'CheckBlocklist');
 function CheckBlocklist($pagename, &$page, &$new) 
-  { Blocklist($pagename, $new['text']); }
+  { Blocklist($pagename, $_POST['text']); }
 
 
 ##   Blocklist is the function that does all of the work of
