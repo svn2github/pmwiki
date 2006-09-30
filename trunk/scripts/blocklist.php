@@ -4,6 +4,37 @@
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.  See pmwiki.php for full details.
+
+    This script adds blocklisting capabilities to PmWiki, and can
+    be enabled by simply setting the following in local/config.php:
+
+        $EnableBlocklist = 1;
+
+    With $EnableBlocklist set to 1, this module will search through
+    the Site.Blocklist page, as well as any other pages given by
+    the $Blocklist pages variable, looking for lines of the
+    form "block:some phrase" or "block:/regex/", with "some phrase" 
+    and "/regex/" indicating things to be excluded from any 
+    posting to the site.  
+
+    In addition, if a page contains IP addresses of the form
+    "a.b.c.d" or "a.b.c.*", then any posts coming from hosts
+    matching the address will be blocked.
+
+    There is also an "unblock:..." form, which removes an entry
+    from the blocklist.  This is useful for removing specific
+    block items in wikifarms and with automatically downloaded
+    blocklists (below).
+
+    The script also has the capability of automatically downloading
+    blocklists from other sources, such as chongqed.org and
+    and the MoinMaster blocklist.  These are configured using
+    the $BlocklistDownload array.  An $EnableBlocklist value
+    of at least 10 configures PmWiki to automatically download
+    these external blocklists and refresh them daily.
+
+    More information about blocklists is available in the
+    PmWiki.Blocklist page.
 */
 
 
