@@ -167,7 +167,7 @@ function FmtPageList($outfmt, $pagename, $opt) {
 ## MakePageList generates a list of pages using the specifications given
 ## by $opt.
 function MakePageList($pagename, $opt, $retpages = 1) {
-  global $MakePageListOpt, $PageListFilters, $EnablePageListProtect;
+  global $MakePageListOpt, $PageListFilters, $EnablePageListProtect, $PCache;
 
   StopWatch('MakePageList pre');
   SDV($EnablePageListProtect, 1);
