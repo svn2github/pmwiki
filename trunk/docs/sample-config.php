@@ -37,6 +37,12 @@ $WikiTitle = 'PmWiki';
 ## and PmWiki.PasswordsAdmin.
 # $DefaultPasswords['admin'] = crypt('secret');
 
+## If you're running a publicly available site and allow anyone to
+## edit without requiring a password, you probably want to put some
+## blocklists in place to avoid wikispam.  See PmWiki.Blocklist.
+# $EnableBlocklist = 1;                    # enable manual blocklists
+# $EnableBlocklist = 10;                   # enable automatic blocklists
+
 ##  PmWiki comes with graphical user interface buttons for editing;
 ##  to enable these buttons, set $EnableGUIButtons to 1.  
 # $EnableGUIButtons = 1;
