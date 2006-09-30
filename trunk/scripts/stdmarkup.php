@@ -57,9 +57,9 @@ Markup('textvar:', '>directives',
   '/\\(:\\w[-\\w]*:(?!\\)).*?:\\)/s', '');
 
 ## patterns recognized as text vars
-SDV($PageTextVarPatterns, array(
-  '/^:*(\\w[-\\w]*):\\s?(.*)$/m',
-  '/\\(:(\\w[-\\w]*):\\s?(.*?):\\)/s'));
+SDVA($PageTextVarPatterns, array(
+  'var:' => '/^:*(\\w[-\\w]*):\\s?(.*)$/m',
+  '(:var:...:)' => '/\\(:(\\w[-\\w]*):\\s?(.*?):\\)/s'));
 
 ## handle relative text vars in includes
 if (IsEnabled($EnableRelativePageVars, 0)) 
