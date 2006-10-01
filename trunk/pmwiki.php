@@ -367,9 +367,9 @@ function IsEnabled(&$var,$f=0)
 function SetTmplDisplay($var, $val) 
   { NoCache(); $GLOBALS['TmplDisplay'][$var] = $val; }
 function NoCache($x = '') { $GLOBALS['NoHTMLCache'] |= 1; return $x; }
-function ParseArgs($x) {
+function ParseArgs($x, $optpat = '(?>(\\w+)[:=])') {
   $z = array();
-  preg_match_all('/([-+]|(?>(\\w+)[:=]))?("[^"]*"|\'[^\']*\'|\\S+)/',
+  preg_match_all("/($optpat|[-+])?(\"[^\"]*\"|'[^']*'|\\S+)/",
     $x, $terms, PREG_SET_ORDER);
   foreach($terms as $t) {
     $v = preg_replace('/^([\'"])?(.*)\\1$/', '$2', $t[3]);
