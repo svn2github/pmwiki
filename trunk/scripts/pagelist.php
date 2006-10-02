@@ -434,8 +434,15 @@ function FPLTemplate($pagename, &$matches, $opt) {
 
   $savecursor = $Cursor;
   $pagecount = 0; $groupcount = 0; $grouppagecount = 0;
-  $vk = array('{$PageCount}', '{$GroupCount}', '{$GroupPageCount}');
-  $vv = array(&$pagecount, &$groupcount, &$grouppagecount);
+  $pseudovars = array('{$$PageCount}' => &$pagecount, 
+                      '{$$GroupCount}' => &$groupcount, 
+                      '{$$GroupPageCount}' => &$grouppagecount);
+
+  foreach(preg_grep('/^[\\w$]/', array_keys($opt)) as $k) 
+    $pseudovars["{\$\$$k}"] = $opt[$k];
+
+  $vk = array_keys($pseudovars);
+  $vv = array_values($pseudovars);
 
   $lgroup = ''; $out = '';
   foreach($matches as $i => $pn) {
