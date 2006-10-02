@@ -83,6 +83,7 @@ SDV($ActionTitleFmt['search'], '| $[Search Results]');
 SDVA($PageListFilters, array(
   'PageListSources' => 100,
   'PageListTermsTargets' => 110,
+  'PageListVariables' => 120,
   'PageListSort' => 900,
 ));
 
@@ -311,6 +312,27 @@ function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
       return 0;
   }
 }
+
+
+function PageListVariables(&$list, &$opt, $pn, &$page) {
+  switch ($opt['=phase']) {
+    case PAGELIST_PRE:
+      $varlist = preg_grep('/^\\$/', array_keys($opt));
+      if (!$varlist) return 0;
+      foreach($varlist as $v) {
+        $pat = preg_quote($opt[$v], '/');
+        $pat = str_replace(array('\\*', '\\?', '\\[\\^', '\\[', '\\]'),
+                           array('.*', '.', '[^', '[', ']'), $pat);
+        $opt['=varp'][$v] = "/^$pat$/";
+      }
+      return PAGELIST_ITEM;
+
+    case PAGELIST_ITEM:
+      foreach($opt['=varp'] as $v => $pat) 
+        if (!preg_match($pat, PageVar($pn, $v))) return 0;
+      return 1;
+  }
+}        
 
 
 function PageListSort(&$list, &$opt, $pn, &$page) {
