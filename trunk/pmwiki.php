@@ -135,6 +135,7 @@ $FmtPV = array(
   '$AuthId'       => 'NoCache($GLOBALS["AuthId"])',
   '$DefaultGroup' => '$GLOBALS["DefaultGroup"]',
   '$DefaultName'  => '$GLOBALS["DefaultName"]',
+  '$BaseName'     => 'MakeBaseName($pn)',
   '$Action'       => '$GLOBALS["action"]',
   );
 $SaveProperties = array('title', 'description', 'keywords');
@@ -554,6 +555,19 @@ function MakePageName($basepage, $str) {
   $group=preg_replace('/[\\/.].*$/','',$basepage);
   return "$group.$name";
 }
+
+
+## MakeBaseName uses $BaseNamePatterns to return the "base" form
+## of a given pagename -- i.e., stripping any recipe-defined
+## prefixes or suffixes from the page.
+function MakeBaseName($pagename, $patlist = NULL) {
+  global $BaseNamePatterns;
+  $patlist = (array)@$BaseNamePatterns;
+  foreach($patlist as $pat => $rep) 
+    $pagename = preg_replace($pat, $rep, $pagename);
+  return $pagename;
+}
+
 
 ## PCache caches basic information about a page and its attributes--
 ## usually everything except page text and page history.  This makes
