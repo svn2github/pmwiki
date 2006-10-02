@@ -321,14 +321,14 @@ function PageListVariables(&$list, &$opt, $pn, &$page) {
       if (!$varlist) return 0;
       foreach($varlist as $v) {
         $pat = preg_quote($opt[$v], '/');
-        $pat = str_replace(array('\\*', '\\?', '\\[\\^', '\\[', '\\]'),
-                           array('.*', '.', '[^', '[', ']'), $pat);
-        $opt['=varp'][$v] = "/^$pat$/";
+        $pat = str_replace(array('\\*', '\\?', '\\[\\^', '\\[', '\\]', ','),
+                           array('.*', '.', '[^', '[', ']', '|'), $pat);
+        $opt['=varinclp'][$v] = "/^(?:$pat)$/i";
       }
       return PAGELIST_ITEM;
 
     case PAGELIST_ITEM:
-      foreach($opt['=varp'] as $v => $pat) 
+      foreach($opt['=varinclp'] as $v => $pat) 
         if (!preg_match($pat, PageVar($pn, $v))) return 0;
       return 1;
   }
