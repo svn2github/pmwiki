@@ -1365,6 +1365,23 @@ function HandleBrowse($pagename, $auth = 'read') {
   PrintFmt($pagename,$HandleBrowseFmt);
 }
 
+
+## UpdatePage goes through all of the steps needed to update a page,
+## preserving page history, computing link targets, page titles, 
+## and other page attributes.  It does this by calling each entry
+## in $EditFunctions.  $pagename is the name of the page to be updated,
+## $page is the old version of the page (used for page history),
+## $new is the new version of the page to be saved, and $fnlist is
+## an optional list of functions to use instead of $EditFunctions.
+function UpdatePage($pagename, &$page, &$new, $fnlist = NULL) {
+  global $EditFunctions, $IsPagePosted;
+  if (is_null($fnlist)) $fnlist = $EditFunctions;
+  $IsPagePosted = false;
+  foreach((array)$fnlist as $fn) $fn($pagename, $page, $new);
+  return $IsPagePosted;
+}
+
+
 # EditTemplate allows a site administrator to pre-populate new pages
 # with the contents of another page.
 function EditTemplate($pagename, &$page, &$new) {
@@ -1522,7 +1539,6 @@ function HandleEdit($pagename, $auth = 'edit') {
   if (@$_POST['cancel']) 
     { Redirect(FmtPageName($EditRedirectFmt, $pagename)); return; }
   Lock(2);
-  $IsPagePosted = false;
   $page = RetrieveAuthPage($pagename, $auth, true);
   if (!$page) Abort("?cannot edit $pagename"); 
   PCache($pagename,$page);
@@ -1532,7 +1548,7 @@ function HandleEdit($pagename, $auth = 'edit') {
   $new['csum'] = $ChangeSummary;
   if ($ChangeSummary) $new["csum:$Now"] = $ChangeSummary;
   $EnablePost &= preg_grep('/^post/', array_keys(@$_POST));
-  foreach((array)$EditFunctions as $fn) $fn($pagename,$page,$new);
+  UpdatePage($pagename, $page, $new);
   Lock(0);
   if ($IsPagePosted && !@$_POST['postedit']) 
     { Redirect(FmtPageName($EditRedirectFmt, $pagename)); return; }
