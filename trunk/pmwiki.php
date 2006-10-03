@@ -58,7 +58,8 @@ $MessagesFmt = array();
 $BlockMessageFmt = "<h3 class='wikimessage'>$[This post has been blocked by the administrator]</h3>";
 $EditFields = array('text');
 $EditFunctions = array('EditTemplate', 'RestorePage', 'ReplaceOnSave',
-  'SaveAttributes', 'PostPage', 'PostRecentChanges', 'PreviewPage');
+  'SaveAttributes', 'PostPage', 'PostRecentChanges', 'AutoCreateTargets',
+  'PreviewPage');
 $EnablePost = 1;
 $ChangeSummary = substr(stripmagic(@$_REQUEST['csum']), 0, 100);
 $AsSpacedFunction = 'AsSpaced';
@@ -1491,6 +1492,21 @@ function PostRecentChanges($pagename,&$page,&$new) {
   }
 }
 
+function AutoCreateTargets($pagename, &$page, &$new) {
+  global $IsPagePosted, $AutoCreate, $LinkTargets;
+  if (!$IsPagePosted) return;
+  foreach((array)@$AutoCreate as $pat => $init) {
+    if (is_null($init)) continue;
+    foreach(preg_grep($pat, array_keys((array)@$LinkTargets)) as $aname) {
+      print pre_r($aname);
+      if (PageExists($aname)) continue;
+      $x = RetrieveAuthPage($aname, 'edit', false, READPAGE_CURRENT);
+      if (!$x) continue;
+      WritePage($aname, $init);
+    }
+  }
+}
+    
 function PreviewPage($pagename,&$page,&$new) {
   global $IsPageSaved, $FmtV;
   if (@$_POST['preview']) {
