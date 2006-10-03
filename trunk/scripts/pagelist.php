@@ -439,7 +439,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
                       '{$$GroupPageCount}' => &$grouppagecount);
 
   foreach(preg_grep('/^[\\w$]/', array_keys($opt)) as $k) 
-    $pseudovars["{\$\$$k}"] = $opt[$k];
+    $pseudovars["{\$\$$k}"] = htmlspecialchars($opt[$k], ENT_NOQUOTES);
 
   $vk = array_keys($pseudovars);
   $vv = array_values($pseudovars);
