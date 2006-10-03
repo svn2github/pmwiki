@@ -1498,7 +1498,6 @@ function AutoCreateTargets($pagename, &$page, &$new) {
   foreach((array)@$AutoCreate as $pat => $init) {
     if (is_null($init)) continue;
     foreach(preg_grep($pat, array_keys((array)@$LinkTargets)) as $aname) {
-      print pre_r($aname);
       if (PageExists($aname)) continue;
       $x = RetrieveAuthPage($aname, 'edit', false, READPAGE_CURRENT);
       if (!$x) continue;

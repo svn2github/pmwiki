@@ -14,6 +14,10 @@
 
     Transitions defined in this script:
 
+      $Transition['noautocreate']       - turn off auto-creation of targets
+
+      $Transition['version'] < 2001911  - all transitions listed above
+
       $Transition['abslinks']           - absolute links/page vars
 
       $Transition['version'] < 2001901  - all transitions listed above
@@ -54,10 +58,23 @@
 ## if ?trans=0 is specified, then we don't do any fixups.
 if (@$_REQUEST['trans']==='0') return;
 
+## Transitions from 2.2.0-beta11
+if (@$Transition['version'] < 2001911)
+  SDVA($Transition, array('noautocreate' => 1));
+
+## noautocreate:
+##   This removes the 'Auto Create Targets' behavior (used to
+##   automatically create Category.* pages).
+if (@$Transition['noautocreate']) 
+  $EditFunctions = array_diff($EditFunctions, array('AutoCreateTargets'));
+
 ## Transitions from 2.2.0-beta1
 if (@$Transition['version'] < 2001901) 
   SDVA($Transition, array('abslinks' => 1));
 
+## abslinks:
+##   This restores settings so that PmWiki treats all links
+##   as absolute (following the 2.1.x and earlier interpretation).
 if (@$Transition['abslinks']) {
   SDV($EnableRelativePageLinks, 0);
   SDV($EnableRelativePageVars, 0);
