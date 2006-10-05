@@ -31,10 +31,11 @@ if (IsEnabled($EnablePageIndex, 1)) {
 }
 
 ## $SearchPatterns holds patterns for list= option
-SDVA($SearchPatterns['all'], array());
-$SearchPatterns['normal'][] = '!\.(All)?Recent(Changes|Uploads)$!';
-$SearchPatterns['normal'][] = '!\.Group(Print)?(Header|Footer|Attributes)$!';
-$SearchPatterns['normal'][] = str_replace('.', '\\.', "!^$pagename$!");
+SDV($SearchPatterns['all'], array());
+SDVA($SearchPatterns['normal'], array(
+  'recent' => '!\.(All)?Recent(Changes|Uploads)$!',
+  'group' => '!\.Group(Print)?(Header|Footer|Attributes)$!',
+  'self' => str_replace('.', '\\.', "!^$pagename$!")));
 
 ## $FPLFormatOpt is a list of options associated with fmt=
 ## values.  'default' is used for any undefined values of fmt=.

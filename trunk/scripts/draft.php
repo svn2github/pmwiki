@@ -8,7 +8,8 @@
 
 array_unshift($EditFunctions, 'EditDraft');
 SDV($DraftSuffix, '-Draft');
-if ($DraftSuffix) $SearchPatterns['normal'][] = "!$DraftSuffix\$!";
+if ($DraftSuffix) 
+  SDV($SearchPatterns['normal']['draft'], "!$DraftSuffix\$!");
 
 if ($action == 'edit') 
   SDVA($InputTags['e_savedraftbutton'], array(
