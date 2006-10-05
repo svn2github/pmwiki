@@ -342,6 +342,7 @@ function PSS($x)
   { return str_replace('\\"','"',$x); }
 function PVS($x) 
   { return preg_replace("/\n[^\\S\n]*(?=\n)/", "\n<:vspace>", $x); }
+function PVSE($x) { return PVS(htmlspecialchars($x, ENT_NOQUOTES)); }
 function PZZ($x,$y='') { return ''; }
 function PRR($x=NULL) 
   { if ($x || is_null($x)) $GLOBALS['RedoMarkupLine']++; return $x; }
@@ -1055,7 +1056,7 @@ function IncludeText($pagename, $inclspec) {
               ? MakePageName($pagename, $args['basepage'])
               : $iname;
   if ($basepage) $itext = Qualify(@$basepage, @$itext);
-  return PVS(htmlspecialchars($itext, ENT_NOQUOTES));
+  return PVSE($itext);
 }
 
 
@@ -1300,8 +1301,7 @@ function MarkupToHTML($pagename, $text, $opt = NULL) {
   $MarkupFrame[0]['wwcount'] = $WikiWordCount;
   $markrules = BuildMarkupRules();
   foreach((array)$text as $l) 
-    $lines[] = $MarkupFrame[0]['escape'] 
-               ? PVS(htmlspecialchars($l, ENT_NOQUOTES)) : $l;
+    $lines[] = $MarkupFrame[0]['escape'] ? PVSE($l) : $l;
   $lines[] = '(:closeall:)';
   $out = '';
   while (count($lines)>0) {

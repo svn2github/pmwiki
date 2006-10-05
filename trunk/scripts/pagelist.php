@@ -457,7 +457,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
 
     $item = str_replace($vk, $vv, MarkupEscape($ttext));
     $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
-                "PageVar(\$pn, '$2', '$1')", $item);
+                "PVSE(PageVar(\$pn, '$2', '$1'))", $item);
     $out .= MarkupRestore($item);
     $lgroup = $group;
   }

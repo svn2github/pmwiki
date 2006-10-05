@@ -50,7 +50,7 @@ Markup('$[phrase]', '>[=',
 # {$var} substitutions
 Markup('{$var}', '>$[phrase]',
   '/\\{(\\*|!?[-\\w.\\/\\x80-\\xff]*)(\\$:?\\w+)\\}/e', 
-  "htmlspecialchars(PageVar(\$pagename, '$2', '$1'), ENT_NOQUOTES)");
+  "PVSE(PageVar(\$pagename, '$2', '$1'), ENT_NOQUOTES)");
 
 # invisible (:textvar:...:) definition
 Markup('textvar:', '>directives',
