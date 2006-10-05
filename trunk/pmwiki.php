@@ -474,6 +474,7 @@ function MatchPageNames($pagelist, $pat) {
   $pagelist = (array)$pagelist;
   foreach((array)$pat as $p) {
     if (count($pagelist) < 1) break;
+    if (!$p) continue;
     switch ($p{0}) {
       case '/': 
         $pagelist = preg_grep($p, $pagelist); 
