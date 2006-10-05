@@ -173,7 +173,10 @@ function NotifyUpdate($pagename, $dir='') {
       if (!$notify[$m]) { unset($notify[$m]); continue; }
       $mbody = str_replace('$NotifyItems',   
                            urldecode(implode("\n", $notify[$m])), $body);
-      mail($m, $subject, $mbody, $NotifyHeaders, $NotifyParameters);
+      if ($NotifyParameters)
+        mail($m, $subject, $mbody, $NotifyHeaders, $NotifyParameters);
+      else 
+        mail($m, $subject, $mbody, $NotifyHeaders);
       $notify[$m] = array('lastmail' => $nnow);
     }
   }
