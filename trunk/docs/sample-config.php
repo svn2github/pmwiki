@@ -82,6 +82,7 @@ $WikiTitle = 'PmWiki';
 ##  or limiting specific WikiWords.
 # $WikiWordCount['PhD'] = 0;               # disables 'PhD'
 # $WikiWordCount['PmWiki'] = 1;            # convert only first 'PmWiki'
+# $WikiWordCount['WikiWord'] = -1;         # ignore $SpaceWikiWord setting
 
 ##  By default, PmWiki is configured such that only the first occurrence
 ##  of 'PmWiki' in a page is treated as a WikiWord.  If you want to 
