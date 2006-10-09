@@ -822,17 +822,19 @@ class PageStore {
     $pats=(array)$pats; 
     array_push($pats, "/^$GroupPattern\.$NamePattern$/");
     $dir = $this->pagefile('$Group.$Name');
+    $maxslash = substr_count($dir, '/');
     $dirlist = array(preg_replace('!/*[^/]*\\$.*$!','',$dir));
     $out = array();
     while (count($dirlist)>0) {
       $dir = array_shift($dirlist);
       $dfp = @opendir($dir); if (!$dfp) { continue; }
+      $dirslash = substr_count($dir, '/') + 1;
       $o = array();
       while ( ($pagefile = readdir($dfp)) !== false) {
         if ($pagefile{0} == '.') continue;
-        if (is_dir("$dir/$pagefile"))
+        if ($dirslash < $maxslash && is_dir("$dir/$pagefile"))
           { array_push($dirlist,"$dir/$pagefile"); continue; }
-        $o[] = $pagefile;
+        if ($dirslash == $maxslash) $o[] = $pagefile;
       }
       closedir($dfp);
       StopWatch("PageStore::ls merge {$this->dir}");
