@@ -53,7 +53,7 @@ Markup('{$var}', '>$[phrase]',
   "PVSE(PageVar(\$pagename, '$2', '$1'), ENT_NOQUOTES)");
 
 # invisible (:textvar:...:) definition
-Markup('textvar:', '>directives',
+Markup('textvar:', '<split',
   '/\\(:\\w[-\\w]*:(?!\\)).*?:\\)/s', '');
 
 ## patterns recognized as text vars
