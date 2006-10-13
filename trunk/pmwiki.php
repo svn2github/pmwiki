@@ -54,6 +54,7 @@ $KeepToken = "\235\235";
 $Now=time();
 define('READPAGE_CURRENT', $Now+604800);
 $TimeFmt = '%B %d, %Y, at %I:%M %p';
+$TimeISOFmt = '%Y-%m-%dT%H:%M:%S';
 $MessagesFmt = array();
 $BlockMessageFmt = "<h3 class='wikimessage'>$[This post has been blocked by the administrator]</h3>";
 $EditFields = array('text');
@@ -301,7 +302,8 @@ if (IsEnabled($EnableLocalConfig,1)) {
     include_once('config.php');
 }
 
-SDV($CurrentTime,strftime($TimeFmt,$Now));
+SDV($CurrentTime, strftime($TimeFmt, $Now));
+SDV($CurrentTimeISO, strftime($TimeISOFmt, $Now));
 
 if (IsEnabled($EnableStdConfig,1))
   include_once("$FarmD/scripts/stdconfig.php");
