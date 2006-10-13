@@ -85,7 +85,7 @@ function CheckBlocklist($pagename, &$page, &$new)
 function Blocklist($pagename, $text) {
   global $BlocklistPages, $BlockedMessagesFmt, $BlocklistDownload,
     $BlocklistDownloadRefresh, $Now, $EnablePost, $WhyBlockedFmt,
-    $MessagesFmt, $BlocklistMessageFmt, $EnableWhyBlocked;
+    $MessagesFmt, $BlocklistMessageFmt, $EnableWhyBlocked, $IsBlocked;
 
   $BlocklistDownload = (array)@$BlocklistDownload;
   SDV($BlocklistPages, 
@@ -140,6 +140,7 @@ function Blocklist($pagename, $text) {
     $ip = preg_replace('/\\d+$/', '($0\\b|\\*)', $ip);
     if (preg_match("/\\b$ip/", $page['text'], $match)) {
       $EnablePost = 0;
+      $IsBlocked = 1;
       $WhyBlockedFmt[] = $BlockedMessagesFmt['ip'] . $match[0];
     }
 
@@ -162,6 +163,7 @@ function Blocklist($pagename, $text) {
       if (!preg_match($b, $text)) continue;
     } else if (strpos($itext, strtolower($b)) === false) continue;
     $EnablePost = 0;
+    $IsBlocked = 1;
     $WhyBlockedFmt[] = $BlockedMessagesFmt['text'] . $b;
   }
 
