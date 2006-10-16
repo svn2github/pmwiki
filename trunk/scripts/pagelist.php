@@ -73,7 +73,7 @@ Markup('searchbox', 'directives',
 Markup('searchresults', 'directives',
   '/\\(:searchresults(\\s+.*?)?:\\)/ei',
   "FmtPageList(\$GLOBALS['SearchResultsFmt'], \$pagename, 
-       array('req' => 1, 'o' => PSS('$1')))");
+       array('req' => 1, 'request'=>1, 'o' => PSS('$1')))");
 
 SDV($SaveAttrPatterns['/\\(:(searchresults|pagelist)(\\s+.*?)?:\\)/i'], ' ');
 
@@ -139,9 +139,10 @@ function FmtPageList($outfmt, $pagename, $opt) {
     $opt['group'] = @$match[1];
     $rq = substr($rq, strlen(@$match[1])+1);
   }
+  $opt = array_merge($opt, ParseArgs($opt['o'], $PageListArgPattern));
   # merge markup options with form and url
-  $opt = array_merge($opt, ParseArgs($opt['o'].' '.$rq, $PageListArgPattern), 
-                     @$_REQUEST);
+  if (@$opt['request']) 
+    $opt = array_merge($opt, ParseArgs($rq, $PageListArgPattern), @$_REQUEST);
   # non-posted blank search requests return nothing
   if (@($opt['req'] && !$opt['-'] && !$opt[''] && !$opt['+'] && !$opt['q']))
     return '';
@@ -440,7 +441,8 @@ function FPLTemplate($pagename, &$matches, $opt) {
                       '{$$GroupPageCount}' => &$grouppagecount);
 
   foreach(preg_grep('/^[\\w$]/', array_keys($opt)) as $k) 
-    $pseudovars["{\$\$$k}"] = htmlspecialchars($opt[$k], ENT_NOQUOTES);
+    if (!is_array($opt[$k]))
+      $pseudovars["{\$\$$k}"] = htmlspecialchars($opt[$k], ENT_NOQUOTES);
 
   $vk = array_keys($pseudovars);
   $vv = array_values($pseudovars);
