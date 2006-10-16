@@ -55,6 +55,7 @@ $Now=time();
 define('READPAGE_CURRENT', $Now+604800);
 $TimeFmt = '%B %d, %Y, at %I:%M %p';
 $TimeISOFmt = '%Y-%m-%dT%H:%M:%S';
+$TimeISOZFmt = '%Y-%m-%dT%H:%M:%SZ';
 $MessagesFmt = array();
 $BlockMessageFmt = "<h3 class='wikimessage'>$[This post has been blocked by the administrator]</h3>";
 $EditFields = array('text');

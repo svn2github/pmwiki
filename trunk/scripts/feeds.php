@@ -162,9 +162,8 @@ foreach(array_keys($FeedFmt) as $k) {
 }
 
 function HandleFeed($pagename, $auth = 'read') {
-  global $FeedFmt, $action, $PCache, $FmtV, $ISOTimeFmt, $RSSTimeFmt,
+  global $FeedFmt, $action, $PCache, $FmtV, $TimeISOZFmt, $RSSTimeFmt,
     $FeedOpt, $FeedDescPatterns, $CategoryGroup, $EntitiesTable;
-  SDV($ISOTimeFmt, '%Y-%m-%dT%H:%M:%SZ');
   SDV($RSSTimeFmt, 'D, d M Y H:i:s \G\M\T');
   SDV($FeedDescPatterns, 
     array('/<[^>]*$/' => ' ', '/\\w+$/' => '', '/<[^>]+>/' => ''));
@@ -209,7 +208,7 @@ function HandleFeed($pagename, $auth = 'read') {
   $pagelist = $pl;
 
   $FmtV['$FeedRDFSeq'] = $rdfseq;
-  $FmtV['$FeedISOTime'] = gmstrftime($ISOTimeFmt, $feedtime);
+  $FmtV['$FeedISOTime'] = gmstrftime($TimeISOZFmt, $feedtime);
   $FmtV['$FeedRSSTime'] = gmdate($RSSTimeFmt, $feedtime);
   # format start of feed
   $out = FmtPageName($f['feed']['_start'], $pagename);
@@ -228,7 +227,7 @@ function HandleFeed($pagename, $auth = 'read') {
   foreach($pagelist as $pn) {
     $page = &$PCache[$pn];
     $FmtV['$ItemDesc'] = @$page['description'];
-    $FmtV['$ItemISOTime'] = gmstrftime($ISOTimeFmt, $page['time']);
+    $FmtV['$ItemISOTime'] = gmstrftime($TimeISOZFmt, $page['time']);
     $FmtV['$ItemRSSTime'] = gmdate($RSSTimeFmt, $page['time']);
 
     $out .= FmtPageName($f['item']['_start'], $pn);
