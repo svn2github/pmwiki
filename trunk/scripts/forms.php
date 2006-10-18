@@ -103,6 +103,10 @@ Markup('e_preview', 'directives',
 # simply be empty.
 Markup('e_guibuttons', 'directives', '/\\(:e_guibuttons:\\)/', '');
 
+# Prevent (:e_preview:) and (:e_guibuttons:) from 
+# participating in text rendering step.
+SDV($SaveAttrPatterns['/\\(:e_(preview|guibuttons):\\)/'], ' ');
+
 SDVA($InputTags['e_form'], array(
   ':html' => "<form action='{\$PageUrl}?action=edit' method='post'><input 
     type='hidden' name='action' value='edit' /><input 
