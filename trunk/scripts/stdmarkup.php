@@ -58,7 +58,7 @@ Markup('textvar:', '<split',
 
 ## patterns recognized as text vars
 SDVA($PageTextVarPatterns, array(
-  'var:' => '/^:*(\\w[-\\w]*):\\s?(.*)$/m',
+  'var:' => '/^:*(\\w[-\\w]*):[ \\t]?(.*)$/m',
   '(:var:...:)' => '/\\(:(\\w[-\\w]*):\\s?(.*?):\\)/s'));
 
 ## handle relative text vars in includes
