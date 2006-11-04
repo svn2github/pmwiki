@@ -569,7 +569,7 @@ function MakePageName($basepage, $str) {
 ## prefixes or suffixes from the page.
 function MakeBaseName($pagename, $patlist = NULL) {
   global $BaseNamePatterns;
-  $patlist = (array)@$BaseNamePatterns;
+  if (is_null($patlist)) $patlist = (array)@$BaseNamePatterns;
   foreach($patlist as $pat => $rep) 
     $pagename = preg_replace($pat, $rep, $pagename);
   return $pagename;
