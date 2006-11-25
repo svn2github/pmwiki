@@ -115,7 +115,7 @@ function SearchBox($pagename, $opt) {
     class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
     class='inputbutton searchbutton' value='{$opt['label']}' />";
   foreach($opt as $k => $v) {
-    if ($v == '') continue;
+    if ($v == '' || is_array($v)) continue;
     if ($k == 'q' || $k == 'label' || $k == 'value' || $k == 'size') continue;
     $k = str_replace("'", "&#039;", $k);
     $v = str_replace("'", "&#039;", $v);
