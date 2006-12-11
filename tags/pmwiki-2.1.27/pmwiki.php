@@ -1080,7 +1080,7 @@ function FormatTableRow($x) {
   for($i=0;$i<count($td);$i++) {
     if ($td[$i]=='') continue;
     $FmtV['$TableCellCount'] = $i;
-    $attr = FmtPageName($TableCellAttrFmt, '');
+    $attr = FmtPageName(@$TableCellAttrFmt, '');
     $td[$i] = preg_replace('/^(!?)\\s+$/', '$1&nbsp;', $td[$i]);
     if (preg_match('/^!(.*?)!$/',$td[$i],$match))
       { $td[$i]=$match[1]; $t='caption'; $attr=''; }
@@ -1099,7 +1099,7 @@ function FormatTableRow($x) {
   if (@$MarkupFrame[0]['cs'][0] != 'table') $rowcount = 0; else $rowcount++;
   $FmtV['$TableRowCount'] = $rowcount + 1;
   $FmtV['$TableRowIndex'] = ($rowcount % $TableRowIndexMax) + 1;
-  $trattr = FmtPageName($TableRowAttrFmt, '');
+  $trattr = FmtPageName(@$TableRowAttrFmt, '');
   return "<:table,1><tr $trattr>$y</tr>";
 }
 
