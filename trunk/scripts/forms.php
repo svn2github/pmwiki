@@ -8,7 +8,7 @@
 
 # $InputAttrs are the attributes we allow in output tags
 SDV($InputAttrs, array('name', 'value', 'id', 'class', 'rows', 'cols', 
-  'size', 'maxlength', 'action', 'method', 'accesskey', 
+  'size', 'maxlength', 'action', 'method', 'accesskey', 'multiple',
   'checked', 'disabled', 'readonly', 'enctype', 'src', 'alt'));
 
 # Set up formatting for text, submit, hidden, radio, etc. types
@@ -19,6 +19,8 @@ SDV($InputTags['text']['class'], 'inputbox');
 SDV($InputTags['password']['class'], 'inputbox');
 SDV($InputTags['submit']['class'], 'inputbutton');
 SDV($InputTags['reset']['class'], 'inputbutton');
+SDV($InputTags['radio'][':checked'], 'checked');
+SDV($InputTags['checkbox'][':checked'], 'checked');
 
 # (:input form:)
 SDVA($InputTags['form'], array(
@@ -36,31 +38,95 @@ SDVA($InputTags['textarea'], array(
 # (:input image:)
 SDV($InputTags['image'][':args'], array('name', 'src', 'alt'));
 
+# (:input select:)
+SDVA($InputTags['select-option'], array(
+  ':args' => array('name', 'value', 'label'),
+  ':content' => array('label', 'value', 'name'),
+  ':attr' => array('value', 'selected'),
+  ':checked' => 'selected',
+  ':html' => "<option \$InputFormArgs>\$InputFormContent</option>"));
+SDVA($InputTags['select'], array(
+  ':html' => "<select \$InputSelectArgs>\$InputSelectOptions</select>"));
+
 Markup('input', 'directives', 
   '/\\(:input\\s+(\\w+)(.*?):\\)/ei',
   "InputMarkup(\$pagename, '$1', PSS('$2'))");
 
-function InputMarkup($pagename, $type, $args) {
+Markup('input-select', '<split',
+  '/\\(:input\\s+select\\s.*?:\\)(?:\\s*\\(:input\\s+select\\s.*?:\\))*/ei',
+  "InputSelect(\$pagename, 'select', PSS('$0'))");
+
+
+function InputToHTML($pagename, $type, $args, &$opt) {
   global $InputTags, $InputAttrs, $InputValues, $FmtV;
   if (!@$InputTags[$type]) return "(:input $type $args:)";
-  $opt = array_merge($InputTags[$type], ParseArgs($args));
-  $args = @$opt[':args'];
-  if (!$args) $args = array('name', 'value');
-  while (count(@$opt['']) > 0 && count($args) > 0) 
-    $opt[array_shift($args)] = array_shift($opt['']);
+  ##  get input arguments
+  $args = ParseArgs($args);
+  ##  convert any positional arguments to named arguments
+  $posnames = @$opt[':args'];
+  if (!$posnames) $posnames = array('name', 'value');
+  while (count($posnames) > 0 && count(@$args['']) > 0) {
+    $n = array_shift($posnames);
+    if (!isset($args[$n])) $args[$n] = array_shift($args['']);
+  }
+  ##  merge defaults for input type with arguments
+  $opt = array_merge($InputTags[$type], $args);
+  ##  convert any remaining positional args to flags
   foreach ((array)@$opt[''] as $a) 
-    if (!isset($opt[$a])) $opt[$a] = $a;
-  if (!isset($opt['value']) && isset($InputValues[@$opt['name']])) 
-    $opt['value'] = $InputValues[$opt['name']];
+    { $a = strtolower($a); if (!isset($opt[$a])) $opt[$a] = $a; }
+  $name = @$opt['name'];
+  ##  set control values from $InputValues array
+  ##  radio, checkbox, select, etc. require a flag of some sort,
+  ##  others just set 'value'
+  if (isset($InputValues[$name])) {
+    $checked = @$opt[':checked'];
+    if ($checked) {
+      $opt[$checked] = in_array(@$opt['value'], (array)$InputValues[$name])
+                       ? $checked : false;
+    } else $opt['value'] = $InputValues[$name];
+  }
+  ##  build $InputFormArgs from $opt
+  $attrlist = (isset($opt[':attr'])) ? $opt[':attr'] : $InputAttrs;
   $attr = array();
-  foreach ($InputAttrs as $a) {
-    if (!isset($opt[$a])) continue;
+  foreach ($attrlist as $a) {
+    if (!isset($opt[$a]) || $opt[$a]===false) continue;
     $attr[] = "$a='".str_replace("'", '&#39;', $opt[$a])."'";
   }
   $FmtV['$InputFormArgs'] = implode(' ', $attr);
-  $out = FmtPageName($opt[':html'], $pagename);
-  return Keep($out);
+  $FmtV['$InputFormContent'] = '';
+  foreach((array)@$opt[':content'] as $a)
+    if (@$opt[$a]) { $FmtV['$InputFormContent'] = $opt[$a]; break; }
+  return FmtPageName($opt[':html'], $pagename);
 }
+
+
+function InputMarkup($pagename, $type, $args) {
+  return Keep(InputToHTML($pagename, $type, $args, $opt));
+}
+
+
+function InputSelect($pagename, $type, $markup) {
+  global $InputTags, $InputAttrs, $FmtV;
+  preg_match_all('/\\(:input\\s+\\S+\\s+(.*?):\\)/', $markup, $match);
+  $selectopt = (array)$InputTags[$type];
+  $opt = $selectopt;
+  $optionshtml = '';
+  $optiontype = isset($InputTags["$type-option"]) 
+                ? "$type-option" : "select-option";
+  foreach($match[1] as $args) {
+    $optionshtml .= InputToHTML($pagename, $optiontype, $args, $oo);
+    $opt = array_merge($opt, $oo);
+  }
+  $attrlist = array_diff($InputAttrs, array('value'));
+  foreach($attrlist as $a) {
+    if (!isset($opt[$a]) || $opt[$a]===false) continue;
+    $attr[] = "$a='".str_replace("'", '&#39;', $opt[$a])."'";
+  }
+  $FmtV['$InputSelectArgs'] = implode(' ', $attr);
+  $FmtV['$InputSelectOptions'] = $optionshtml;
+  return Keep(FmtPageName($selectopt[':html'], $pagename));
+}
+
 
 ## Form-based authorization prompts (for use with PmWikiAuth)
 
