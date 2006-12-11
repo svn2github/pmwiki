@@ -80,6 +80,7 @@ $MarkupFrameBase = array('cs' => array(), 'vs' => '', 'ref' => 0,
   'escape' => 1);
 $WikiWordCountMax = 1000000;
 $WikiWordCount['PmWiki'] = 1;
+$TableRowIndexMax = 1;
 $UrlExcludeChars = '<>"{}|\\\\^`()[\\]\'';
 $QueryFragPattern = "[?#][^\\s$UrlExcludeChars]*";
 $SuffixPattern = '(?:-?[[:alnum:]]+)*';
