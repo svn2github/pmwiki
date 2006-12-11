@@ -52,7 +52,7 @@ Markup('{$var}', '>$[phrase]',
   '/\\{(!?[-\\w.\\/]*)(\\$\\w+)\\}/e', 
   "htmlspecialchars(PageVar(\$pagename, '$2', '$1'), ENT_NOQUOTES)");
 # {*$var} substitutions, backported from 2.2.0
-Markup('{*$var}', '<{*$var}', '/\\{\\*\\$/e', "'{'.\$pagename.'$'");
+Markup('{*$var}', '<{$var}', '/\\{\\*\\$/e', "'{'.\$pagename.'$'");
 
 Markup('if', 'fulltext',
   "/\\(:(if[^\n]*?):\\)(.*?)(?=\\(:if[^\n]*?:\\)|$)/sei",
