@@ -52,9 +52,14 @@ Markup('input', 'directives',
   '/\\(:input\\s+(\\w+)(.*?):\\)/ei',
   "InputMarkup(\$pagename, '$1', PSS('$2'))");
 
-Markup('input-select', '<split',
+Markup('input-select', '<input',
   '/\\(:input\\s+select\\s.*?:\\)(?:\\s*\\(:input\\s+select\\s.*?:\\))*/ei',
   "InputSelect(\$pagename, 'select', PSS('$0'))");
+
+##  The 'input+sp' rule combines multiple (:input select ... :)
+##  into a single markup line (to avoid split)
+Markup('input+sp', '<split', 
+  '/(\\(:input\\s+select\\s(?>.*?:\\)))\\s+(?=\\(:input\\s)/', '$1');
 
 
 function InputToHTML($pagename, $type, $args, &$opt) {
@@ -83,7 +88,7 @@ function InputToHTML($pagename, $type, $args, &$opt) {
     if ($checked) {
       $opt[$checked] = in_array(@$opt['value'], (array)$InputValues[$name])
                        ? $checked : false;
-    } else $opt['value'] = $InputValues[$name];
+    } else if (!isset($opt['value'])) $opt['value'] = $InputValues[$name];
   }
   ##  build $InputFormArgs from $opt
   $attrlist = (isset($opt[':attr'])) ? $opt[':attr'] : $InputAttrs;
@@ -95,12 +100,22 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   $FmtV['$InputFormArgs'] = implode(' ', $attr);
   $FmtV['$InputFormContent'] = '';
   foreach((array)@$opt[':content'] as $a)
-    if (@$opt[$a]) { $FmtV['$InputFormContent'] = $opt[$a]; break; }
+    if (isset($opt[$a])) { $FmtV['$InputFormContent'] = $opt[$a]; break; }
   return FmtPageName($opt[':html'], $pagename);
 }
 
 
 function InputMarkup($pagename, $type, $args) {
+  global $InputValues;
+  if ($type == 'default') {
+    $args = ParseArgs($args);
+    $args[''] = (array)@$args[''];
+    if (!isset($args['name'])) $args['name'] = array_shift($args['']);
+    if (!isset($args['value'])) $args['value'] = array_shift($args['']);
+    if (!isset($InputValues[$args['name']])) 
+      $InputValues[$args['name']] = $args['value'];
+    return '';
+  }
   return Keep(InputToHTML($pagename, $type, $args, $opt));
 }
 
