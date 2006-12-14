@@ -1380,7 +1380,7 @@ function HandleBrowse($pagename, $auth = 'read') {
 ## $page is the old version of the page (used for page history),
 ## $new is the new version of the page to be saved, and $fnlist is
 ## an optional list of functions to use instead of $EditFunctions.
-function UpdatePage($pagename, &$page, &$new, $fnlist = NULL) {
+function UpdatePage(&$pagename, &$page, &$new, $fnlist = NULL) {
   global $EditFunctions, $IsPagePosted;
   if (is_null($fnlist)) $fnlist = $EditFunctions;
   $IsPagePosted = false;
