@@ -57,7 +57,7 @@ SDV($UploadPrefixFmt,'/$Group');
 SDV($UploadFileFmt,"$UploadDir$UploadPrefixFmt");
 $v = preg_replace('#^/(.*/)#', '', $UploadDir);
 SDV($UploadUrlFmt,preg_replace('#/[^/]*$#', "/$v", $PubDirUrl, 1));
-SDV($LinkUploadCreateFmt, "<a class='createlinktext' href='\$LinkUpload'>\$LinkText</a><a class='createlink' href='\$LinkUpload'>&nbsp;&Delta;</a>");
+SDV($LinkUploadCreateFmt, "<a rel='nofollow' class='createlinktext' href='\$LinkUpload'>\$LinkText</a><a rel='nofollow' class='createlink' href='\$LinkUpload'>&nbsp;&Delta;</a>");
 
 SDV($PageUploadFmt,array("
   <div id='wikiupload'>
@@ -277,7 +277,7 @@ function FmtUploadList($pagename, $args) {
     $name = PUE("$uploadurl$file");
     $stat = stat("$uploaddir/$file");
     if ($EnableUploadOverwrite) 
-      $overwrite = FmtPageName("<a class='createlink'
+      $overwrite = FmtPageName("<a rel='nofollow' class='createlink'
         href='\$PageUrl?action=upload&amp;upname=$file'>&nbsp;&Delta;</a>", 
         $pagename);
     $out[] = "<li> <a href='$name'>$file</a>$overwrite ... ".
