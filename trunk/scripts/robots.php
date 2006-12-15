@@ -61,5 +61,9 @@ if (!@$RobotActions[$action]) {
 if (IsEnabled($EnableRobotCloakActions, 0)) {
   $p = create_function('$a', 'return (boolean)$a;');
   $p = join('|', array_keys(array_filter($RobotActions, $p)));
-  $FmtP["/(\\\$ScriptUrl[^#\"'\\s<>]+)\?action=(?!$p)\\w+/"] = '$1';
+  $FmtPV['$PageUrl'] = 
+    'PUE(($EnablePathInfo)
+         ? "\\$ScriptUrl/$group/$name"
+         : "\\$ScriptUrl?n=$group.$name")';
+  $FmtP["/(\\\$ScriptUrl[^#\"'\\s<>]+)\\?action=(?!$p)\\w+/"] = '$1';
 }
