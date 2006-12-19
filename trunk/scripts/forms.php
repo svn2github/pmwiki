@@ -46,6 +46,7 @@ SDVA($InputTags['select-option'], array(
   ':checked' => 'selected',
   ':html' => "<option \$InputFormArgs>\$InputFormContent</option>"));
 SDVA($InputTags['select'], array(
+  'class' => 'inputbox',
   ':html' => "<select \$InputSelectArgs>\$InputSelectOptions</select>"));
 
 Markup('input', 'directives', 
