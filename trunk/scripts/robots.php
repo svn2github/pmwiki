@@ -36,8 +36,9 @@
 
 ## $MetaRobots provides the value for the <meta name='robots' ...> tag.
 SDV($MetaRobots,
-  ($action!='browse' || preg_match('#^PmWiki[./](?!PmWiki$)|^Site[./]#',
-    $pagename)) ? 'noindex,nofollow' : 'index,follow');
+      ($action!='browse' || !PageExists($pagename)
+        || preg_match('#^PmWiki[./](?!PmWiki$)|^Site[./]#', $pagename))
+      ? 'noindex,nofollow' : 'index,follow');
 if ($MetaRobots)
   $HTMLHeaderFmt['robots'] =
     "  <meta name='robots' content='\$MetaRobots' />\n";
