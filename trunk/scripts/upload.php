@@ -44,6 +44,9 @@ SDVA($UploadExts,array(
   'swf' => 'application/x-shockwave-flash',
   'txt' => 'text/plain', 'rtf' => 'application/rtf', 
   'tex' => 'application/x-tex', 'dvi' => 'application/x-dvi',
+  'odt' => 'application/vnd.oasis.opendocument.text',
+  'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+  'odp' => 'application/vnd.oasis.opendocument.presentation',
   '' => 'text/plain'));
 
 SDV($UploadMaxSize,50000);
