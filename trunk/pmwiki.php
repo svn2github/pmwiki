@@ -1281,7 +1281,7 @@ function DisableMarkup() {
   while (count($idlist)>0) {
     $id = array_shift($idlist);
     if (is_array($id)) { $idlist = array_merge($idlist, $id); continue; }
-    $MarkupTable[$id] = array('cmd' => 'none', pat=>'');
+    $MarkupTable[$id] = array('cmd' => 'none', 'pat'=>'');
   }
 }
     
@@ -1625,13 +1625,13 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
       $x = array(2, array(), '');
       $acache['@site'][$k] = IsAuthorized($v, 'site', $x);
       $AuthList["@_site_$k"] = $acache['@site'][$k][0] ? 1 : 0;
-      $acache[$gn][$k] = IsAuthorized($gp["passwd$k"], 'group', 
+      $acache[$gn][$k] = IsAuthorized(@$gp["passwd$k"], 'group', 
                                       $acache['@site'][$k]);
     }
   }
   foreach($DefaultPasswords as $k => $v) 
     list($page['=auth'][$k], $page['=passwd'][$k], $page['=pwsource'][$k]) =
-      IsAuthorized($page["passwd$k"], 'page', $acache[$gn][$k]);
+      IsAuthorized(@$page["passwd$k"], 'page', $acache[$gn][$k]);
   foreach($AuthCascade as $k => $t) {
     if ($page['=auth'][$k]+0 == 2) {
       $page['=auth'][$k] = $page['=auth'][$t];
@@ -1676,7 +1676,7 @@ function IsAuthorized($chal, $source, &$from) {
     $x = '';
     $pwchal = preg_split('/([, ]|\\w+:)/', $c, -1, PREG_SPLIT_DELIM_CAPTURE);
     foreach($pwchal as $pw) {
-      if ($pw == ',') continue;
+      if ($pw == ',' || $pw == '') continue;
       else if ($pw == ' ') { $x = ''; continue; }
       else if (substr($pw, -1, 1) == ':') { $x = $pw; continue; }
       else if ($pw{0} != '@' && $x > '') $pw = $x . $pw;
@@ -1715,7 +1715,7 @@ function SessionAuth($pagename, $auth = NULL) {
   $sid = session_id();
   @session_start();
   foreach((array)$auth as $k => $v)
-    if ($k) $_SESSION[$k] = (array)$v + (array)$_SESSION[$k];
+    if ($k) $_SESSION[$k] = (array)$v + (array)@$_SESSION[$k];
 
   if (!isset($AuthId)) $AuthId = @end($_SESSION['authid']);
   $AuthPw = array_keys((array)@$_SESSION['authpw']);
