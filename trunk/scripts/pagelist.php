@@ -187,7 +187,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   asort($PageListFilters);
   $opt['=phase'] = PAGELIST_PRE; $list=array(); $pn=NULL; $page=NULL;
   foreach($PageListFilters as $fn => $v) {
-    $ret = $fn($list, $opt, $pn, $page);
+    $ret = $fn($list, $opt, $pagename, $page);
     if ($ret & PAGELIST_ITEM) $itemfilters[] = $fn;
     if ($ret & PAGELIST_POST) $postfilters[] = $fn;
   }
@@ -214,7 +214,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   StopWatch('MakePageList post');
   $opt['=phase'] = PAGELIST_POST; $pn=NULL; $page=NULL;
   foreach((array)$postfilters as $fn) 
-    $fn($list, $opt, $pn, $page);
+    $fn($list, $opt, $pagename, $page);
   
   if ($retpages) 
     for($i=0; $i<count($list); $i++)
@@ -224,7 +224,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
 }
 
 
-function PageListSources(&$list, &$opt, $pagename, &$page) {
+function PageListSources(&$list, &$opt, $pn, &$page) {
   global $SearchPatterns;
 
   StopWatch('PageListSources begin');
@@ -236,13 +236,13 @@ function PageListSources(&$list, &$opt, $pagename, &$page) {
   if (@$opt['name']) $opt['=pnfilter'][] = FixGlob($opt['name'], '$1*.$2');
 
   if (@$opt['trail']) {
-    $trail = ReadTrail($pagename, $opt['trail']);
+    $trail = ReadTrail($pn, $opt['trail']);
     $list = array();
     foreach($trail as $tstop) {
-      $pn = $tstop['pagename'];
-      $list[] = $pn;
+      $n = $tstop['pagename'];
+      $list[] = $n;
       $tstop['parentnames'] = array();
-      PCache($pn, $tstop);
+      PCache($n, $tstop);
     }
     foreach($trail as $tstop) 
       $PCache[$tstop['pagename']]['parentnames'][] = 
@@ -274,7 +274,7 @@ function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
         $opt['=exclp'][] = '$'.implode('|', array_map('preg_quote',$excl)).'$i';
 
       if (@$opt['link']) {
-        $link = MakePageName($pagename, $opt['link']);
+        $link = MakePageName($pn, $opt['link']);
         $opt['=linkp'] = "/(^|,)$link(,|$)/i";
         $indexterms[] = " $link ";
       }
