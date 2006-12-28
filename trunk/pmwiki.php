@@ -73,8 +73,10 @@ $RecentChangesFmt = array(
     '* [[{$Group}.{$Name}]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]',
   '$Group.RecentChanges' =>
     '* [[{$Group}/{$Name}]]  . . . $CurrentTime $[by] $AuthorLink: [=$ChangeSummary=]');
-$ScriptUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-$PubDirUrl = preg_replace('#/[^/]*$#','/pub',$ScriptUrl,1);
+$UrlScheme = (@$_SERVER['HTTPS']=='on' || @$_SERVER['SERVER_PORT']==443)
+             ? 'https' : 'http';
+$ScriptUrl = $UrlScheme.'://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+$PubDirUrl = preg_replace('#/[^/]*$#', '/pub', $ScriptUrl, 1);
 $HTMLVSpace = "<vspace>";
 $HTMLPNewline = '';
 $MarkupFrame = array();
