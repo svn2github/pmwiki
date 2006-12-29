@@ -44,7 +44,7 @@
 ##   but at some point we may change the default to disabled.
 if (IsEnabled($EnableBlocklistImmediate, 1)) {
   SDVA($BlocklistActions, array('comment' => 1));
-  if ($BlocklistActions[$action]) {
+  if (isset($_POST['text']) && $BlocklistActions[$action]) {
     Blocklist($pagename, $_POST['text']);
     if (!$EnablePost) {
       unset($_POST['post']);
@@ -72,7 +72,7 @@ if ($EnableBlocklist >= 10) {
 ##   "update a page cycle"
 array_unshift($EditFunctions, 'CheckBlocklist');
 function CheckBlocklist($pagename, &$page, &$new) 
-  { Blocklist($pagename, $_POST['text']); }
+  { if (isset($_POST['text'])) Blocklist($pagename, $_POST['text']); }
 
 
 ##   Blocklist is the function that does all of the work of
