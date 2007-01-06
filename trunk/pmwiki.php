@@ -520,8 +520,10 @@ function ResolvePageName($pagename) {
   $pagename = preg_replace('!([./][^./]+)\\.html$!', '$1', $pagename);
   if ($pagename == '') return $DefaultPage;
   $p = MakePageName($DefaultPage, $pagename);
-  if (!preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $p))
-    Abort('$[?invalid page name]', '404 Not Found');
+  if (!preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $p)) {
+    header('HTTP/1.1 404 Not Found');
+    Abort('$[?invalid page name]');
+  }
   if (preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $pagename))
     return $p;
   if (IsEnabled($EnableFixedUrlRedirect, 1)
@@ -900,9 +902,8 @@ function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0) {
   return $AuthFunction($pagename, $level, $authprompt, $since);
 }
 
-function Abort($msg, $status = NULL) {
+function Abort($msg) {
   # exit pmwiki with an abort message
-  if ($status) header("HTTP/1.1 $status");
   $msg = "<h3>$[PmWiki can't process your request]</h3>
     <p>$msg</p><p>We are sorry for any inconvenience.</p>";
   echo preg_replace('/\\$\\[([^\\]]+)\\]/e',"XL(PSS('$1'))", $msg);
