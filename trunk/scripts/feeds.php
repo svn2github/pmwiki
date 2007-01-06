@@ -163,7 +163,7 @@ foreach(array_keys($FeedFmt) as $k) {
 
 function HandleFeed($pagename, $auth = 'read') {
   global $FeedFmt, $action, $PCache, $FmtV, $TimeISOZFmt, $RSSTimeFmt,
-    $FeedOpt, $FeedDescPatterns, $CategoryGroup, $EntitiesTable;
+    $FeedPageListOpt, $FeedDescPatterns, $CategoryGroup, $EntitiesTable;
   SDV($RSSTimeFmt, 'D, d M Y H:i:s \G\M\T');
   SDV($FeedDescPatterns, 
     array('/<[^>]*$/' => ' ', '/\\w+$/' => '', '/<[^>]+>/' => ''));
