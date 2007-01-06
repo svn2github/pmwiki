@@ -424,7 +424,7 @@ function Lock($op) {
   if (!$lockfp) { 
     @unlink($LockFile); 
     $lockfp = fopen($LockFile,"w") or
-      Abort("Cannot acquire lockfile", "Lockfile");
+      Abort('?cannot acquire lockfile');
     fixperms($LockFile);
   }
   if ($op<0) { flock($lockfp,LOCK_UN); fclose($lockfp); $lockfp=0; $curop=0; }
@@ -466,7 +466,7 @@ function mkdirp($dir) {
 ## so that both PmWiki and the account (current dir) owner can manipulate it
 function fixperms($fname, $add = 0) {
   clearstatcache();
-  if (!file_exists($fname)) Abort('no such file');
+  if (!file_exists($fname)) Abort('?no such file');
   $bp = 0;
   if (fileowner($fname)!=@fileowner('.')) $bp = (is_dir($fname)) ? 007 : 006;
   if (filegroup($fname)==@filegroup('.')) $bp <<= 3;
@@ -521,7 +521,7 @@ function ResolvePageName($pagename) {
   if ($pagename == '') return $DefaultPage;
   $p = MakePageName($DefaultPage, $pagename);
   if (!preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $p))
-    Abort("?invalid page name");
+    Abort('$[?invalid page name]', '404 Not Found');
   if (preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $pagename))
     return $p;
   if (IsEnabled($EnableFixedUrlRedirect, 1)
@@ -900,10 +900,12 @@ function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0) {
   return $AuthFunction($pagename, $level, $authprompt, $since);
 }
 
-function Abort($msg) {
+function Abort($msg, $status = NULL) {
   # exit pmwiki with an abort message
-  echo "<h3>PmWiki can't process your request</h3>
+  if ($status) header("HTTP/1.1 $status");
+  $msg = "<h3>$[PmWiki can't process your request]</h3>
     <p>$msg</p><p>We are sorry for any inconvenience.</p>";
+  echo preg_replace('/\\$\\[([^\\]]+)\\]/e',"XL(PSS('$1'))", $msg);
   exit;
 }
 
@@ -1336,7 +1338,7 @@ function HandleBrowse($pagename, $auth = 'read') {
     $EnableHTMLCache, $NoHTMLCache, $PageCacheFile, $LastModTime, $IsHTMLCached,
     $FmtV, $HandleBrowseFmt, $PageStartFmt, $PageEndFmt, $PageRedirectFmt;
   $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
-  if (!$page) Abort('?cannot read $pagename');
+  if (!$page) Abort("?cannot read $pagename");
   PCache($pagename,$page);
   if (PageExists($pagename)) $text = @$page['text'];
   else {
