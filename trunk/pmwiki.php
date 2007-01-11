@@ -734,8 +734,10 @@ function CmpPageAttr($a, $b) {
 class PageStore {
   var $dirfmt;
   var $iswrite;
-  function PageStore($d='$WorkDir/$FullName', $w=0) 
-    { $this->dirfmt=$d; $this->iswrite=$w; }
+  function PageStore($d='$WorkDir/$FullName', $w=0) { 
+    $this->dirfmt = $d; $this->iswrite = $w; 
+    $GLOBALS['PageExistsCache'] = array();
+  }
   function pagefile($pagename) {
     global $FarmD;
     $dfmt = $this->dirfmt;
