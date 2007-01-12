@@ -53,8 +53,8 @@ SDVA($FPLFormatOpt, array(
   ));
 
 SDV($SearchResultsFmt, "<div class='wikisearch'>\$[SearchFor]
-  $HTMLVSpace\$MatchList
-  $HTMLVSpace\$[SearchFound]$HTMLVSpace</div>");
+  <div class='vspace'></div>\$MatchList
+  <div class='vspace'></div>\$[SearchFound]</div>");
 SDV($SearchQuery, str_replace('$', '&#036;', 
   htmlspecialchars(stripmagic(@$_REQUEST['q']), ENT_NOQUOTES)));
 XLSDV('en', array(
