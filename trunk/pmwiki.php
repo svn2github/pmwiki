@@ -285,8 +285,8 @@ if (isset($_GET['action'])) $action = $_GET['action'];
 elseif (isset($_POST['action'])) $action = $_POST['action'];
 else $action = 'browse';
 
-$pagename = $_REQUEST['n'];
-if (!$pagename) $pagename = $_REQUEST['pagename'];
+$pagename = @$_REQUEST['n'];
+if (!$pagename) $pagename = @$_REQUEST['pagename'];
 if (!$pagename && 
     preg_match('!^'.preg_quote($_SERVER['SCRIPT_NAME'],'!').'/?([^?]*)!',
       $_SERVER['REQUEST_URI'],$match))
@@ -332,8 +332,9 @@ foreach((array)$InterMapFiles as $f) {
 $LinkPattern = implode('|',array_keys($LinkFunctions));
 SDV($LinkPageCreateSpaceFmt,$LinkPageCreateFmt);
 
-$ActionTitle = FmtPageName(@$ActionTitleFmt[$action],$pagename);
-if (!function_exists(@$HandleActions[$action])) $action='browse';
+$ActionTitle = FmtPageName(@$ActionTitleFmt[$action], $pagename);
+if (!@$HandleActions[$action] || !function_exists($HandleActions[$action])) 
+  $action='browse';
 SDV($HandleAuth[$action], 'read');
 $HandleActions[$action]($pagename, $HandleAuth[$action]);
 Lock(0);
@@ -549,7 +550,7 @@ function MakePageName($basepage, $str) {
   $str = preg_replace('/[#?].*$/', '', $str);
   $m = preg_split('/[.\\/]/', $str);
   if (count($m)<1 || count($m)>2 || $m[0]=='') return '';
-  if ($m[1] > '') {
+  if (@$m[1] > '') {
     $group = preg_replace(array_keys($MakePageNamePatterns),
                array_values($MakePageNamePatterns), $m[0]);
     $name = preg_replace(array_keys($MakePageNamePatterns),
@@ -828,7 +829,7 @@ class PageStore {
   }
   function ls($pats=NULL) {
     global $GroupPattern, $NamePattern;
-    StopWatch("PageStore::ls begin {$this->dir}");
+    StopWatch("PageStore::ls begin {$this->dirfmt}");
     $pats=(array)$pats; 
     array_push($pats, "/^$GroupPattern\.$NamePattern$/");
     $dir = $this->pagefile('$Group.$Name');
@@ -847,10 +848,10 @@ class PageStore {
         if ($dirslash == $maxslash) $o[] = $pagefile;
       }
       closedir($dfp);
-      StopWatch("PageStore::ls merge {$this->dir}");
+      StopWatch("PageStore::ls merge {$this->dirfmt}");
       $out = array_merge($out, MatchPageNames($o, $pats));
     }
-    StopWatch("PageStore::ls end {$this->dir}");
+    StopWatch("PageStore::ls end {$this->dirfmt}");
     return $out;
   }
 }

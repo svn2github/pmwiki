@@ -22,8 +22,8 @@ global $HTTPHeaders, $KeepToken, $pagename,
 
 $Charset = 'UTF-8';
 $HTTPHeaders[] = 'Content-type: text/html; charset=UTF-8';
-$pagename = $_REQUEST['n'];
-if (!$pagename) $pagename = $_REQUEST['pagename'];
+$pagename = @$_REQUEST['n'];
+if (!$pagename) $pagename = @$_REQUEST['pagename'];
 if (!$pagename &&
       preg_match('!^'.preg_quote($_SERVER['SCRIPT_NAME'],'!').'/?([^?]*)!',
           $_SERVER['REQUEST_URI'],$match))

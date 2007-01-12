@@ -91,9 +91,9 @@ SDVA($PageListFilters, array(
 foreach(array('random', 'size', 'time', 'ctime') as $o) 
   SDV($PageListSortCmp[$o], "@(\$PCache[\$x]['$o']-\$PCache[\$y]['$o'])");
 
-#define PAGELIST_PRE       1
-#define PAGELIST_ITEM      2
-#define PAGELIST_POST      4
+define('PAGELIST_PRE' , 1);
+define('PAGELIST_ITEM', 2);
+define('PAGELIST_POST', 4);
 
 ## SearchBox generates the output of the (:searchbox:) markup.
 ## If $SearchBoxFmt is defined, that is used, otherwise a searchbox
@@ -106,7 +106,7 @@ function SearchBox($pagename, $opt) {
     'value' => str_replace("'", "&#039;", $SearchQuery)));
   $opt = array_merge((array)$SearchBoxOpt, @$_GET, (array)$opt);
   $opt['action'] = 'search';
-  $target = ($opt['target']) 
+  $target = (@$opt['target']) 
             ? MakePageName($pagename, $opt['target']) : $pagename;
   $out = FmtPageName(" class='wikisearch' action='\$PageUrl' method='get'>",
                      $target);
@@ -184,6 +184,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   if (IsEnabled($EnablePageListProtect, 1)) $opt['readf'] = 1000;
   else @$opt['readf'] += 0;
 
+  $itemfilters = array(); $postfilters = array();
   asort($PageListFilters);
   $opt['=phase'] = PAGELIST_PRE; $list=array(); $pn=NULL; $page=NULL;
   foreach($PageListFilters as $fn => $v) {
@@ -230,7 +231,7 @@ function PageListSources(&$list, &$opt, $pn, &$page) {
   StopWatch('PageListSources begin');
   ## add the list= option to our list of pagename filter patterns
   $opt['=pnfilter'] = array_merge((array)@$opt['=pnfilter'], 
-                                  (array)$SearchPatterns[$opt['list']]);
+                                  (array)@$SearchPatterns[$opt['list']]);
 
   if (@$opt['group']) $opt['=pnfilter'][] = FixGlob($opt['group'], '$1$2.*');
   if (@$opt['name']) $opt['=pnfilter'][] = FixGlob($opt['name'], '$1*.$2');
@@ -260,7 +261,7 @@ function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
   switch ($opt['=phase']) {
     case PAGELIST_PRE:
       $FmtV['$MatchSearched'] = count($list);
-      $incl = array(); $inclp = array();
+      $incl = array(); $excl = array();
       foreach((array)@$opt[''] as $i) { $incl[] = $i; }
       foreach((array)@$opt['+'] as $i) { $incl[] = $i; }
       foreach((array)@$opt['-'] as $i) { $excl[] = $i; }
@@ -363,6 +364,7 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
 
   ## case PAGELIST_POST
   StopWatch('PageListSort begin');
+  $code = '';
   foreach(preg_split('/[\\s,|]+/', $order, -1, PREG_SPLIT_NO_EMPTY) as $o) {
     if ($o{0} == '-') { $r = '-'; $o = substr($o, 1); }
     else $r = '';
@@ -389,7 +391,7 @@ function HandleSearchA($pagename, $level = 'read') {
   $form = RetrieveAuthPage($pagename, $level, true, READPAGE_CURRENT);
   if (!$form) Abort("?unable to read $pagename");
   PCache($pagename, $form);
-  $text = preg_replace('/\\[([=@])(.*?)\\1\\]/s', ' ', $form['text']);
+  $text = preg_replace('/\\[([=@])(.*?)\\1\\]/s', ' ', @$form['text']);
   if (!preg_match('/\\(:searchresults(\\s.*?)?:\\)/', $text))
     foreach((array)$PageSearchForm as $formfmt) {
       $form = ReadPage(FmtPageName($formfmt, $pagename), READPAGE_CURRENT);
