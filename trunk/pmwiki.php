@@ -336,7 +336,8 @@ $ActionTitle = FmtPageName(@$ActionTitleFmt[$action], $pagename);
 if (!@$HandleActions[$action] || !function_exists($HandleActions[$action])) 
   $action='browse';
 SDV($HandleAuth[$action], 'read');
-$HandleActions[$action]($pagename, $HandleAuth[$action]);
+if (IsEnabled($EnableActions, 1))
+  $HandleActions[$action]($pagename, $HandleAuth[$action]);
 Lock(0);
 return;
 
@@ -951,12 +952,12 @@ function PrintFmt($pagename,$fmt) {
     }
     return;
   }
-  if (preg_match("/^markup:(.*)$/",$x,$match))
-    { print MarkupToHTML($pagename,$match[1]); return; }
-  if (preg_match('/^wiki:(.+)$/', $x, $match)) 
-    { PrintWikiPage($pagename, $match[1], 'read'); return; }
-  if (preg_match('/^page:(.+)$/', $x, $match)) 
-    { PrintWikiPage($pagename, $match[1], ''); return; }
+  if (substr($x, 0, 7) == 'markup:')
+    { print MarkupToHTML($pagename, substr($x, 7)); return; }
+  if (substr($x, 0, 5) == 'wiki:')
+    { PrintWikiPage($pagename, substr($x, 5), 'read'); return; }
+  if (substr($x, 0, 5) == 'page:')
+    { PrintWikiPage($pagename, substr($x, 5), ''); return; }
   echo $x;
 }
 
