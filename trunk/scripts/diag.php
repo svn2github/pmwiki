@@ -37,17 +37,12 @@ function HandleRuleset($pagename) {
   print Ruleset();
 }
 
-function DisplayStopWatch() {
+function StopWatchHTML($pagename, $print = 0) {
   global $StopWatch;
   StopWatch('now');
-  $out = "<pre>";
-  foreach((array)$StopWatch as $k => $x) {
-    $out .= "$x\n";
-  }
+  $out = '<pre>'.implode("\n", (array)$StopWatch)."\n</pre>";
   if (is_array($StopWatch)) array_pop($StopWatch);
-  $out .= '</pre>';
+  if ($print) print $out;
   return $out;
 }
-
-$FmtP['/\\$StopWatch/e'] = 'DisplayStopWatch()';
 
