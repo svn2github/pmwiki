@@ -346,7 +346,7 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
     case PAGELIST_PRE:
       if (!preg_match('/^([\\s,|]*-?(name|group|random))*$/', $order))
         $opt['readf']++;
-      if (preg_match('/random|group|title/', $order)) 
+      if (preg_match('/random|group|title|\\$/', $order)) 
         return PAGELIST_ITEM | PAGELIST_POST;
       return PAGELIST_POST;
 
