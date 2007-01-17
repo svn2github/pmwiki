@@ -105,7 +105,7 @@ function LoadPageTemplate($pagename,$tfilefmt) {
   $ps = 'Start';
   while (count($sect)>0) {
     $k = array_shift($sect);
-    $v = preg_split('/[[<]!--((?:wiki|file|function|markup):.*?)--[]>]/',
+    $v = preg_split('/[[<]!--((?:wiki|file|function|markup):.*?)--[]>]/s',
       array_shift($sect),0,PREG_SPLIT_DELIM_CAPTURE);
     $TmplFmt[$ps][] = "<!--$k-->";
     if ($k{0} == '/') 
