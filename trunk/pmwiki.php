@@ -1165,7 +1165,7 @@ function FormatTableRow($x, $sep = '\\|\\|') {
     $TableRowIndexMax, $FmtV;
   static $rowcount;
   $x = preg_replace("/$sep\\s*$/",'',$x);
-  $td = PREG_SPLIT("/$sep/", $x); $y = '';
+  $td = preg_split("/$sep/", $x); $y = '';
   for($i=0;$i<count($td);$i++) {
     if ($td[$i]=='') continue;
     $FmtV['$TableCellCount'] = $i;
