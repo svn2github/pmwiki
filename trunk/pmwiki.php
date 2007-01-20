@@ -1160,12 +1160,12 @@ function MarkupClose($key = '') {
 }
 
 
-function FormatTableRow($x) {
+function FormatTableRow($x, $sep = '\\|\\|') {
   global $Block, $TableCellAttrFmt, $MarkupFrame, $TableRowAttrFmt, 
     $TableRowIndexMax, $FmtV;
   static $rowcount;
-  $x = preg_replace('/\\|\\|\\s*$/','',$x);
-  $td = explode('||',$x); $y='';
+  $x = preg_replace("/$sep\\s*$/",'',$x);
+  $td = PREG_SPLIT("/$sep/", $x); $y = '';
   for($i=0;$i<count($td);$i++) {
     if ($td[$i]=='') continue;
     $FmtV['$TableCellCount'] = $i;
