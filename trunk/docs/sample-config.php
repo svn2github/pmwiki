@@ -74,6 +74,7 @@ $WikiTitle = 'PmWiki';
 # $SpaceWikiWords = 1;                     # turn on WikiWord spacing
 
 ##  Set $EnableWikiWords if you want to allow WikiWord links.
+##  For more options with WikiWords, see scripts/wikiwords.php .
 # $EnableWikiWords = 1;                      # enable WikiWord links
 
 ##  $DiffKeepDays specifies the minimum number of days to keep a page's
