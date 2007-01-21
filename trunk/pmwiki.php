@@ -66,7 +66,6 @@ $EnablePost = 1;
 $ChangeSummary = substr(stripmagic(@$_REQUEST['csum']), 0, 100);
 $AsSpacedFunction = 'AsSpaced';
 $SpaceWikiWords = 0;
-$LinkWikiWords = 0;
 $RCDelimPattern = '  ';
 $RecentChangesFmt = array(
   '$SiteGroup.AllRecentChanges' => 
@@ -1192,18 +1191,6 @@ function FormatTableRow($x, $sep = '\\|\\|') {
   return "<:table,1><tr $trattr>$y</tr>";
 }
 
-function WikiLink($pagename, $word) {
-  global $LinkWikiWords, $WikiWordCount, $SpaceWikiWords, $AsSpacedFunction, 
-    $MarkupFrame, $WikiWordCountMax;
-  if (!$LinkWikiWords || ($WikiWordCount[$word] < 0)) return $word;
-  $text = ($SpaceWikiWords) ? $AsSpacedFunction($word) : $word;
-  $text = preg_replace('!.*/!', '', $text);
-  if (!isset($MarkupFrame[0]['wwcount'][$word]))
-    $MarkupFrame[0]['wwcount'][$word] = $WikiWordCountMax;
-  if ($MarkupFrame[0]['wwcount'][$word]-- < 1) return $text;
-  return MakeLink($pagename, $word, $text);
-}
-  
 function LinkIMap($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
   global $FmtV, $IMap, $IMapLinkFmt, $UrlLinkFmt;
   $FmtV['$LinkUrl'] = PUE(str_replace('$1',$path,$IMap[$imap]));

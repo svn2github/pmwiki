@@ -69,8 +69,8 @@ $WikiTitle = 'PmWiki';
 ##  have spaces before each sequence of capital letters.
 # $SpaceWikiWords = 1;                     # turn on WikiWord spacing
 
-##  Set $LinkWikiWords if you want to allow WikiWord links.
-# $LinkWikiWords = 1;                      # enable WikiWord links
+##  Set $EnableWikiWords if you want to allow WikiWord links.
+# $EnableWikiWords = 1;                      # enable WikiWord links
 
 ##  If you want only the first occurrence of a WikiWord to be converted
 ##  to a link, set $WikiWordCountMax=1.

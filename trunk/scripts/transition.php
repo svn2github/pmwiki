@@ -14,6 +14,10 @@
 
     Transitions defined in this script:
 
+      $Transition['wikiwords']          - 2.1-style WikiWord processing
+
+      $Transition['version'] < 2001924  - all transitions listed above
+
       $Transition['abslinks']           - absolute links/page vars
 
       $Transition['version'] < 2001901  - all transitions listed above
@@ -53,6 +57,19 @@
 
 ## if ?trans=0 is specified, then we don't do any fixups.
 if (@$_REQUEST['trans']==='0') return;
+
+## Transitions from 2.2.0-beta24
+if (@$Transition['version'] < 2001924)
+  SDVA($Transition, array('wikiwords' => 1));
+
+## wikiwords:
+##   This restores the PmWiki 2.1 behavior for WikiWord processing.
+##   WikiWords aren't linked by default, but appear with
+##   <span class='wikiword'>...</span> tags around them.
+if (@$Transition['wikiwords']) {
+  SDV($EnableWikiWords, 1);
+  SDV($LinkWikiWords, 0);
+}
 
 ## Transitions from 2.2.0-beta1
 if (@$Transition['version'] < 2001901) 

@@ -276,16 +276,14 @@ Markup('img','<urllink',
     \$GLOBALS['ImgTagFmt']),'L')");
 
 ## bare wikilinks
-Markup('wikilink', '>urllink',
-  "/\\b($GroupPattern([\\/.]))?($WikiWordPattern)/e",
-  "Keep('<span class=\\'wikiword\\'>'.WikiLink(\$pagename,'$0').'</span>',
-        'L')");
+##    v2.2: markup rule moved to scripts/wikiwords.php)
+Markup('wikilink', '>urllink');
 
-## escaped `WikiWords
+## escaped `WikiWords 
+##    v2.2: rule kept here for markup compatibility with 2.1 and earlier
 Markup('`wikiword', '<wikilink',
   "/`(($GroupPattern([\\/.]))?($WikiWordPattern))/e",
   "Keep('$1')");
-
 
 #### Block markups ####
 ## Completely blank lines don't do anything.

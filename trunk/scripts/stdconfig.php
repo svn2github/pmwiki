@@ -44,6 +44,8 @@ if (IsEnabled($EnableSkinLayout,1))
   include_once("$FarmD/scripts/skins.php");        # must come after prefs
 if (@$Transition || IsEnabled($EnableTransitions, 0))
   include_once("$FarmD/scripts/transition.php");   # must come after skins
+if (@$LinkWikiWords || IsEnabled($EnableWikiWords, 0))
+  include_once("$FarmD/scripts/wikiwords.php");    # must come before stdmarkup
 if (IsEnabled($EnableStdMarkup,1))
   include_once("$FarmD/scripts/stdmarkup.php");    # must come after transition
 if ($action=='diff' && @!$HandleActions['diff'])
