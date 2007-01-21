@@ -19,6 +19,31 @@
 
         $LinkWikiWords = 0;
 
+    If you want only the first occurrence of a WikiWord to be converted
+    to a link, set $WikiWordCountMax=1.
+
+        $WikiWordCountMax = 1;         # converts only first WikiWord
+        $WikiWordCountMax = 0;         # another way to disable WikiWord links
+
+    The $WikiWordCount array can be used to control the number of times
+    a WikiWord is converted to a link.  This is useful for disabling
+    or limiting specific WikiWords.
+
+        $WikiWordCount['PhD'] = 0;         # disables 'PhD'
+        $WikiWordCount['PmWiki'] = 1;      # convert only first 'PmWiki'
+        $WikiWordCount['WikiWord'] = -1;   # ignore $SpaceWikiWord setting
+
+    By default, PmWiki is configured such that only the first occurrence
+    of 'PmWiki' in a page is treated as a WikiWord.  If you want to
+    restore 'PmWiki' to be treated like other WikiWords, uncomment the
+    line below.
+        unset($WikiWordCount['PmWiki']);
+
+    If you want to disable WikiWords matching a pattern, you can use
+    something like the following.  Note that the first argument has to
+    be different for each call to Markup().  The example below disables
+    WikiWord links like COM1, COM2, COM1234, etc.
+        Markup('COM\d+', '<wikilink', '/\\bCOM\\d+/', "Keep('$0')");
 */
 
 SDV($LinkWikiWords, 1);
