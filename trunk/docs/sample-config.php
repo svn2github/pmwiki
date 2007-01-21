@@ -47,6 +47,10 @@ $WikiTitle = 'PmWiki';
 ##  to enable these buttons, set $EnableGUIButtons to 1.  
 # $EnableGUIButtons = 1;
 
+##  To enable markup syntax from the Creole common wiki markup language
+##  (http://www.wikicreole.org/), set $EnableCreoleMarkup to 1.
+# $EnableCreoleMarkup = 1;
+
 ##  If you want uploads enabled on your system, set $EnableUpload=1.
 ##  You'll also need to set a default upload password, or else set
 ##  passwords on individual groups and pages.  For more information
@@ -72,39 +76,19 @@ $WikiTitle = 'PmWiki';
 ##  Set $EnableWikiWords if you want to allow WikiWord links.
 # $EnableWikiWords = 1;                      # enable WikiWord links
 
-##  If you want only the first occurrence of a WikiWord to be converted
-##  to a link, set $WikiWordCountMax=1.
-# $WikiWordCountMax = 1;                   # converts only first WikiWord
-# $WikiWordCountMax = 0;                   # another way to disable WikiWords
-
-##  The $WikiWordCount array can be used to control the number of times
-##  a WikiWord is converted to a link.  This is useful for disabling
-##  or limiting specific WikiWords.
-# $WikiWordCount['PhD'] = 0;               # disables 'PhD'
-# $WikiWordCount['PmWiki'] = 1;            # convert only first 'PmWiki'
-# $WikiWordCount['WikiWord'] = -1;         # ignore $SpaceWikiWord setting
-
-##  By default, PmWiki is configured such that only the first occurrence
-##  of 'PmWiki' in a page is treated as a WikiWord.  If you want to 
-##  restore 'PmWiki' to be treated like other WikiWords, uncomment the
-##  line below.
-# unset($WikiWordCount['PmWiki']);
-
-##  If you want to disable WikiWords matching a pattern, you can use 
-##  something like the following.  Note that the first argument has to 
-##  be different for each call to Markup().  The example below disables
-##  WikiWord links like COM1, COM2, COM1234, etc.
-# Markup('COM\d+', '<wikilink', '/\\bCOM\\d+/', "Keep('$0')");
-
 ##  $DiffKeepDays specifies the minimum number of days to keep a page's
 ##  revision history.  The default is 3650 (approximately 10 years).
 # $DiffKeepDays=30;                        # keep page history at least 30 days
 
-## By default, viewers are able to see the names (but not the
-## contents) of read-protected pages in search results and
-## page listings.  Set $EnablePageListProtect to keep read-protected
-## pages from appearing in search results.
-# $EnablePageListProtect = 1;
+## By default, viewers are prevented from seeing the existence
+## of read-protected pages in search results and page listings,
+## but this can be slow as PmWiki has to check the permissions
+## of each page.  Setting $EnablePageListProtect to zero will
+## speed things up considerably, but it will also mean that
+## viewers may learn of the existence of read-protected pages.
+## (It does not enable them to access the contents of the
+## pages.)
+# $EnablePageListProtect = 0;
 
 ##  The refcount.php script enables ?action=refcount, which helps to
 ##  find missing and orphaned pages.  See PmWiki.RefCount.
