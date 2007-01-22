@@ -425,7 +425,7 @@ function Lock($op) {
   if (!$lockfp) { 
     @unlink($LockFile); 
     $lockfp = fopen($LockFile,"w") or
-      Abort('?cannot acquire lockfile');
+      Abort('?cannot acquire lockfile', 'flock');
     fixperms($LockFile);
   }
   if ($op<0) { flock($lockfp,LOCK_UN); fclose($lockfp); $lockfp=0; $curop=0; }
@@ -905,11 +905,17 @@ function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0) {
   return $AuthFunction($pagename, $level, $authprompt, $since);
 }
 
-function Abort($msg) {
+function Abort($msg, $info='') {
   # exit pmwiki with an abort message
+  global $ScriptUrl;
+  if ($info) 
+    $info = "<p class='vspace'><a href='http://www.pmwiki.org/pmwiki/info/$info'>$[More information]</a></p>";
   $msg = "<h3>$[PmWiki can't process your request]</h3>
-    <p>$msg</p><p>We are sorry for any inconvenience.</p>";
-  echo preg_replace('/\\$\\[([^\\]]+)\\]/e',"XL(PSS('$1'))", $msg);
+    <p class='vspace'>$msg</p>
+    <p class='vspace'>We are sorry for any inconvenience.</p>
+    $info
+    <p class='vspace'><a href='$ScriptUrl'>$[Return to] $ScriptUrl</a></p>";
+  echo preg_replace('/\\$\\[([^\\]]+)\\]/e', "XL(PSS('$1'))", $msg);
   exit;
 }
 

@@ -75,7 +75,7 @@ function SetSkin($pagename, $skin) {
     }
     closedir($dh);
   }
-  if (!$IsTemplateLoaded) Abort("Unable to load $Skin template");
+  if (!$IsTemplateLoaded) Abort("Unable to load $Skin template", 'skin');
 }
 
 
