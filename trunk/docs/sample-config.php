@@ -59,7 +59,7 @@ $WikiTitle = 'PmWiki';
 # $DefaultPasswords['upload'] = crypt('secret');
 
 ##  Setting $EnableDiag turns on the ?action=diag and ?action=phpinfo
-##  actions, which often helps the PmWiki authors to troubleshoot 
+##  actions, which often helps others to remotely troubleshoot 
 ##  various configuration and execution problems.
 # $EnableDiag = 1;                         # enable remote diagnostics
 
