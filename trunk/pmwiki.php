@@ -425,7 +425,7 @@ function Lock($op) {
   if (!$lockfp) { 
     @unlink($LockFile); 
     $lockfp = fopen($LockFile,"w") or
-      Abort('?cannot acquire lockfile', 'flock');
+      Abort('Cannot acquire lockfile', 'flock');
     fixperms($LockFile);
   }
   if ($op<0) { flock($lockfp,LOCK_UN); fclose($lockfp); $lockfp=0; $curop=0; }
@@ -909,7 +909,7 @@ function Abort($msg, $info='') {
   # exit pmwiki with an abort message
   global $ScriptUrl;
   if ($info) 
-    $info = "<p class='vspace'><a href='http://www.pmwiki.org/pmwiki/info/$info'>$[More information]</a></p>";
+    $info = "<p class='vspace'><a target='_blank' href='http://www.pmwiki.org/pmwiki/info/$info'>$[More information]</a></p>";
   $msg = "<h3>$[PmWiki can't process your request]</h3>
     <p class='vspace'>$msg</p>
     <p class='vspace'>We are sorry for any inconvenience.</p>

@@ -81,20 +81,24 @@ function SetSkin($pagename, $skin) {
 
 # LoadPageTemplate loads a template into $TmplFmt
 function LoadPageTemplate($pagename,$tfilefmt) {
-  global $PageStartFmt, $PageEndFmt, $HTMLHeaderFmt, $HTMLFooterFmt,
+  global $PageStartFmt, $PageEndFmt, 
+    $EnableDiag, $EnableSkinDiag, $HTMLHeaderFmt, $HTMLFooterFmt,
     $IsTemplateLoaded, $TmplFmt, $TmplDisplay,
     $PageTextStartFmt, $PageTextEndFmt;
-
-  # $BasicLayoutVars is deprecated
-  global $BasicLayoutVars;
-  if (isset($BasicLayoutVars)) 
-    foreach($BasicLayoutVars as $sw) $TmplDisplay[$sw] = 1;
 
   SDV($PageTextStartFmt, "\n<div id='wikitext'>\n");
   SDV($PageTextEndFmt, "</div>\n");
 
   $sddef = array('PageEditFmt' => 0);
-  $k = implode('',file(FmtPageName($tfilefmt,$pagename)));
+  $k = implode('', file(FmtPageName($tfilefmt, $pagename)));
+
+  if (IsEnabled($EnableSkinDiag, 0)) {
+    if (!preg_match('/<!--((No)?(HT|X)MLHeader|HeaderText)-->/i', $k))
+      Abort("Skin template missing &lt;!--HTMLHeader--&gt;", 'htmlheader');
+    if (!preg_match('/<!--(No)?(HT|X)MLFooter-->/i', $k))
+      Abort("Skin template missing &lt;!--HTMLFooter--&gt;", 'htmlheader');
+  }
+
   $sect = preg_split(
     '#[[<]!--(/?(?:Page[A-Za-z]+Fmt|(?:HT|X)ML(?:Head|Foot)er|HeaderText|PageText).*?)--[]>]#',
     $k, 0, PREG_SPLIT_DELIM_CAPTURE);
