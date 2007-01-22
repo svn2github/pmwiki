@@ -909,7 +909,7 @@ function Abort($msg, $info='') {
   # exit pmwiki with an abort message
   global $ScriptUrl;
   if ($info) 
-    $info = "<p class='vspace'><a target='_blank' href='http://www.pmwiki.org/pmwiki/info/$info'>$[More information]</a></p>";
+    $info = "<p class='vspace'><a target='_blank' rel='nofollow' href='http://www.pmwiki.org/pmwiki/info/$info'>$[More information]</a></p>";
   $msg = "<h3>$[PmWiki can't process your request]</h3>
     <p class='vspace'>$msg</p>
     <p class='vspace'>We are sorry for any inconvenience.</p>
