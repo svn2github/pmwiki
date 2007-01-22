@@ -82,7 +82,7 @@ function SetSkin($pagename, $skin) {
 # LoadPageTemplate loads a template into $TmplFmt
 function LoadPageTemplate($pagename,$tfilefmt) {
   global $PageStartFmt, $PageEndFmt, 
-    $EnableDiag, $EnableSkinDiag, $HTMLHeaderFmt, $HTMLFooterFmt,
+    $EnableSkinDiag, $HTMLHeaderFmt, $HTMLFooterFmt,
     $IsTemplateLoaded, $TmplFmt, $TmplDisplay,
     $PageTextStartFmt, $PageTextEndFmt;
 
