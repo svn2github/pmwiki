@@ -245,6 +245,7 @@ function PageListSources(&$list, &$opt, $pn, &$page) {
       $tstop['parentnames'] = array();
       PCache($n, $tstop);
     }
+    $list = MatchPageNames($list, $opt['=pnfilter']);
     foreach($trail as $tstop) 
       $PCache[$tstop['pagename']]['parentnames'][] = 
         @$trail[$tstop['parent']]['pagename'];
