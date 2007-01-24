@@ -180,6 +180,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   SDV($EnablePageListProtect, 1);
   SDVA($MakePageListOpt, array('list' => 'default'));
   $opt = array_merge((array)$MakePageListOpt, (array)$opt);
+  if (!@$opt['order'] && !@$opt['trail']) $opt['order'] = 'name';
 
   if (IsEnabled($EnablePageListProtect, 1)) $opt['readf'] = 1000;
   else @$opt['readf'] += 0;
@@ -433,7 +434,6 @@ function FPLTemplate($pagename, &$matches, $opt) {
   ##   remove any anchor markups to avoid duplications
   $ttext = preg_replace('/\\[\\[#[A-Za-z][-.:\\w]*\\]\\]/', '', $ttext);
 
-  if (!@$opt['order'] && !@$opt['trail']) $opt['order'] = 'name';
   $matches = array_values(MakePageList($pagename, $opt, 0));
   if (@$opt['count']) array_splice($matches, $opt['count']);
 
