@@ -52,11 +52,11 @@ SDVA($InputTags['select'], array(
 ##  (:input default:) needs to occur before all other input markups.
 Markup('input-default', 'directives',
   '/\\(:input\\s+(default)\\b(.*?):\\)/ei',
-  "InputMarkup(\$pagename, '$1', PSS('$2'))");
+  "InputDefault(\$pagename, '$1', PSS('$2'))");
 
 ##  (:input ...:) goes after input-default
 Markup('input', '>input-default', 
-  '/\\(:input\\s+(\\w+)(.*?):\\)/ei',
+  '/\\(:input\\s+(?!select)(\\w+)(.*?):\\)/ei',
   "InputMarkup(\$pagename, '$1', PSS('$2'))");
 
 ##  (:input select:) has its own markup processing
@@ -112,20 +112,20 @@ function InputToHTML($pagename, $type, $args, &$opt) {
 }
 
 
-function InputMarkup($pagename, $type, $args) {
+function InputDefault($pagename, $type, $args) {
   global $InputValues;
-  if ($type == 'default') {
-    $args = ParseArgs($args);
-    $args[''] = (array)@$args[''];
-    if (!isset($args['name'])) $args['name'] = array_shift($args['']);
-    if (!isset($args['value'])) $args['value'] = array_shift($args['']);
-    if (!isset($InputValues[$args['name']])) 
-      $InputValues[$args['name']] = $args['value'];
-    return '';
-  }
-  return Keep(InputToHTML($pagename, $type, $args, $opt));
+  $args = ParseArgs($args);
+  $args[''] = (array)@$args[''];
+  if (!isset($args['name'])) $args['name'] = array_shift($args['']);
+  if (!isset($args['value'])) $args['value'] = array_shift($args['']);
+  if (!isset($InputValues[$args['name']])) 
+    $InputValues[$args['name']] = $args['value'];
+  return '';
 }
 
+function InputMarkup($pagename, $type, $args) {
+  return Keep(InputToHTML($pagename, $type, $args, $opt));
+}
 
 function InputSelect($pagename, $type, $markup) {
   global $InputTags, $InputAttrs, $FmtV;
