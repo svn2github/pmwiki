@@ -50,19 +50,19 @@ SDVA($InputTags['select'], array(
   ':html' => "<select \$InputSelectArgs>\$InputSelectOptions</select>"));
 
 ##  (:input default:) needs to occur before all other input markups.
-Markup('input-default', 'directives',
+Markup('input', 'directives',
   '/\\(:input\\s+(default)\\b(.*?):\\)/ei',
   "InputDefault(\$pagename, '$1', PSS('$2'))");
 
-##  (:input ...:) goes after input-default
-Markup('input', '>input-default', 
-  '/\\(:input\\s+(?!select)(\\w+)(.*?):\\)/ei',
-  "InputMarkup(\$pagename, '$1', PSS('$2'))");
-
 ##  (:input select:) has its own markup processing
-Markup('input-select', '<input',
+Markup('input-select', 'input',
   '/\\(:input\\s+select\\s.*?:\\)(?:\\s*\\(:input\\s+select\\s.*?:\\))*/ei',
   "InputSelect(\$pagename, 'select', PSS('$0'))");
+
+##  (:input ...:) goes after all other input markups
+Markup('input-type', '>input', 
+  '/\\(:input\\s+(\\w+)(.*?):\\)/ei',
+  "InputMarkup(\$pagename, '$1', PSS('$2'))");
 
 ##  The 'input+sp' rule combines multiple (:input select ... :)
 ##  into a single markup line (to avoid split line effects)
