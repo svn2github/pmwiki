@@ -71,8 +71,10 @@ if ($EnableBlocklist >= 10) {
 ##   check for blocks on anything being posted through the normal
 ##   "update a page cycle"
 array_unshift($EditFunctions, 'CheckBlocklist');
-function CheckBlocklist($pagename, &$page, &$new) 
-  { if (isset($_POST['text'])) Blocklist($pagename, $_POST['text']); }
+function CheckBlocklist($pagename, &$page, &$new) { 
+  $ptext = implode('', @$_POST);
+  if (@$ptext) Blocklist($pagename, $ptext); 
+}
 
 
 ##   Blocklist is the function that does all of the work of
