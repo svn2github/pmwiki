@@ -539,7 +539,7 @@ function ResolvePageName($pagename) {
 ## group of the returned pagename.
 function MakePageName($basepage, $str) {
   global $MakePageNameFunction, $PageNameChars, $PagePathFmt,
-    $MakePageNamePatterns;
+    $MakePageNamePatterns, $EnableGroupHomeIsDefaultName;
   if (@$MakePageNameFunction) return $MakePageNameFunction($basepage, $str);
   SDV($PageNameChars,'-[:alnum:]');
   SDV($MakePageNamePatterns, array(
@@ -559,13 +559,17 @@ function MakePageName($basepage, $str) {
   }
   $name = preg_replace(array_keys($MakePageNamePatterns),
             array_values($MakePageNamePatterns), $m[0]);
-  if (count($m)>1) { $basepage = "$name.$name"; }
+  $grouphome = count($m) > 1;
   foreach((array)$PagePathFmt as $pg) {
     $pn = FmtPageName(str_replace('$1',$name,$pg),$basepage);
+    if ($grouphome && PageVar($pn, '$Group') != $name) continue;
     if (PageExists($pn)) return $pn;
   }
-  $group=preg_replace('/[\\/.].*$/','',$basepage);
-  return "$group.$name";
+  if ($grouphome) 
+    return (@$EnableGroupHomeIsDefaultName)
+           ? FmtPageName("{\$Group}.{\$DefaultName}", "$name.$name")
+           : "$name.$name";
+  return preg_replace('/[^\\/.]+$/', $name, $basepage);
 }
 
 
