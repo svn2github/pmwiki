@@ -37,7 +37,7 @@ $GroupPattern = '[\\w\\x80-\\xfe]+(?:-[[\\w\\x80-\\xfe]+)*';
 $NamePattern = '[\\w\\x80-\\xfe]+(?:-[[\\w\\x80-\\xfe]+)*';
 $WikiWordPattern = 
   '[A-Z][A-Za-z0-9]*(?:[A-Z][a-z0-9]|[a-z0-9][A-Z])[A-Za-z0-9]*';
-$SuffixPattern = '(?:-?[[:alnum:]\\x80-\\xd6]+)*';
+$SuffixPattern = '(?:-?[A-Za-z0-9\\x80-\\xd6]+)*';
 
 SDV($PageNameChars, '-[:alnum:]\\x80-\\xfe');
 SDV($MakePageNamePatterns, array(
