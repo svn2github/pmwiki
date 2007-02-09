@@ -560,21 +560,17 @@ function MakePageName($basepage, $str) {
   }
   $name = preg_replace(array_keys($MakePageNamePatterns),
             array_values($MakePageNamePatterns), $m[0]);
-  ##  handle "Group." conversions
-  if (count($m) > 1) {
-    $grouphome = '';
-    foreach((array)$PagePathFmt as $pg) {
-      $pn = FmtPageName(str_replace('$1', $name, $pg), $basepage);
-      if (PageVar($pn, '$Group') != $name) continue;
-      if (PageExists($pn)) return $pn;
-      if (!$grouphome) $grouphome = $pn;
-    }
-    return ($grouphome) ? $grouphome : "$name.$name";
-  }
-  ##  handle unqualified (relative) conversions
+  $isgrouphome = count($m) > 1;
   foreach((array)$PagePathFmt as $pg) {
+    if ($isgrouphome && strncmp($pg, '$1.', 3) !== 0) continue;
     $pn = FmtPageName(str_replace('$1', $name, $pg), $basepage);
     if (PageExists($pn)) return $pn;
+  }
+  if ($isgrouphome) {
+    foreach((array)$PagePathFmt as $pg) 
+      if (strncmp($pg, '$1.', 3) == 0)
+        return FmtPageName(str_replace('$1', $name, $pg), $basepage);
+    return "$name.$name";
   }
   return preg_replace('/[^\\/.]+$/', $name, $basepage);
 }
