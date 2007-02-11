@@ -392,19 +392,18 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
 
   ## case PAGELIST_POST
   StopWatch('PageListSort begin');
-  if ($opt['=order']['title'])
+  $order = $opt['=order'];
+  if ($order['title'])
     foreach($list as $pn) 
       if (!isset($PCache[$pn]['title'])) 
         $PCache[$pn]['title'] = PageVar($pn, '$Title');
-  if ($opt['=order']['group'])
+  if ($order['group'])
     foreach($list as $pn) $PCache[$pn]['group'] = PageVar($pn, '$Group');
-  if ($opt['=order']['random'])
+  if ($order['random'])
     foreach($list as $pn) $PCache[$pn]['random'] = rand();
-  $pvlist = preg_grep('/^\\$/', $opt['=order']);
-  foreach($pvlist as $pv) 
+  foreach(preg_grep('/^\\$/', array_keys($order)) as $o) 
     foreach($list as $pn) 
-      $PCache[$pn][$pv] = PageVar($pn, $pv);
-    
+      $PCache[$pn][$o] = PageVar($pn, $o);
   $code = '';
   foreach($opt['=order'] as $o => $r) {
     if (@$PageListSortCmp[$o]) 
