@@ -66,9 +66,31 @@ if (IsEnabled($EnableRelativePageVars, 0))
   SDV($QualifyPatterns["/\\{([-\\w\\x80-\\xfe]*)(\\$:?\\w+\\})/e"], 
     "'{' . ('$1' ? MakePageName(\$pagename, '$1') : \$pagename) . '$2'");
 
+
+## (:if:)/(:elseif:)/(:else:)
 Markup('if', 'fulltext',
-  "/\\(:(if[^\n]*?):\\)(.*?)(?=\\(:if[^\n]*?:\\)|$)/sei",
-  "CondText(\$pagename,PSS('$1'),PSS('$2'))");
+  "/ \\(:if (?:end)? \\b[^\n]*?:\\)
+     .*?
+     (?: \\(: (?:if|ifend) \\s* :\\)
+     |   (?=\\(:(?:if|ifend)\\b[^\n]*?:\\) | $)
+     )
+   /seix",
+  "CondText2(\$pagename, PSS('$0'))");
+
+function CondText2($pagename, $text) {
+  global $Conditions;
+  $parts = preg_split('/\\(:(ifend|if|else *if|else)\\b\\s*(!?)\\s*(\\S+)?\\s*(.*?)\\s*:\\)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+  $x = array_shift($parts);
+  while ($parts) {
+    list($condstr, $not, $condname, $condparm, $condtext) =
+      array_splice($parts, 0, 5);
+    if (!isset($Conditions[$condname])) return $condtext;
+    $tf = @eval("return ({$Conditions[$condname]});");
+    if ($tf xor $not) return $condtext;
+  }
+  return '';
+}
+
 
 ## (:include:)
 Markup('include', '>if',
