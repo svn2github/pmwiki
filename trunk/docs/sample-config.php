@@ -48,8 +48,8 @@ $WikiTitle = 'PmWiki';
 # $EnableGUIButtons = 1;
 
 ##  To enable markup syntax from the Creole common wiki markup language
-##  (http://www.wikicreole.org/), set $EnableCreoleMarkup to 1.
-# $EnableCreoleMarkup = 1;
+##  (http://www.wikicreole.org/), include it here:
+# include_once('scripts/creole.php');
 
 ##  If you want uploads enabled on your system, set $EnableUpload=1.
 ##  You'll also need to set a default upload password, or else set
