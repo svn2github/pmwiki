@@ -40,12 +40,12 @@ foreach((array)$PageCSSListFmt as $k=>$v)
 # the $skin array.
 function SetSkin($pagename, $skin) {
   global $Skin, $SkinLibDirs, $SkinDir, $SkinDirUrl, 
-    $IsTemplateLoaded, $PubDirUrl, $FarmPubDirUrl, $FarmD;
+    $IsTemplateLoaded, $PubDirUrl, $FarmPubDirUrl, $FarmD, $GCount;
   SDV($SkinLibDirs, array(
     "./pub/skins/\$Skin"      => "$PubDirUrl/skins/\$Skin",
     "$FarmD/pub/skins/\$Skin" => "$FarmPubDirUrl/skins/\$Skin"));
   foreach((array)$skin as $sfmt) {
-    $Skin = FmtPageName($sfmt, $pagename);
+    $Skin = FmtPageName($sfmt, $pagename); $GCount = 0;
     foreach($SkinLibDirs as $dirfmt => $urlfmt) {
       $SkinDir = FmtPageName($dirfmt, $pagename);
       if (is_dir($SkinDir)) 
