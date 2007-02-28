@@ -130,21 +130,29 @@ function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
   if (!$pw) return false;
   if (!function_exists('ldap_connect')) return false;
   foreach ((array)$pwlist as $ldap) {
-    if (!preg_match('!(ldaps?://[^/]+)/(.+)$!', $ldap, $match))
+    if (!preg_match('!(ldaps?://[^/]+)/(.*)$!', $ldap, $match))
       continue;
+    ##  connecting to the LDAP server
     list($z, $url, $path) = $match;
+    $ds = ldap_connect($url);
+    ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+    ##  For Active Directory, don't specify a path and we simply
+    ##  attempt to bind with the username and password directly
+    if (!$path && @ldap_bind($ds, $id, $pw)) { ldap_close($ds); return true; }
+    ##  Otherwise, we use Apache-style urls for LDAP authentication
+    ##  Split the path into its search components
     list($basedn, $attr, $sub, $filter) = explode('?', $path);
     if (!$attr) $attr = 'uid';
     if (!$sub) $sub = 'one';
     if (!$filter) $filter = '(objectClass=*)';
     $binddn = @$AuthLDAPBindDN;
     $bindpw = @$AuthLDAPBindPassword;
-    $ds = ldap_connect($url);
-    ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
     if (ldap_bind($ds, $binddn, $bindpw)) {
+      ##  Search for the appropriate uid
       $fn = ($sub == 'sub') ? 'ldap_search' : 'ldap_list';
       $sr = $fn($ds, $basedn, "(&$filter($attr=$id))", array($attr));
       $x = ldap_get_entries($ds, $sr);
+      ##  If we find a unique id, bind to it for success
       if ($x['count'] == 1) {
         $dn = $x[0]['dn'];
         if (@ldap_bind($ds, $dn, $pw)) { ldap_close($ds); return true; }
