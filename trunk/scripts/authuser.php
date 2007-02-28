@@ -132,7 +132,7 @@ function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
   foreach ((array)$pwlist as $ldap) {
     if (!preg_match('!(ldaps?://[^/]+)/(.*)$!', $ldap, $match))
       continue;
-    ##  connecting to the LDAP server
+    ##  connect to the LDAP server
     list($z, $url, $path) = $match;
     $ds = ldap_connect($url);
     ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
