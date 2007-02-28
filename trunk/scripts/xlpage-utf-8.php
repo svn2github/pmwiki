@@ -64,9 +64,12 @@ function utf8toupper($x) {
 
 function AsSpacedUTF8($text) {
   global $CaseConversions;
+  static $lower, $upper;
   if (!@$CaseConversions) return AsSpaced($text);
-  $lower = implode('|', array_keys($CaseConversions));
-  $upper = implode('|', array_values($CaseConversions));
+  if (!@$lower) {
+    $lower = implode('|', array_keys($CaseConversions));
+    $upper = implode('|', array_values($CaseConversions));
+  }
   $text = preg_replace("/($lower|\\d)($upper)/", '$1 $2', $text);
   $text = preg_replace('/(?<![-\\d])(\\d+( |$))/', ' $1', $text);
   return preg_replace("/($upper)(($upper)($lower|\\d))/", '$1 $2', $text);
