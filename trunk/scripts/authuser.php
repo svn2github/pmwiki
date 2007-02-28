@@ -31,7 +31,6 @@
 # let Site.AuthForm know that we're doing user-based authorization
 $EnableAuthUser = 1;
 
-$pagename = ResolvePageName($pagename);
 if (@$_POST['authid']) 
   AuthUserId($pagename, stripmagic(@$_POST['authid']), 
              stripmagic(@$_POST['authpw']));
