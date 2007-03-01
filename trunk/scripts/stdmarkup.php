@@ -174,7 +174,7 @@ Markup('messages', 'directives',
 Markup('comment', 'directives', '/\\(:comment .*?:\\)/i', '');
 
 ## character entities
-Markup('&','directives','/&amp;(?>([A-Za-z0-9]+|#\\d+|#[xX][A-Fa-f0-9]+));/',
+Markup('&','<directives','/&amp;(?>([A-Za-z0-9]+|#\\d+|#[xX][A-Fa-f0-9]+));/',
   '&$1;');
 
 ## (:title:)
