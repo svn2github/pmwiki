@@ -484,7 +484,7 @@ function GlobToPCRE($pat) {
   $pat = str_replace(array('\\*', '\\?', '\\[', '\\]', '\\^'),
                      array('.*',  '.',   '[',   ']',   '^'), $pat);
   $excl = array(); $incl = array();
-  foreach(preg_split('/[\\s,]+/', $pat, -1, PREG_SPLIT_NO_EMPTY) as $p) {
+  foreach(preg_split('/,+/', $pat, -1, PREG_SPLIT_NO_EMPTY) as $p) {
     if ($p{0} == '-' || $p{0} == '!') $excl[] = '^'.substr($p, 1).'$';
     else $incl[] = "^$p$";
   }
@@ -494,7 +494,7 @@ function GlobToPCRE($pat) {
 ## FixGlob changes wildcard patterns without '.' to things like
 ## '*.foo' (name matches) or 'foo.*' (group matches).
 function FixGlob($x, $rep = '$1*.$2') {
-  return preg_replace('/([\\s,][-!]?)([^.\\s,]+)(?=[\\s,])/', $rep, " $x ");
+  return preg_replace('/([\\s,][-!]?)([^.\\s,]+)(?=[\\s,])/', $rep, ",$x,");
 }
 
 ## MatchPageNames reduces $pagelist to those pages with names
