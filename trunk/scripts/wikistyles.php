@@ -12,7 +12,7 @@ SDV($WikiStylePattern,'%%|%[A-Za-z][-,=:#\\w\\s\'"().]*%');
 Markup('%%','style','%','return ApplyStyles($x);');
 
 ## %define=...% markup on a line by itself
-Markup('%define=', '>&',
+Markup('%define=', '>split',
   "/^(?=%define=)((?:$WikiStylePattern)\\s*)+$/e",
   "PZZ(ApplyStyles(PSS('$0')))");
 

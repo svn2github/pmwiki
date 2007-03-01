@@ -66,6 +66,10 @@ if (IsEnabled($EnableRelativePageVars, 0))
   SDV($QualifyPatterns["/\\{([-\\w\\x80-\\xfe]*)(\\$:?\\w+\\})/e"], 
     "'{' . ('$1' ? MakePageName(\$pagename, '$1') : \$pagename) . '$2'");
 
+## character entities
+Markup('&','<if','/&amp;(?>([A-Za-z0-9]+|#\\d+|#[xX][A-Fa-f0-9]+));/',
+  '&$1;');
+
 
 ## (:if:)/(:elseif:)/(:else:)
 Markup('if', 'fulltext',
@@ -173,21 +177,17 @@ Markup('messages', 'directives',
 ## (:comment:)
 Markup('comment', 'directives', '/\\(:comment .*?:\\)/i', '');
 
-## character entities
-Markup('&','<directives','/&amp;(?>([A-Za-z0-9]+|#\\d+|#[xX][A-Fa-f0-9]+));/',
-  '&$1;');
-
 ## (:title:)
-Markup('title','>&',
+Markup('title','directives',
   '/\\(:title\\s(.*?):\\)/ei',
   "PZZ(PCache(\$pagename, 
          \$zz=array('title' => SetProperty(\$pagename, 'title', PSS('$1')))))");
 
 ## (:keywords:), (:description:)
-Markup('keywords', '>&', 
+Markup('keywords', 'directives', 
   "/\\(:keywords?\\s+(.+?):\\)/ei",
   "PZZ(SetProperty(\$pagename, 'keywords', PSS('$1'), ', '))");
-Markup('description', '>&',
+Markup('description', 'directives',
   "/\\(:description\\s+(.+?):\\)/ei",
   "PZZ(SetProperty(\$pagename, 'description', PSS('$1'), '\n'))");
 $HTMLHeaderFmt['meta'] = 'function:PrintMetaTags';
