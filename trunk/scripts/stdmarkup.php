@@ -83,11 +83,13 @@ Markup('if', 'fulltext',
 
 function CondText2($pagename, $text) {
   global $Conditions;
-  $parts = preg_split('/\\(:(ifend|if|else *if|else)\\b\\s*(!?)\\s*(\\S+)?\\s*(.*?)\\s*:\\)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+  $parts = preg_split('/\\(:(?:ifend|if|else *if|else)\\b\\s*(.*?)\\s*:\\)/', 
+                      $text, -1, PREG_SPLIT_DELIM_CAPTURE);
   $x = array_shift($parts);
   while ($parts) {
-    list($condstr, $not, $condname, $condparm, $condtext) =
-      array_splice($parts, 0, 5);
+    list($condspec, $condtext) = array_splice($parts, 0, 2);
+    if (!preg_match("/^\\s*(!?)\\s*(\\S*)\\s*(.*?)\\s*$/", $condspec, $match)) continue;
+    list($x, $not, $condname, $condparm) = $match;
     if (!isset($Conditions[$condname])) return $condtext;
     $tf = @eval("return ({$Conditions[$condname]});");
     if ($tf xor $not) return $condtext;
