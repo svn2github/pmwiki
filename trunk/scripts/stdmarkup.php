@@ -50,7 +50,7 @@ Markup('$[phrase]', '>[=',
 # {$var} substitutions
 Markup('{$var}', '>$[phrase]',
   '/\\{(\\*|!?[-\\w.\\/\\x80-\\xff]*)(\\$:?\\w+)\\}/e', 
-  "PVSE(PageVar(\$pagename, '$2', '$1'), ENT_NOQUOTES)");
+  "PRR(PVSE(PageVar(\$pagename, '$2', '$1')))");
 
 # invisible (:textvar:...:) definition
 Markup('textvar:', '<split',
