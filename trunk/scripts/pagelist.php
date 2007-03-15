@@ -585,8 +585,6 @@ function FPLTemplate($pagename, &$matches, $opt) {
     }
   }
 
-  $out = preg_replace("/\n\n+/", "\n", $out);
-
   $class = preg_replace('/[^-a-zA-Z0-9\\x80-\\xff]/', ' ', @$opt['class']);
   $div = ($class) ? "<div class='$class'>" : '<div>';
   $out = $div.MarkupToHTML($pagename, $out, array('escape' => 0)).'</div>';
