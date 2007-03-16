@@ -484,6 +484,26 @@ function HandleSearchA($pagename, $level = 'read') {
 ## $FPLFormatOpt hash.
 ########################################################################
 
+## This helper function handles the count= parameter for extracting
+## a range of pagelist in the list.
+function CalcRange($range, $n) {
+  if ($n < 1) return array(0, 0);
+  if (strpos($range, '..') === false) {
+    if ($range > 0) return array(1, min($range, $n));
+    if ($range < 0) return array(max($n + $range + 1, 1), $n);
+    return array(1, $n);
+  }
+  list($r0, $r1) = explode('..', $range);
+  if ($r0 < 0) $r0 += $n + 1;
+  if ($r1 < 0) $r1 += $n + 1;
+  else if ($r1 == 0) $r1 = $n;
+  $r0 = min(max($r0, 1), $n); 
+  $r1 = min(max($r1, 1), $n);
+  return array($r0, $r1);
+}
+
+
+##  FPLTemplate handles PagelistTemplates
 function FPLTemplate($pagename, &$matches, $opt) {
   global $Cursor, $FPLFormatOpt, $FPLTemplatePageFmt;
   SDV($FPLTemplatePageFmt, array('{$FullName}',
@@ -513,7 +533,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
   $tparts = preg_split('/\\(:(template)\\s+(\\w+)\\s*(.*?):\\)/i', $ttext, -1,
                        PREG_SPLIT_DELIM_CAPTURE);
 
-  ## handle (:template defaults:)
+  ##  handle (:template defaults:)
   $i = 0;
   while ($i < count($tparts)) {
     if ($tparts[$i] != 'template') { $i++; continue; }
@@ -521,9 +541,15 @@ function FPLTemplate($pagename, &$matches, $opt) {
     $opt = array_merge(ParseArgs($tparts[$i+2]), $opt);
     array_splice($tparts, $i, 3);
   }
-  
+
+  ##  get the list of pages
   $matches = array_values(MakePageList($pagename, $opt, 0));
-  if (@$opt['count']) array_splice($matches, $opt['count']);
+  ##  extract page subset according to 'count=' parameter
+  if (@$opt['count']) {
+    list($r0, $r1) = CalcRange($opt['count'], count($matches));
+    if ($r1 < $r0) $matches = array_reverse(array_slice($matches, $r1-1, $r0-$r1+1));
+    else $matches = array_slice($matches, $r0-1, $r1-$r0+1);
+  }
 
   $savecursor = $Cursor;
   $pagecount = 0; $groupcount = 0; $grouppagecount = 0;
