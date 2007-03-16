@@ -484,7 +484,7 @@ function GlobToPCRE($pat) {
   $pat = str_replace(array('\\*', '\\?', '\\[', '\\]', '\\^'),
                      array('.*',  '.',   '[',   ']',   '^'), $pat);
   $excl = array(); $incl = array();
-  foreach(preg_split('/,+/', $pat, -1, PREG_SPLIT_NO_EMPTY) as $p) {
+  foreach(preg_split('/,+\s?/', $pat, -1, PREG_SPLIT_NO_EMPTY) as $p) {
     if ($p{0} == '-' || $p{0} == '!') $excl[] = '^'.substr($p, 1).'$';
     else $incl[] = "^$p$";
   }
