@@ -503,7 +503,7 @@ function CalcRange($range, $n) {
 
 ##  FPLTemplate handles PagelistTemplates
 function FPLTemplate($pagename, &$matches, $opt) {
-  global $Cursor, $FPLTemplatePageFmt;
+  global $Cursor, $FPLTemplatePageFmt, $PageListArgPattern;
   SDV($FPLTemplatePageFmt, array('{$FullName}',
     '{$SiteGroup}.LocalTemplates', '{$SiteGroup}.PageListTemplates'));
 
@@ -536,7 +536,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
   while ($i < count($tparts)) {
     if ($tparts[$i] != 'template') { $i++; continue; }
     if ($tparts[$i+1] != 'defaults') { $i+=4; continue; }
-    $opt = array_merge(ParseArgs($tparts[$i+2]), $opt);
+    $opt = array_merge(ParseArgs($tparts[$i+2], $PageListArgPattern), $opt);
     array_splice($tparts, $i, 3);
   }
 
