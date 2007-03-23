@@ -55,15 +55,11 @@ h6 { font-size:1.0em; }
 #wikileft a:hover { text-decoration:underline; color:blue; }
 #wikileft ul { list-style:none; padding:0px; margin:0px; }
 #wikileft li { margin:0px; padding-left: 6px; }
-/* The "#wikileft h1" and "#wikileft h5" settings are for
-** backwards compatibility with previous releases of PmWiki.
-** They are deprecated (replaced with the .sidehead class),
-** and may be removed in a future release. */
-#wikileft h1, #wikileft h5, .sidehead {
+.sidehead {
   margin:0px; padding:4px 2px 2px 2px;
   font-size:11pt; font-weight:bold; font-style:normal; 
 }
-#wikileft h1 a, #wikileft h5 a, .sidehead a 
+.sidehead a 
   { color:#505050; font-weight:bold; font-style:normal; }
 
 /* These affect the main content area. */
