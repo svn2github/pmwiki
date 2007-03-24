@@ -91,6 +91,8 @@ SDVA($PageListFilters, array(
 
 foreach(array('random', 'size', 'time', 'ctime') as $o) 
   SDV($PageListSortCmp[$o], "@(\$PCache[\$x]['$o']-\$PCache[\$y]['$o'])");
+SDV($PageListSortCmp['title'], 
+  '@strcasecmp($PCache[$x][\'=title\'], $PCache[$y][\'=title\'])');
 
 define('PAGELIST_PRE' , 1);
 define('PAGELIST_ITEM', 2);
@@ -398,7 +400,7 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
   if ($order['title'])
     foreach($list as $pn) 
       if (!isset($PCache[$pn]['title'])) 
-        $PCache[$pn]['title'] = PageVar($pn, '$Title');
+        $PCache[$pn]['=title'] = PageVar($pn, '$Title');
   if ($order['group'])
     foreach($list as $pn) $PCache[$pn]['group'] = PageVar($pn, '$Group');
   if ($order['random'])
