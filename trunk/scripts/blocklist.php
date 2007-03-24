@@ -209,8 +209,10 @@ function BlocklistDownload($pagename, $dir = '') {
 
   ##  if we didn't get it, and we don't already have text, save a
   ##  note in the page so we know what happened
-  if (!$blocklistdata && !@$page['text']) 
-    $blocklistdata = '#### Unable to download blocklist';
+  if (!$blocklistdata && !@$page['text']) {
+    $auf = ini_get('allow_url_fopen');
+    $blocklistdata = "#### Unable to download blocklist (allow_url_fopen=$auf)";
+  }
 
   ##  if we have some new text to save, let's format it and save it
   if ($blocklistdata) {
