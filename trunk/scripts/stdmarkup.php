@@ -330,7 +330,7 @@ Markup('^img', 'block',
 
 ## Whitespace at the beginning of lines can be used to maintain the
 ## indent level of a previous list item, or a preformatted text block.
-Markup('^ws', '<^img', '/^(\\s+)/e', "WSIndent('$1')");
+Markup('^ws', '<^img', '/^\\s+ #1/ex', "WSIndent('$0')");
 function WSIndent($i) {
   global $MarkupFrame;
   $icol = strlen($i);
@@ -347,9 +347,9 @@ function WSIndent($i) {
 ## blocks of preformatted text.
 SDV($EnableWSPre, 1);
 Markup('^ ', 'block', 
-  '/^(\\s+)/e',
-  "(\$GLOBALS['EnableWSPre'] > 0 && strlen('$1') >= \$GLOBALS['EnableWSPre']) 
-     ? '<:pre,1>$1' : '$1'");
+  '/^\\s+ #2/ex',
+  "(\$GLOBALS['EnableWSPre'] > 0 && strlen('$0') >= \$GLOBALS['EnableWSPre']) 
+     ? '<:pre,1>$0' : '$0'");
 
 ## bullet lists
 Markup('^*','block','/^(\\*+)\\s?(\\s*)/','<:ul,$1,$0>$2');
