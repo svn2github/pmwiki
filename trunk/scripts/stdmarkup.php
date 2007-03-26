@@ -340,12 +340,14 @@ function WSIndent($i) {
       $MarkupFrame[0]['icol'] = $icol;
       return '';
     }
-  return "<:pre,1>$i";
+  return $i;
 }
 
-## If the ^ws rule is disabled, then leading whitespace is a
-## preformatted text block.
-Markup('^ ','block','/^(\\s)/','<:pre,1>$1');
+## The $EnableWSPre setting uses leading spaces on markup lines to indicate
+## blocks of preformatted text.
+SDV($EnableWSPre, 1);
+if (@$EnableWSPre > 0) 
+  Markup('^ ','block',"/^(\\s\{$EnableWSPre})/",'<:pre,1>$1');
 
 ## bullet lists
 Markup('^*','block','/^(\\*+)\\s?(\\s*)/','<:ul,$1,$0>$2');
