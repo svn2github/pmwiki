@@ -346,8 +346,10 @@ function WSIndent($i) {
 ## The $EnableWSPre setting uses leading spaces on markup lines to indicate
 ## blocks of preformatted text.
 SDV($EnableWSPre, 1);
-if (@$EnableWSPre > 0) 
-  Markup('^ ','block',"/^(\\s\{$EnableWSPre})/",'<:pre,1>$1');
+Markup('^ ', 'block', 
+  '/^(\\s+)/e',
+  "(\$GLOBALS['EnableWSPre'] > 0 && strlen('$1') >= \$GLOBALS['EnableWSPre']) 
+     ? '<:pre,1>$1' : '$1'");
 
 ## bullet lists
 Markup('^*','block','/^(\\*+)\\s?(\\s*)/','<:ul,$1,$0>$2');
