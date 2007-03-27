@@ -398,9 +398,7 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
   StopWatch('PageListSort begin');
   $order = $opt['=order'];
   if ($order['title'])
-    foreach($list as $pn) 
-      if (!isset($PCache[$pn]['title'])) 
-        $PCache[$pn]['=title'] = PageVar($pn, '$Title');
+    foreach($list as $pn) $PCache[$pn]['=title'] = PageVar($pn, '$Title');
   if ($order['group'])
     foreach($list as $pn) $PCache[$pn]['group'] = PageVar($pn, '$Group');
   if ($order['random'])
