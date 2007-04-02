@@ -10,6 +10,23 @@ SDV($DraftSuffix, '-Draft');
 if ($DraftSuffix) 
   SDV($SearchPatterns['normal']['draft'], "!$DraftSuffix\$!");
 
+##  set up a 'publish' authorization level, defaulting to 'edit' authorization
+SDV($DefaultPasswords['publish'], '');
+SDV($AuthCascade['publish'], 'edit');
+if ($AuthCascade['attr'] == 'edit') $AuthCascade['attr'] = 'publish';
+
+## Add a 'publish' page attribute if desired
+if (IsEnabled($EnablePublishAttr, 0))
+  SDV($PageAttributes['passwdpublish'], '$[Set new publish password:]');
+
+##  with drafts enabled, the 'post' operation requires 'publish' permissions
+if ($action == 'edit' && $_POST['post'] && $HandleAuth['edit'] == 'edit')
+  $HandleAuth['edit'] = 'publish';
+
+$basename = preg_replace("/$DraftSuffix\$/", '', $pagename);
+##  if no -Draft page, switch to $basename
+if (!PageExists($pagename) && PageExists($basename)) $pagename = $basename;
+
 ##  set edit form button labels to reflect draft prompts
 SDVA($InputTags['e_savebutton'], array('value' => ' '.XL('Publish').' '));
 SDVA($InputTags['e_saveeditbutton'], array('value' => ' '.XL('Save draft and edit').' '));
@@ -18,22 +35,9 @@ SDVA($InputTags['e_savedraftbutton'], array(
     'name' => 'postdraft', 'value' => ' '.XL('Save draft').' ',
     'accesskey' => XL('ak_savedraft')));
 
-##  set up a 'publish' authorization level, defaulting to 'edit' authorization
-SDV($DefaultPasswords['publish'], '');
-SDV($AuthCascade['publish'], 'edit');
-
-##  with drafts enabled, the 'post' operation requires 'publish' permissions
-if ($action == 'edit' && $_POST['post'] && $HandleAuth['edit'] == 'edit')
-  $HandleAuth['edit'] = 'publish';
-
 ##  disable the 'publish' button if not authorized to publish
-$basename = preg_replace("/$DraftSuffix\$/", '', $pagename);
 if (!CondAuth($basename, 'publish')) 
   SDVA($InputTags['e_savebutton'], array('disabled' => 'disabled'));
-
-## Add a 'publish' page attribute if desired
-if (IsEnabled($EnablePublishAttr, 0))
-  SDV($PageAttributes['passwdpublish'], '$[Set new publish password:]');
 
 ##  add the draft handler into $EditFunctions
 if ($action == 'edit') array_unshift($EditFunctions, 'EditDraft');
