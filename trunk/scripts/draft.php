@@ -42,20 +42,21 @@ if (!CondAuth($basename, 'publish'))
 ##  add the draft handler into $EditFunctions
 if ($action == 'edit') array_unshift($EditFunctions, 'EditDraft');
 function EditDraft(&$pagename, &$page, &$new) {
-  global $WikiDir, $DraftSuffix, $DeleteKeyPattern;
+  global $WikiDir, $DraftSuffix, $DeleteKeyPattern, 
+    $DraftRecentChangesFmt, $RecentChangesFmt;
   SDV($DeleteKeyPattern, "^\\s*delete\\s*$");
   $basename = preg_replace("/$DraftSuffix\$/", '', $pagename);
   $draftname = $basename . $DraftSuffix;
-  if ($_POST['postdraft'] || $_POST['postedit']) 
-    { $pagename = $draftname; return; }
-  if ($_POST['post'] && !preg_match("/$DeleteKeyPattern/", $new['text'])) { 
+  if ($_POST['postdraft'] || $_POST['postedit']) $pagename = $draftname; 
+  else if ($_POST['post'] && !preg_match("/$DeleteKeyPattern/", $new['text'])) { 
     $pagename = $basename; 
     $page = ReadPage($basename);
     $WikiDir->delete($draftname);
-    return; 
   }
-  if (PageExists($draftname) && $pagename != $draftname)
+  else if (PageExists($draftname) && $pagename != $draftname)
     { Redirect($draftname, '$PageUrl?action=edit'); exit(); }
+  if ($pagename == $draftname && isset($DraftRecentChangesFmt))
+    $RecentChangesFmt = $DraftRecentChangesFmt;
 }
 
 
