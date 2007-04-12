@@ -1493,16 +1493,17 @@ function SaveAttributes($pagename,&$page,&$new) {
 
 function PostPage($pagename, &$page, &$new) {
   global $DiffKeepDays, $DiffFunction, $DeleteKeyPattern, $EnablePost,
-    $Now, $Author, $WikiDir, $IsPagePosted;
+    $Now, $Charset, $Author, $WikiDir, $IsPagePosted;
   SDV($DiffKeepDays,3650);
   SDV($DeleteKeyPattern,"^\\s*delete\\s*$");
   $IsPagePosted = false;
   if ($EnablePost) {
-    $new["author"]=@$Author;
+    $new['charset'] = $Charset;
+    $new['author'] = @$Author;
     $new["author:$Now"] = @$Author;
     $new["host:$Now"] = $_SERVER['REMOTE_ADDR'];
     $diffclass = preg_replace('/\\W/','',@$_POST['diffclass']);
-    if ($page["time"]>0 && function_exists(@$DiffFunction)) 
+    if ($page['time']>0 && function_exists(@$DiffFunction)) 
       $new["diff:$Now:{$page['time']}:$diffclass"] =
         $DiffFunction($new['text'],@$page['text']);
     $keepgmt = $Now-$DiffKeepDays * 86400;
