@@ -54,6 +54,9 @@ if (IsEnabled($EnableWikiTrails,1))
   include_once("$FarmD/scripts/trails.php");
 if (IsEnabled($EnableWikiStyles,1))
   include_once("$FarmD/scripts/wikistyles.php");
+if (IsEnabled($EnableMarkupExpressions, 1) 
+    && !function_exists('MarkupExpression'))
+  include_once("$FarmD/scripts/markupexpr.php");
 if (IsEnabled($EnableMailPosts,0))
   include_once("$FarmD/scripts/mailposts.php");
 if (IsEnabled($EnablePageList,1))
