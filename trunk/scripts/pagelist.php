@@ -30,6 +30,8 @@ if (IsEnabled($EnablePageIndex, 1)) {
   $EditFunctions[] = 'PostPageIndex';
 }
 
+SDV($StrFoldFunction, 'strtolower');
+
 ## $SearchPatterns holds patterns for list= option
 SDV($SearchPatterns['all'], array());
 SDVA($SearchPatterns['normal'], array(
@@ -285,14 +287,15 @@ function PageListSources(&$list, &$opt, $pn, &$page) {
 
 function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
   global $FmtV;
+  $fold = $GLOBALS['StrFoldFunction'];
 
   switch ($opt['=phase']) {
     case PAGELIST_PRE:
       $FmtV['$MatchSearched'] = count($list);
       $incl = array(); $excl = array();
-      foreach((array)@$opt[''] as $i) { $incl[] = $i; }
-      foreach((array)@$opt['+'] as $i) { $incl[] = $i; }
-      foreach((array)@$opt['-'] as $i) { $excl[] = $i; }
+      foreach((array)@$opt[''] as $i) { $incl[] = $fold($i); }
+      foreach((array)@$opt['+'] as $i) { $incl[] = $fold($i); }
+      foreach((array)@$opt['-'] as $i) { $excl[] = $fold($i); }
 
       $indexterms = PageIndexTerms($incl);
       foreach($incl as $i) {
@@ -326,7 +329,7 @@ function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
       if (@$opt['=linkp'] && !preg_match($opt['=linkp'], @$page['targets'])) 
         { $opt['=reindex'][] = $pn; return 0; }
       if (@$opt['=inclp'] || @$opt['=exclp']) {
-        $text = $pn."\n".@$page['targets']."\n".@$page['text'];
+        $text = $fold($pn."\n".@$page['targets']."\n".@$page['text']);
         foreach((array)@$opt['=exclp'] as $i) 
           if (preg_match($i, $text)) return 0;
         foreach((array)@$opt['=inclp'] as $i) 
@@ -631,10 +634,11 @@ function FPLTemplate($pagename, &$matches, $opt) {
 ## normalized list of associated search terms.  This reduces the
 ## size of the index and speeds up searches.
 function PageIndexTerms($terms) {
+  global $StrFoldFunction;
   $w = array();
   foreach((array)$terms as $t) {
     $w = array_merge($w, preg_split('/[^\\w\\x80-\\xff]+/', 
-                                    strtolower($t), -1, PREG_SPLIT_NO_EMPTY));
+           $StrFoldFunction($t), -1, PREG_SPLIT_NO_EMPTY));
   }
  return $w;
 }
