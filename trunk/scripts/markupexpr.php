@@ -18,14 +18,15 @@
         {(tolower (substr "HELLOWORLD" 5))}    # produces "world"
 
     Some "built-in" expressions defined by this recipe include:
-        substr  - extract a portion of a string
-        ftime   - date/time formatting
-        strlen  - length of a string
+        substr   - extract a portion of a string
+        ftime    - date/time formatting
+        strlen   - length of a string
+        rand     - generate a random number
         pagename - build a pagename from a string
-        toupper - convert string to uppercase
-        tolower - convert string to lowercase
-        ucfirst - convert first character to uppercase
-        ucwords - convert first character of each word to uppercase
+        toupper  - convert string to uppercase
+        tolower  - convert string to lowercase
+        ucfirst  - convert first character to uppercase
+        ucwords  - convert first character of each word to uppercase
         asspaced - spaceformatting of wikiwords
 
     Custom expressions may be added by other recipes by adding
@@ -59,8 +60,9 @@ Markup('{(', '>{$var}',
 
 SDVA($MarkupExpr, array(
   'substr' => 'call_user_func_array("substr", $args)',
-  'ftime' => 'ME_ftime($args[0], $args[1], $argp)',
   'strlen' => 'strlen($args[0])',
+  'ftime' => 'ME_ftime($args[0], $args[1], $argp)',
+  'rand'   => '($args) ? rand($args[0], $args[1]) : rand()',
   'ucfirst' => 'ucfirst($args[0])',
   'ucwords' => 'ucwords($args[0])',
   'tolower' => 'strtolower($args[0])',
