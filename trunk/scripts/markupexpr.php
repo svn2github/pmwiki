@@ -59,7 +59,7 @@ Markup('{(', '>{$var}',
 
 SDVA($MarkupExpr, array(
   'substr' => 'call_user_func_array("substr", $args)',
-  'ftime' => 'ME_ftime($args[0], $args[1])',
+  'ftime' => 'ME_ftime($args[0], $args[1], $argp)',
   'strlen' => 'strlen($args[0])',
   'ucfirst' => 'ucfirst($args[0])',
   'ucwords' => 'ucwords($args[0])',
@@ -107,8 +107,13 @@ function MarkupExpression($pagename, $expr) {
 
 ##   ME_ftime handles {(ftime ...)} expressions.
 ##
-function ME_ftime($fmt = '', $when = '') {
+function ME_ftime($arg0 = '', $arg1 = '', $argp = NULL) {
   global $TimeFmt, $Now;
+  if (@$argp['fmt']) $fmt = $argp['fmt']; 
+  else if (strpos($arg0, '%') !== false) { $fmt = $arg0; $arg0 = $arg1; }
+  else if (strpos($arg1, '%') !== false) $fmt = $arg1;
+  if (@$argp['when']) $when = $argp['when'];
+  else $when = $arg0;
   $dpat = '#^\\s*(\\d{4})([.-/]?)?(\\d\\d)\\2?(\\d\\d)?(?!\\d)(.*)#';
   if (preg_match('/^\\s*@(\\d+)\\s*(.*)$/', $when, $match)) {
     ##  unix timestamp dates
