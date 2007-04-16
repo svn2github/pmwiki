@@ -110,7 +110,7 @@ function MarkupExpression($pagename, $expr) {
 ##   ME_ftime handles {(ftime ...)} expressions.
 ##
 function ME_ftime($arg0 = '', $arg1 = '', $argp = NULL) {
-  global $TimeFmt, $Now;
+  global $TimeFmt, $Now, $FTimeFmt;
   if (@$argp['fmt']) $fmt = $argp['fmt']; 
   else if (strpos($arg0, '%') !== false) { $fmt = $arg0; $arg0 = $arg1; }
   else if (strpos($arg1, '%') !== false) $fmt = $arg1;
@@ -131,7 +131,7 @@ function ME_ftime($arg0 = '', $arg1 = '', $argp = NULL) {
   } else 
     ##  call strtotime for everything else
     $time = strtotime($when);
-  if ($fmt == '') $fmt = $TimeFmt;
+  if ($fmt == '') { SDV($FTimeFmt, $TimeFmt); $fmt = $FTimeFmt; }
   ##  make sure we have %F available for ISO dates
   $fmt = str_replace('%F', '%Y-%m-%d', $fmt);
   return strftime($fmt, $time);
