@@ -133,7 +133,7 @@ function ME_ftime($arg0 = '', $arg1 = '', $argp = NULL) {
     $time = strtotime($when);
   if ($fmt == '') { SDV($FTimeFmt, $TimeFmt); $fmt = $FTimeFmt; }
   ##  make sure we have %F available for ISO dates
-  $fmt = str_replace('%F', '%Y-%m-%d', $fmt);
+  $fmt = str_replace(array('%F', '%s'), array('%Y-%m-%d', $Now), $fmt);
   return strftime($fmt, $time);
 }
 
