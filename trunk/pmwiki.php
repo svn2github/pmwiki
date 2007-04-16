@@ -1589,7 +1589,10 @@ function HandleEdit($pagename, $auth = 'edit') {
     str_replace('$','&#036;',htmlspecialchars(@$new['text'],ENT_NOQUOTES));
   $FmtV['$EditBaseTime'] = $Now;
   if (@$PageEditForm) {
-    $form = ReadPage(FmtPageName($PageEditForm, $pagename), READPAGE_CURRENT);
+    $efpage = FmtPageName($PageEditForm, $pagename);
+    $form = RetrieveAuthPage($efpage, 'read', false, READPAGE_CURRENT);
+    if (!$form || !@$form['text']) 
+      Abort("?unable to retrieve edit form $efpage", 'editform');
     $FmtV['$EditForm'] = MarkupToHTML($pagename, $form['text']);
   }
   SDV($PageEditFmt, "<div id='wikiedit'>
