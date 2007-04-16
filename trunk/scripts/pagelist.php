@@ -649,7 +649,8 @@ function PageIndexTerms($terms) {
 ## via register_shutdown_function (which sometimes changes directories
 ## on us).
 function PageIndexUpdate($pagelist, $dir = '') {
-  global $PageIndexFile, $PageIndexTime, $Now;
+  global $EnableReadOnly, $PageIndexFile, $PageIndexTime, $Now;
+  if (IsEnabled($EnableReadOnly, 0)) return;
   $abort = ignore_user_abort(true);
   if ($dir) { flush(); chdir($dir); }
   SDV($PageIndexTime, 10);
