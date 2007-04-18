@@ -1232,8 +1232,9 @@ function LinkIMap($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
 }
 
 function LinkPage($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
-  global $QueryFragPattern,$LinkPageExistsFmt,$LinkPageSelfFmt,
-    $LinkPageCreateSpaceFmt,$LinkPageCreateFmt,$FmtV,$LinkTargets;
+  global $QueryFragPattern, $LinkPageExistsFmt, $LinkPageSelfFmt,
+    $LinkPageCreateSpaceFmt, $LinkPageCreateFmt, $LinkTargets,
+    $EnableLinkPageRelative;
   if (!$fmt && $path{0} == '#') {
     $path = preg_replace("/[^-.:\\w]/", '', $path);
     return ($path) ? "<a href='#$path'>$txt</a>" : '';
@@ -1252,8 +1253,11 @@ function LinkPage($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
       $fmt = ($tgtname == $pagename && $qf == '') 
              ? $LinkPageSelfFmt : $LinkPageExistsFmt;
   }
+  $url = PageVar($tgtname, '$PageUrl');
+  if (@$EnableLinkPageRelative) 
+    $url = preg_replace('!^[a-z]+://[^/]*!i', '', $url);
   $fmt = str_replace(array('$LinkUrl', '$LinkText'),
-           array(PageVar($tgtname, '$PageUrl').PUE($qf), $txt), $fmt);
+                     array($url.PUE($qf), $txt), $fmt);
   return FmtPageName($fmt,$tgtname);
 }
 
