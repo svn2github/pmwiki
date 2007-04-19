@@ -1055,6 +1055,51 @@ function CondText($pagename,$condspec,$condtext) {
 }
 
 
+##  TextSection extracts a section of text delimited by page anchors.
+##  The $sections parameter can have the form
+##    #abc           - [[#abc]] to next anchor
+##    #abc#def       - [[#abc]] up to [[#def]]
+##    #abc#, #abc..  - [[#abc]] to end of text
+##    ##abc, ..#abc  - beginning of text to [[#abc]]
+##  Returns the text unchanged if no sections are requested,
+##  or false if a requested beginning anchor isn't in the text.
+function TextSection($text, $sections) {
+  $npat = '[[:alpha:]][-\\w*]*';
+  if (!preg_match("/#($npat)?(\\.\\.)?(#($npat)?)?/", $sections, $match))
+    return $text;
+  @list($x, $aa, $dots, $b, $bb) = $match;
+  if (!$dots && !$b) $bb = $npat;
+  if ($aa) {
+    if (strpos($text, "[[#$aa]]") === false) return false;
+    $text = preg_replace("/^.*?\n([^\n]*\\[\\[#$aa\\]\\])/s", '$1', $text, 1);
+  }
+  if ($bb)
+    $text = preg_replace("/(\n)[^\n]*\\[\\[#$bb\\]\\].*$/s", '$1', $text, 1);
+  return $text;
+}
+
+
+##  RetrieveAuthSection extracts a section of text from a page.
+##  If $pagesection starts with anything other than '#', it identifies
+##  the page to extract text from.  Otherwise RetrieveAuthSection looks
+##  in the pages given by $list, or in $pagename if $list is not specified.
+##  Any page variables in the text are pagename-qualified.
+function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') {
+  if ($pagesection{0} != '#')
+    $list = array(MakePageName($pagename, $pagesection));
+  else if (is_null($list)) $list = array($pagename);
+  foreach((array)$list as $t) {
+    $t = FmtPageName($t, $pagename);
+    if (!PageExists($t)) continue;
+    $tpage = RetrieveAuthPage($t, $auth, false, READPAGE_CURRENT);
+    if (!$tpage) continue;
+    $text = TextSection($tpage['text'], $pagesection);
+    if ($text !== false) return Qualify($t, $text);
+  }
+  return false;
+}
+
+
 function IncludeText($pagename, $inclspec) {
   global $MaxIncludes, $IncludeOpt, $InclCount;
   SDV($MaxIncludes,50);
@@ -1065,28 +1110,17 @@ function IncludeText($pagename, $inclspec) {
   while (count($args['#'])>0) {
     $k = array_shift($args['#']); $v = array_shift($args['#']);
     if ($k=='') {
-      preg_match('/^([^#\\s]*)(.*)$/', $v, $match);
-      if ($match[1]) {                                 # include a page
+      if ($v{0} != '#') {
         if (isset($itext)) continue;
-        $iname = MakePageName($pagename, $match[1]);
+        $iname = MakePageName($pagename, $v);
         if (!$args['self'] && $iname == $pagename) continue;
-        if (!PageExists($iname)) continue;
         $ipage = RetrieveAuthPage($iname, 'read', false, READPAGE_CURRENT);
         $itext = @$ipage['text'];
       }
-      if (preg_match("/^#($npat)?(\\.\\.)?(#($npat)?)?$/", $match[2], $m)) {
-        @list($x, $aa, $dots, $b, $bb) = $m;
-        if (!$dots && !$b) $bb = $npat;
-        if ($aa)
-          $itext=preg_replace("/^.*?\n([^\n]*\\[\\[#$aa\\]\\])/s",
-                              '$1', $itext, 1);
-        if ($bb)
-          $itext=preg_replace("/(\n)[^\n]*\\[\\[#$bb\\]\\].*$/s",
-                              '$1', $itext, 1);
-      }
+      $itext = TextSection($itext, $v);
       continue;
     }
-    if (in_array($k, array('line', 'lines', 'para', 'paras'))) {
+    if (preg_match('/^(?:line|para)s?$/', $k)) {
       preg_match('/^(\\d*)(\\.\\.(\\d*))?$/', $v, $match);
       @list($x, $a, $dots, $b) = $match;
       $upat = ($k{0} == 'p') ? ".*?(\n\\s*\n|$)" : "[^\n]*(?:\n|$)";

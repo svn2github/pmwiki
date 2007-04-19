@@ -513,17 +513,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
   StopWatch("FPLTemplate begin");
   $template = @$opt['template'];
   if (!$template) $template = @$opt['fmt'];
-
-  list($tname, $qf) = explode('#', $template, 2);
-  if ($tname) $tname = array(MakePageName($pagename, $tname));
-  else $tname = (array)$FPLTemplatePageFmt;
-  foreach ($tname as $t) {
-    $t = FmtPageName($t, $pagename);
-    if (!PageExists($t)) continue;
-    if ($qf) $t .= "#$qf";
-    $ttext = IncludeText($pagename, $t, true);
-    if (!$qf || strpos($ttext, "[[#$qf]]") !== false) break;
-  }
+  $ttext = PVSE(RetrieveAuthSection($pagename, $template, $FPLTemplatePageFmt));
 
   ##  save any escapes
   $ttext = MarkupEscape($ttext);
