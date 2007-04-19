@@ -33,7 +33,8 @@ SDV($InputTags['end'][':html'], '</form>');
 
 # (:input textarea:)
 SDVA($InputTags['textarea'], array(
-  ':html' => "<textarea \$InputFormArgs></textarea>"));
+  ':content' => array('value'),
+  ':html' => "<textarea \$InputFormArgs>\$InputFormContent</textarea>"));
 
 # (:input image:)
 SDV($InputTags['image'][':args'], array('name', 'src', 'alt'));
@@ -113,13 +114,25 @@ function InputToHTML($pagename, $type, $args, &$opt) {
 
 
 function InputDefault($pagename, $type, $args) {
-  global $InputValues;
+  global $InputValues, $PageTextVarPatterns;
   $args = ParseArgs($args);
   $args[''] = (array)@$args[''];
   if (!isset($args['name'])) $args['name'] = array_shift($args['']);
   if (!isset($args['value'])) $args['value'] = array_shift($args['']);
-  if (!isset($InputValues[$args['name']])) 
+  if (@$args[$name] && !isset($InputValues[$args['name']])) 
     $InputValues[$args['name']] = $args['value'];
+  if (@$args['source']) {
+    $source = MakePageName($pagename, $args['source']);
+    $page = RetrieveAuthPage($source, 'read', false, READPAGE_CURRENT);
+    if ($page) {
+      foreach((array)$PageTextVarPatterns as $pat)
+        if (preg_match_all($pat, $page['text'], $match, PREG_SET_ORDER))
+          foreach($match as $m)
+            if (!isset($InputValues[$m[1]]))
+              $InputValues[$m[1]] = 
+                htmlspecialchars(Qualify($source, $m[2]), ENT_NOQUOTES);
+    }
+  }
   return '';
 }
 
