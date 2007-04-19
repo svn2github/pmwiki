@@ -121,6 +121,12 @@ function InputDefault($pagename, $type, $args) {
   if (!isset($args['value'])) $args['value'] = array_shift($args['']);
   if (@$args[$name] && !isset($InputValues[$args['name']])) 
     $InputValues[$args['name']] = $args['value'];
+  if (@$args['request']) {
+    $req = array_merge($_GET, $_POST);
+    foreach($req as $k => $v) 
+      if (!isset($InputValues[$k])) 
+        $InputValues[$k] = htmlspecialchars(stripmagic($v), ENT_NOQUOTES);
+  }
   if (@$args['source']) {
     $source = MakePageName($pagename, $args['source']);
     $page = RetrieveAuthPage($source, 'read', false, READPAGE_CURRENT);
