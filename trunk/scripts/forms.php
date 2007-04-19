@@ -87,7 +87,8 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   ##  convert any remaining positional args to flags
   foreach ((array)@$opt[''] as $a) 
     { $a = strtolower($a); if (!isset($opt[$a])) $opt[$a] = $a; }
-  $name = @$opt['name'];
+  $opt['name'] = preg_replace('/^\\$:/', 'ptv_', @$opt['name']);
+  $name = $opt['name'];
   ##  set control values from $InputValues array
   ##  radio, checkbox, select, etc. require a flag of some sort,
   ##  others just set 'value'
@@ -117,10 +118,10 @@ function InputDefault($pagename, $type, $args) {
   global $InputValues, $PageTextVarPatterns;
   $args = ParseArgs($args);
   $args[''] = (array)@$args[''];
-  if (!isset($args['name'])) $args['name'] = array_shift($args['']);
-  if (!isset($args['value'])) $args['value'] = array_shift($args['']);
-  if (@$args[$name] && !isset($InputValues[$args['name']])) 
-    $InputValues[$args['name']] = $args['value'];
+  $name = (isset($args['name'])) ? $args['name'] : array_shift($args['']);
+  $name = str_replace('/^\\$:/', 'ptv_', $name);
+  $value = (isset($args['value'])) ? $args['value'] : array_shift($args['']);
+  if (!isset($InputValues[$name])) $InputValues[$name] = $value;
   if (@$args['request']) {
     $req = array_merge($_GET, $_POST);
     foreach($req as $k => $v) 
@@ -134,8 +135,8 @@ function InputDefault($pagename, $type, $args) {
       foreach((array)$PageTextVarPatterns as $pat)
         if (preg_match_all($pat, $page['text'], $match, PREG_SET_ORDER))
           foreach($match as $m)
-            if (!isset($InputValues[$m[1]]))
-              $InputValues[$m[1]] = 
+            if (!isset($InputValues['ptv_'.$m[1]]))
+              $InputValues['ptv_'.$m[1]] = 
                 htmlspecialchars(Qualify($source, $m[2]), ENT_NOQUOTES);
     }
   }
@@ -257,15 +258,26 @@ SDVA($InputTags['e_resetbutton'], array(
   ':html' => "<input type='reset' \$InputFormArgs />",
   'value' => ' '.XL('Reset').' '));
 
-if (@$_POST['ptvreplace']) {
+
+## This function returns the value of $_POST[$var], replacing
+## any instances of $syn with $rep.  If $_POST[$var] isn't set
+## or is empty, returns $orig.  The function also makes sure
+## that a value for $var is taken only once -- after that it
+## always returns $orig.
+function PTVPOSTVar($var, $syn, $rep, $orig) {
+  global $PTVPOST;
+  if (!isset($PTVPOST)) $PTVPOST = $_POST;
+  if (!isset($PTVPOST[$var]) || $PTVPOST[$var] == '') return $orig;
+  $x = str_replace($syn, $rep, stripmagic($PTVPOST[$var]));
+  unset($PTVPOST[$var]);
+  return $x;
+}
+
+if (preg_grep('/^ptv_/', array_keys(@$_POST))) {
   SDVA($ROEPatterns, array(
     '/^(:*\\s*(\\w[-\\w]*)\\s*:[ \\t]?)(.*)$/me' 
-      => "(isset(\$_POST['$2']) && \$_POST['$2'] > '')
-          ? '$1' . str_replace('\n', ' ', stripmagic(\$_POST['$2']))
-          : PSS('$0')",
+      => "'$1' . PTVPOSTVar('ptv_$2', '\n', ' ', PSS('$3'))",
     '/(\\(: *(\\w[-\\w]*) *:(?!\\))\\s?)(.*?):\\)/se'
-      => "(isset(\$_POST['$2']) && \$_POST['$2'] > '')
-          ? '$1' . str_replace(':)','&#x3a;)',stripmagic(\$_POST['$2'])) . ':)'
-          : PSS('$0')",
+      => "'$1' . PTVPOSTVar('ptv_$2', ':)', '&#x3a;)', PSS('$3')) .':)'",
     ));
 }
