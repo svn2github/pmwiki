@@ -116,7 +116,7 @@ function ME_ftime($arg0 = '', $arg1 = '', $argp = NULL) {
   else if (strpos($arg1, '%') !== false) $fmt = $arg1;
   if (@$argp['when']) $when = $argp['when'];
   else $when = $arg0;
-  $dpat = '#^\\s*(\\d{4})([.-/]?)?(\\d\\d)\\2?(\\d\\d)?(?!\\d)(.*)#';
+  $dpat = '#(?<!\\d)(19\\d\\d|20[0-3]\\d)([-./]?)(\\d\\d)(?:\\2(\\d\\d))?(?!\\d)(.*)#';
   if (preg_match('/^\\s*@(\\d+)\\s*(.*)$/', $when, $match)) {
     ##  unix timestamp dates
     $time = $match[2] ? strtotime($match[2], $match[1]) : $match[1];
