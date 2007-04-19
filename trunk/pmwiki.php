@@ -1506,14 +1506,17 @@ function RestorePage($pagename,&$page,&$new,$restore=NULL) {
   return $new['text'];
 }
 
-## ReplaceOnSave performs any text replacements (held in $ROSPatterns)
-## on the new text prior to saving the page.
+## ReplaceOnSave performs text replacements on the text being posted.
+## Patterns held in $ROEPatterns are replaced on every edit request,
+## patterns held in $ROSPatterns are replaced only when the page
+## is being posted (as signaled by $EnablePost).
 function ReplaceOnSave($pagename,&$page,&$new) {
-  global $EnablePost, $ROSPatterns;
+  global $EnablePost, $ROSPatterns, $ROEPatterns;
+  foreach ((array)$ROEPatterns as $pat => $rep)
+    $new['text'] = preg_replace($pat, $rep, $new['text']);
   if (!$EnablePost) return;
-  foreach((array)$ROSPatterns as $pat=>$repfmt) 
-    $new['text'] = 
-      preg_replace($pat,FmtPageName($repfmt,$pagename),$new['text']);
+  foreach((array)$ROSPatterns as $pat=>$rep) 
+    $new['text'] = preg_replace($pat, $rep, $new['text']);
 }
 
 function SaveAttributes($pagename,&$page,&$new) {
