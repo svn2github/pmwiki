@@ -1512,10 +1512,10 @@ function RestorePage($pagename,&$page,&$new,$restore=NULL) {
 ## is being posted (as signaled by $EnablePost).
 function ReplaceOnSave($pagename,&$page,&$new) {
   global $EnablePost, $ROSPatterns, $ROEPatterns;
-  foreach ((array)$ROEPatterns as $pat => $rep)
+  foreach ((array)@$ROEPatterns as $pat => $rep)
     $new['text'] = preg_replace($pat, $rep, $new['text']);
   if (!$EnablePost) return;
-  foreach((array)$ROSPatterns as $pat=>$rep) 
+  foreach((array)@$ROSPatterns as $pat=>$rep) 
     $new['text'] = preg_replace($pat, $rep, $new['text']);
 }
 
