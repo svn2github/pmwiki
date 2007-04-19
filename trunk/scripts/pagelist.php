@@ -663,7 +663,7 @@ function PageIndexUpdate($pagelist, $dir = '') {
       foreach($terms as $t) { if (strpos($x, $t) === false) $x .= " $t"; }
       fputs($ofp, "$pn:$Now: $targets :$x\n");
     }
-    $updated[$pn]++;
+    @$updated[$pn]++;
   }
   $ifp = @fopen($PageIndexFile, 'r');
   if ($ifp) {
