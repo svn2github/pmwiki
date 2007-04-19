@@ -257,3 +257,15 @@ SDVA($InputTags['e_resetbutton'], array(
   ':html' => "<input type='reset' \$InputFormArgs />",
   'value' => ' '.XL('Reset').' '));
 
+if (@$_POST['ptvreplace']) {
+  SDVA($ROEPatterns, array(
+    '/^(:*\\s*(\\w[-\\w]*)\\s*:[ \\t]?)(.*)$/me' 
+      => "(isset(\$_POST['$2']) && \$_POST['$2'] > '')
+          ? '$1' . str_replace('\n', ' ', stripmagic(\$_POST['$2']))
+          : PSS('$0')",
+    '/(\\(: *(\\w[-\\w]*) *:(?!\\))\\s?)(.*?):\\)/se'
+      => "(isset(\$_POST['$2']) && \$_POST['$2'] > '')
+          ? '$1' . str_replace(':)','&#x3a;)',stripmagic(\$_POST['$2'])) . ':)'
+          : PSS('$0')",
+    ));
+}
