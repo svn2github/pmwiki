@@ -647,7 +647,7 @@ function PageTextVar($pagename, $var) {
             $pc["=p_{$m[1]}"] = Qualify($pagename, $m[2]);
     }
   }
-  return $PCache[$pagename]["=p_$var"];
+  return @$PCache[$pagename]["=p_$var"];
 }
 
 
