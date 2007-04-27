@@ -658,13 +658,14 @@ function PageVar($pagename, $var, $pn = '') {
   if ($pn) {
     $pn = isset($Cursor[$pn]) ? $Cursor[$pn] : MakePageName($pagename, $pn);
   } else $pn = $pagename;
-  if ($pn == '') return '';
-  if (preg_match('/^(.+)[.\\/]([^.\\/]+)$/', $pn, $match)
-      && !isset($PCache[$pn]['time']) 
-      && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) 
-    { $page = ReadPage($pn, READPAGE_CURRENT); PCache($pn, $page); }
-  @list($d, $group, $name) = $match;
-  $page = &$PCache[$pn];
+  if ($pn) {
+    if (preg_match('/^(.+)[.\\/]([^.\\/]+)$/', $pn, $match)
+        && !isset($PCache[$pn]['time']) 
+        && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) 
+      { $page = ReadPage($pn, READPAGE_CURRENT); PCache($pn, $page); }
+    @list($d, $group, $name) = $match;
+    $page = &$PCache[$pn];
+  } else { $group = ''; $name = ''; }
   if (@$FmtPV[$var]) return eval("return ({$FmtPV[$var]});");
   if (strncmp($var, '$:', 2)==0) return PageTextVar($pn, substr($var, 2));
   return '';
