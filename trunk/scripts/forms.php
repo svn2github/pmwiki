@@ -258,26 +258,3 @@ SDVA($InputTags['e_resetbutton'], array(
   ':html' => "<input type='reset' \$InputFormArgs />",
   'value' => ' '.XL('Reset').' '));
 
-
-## This function returns the value of $_POST[$var], replacing
-## any instances of $syn with $rep.  If $_POST[$var] isn't set
-## or is empty, returns $orig.  The function also makes sure
-## that a value for $var is taken only once -- after that it
-## always returns $orig.
-function PTVPOSTVar($var, $syn, $rep, $orig) {
-  global $PTVPOST;
-  if (!isset($PTVPOST)) $PTVPOST = $_POST;
-  if (!isset($PTVPOST[$var]) || $PTVPOST[$var] == '') return $orig;
-  $x = str_replace($syn, $rep, stripmagic($PTVPOST[$var]));
-  unset($PTVPOST[$var]);
-  return $x;
-}
-
-if (preg_grep('/^ptv_/', array_keys(@$_POST))) {
-  SDVA($ROEPatterns, array(
-    '/^(:*\\s*(\\w[-\\w]*)\\s*:[ \\t]?)(.*)$/me' 
-      => "'$1' . PTVPOSTVar('ptv_$2', '\n', ' ', PSS('$3'))",
-    '/(\\(: *(\\w[-\\w]*) *:(?!\\))\\s?)(.*?):\\)/se'
-      => "'$1' . PTVPOSTVar('ptv_$2', ':)', '&#x3a;)', PSS('$3')) .':)'",
-    ));
-}
