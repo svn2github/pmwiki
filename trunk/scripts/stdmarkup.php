@@ -467,7 +467,8 @@ $Conditions['date'] = "CondDate(\$condparm)";
 
 function CondDate($condparm) {
   global $Now;
-  if (!preg_match('/^(\\S*?)(\\.\\.(\\S*))?(\\s.*)?$/',trim($condparm),$match))
+  if (!preg_match('/^(\\S*?)(\\.\\.(\\S*))?(\\s+\\S.*)?$/',
+                  trim($condparm), $match))
     return false;
   if ($match[4] == '') { $x0 = $Now; NoCache(); }
   else { list($x0, $x1) = DRange($match[4]); }
