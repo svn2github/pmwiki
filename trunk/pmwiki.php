@@ -1120,6 +1120,9 @@ function TextSection($text, $sections) {
 ##  the page to extract text from.  Otherwise RetrieveAuthSection looks
 ##  in the pages given by $list, or in $pagename if $list is not specified.
 ##  Any page variables in the text are pagename-qualified.
+##                    WARNING WARNING WARNING
+##  The return values of this function are likely to change, so don't
+##  rely on it just yet.
 function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') {
   if ($pagesection{0} != '#')
     $list = array(MakePageName($pagename, $pagesection));
