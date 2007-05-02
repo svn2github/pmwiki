@@ -410,7 +410,6 @@ function StopWatch($x) {
 ## DRange converts a variety of string formats into date (ranges).
 ## It returns the start and end timestamps (+1 second) of the specified date.
 function DRange($when) {
-  global $Now;
   ##  unix/posix @timestamp dates
   if (preg_match('/^\\s*@(\\d+)\\s*(.*)$/', $when, $m)) {
     $t0 = $m[2] ? strtotime($m[2], $m[1]) : $m[1];
@@ -436,12 +435,10 @@ function DRange($when) {
   if ($when == 'today') 
     return array(mktime(0, 0, 0, $m[4]+1, $m[3]  , $m[5]+1900),
                  mktime(0, 0, 0, $m[4]+1, $m[3]+1, $m[5]+1900));
-  if (preg_match('/\\S/', $when)) {
-    $t0 = strtotime($when);
-    $t1 = strtotime("+1 day", $t0);
-    return array($t0, $t1);
-  }
-  return array($Now, $Now+1);
+  if (preg_match('/^\\s*$/', $when)) return array(-1, -1);
+  $t0 = strtotime($when);
+  $t1 = strtotime("+1 day", $t0);
+  return array($t0, $t1);
 }
 
 ## AsSpaced converts a string with WikiWords into a spaced version
