@@ -406,6 +406,44 @@ function StopWatch($x) {
     sprintf("%05.2f %05.2f %s", $wtime-$wstart, $utime-$ustart, $x);
 }
 
+
+## DRange converts a variety of string formats into date (ranges).
+## It returns the start and end timestamps (+1 second) of the specified date.
+function DRange($when) {
+  global $Now;
+  ##  unix/posix @timestamp dates
+  if (preg_match('/^\\s*@(\\d+)\\s*(.*)$/', $when, $m)) {
+    $t0 = $m[2] ? strtotime($m[2], $m[1]) : $m[1];
+    return array($t0, $t0+1);
+  }
+  ##  ISO-8601 dates
+  $dpat = '#(?<!\\d)(19\\d\\d|20[0-3]\\d)([-./]?)([01]\\d)(?:\\2([0-3]\\d))?(?!\
+\d)(.*)#';
+  if (preg_match($dpat, $when, $m)) {
+    if ($m[4] == '') { $m[4] = 1; $d1 = 0; $m1 = 1; }
+    else { $d1 = 1; $m1 = 0; }
+    $t0 = mktime(0, 0, 0, $m[3],       $m[4],       $m[1]);
+    $t1 = mktime(0, 0, 0, $m[3] + $m1, $m[4] + $d1, $m[1]);
+    if ($m[5] > '') 
+      { $t0 = strtotime($m[5], $t0); $t1 = strtotime($m[5], $t1); }
+    return array($t0, $t1);
+  }
+  ##  today, tomorrow, yesterday
+  NoCache();
+  $m = localtime(time());
+  if ($when == 'tomorrow') { $m[3]++; $when = 'today'; }
+  if ($when == 'yesterday') { $m[3]--; $when = 'today'; }
+  if ($when == 'today') 
+    return array(mktime(0, 0, 0, $m[4]+1, $m[3]  , $m[5]+1900),
+                 mktime(0, 0, 0, $m[4]+1, $m[3]+1, $m[5]+1900));
+  if (preg_match('/\\S/', $when)) {
+    $t0 = strtotime($when);
+    $t1 = strtotime("+1 day", $t0);
+    return array($t0, $t1);
+  }
+  return array($Now, $Now+1);
+}
+
 ## AsSpaced converts a string with WikiWords into a spaced version
 ## of that string.  (It can be overridden via $AsSpacedFunction.)
 function AsSpaced($text) {
