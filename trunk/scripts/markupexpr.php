@@ -114,13 +114,13 @@ function ME_ftime($arg0 = '', $arg1 = '', $argp = NULL) {
   if (@$argp['fmt']) $fmt = $argp['fmt']; 
   else if (strpos($arg0, '%') !== false) { $fmt = $arg0; $arg0 = $arg1; }
   else if (strpos($arg1, '%') !== false) $fmt = $arg1;
-  if (@$argp['when']) $when = $argp['when'];
-  else $when = $arg0;
-  ##  determine the time
-  list($time, $x) = DRange($when);
+  ## determine the timestamp
+  if (isset($argp['when'])) list($time, $x) = DRange($argp['when']);
+  else if ($arg0 > '') list($time, $x) = DRange($arg0);
+  else $time = $Now;
   if (@$fmt == '') { SDV($FTimeFmt, $TimeFmt); $fmt = $FTimeFmt; }
   ##  make sure we have %F available for ISO dates
-  $fmt = str_replace(array('%F', '%s'), array('%Y-%m-%d', $Now), $fmt);
+  $fmt = str_replace(array('%F', '%s'), array('%Y-%m-%d', $time), $fmt);
   return strftime($fmt, $time);
 }
 
