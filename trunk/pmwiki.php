@@ -335,11 +335,21 @@ SDV($LinkPageCreateSpaceFmt,$LinkPageCreateFmt);
 $ActionTitle = FmtPageName(@$ActionTitleFmt[$action], $pagename);
 if (!@$HandleActions[$action] || !function_exists($HandleActions[$action])) 
   $action='browse';
-SDV($HandleAuth[$action], 'read');
-if (IsEnabled($EnableActions, 1))
-  $HandleActions[$action]($pagename, $HandleAuth[$action]);
+if (IsEnabled($EnableActions, 1)) HandleDispatch($pagename, $action);
 Lock(0);
 return;
+
+##  HandleDispatch() is used to dispatch control to the appropriate
+##  action handler with the appropriate permissions.
+##  If a message is supplied, it is added to $MessagesFmt.
+function HandleDispatch($pagename, $action, $msg=NULL) {
+  global $MessagesFmt, $HandleActions, $HandleAuth;
+  if ($msg) $MessagesFmt[] = "<div class='wikimessage'>$msg</div>";
+  $fn = $HandleActions[$action];
+  $auth = $HandleAuth[$action];
+  if (!$auth) $auth = 'read';
+  return $fn($pagename, $auth);
+}
 
 ## helper functions
 function stripmagic($x) 
