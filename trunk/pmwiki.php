@@ -759,6 +759,15 @@ function FmtPageName($fmt, $pagename) {
   return $fmt;
 }
 
+##  FmtTemplateVars uses $vars to replace all occurrences of 
+##  {$$key} in $text with $vars['key'].
+function FmtTemplateVars($text, $vars) {
+  foreach(preg_grep('/^[\\w$]/', array_keys($vars)) as $k)
+    if (!is_array($vars[$k]))
+      $text = str_replace("{\$\$$k}", $vars[$k], $text);
+  return $text;
+}
+
 ## The XL functions provide translation tables for $[i18n] strings
 ## in FmtPageName().
 function XL($key) {
@@ -1109,7 +1118,8 @@ function CondText($pagename,$condspec,$condtext) {
 ##    ##abc, ..#abc  - beginning of text to [[#abc]]
 ##  Returns the text unchanged if no sections are requested,
 ##  or false if a requested beginning anchor isn't in the text.
-function TextSection($text, $sections) {
+function TextSection($text, $sections, $args = NULL) {
+  $args = (array)$args;
   $npat = '[[:alpha:]][-\\w*]*';
   if (!preg_match("/#($npat)?(\\.\\.)?(#($npat)?)?/", $sections, $match))
     return $text;
@@ -1117,7 +1127,8 @@ function TextSection($text, $sections) {
   if (!$dots && !$b) $bb = $npat;
   if ($aa) {
     if (strpos($text, "[[#$aa]]") === false) return false;
-    $text = preg_replace("/^.*?\n([^\n]*\\[\\[#$aa\\]\\])/s", '$1', $text, 1);
+    $rep = (@$args['anchors']) ? '$1' : '';
+    $text = preg_replace("/^.*?\n([^\n]*\\[\\[#$aa\\]\\])/s", $rep, $text, 1);
   }
   if ($bb)
     $text = preg_replace("/(\n)[^\n]*\\[\\[#$bb\\]\\].*$/s", '$1', $text, 1);
@@ -1166,7 +1177,7 @@ function IncludeText($pagename, $inclspec) {
         $ipage = RetrieveAuthPage($iname, 'read', false, READPAGE_CURRENT);
         $itext = @$ipage['text'];
       }
-      $itext = TextSection($itext, $v);
+      $itext = TextSection($itext, $v, array('anchors' => 1));
       continue;
     }
     if (preg_match('/^(?:line|para)s?$/', $k)) {
@@ -1184,7 +1195,7 @@ function IncludeText($pagename, $inclspec) {
               ? MakePageName($pagename, $args['basepage'])
               : $iname;
   if ($basepage) $itext = Qualify(@$basepage, @$itext);
-  return PVSE($itext);
+  return FmtTemplateVars(PVSE($itext), $args);
 }
 
 
