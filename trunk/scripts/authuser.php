@@ -40,6 +40,7 @@ function AuthUserId($pagename, $id, $pw=NULL) {
   global $AuthUser, $AuthUserPageFmt, $AuthUserFunctions, 
     $AuthId, $MessagesFmt;
 
+  $auth = array();
   foreach((array)$AuthUser as $k=>$v) $auth[$k] = (array)$v;
   $authid = '';
 
