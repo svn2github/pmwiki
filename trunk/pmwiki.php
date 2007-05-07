@@ -213,7 +213,7 @@ function CompareArgs($arg)
 $Conditions['auth'] = 'CondAuth($pagename, $condparm)';
 function CondAuth($pagename, $condparm) {
   NoCache();
-  list($level, $pn) = explode(' ', $condparm, 2);
+  @list($level, $pn) = explode(' ', $condparm, 2);
   $pn = ($pn > '') ? MakePageName($pagename, $pn) : $pagename;
   return (boolean)RetrieveAuthPage($pn, $level, false, READPAGE_CURRENT);
 }
