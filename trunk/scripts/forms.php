@@ -50,31 +50,32 @@ SDVA($InputTags['select'], array(
   'class' => 'inputbox',
   ':html' => "<select \$InputSelectArgs>\$InputSelectOptions</select>"));
 
-##  (:input default:) needs to occur before all other input markups.
+# (:input default:)
+SDVA($InputTags['default'], array(':fn' => 'InputDefault'));
+
+##  (:input ...:) directives
 Markup('input', 'directives',
-  '/\\(:input\\s+(default)\\b(.*?):\\)/ei',
-  "InputDefault(\$pagename, '$1', PSS('$2'))");
-
-##  (:input select:) has its own markup processing
-Markup('input-select', 'input',
-  '/\\(:input\\s+select\\s.*?:\\)(?:\\s*\\(:input\\s+select\\s.*?:\\))*/ei',
-  "InputSelect(\$pagename, 'select', PSS('$0'))");
-
-##  (:input ...:) goes after all other input markups
-Markup('input-type', '>input', 
   '/\\(:input\\s+(\\w+)(.*?):\\)/ei',
   "InputMarkup(\$pagename, '$1', PSS('$2'))");
+
+##  (:input select:) has its own markup processing
+Markup('input-select', '<input',
+  '/\\(:input\\s+select\\s.*?:\\)(?:\\s*\\(:input\\s+select\\s.*?:\\))*/ei',
+  "InputSelect(\$pagename, 'select', PSS('$0'))");
 
 ##  The 'input+sp' rule combines multiple (:input select ... :)
 ##  into a single markup line (to avoid split line effects)
 Markup('input+sp', '<split', 
   '/(\\(:input\\s+select\\s(?>.*?:\\)))\\s+(?=\\(:input\\s)/', '$1');
 
+
+##  InputToHTML performs standard processing on (:input ...:) arguments,
+##  and returns the formatted HTML string.
 function InputToHTML($pagename, $type, $args, &$opt) {
   global $InputTags, $InputAttrs, $InputValues, $FmtV;
   if (!@$InputTags[$type]) return "(:input $type $args:)";
   ##  get input arguments
-  $args = ParseArgs($args);
+  if (!is_array($args)) $args = ParseArgs($args);
   ##  convert any positional arguments to named arguments
   $posnames = @$InputTags[$type][':args'];
   if (!$posnames) $posnames = array('name', 'value');
@@ -87,17 +88,31 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   ##  convert any remaining positional args to flags
   foreach ((array)@$opt[''] as $a) 
     { $a = strtolower($a); if (!isset($opt[$a])) $opt[$a] = $a; }
-  $opt['name'] = preg_replace('/^\\$:/', 'ptv_', @$opt['name']);
-  $name = $opt['name'];
-  ##  set control values from $InputValues array
-  ##  radio, checkbox, select, etc. require a flag of some sort,
-  ##  others just set 'value'
-  if (isset($InputValues[$name])) {
-    $checked = @$opt[':checked'];
-    if ($checked) {
-      $opt[$checked] = in_array(@$opt['value'], (array)$InputValues[$name])
-                       ? $checked : false;
-    } else if (!isset($opt['value'])) $opt['value'] = $InputValues[$name];
+  if (isset($opt['name'])) {
+    $opt['name'] = preg_replace('/^\\$:/', 'ptv_', @$opt['name']);
+    $name = $opt['name'];
+    ##  set control values from $InputValues array
+    ##  radio, checkbox, select, etc. require a flag of some sort,
+    ##  others just set 'value'
+    if (isset($InputValues[$name])) {
+      $checked = @$opt[':checked'];
+      if ($checked) {
+        $opt[$checked] = in_array(@$opt['value'], (array)$InputValues[$name])
+                         ? $checked : false;
+      } else if (!isset($opt['value'])) $opt['value'] = $InputValues[$name];
+    }
+  }
+  ##  build $InputFormContent
+  $FmtV['$InputFormContent'] = '';
+  foreach((array)@$opt[':content'] as $a)
+    if (isset($opt[$a])) { $FmtV['$InputFormContent'] = $opt[$a]; break; }
+  ##  hash and store any "secure" values
+  if (@$opt['secure'] == '#') $opt['secure'] = rand();
+  if (@$opt['secure'] > '') {
+    $md5 = md5($opt['secure'] . $opt['value']);
+    @session_start(); 
+    $_SESSION['forms'][$md5] = $opt['value'];
+    $opt['value'] = $md5;
   }
   ##  build $InputFormArgs from $opt
   $attrlist = (isset($opt[':attr'])) ? $opt[':attr'] : $InputAttrs;
@@ -107,13 +122,22 @@ function InputToHTML($pagename, $type, $args, &$opt) {
     $attr[] = "$a='".str_replace("'", '&#39;', $opt[$a])."'";
   }
   $FmtV['$InputFormArgs'] = implode(' ', $attr);
-  $FmtV['$InputFormContent'] = '';
-  foreach((array)@$opt[':content'] as $a)
-    if (isset($opt[$a])) { $FmtV['$InputFormContent'] = $opt[$a]; break; }
   return FmtPageName($opt[':html'], $pagename);
 }
 
 
+##  InputMarkup handles the (:input ...:) directive.  It either
+##  calls any function given by the :fn element of the corresponding
+##  tag, or else just returns the result of InputToHTML().
+function InputMarkup($pagename, $type, $args) {
+  global $InputTags;
+  $fn = @$InputTags[$type][':fn'];
+  if ($fn) return $fn($pagename, $type, $args);
+  return Keep(InputToHTML($pagename, $type, $args, $opt));
+}
+
+
+##  (:input default:) directive.
 function InputDefault($pagename, $type, $args) {
   global $InputValues, $PageTextVarPatterns;
   $args = ParseArgs($args);
@@ -143,10 +167,9 @@ function InputDefault($pagename, $type, $args) {
   return '';
 }
 
-function InputMarkup($pagename, $type, $args) {
-  return Keep(InputToHTML($pagename, $type, $args, $opt));
-}
 
+##  (:input select ...:) is special, because we need to process a bunch of
+##  them as a single unit.
 function InputSelect($pagename, $type, $markup) {
   global $InputTags, $InputAttrs, $FmtV;
   preg_match_all('/\\(:input\\s+\\S+\\s+(.*?):\\)/', $markup, $match);
@@ -169,6 +192,32 @@ function InputSelect($pagename, $type, $markup) {
   return Keep(FmtPageName($selectopt[':html'], $pagename));
 }
 
+
+function InputActionForm($pagename, $type, $args) {
+  global $InputAttrs;
+  $args = ParseArgs($args);
+  if (@$args['pagename']) $pagename = $args['pagename'];
+  $opt = NULL;
+  $html = InputToHTML($pagename, $type, $args, $opt);
+  foreach(preg_grep('/^[\\w$]/', array_keys($args)) as $k) {
+    if (is_array($args[$k]) || in_array($k, $InputAttrs)) continue;
+    if ($k == 'n' || $k == 'pagename') continue;
+    $html .= "<input type='hidden' name='$k' value='{$args[$k]}' />";
+  }
+  return Keep($html);
+}
+
+
+## RequestArgs is used to extract values from controls (typically
+## in $_GET and $_POST).
+function RequestArgs($req = NULL) {
+  if (is_null($req)) $req = array_merge($_GET, $_POST);
+  foreach ($req as $k => $v) $req[$k] = stripmagic($req[$k]);
+  return $req;
+}
+
+
+  
 
 ## Form-based authorization prompts (for use with PmWikiAuth)
 
