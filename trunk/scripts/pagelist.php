@@ -410,7 +410,8 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
         $r = '+';
         if ($o{0} == '-') { $r = '-'; $o = substr($o, 1); }
         $opt['=order'][$o] = $r;
-        if (!isset($PageListSortRead[$o]) || $PageListSortRead[$o])
+        if ($o{0} != '$' && 
+            (!isset($PageListSortRead[$o]) || $PageListSortRead[$o]))
           $ret |= PAGELIST_ITEM;
       }
       StopWatch("PageListSort pre ret=$ret order={$opt['order']}");
