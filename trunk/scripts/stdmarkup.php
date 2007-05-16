@@ -56,11 +56,6 @@ Markup('{$var}', '>$[phrase]',
 Markup('textvar:', '<split',
   '/\\(:\\w[-\\w]*:(?!\\)).*?:\\)/s', '');
 
-## patterns recognized as text vars
-SDVA($PageTextVarPatterns, array(
-  'var:' => '/^:*\\s*(\\w[-\\w]*)\\s*:[ \\t]?(.*)$/m',
-  '(:var:...:)' => '/\\(: *(\\w[-\\w]*) *:(?!\\))\\s?(.*?):\\)/s'));
-
 ## handle relative text vars in includes
 if (IsEnabled($EnableRelativePageVars, 0)) 
   SDV($QualifyPatterns["/\\{([-\\w\\x80-\\xfe]*)(\\$:?\\w+\\})/e"], 

@@ -145,6 +145,11 @@ $FmtPV = array(
   '$Action'       => '$GLOBALS["action"]',
   );
 $SaveProperties = array('title', 'description', 'keywords');
+$PageTextVarPatterns = array(
+  'var:'        => '/^(:*\\s*(\\w[-\\w]*)\\s*:[ \\t]?)(.*)($)/m',
+  '(:var:...:)' => '/(\\(: *(\\w[-\\w]*) *:(?!\\))\\s?)(.*?)(:\\))/s'
+  );
+
 
 $WikiTitle = 'PmWiki';
 $Charset = 'ISO-8859-1';
@@ -689,7 +694,7 @@ function PageTextVar($pagename, $var) {
       foreach((array)$PageTextVarPatterns as $pat) 
         if (preg_match_all($pat, $page['text'], $match, PREG_SET_ORDER))
           foreach($match as $m)  
-            $pc["=p_{$m[1]}"] = Qualify($pagename, $m[2]);
+            $pc["=p_{$m[2]}"] = Qualify($pagename, $m[3]);
     }
   }
   return @$PCache[$pagename]["=p_$var"];
@@ -761,7 +766,13 @@ function FmtPageName($fmt, $pagename) {
 
 ##  FmtTemplateVars uses $vars to replace all occurrences of 
 ##  {$$key} in $text with $vars['key'].
-function FmtTemplateVars($text, $vars) {
+function FmtTemplateVars($text, $vars, $pagename = NULL) {
+  global $FmtPV;
+  if ($pagename) {
+    $pat = implode('|', array_map('preg_quote', array_keys($FmtPV)));
+    $text = preg_replace("/\\{\\$($pat)\\}/e", 
+                         "PageVar('$pagename', '$1')", $text);
+  }
   foreach(preg_grep('/^[\\w$]/', array_keys($vars)) as $k)
     if (!is_array($vars[$k]))
       $text = str_replace("{\$\$$k}", $vars[$k], $text);
