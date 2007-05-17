@@ -442,6 +442,7 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
       $code .= "\$c = @strcasecmp(\$PCache[\$x]['$o'],\$PCache[\$y]['$o']); ";
     $code .= "if (\$c) return $r\$c;\n";
   }
+  StopWatch('PageListSort sort');
   if ($code) 
     uasort($list,
            create_function('$x,$y', "global \$PCache; $code return 0;"));
