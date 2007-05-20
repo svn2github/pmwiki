@@ -96,7 +96,7 @@ function CondText2($pagename, $text) {
 ## (:include:)
 Markup('include', '>if',
   '/\\(:include\\s+(\\S.*?):\\)/ei',
-  "PRR(IncludeText(\$pagename, '$1'))");
+  "PRR(IncludeText(\$pagename, PSS('$1')))");
 
 ## (:redirect:)
 Markup('redirect', '<include',
