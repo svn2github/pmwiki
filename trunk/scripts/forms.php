@@ -34,6 +34,7 @@ SDV($InputTags['end'][':html'], '</form>');
 # (:input textarea:)
 SDVA($InputTags['textarea'], array(
   ':content' => array('value'),
+  ':attr' => array_diff($InputAttrs, array('value')),
   ':html' => "<textarea \$InputFormArgs>\$InputFormContent</textarea>"));
 
 # (:input image:)
