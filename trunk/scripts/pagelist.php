@@ -554,7 +554,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
   $i = 0;
   while ($i < count($tparts)) {
     if ($tparts[$i] != 'template') { $i++; continue; }
-    if ($tparts[$i+1] != 'defaults') { $i+=4; continue; }
+    if ($tparts[$i+1] != 'defaults' && $tparts[$i+1] != 'default') { $i+=4; continue; }
     $opt = array_merge(ParseArgs($tparts[$i+2], $PageListArgPattern), $opt);
     array_splice($tparts, $i, 3);
   }
