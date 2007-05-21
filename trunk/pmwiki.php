@@ -692,7 +692,7 @@ function PageTextVar($pagename, $var) {
     $page = RetrieveAuthPage($pagename, 'read', false, READPAGE_CURRENT);
     if ($page) {
       foreach((array)$PageTextVarPatterns as $pat) 
-        if (preg_match_all($pat, $page['text'], $match, PREG_SET_ORDER))
+        if (preg_match_all($pat, @$page['text'], $match, PREG_SET_ORDER))
           foreach($match as $m)  
             $pc["=p_{$m[2]}"] = Qualify($pagename, $m[3]);
     }
