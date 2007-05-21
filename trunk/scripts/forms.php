@@ -51,8 +51,9 @@ SDVA($InputTags['select'], array(
   'class' => 'inputbox',
   ':html' => "<select \$InputSelectArgs>\$InputSelectOptions</select>"));
 
-# (:input default:)
+# (:input defaults?:)
 SDVA($InputTags['default'], array(':fn' => 'InputDefault'));
+SDVA($InputTags['defaults'], array(':fn' => 'InputDefault'));
 
 ##  (:input ...:) directives
 Markup('input', 'directives',
@@ -153,16 +154,17 @@ function InputDefault($pagename, $type, $args) {
       if (!isset($InputValues[$k])) 
         $InputValues[$k] = htmlspecialchars(stripmagic($v), ENT_NOQUOTES);
   }
-  if (@$args['source']) {
-    $source = MakePageName($pagename, $args['source']);
+  $source = @$args['source'];
+  if ($source) {
+    $source = MakePageName($pagename, $source);
     $page = RetrieveAuthPage($source, 'read', false, READPAGE_CURRENT);
     if ($page) {
       foreach((array)$PageTextVarPatterns as $pat)
         if (preg_match_all($pat, $page['text'], $match, PREG_SET_ORDER))
           foreach($match as $m)
             if (!isset($InputValues['ptv_'.$m[1]]))
-              $InputValues['ptv_'.$m[1]] = 
-                htmlspecialchars(Qualify($source, $m[2]), ENT_NOQUOTES);
+              $InputValues['ptv_'.$m[2]] = 
+                htmlspecialchars(Qualify($source, $m[3]), ENT_NOQUOTES);
     }
   }
   return '';
