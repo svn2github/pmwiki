@@ -431,15 +431,12 @@ function DRange($when) {
     return array($t0, $t0+1);
   }
   ##  ISO-8601 dates
-  $dpat = '#(?<!\\d)(19\\d\\d|20[0-3]\\d)([-./]?)([01]\\d)(?:\\2([0-3]\\d))?(?!\
-\d)(.*)#';
+  $dpat = '#(?<!\\d)(19\\d\\d|20[0-3]\\d)([-./]?)([01]\\d)(?:\\2([0-3]\\d))?(?!\\d)#';
   if (preg_match($dpat, $when, $m)) {
     if ($m[4] == '') { $m[4] = 1; $d1 = 0; $m1 = 1; }
     else { $d1 = 1; $m1 = 0; }
     $t0 = mktime(0, 0, 0, $m[3],       $m[4],       $m[1]);
     $t1 = mktime(0, 0, 0, $m[3] + $m1, $m[4] + $d1, $m[1]);
-    if ($m[5] > '') 
-      { $t0 = strtotime($m[5], $t0); $t1 = strtotime($m[5], $t1); }
     return array($t0, $t1);
   }
   ##  today, tomorrow, yesterday
