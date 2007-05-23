@@ -313,6 +313,7 @@ function PageListIf(&$list, &$opt, $pn, &$page) {
 
 function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
   global $FmtV;
+  static $reindex = array();
   $fold = $GLOBALS['StrFoldFunction'];
 
   switch ($opt['=phase']) {
@@ -353,22 +354,22 @@ function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
       if (!$page) { $page = ReadPage($pn, READPAGE_CURRENT); $opt['=readc']++; }
       if (!$page) return 0;
       if (@$opt['=linkp'] && !preg_match($opt['=linkp'], @$page['targets'])) 
-        { $opt['=reindex'][] = $pn; return 0; }
+        { $reindex[] = $pn; return 0; }
       if (@$opt['=inclp'] || @$opt['=exclp']) {
         $text = $fold($pn."\n".@$page['targets']."\n".@$page['text']);
         foreach((array)@$opt['=exclp'] as $i) 
           if (preg_match($i, $text)) return 0;
         foreach((array)@$opt['=inclp'] as $i) 
           if (!preg_match($i, $text)) { 
-            if ($i{0} == '$') $opt['=reindex'][] = $pn; 
+            if ($i{0} == '$') $reindex[] = $pn;
             return 0; 
           }
       }
       return 1;
 
     case PAGELIST_POST:
-      if (@$opt['=reindex']) 
-        register_shutdown_function('PageIndexUpdate',$opt['=reindex'],getcwd());
+      if ($reindex) PageIndexQueueUpdate($reindex);
+      $reindex = array();
       return 0;
   }
 }
@@ -673,14 +674,17 @@ function PageIndexTerms($terms) {
 ## The optional $dir parameter allows this function to be called
 ## via register_shutdown_function (which sometimes changes directories
 ## on us).
-function PageIndexUpdate($pagelist, $dir = '') {
-  global $EnableReadOnly, $PageIndexFile, $PageIndexTime, $Now;
+function PageIndexUpdate($pagelist = NULL, $dir = '') {
+  global $EnableReadOnly, $PageIndexUpdateList, $PageIndexFile, 
+    $PageIndexTime, $Now;
   if (IsEnabled($EnableReadOnly, 0)) return;
   $abort = ignore_user_abort(true);
   if ($dir) { flush(); chdir($dir); }
-  SDV($PageIndexTime, 10);
+  if (is_null($pagelist)) 
+    { $pagelist = (array)$PageIndexUpdateList; $PageIndexUpdateList = array(); }
   if (!$pagelist || !$PageIndexFile) return;
-  $c = count($pagelist);
+  SDV($PageIndexTime, 10);
+  $c = count($pagelist); $updatecount = 0;
   StopWatch("PageIndexUpdate begin ($c pages to update)");
   $pagelist = (array)$pagelist;
   $timeout = time() + $PageIndexTime;
@@ -688,7 +692,9 @@ function PageIndexUpdate($pagelist, $dir = '') {
   Lock(2);
   $ofp = fopen("$PageIndexFile,new", 'w');
   foreach($pagelist as $pn) {
-    if (time() > $timeout) break;
+    if (@$updated[$pn]) continue;
+    @$updated[$pn]++;
+    if (time() > $timeout) continue;
     $page = ReadPage($pn, READPAGE_CURRENT);
     if ($page) {
       $targets = str_replace(',', ' ', @$page['targets']);
@@ -698,7 +704,7 @@ function PageIndexUpdate($pagelist, $dir = '') {
       foreach($terms as $t) { if (strpos($x, $t) === false) $x .= " $t"; }
       fputs($ofp, "$pn:$Now: $targets :$x\n");
     }
-    @$updated[$pn]++;
+    $updatecount++;
   }
   $ifp = @fopen($PageIndexFile, 'r');
   if ($ifp) {
@@ -718,9 +724,20 @@ function PageIndexUpdate($pagelist, $dir = '') {
   if (file_exists($PageIndexFile)) unlink($PageIndexFile); 
   rename("$PageIndexFile,new", $PageIndexFile);
   fixperms($PageIndexFile);
-  $c = count($updated);
-  StopWatch("PageIndexUpdate end ($c updated)");
+  StopWatch("PageIndexUpdate end ($updatecount updated)");
   ignore_user_abort($abort);
+}
+
+## PageIndexQueueUpdate specifies pages to be updated in
+## the index upon shutdown (via register_shutdown function).
+function PageIndexQueueUpdate($pagelist) {
+  global $PageIndexUpdateList;
+  if (!@$PageIndexUpdateList) 
+    register_shutdown_function('PageIndexUpdate', NULL, getcwd());
+  $PageIndexUpdateList = array_merge((array)@$PageIndexUpdateList,
+                                     (array)$pagelist);
+  $c1 = count($pagelist); $c2 = count($PageIndexUpdateList);
+  StopWatch("PageIndexQueueUpdate: queued $c1 pages ($c2 total)");
 }
 
 ## PageIndexGrep returns a list of pages that match the strings
@@ -758,6 +775,5 @@ function PageIndexGrep($terms, $invert = false) {
 ## the linkindex whenever a page is saved.
 function PostPageIndex($pagename, &$page, &$new) {
   global $IsPagePosted;
-  if ($IsPagePosted) 
-    register_shutdown_function('PageIndexUpdate', $pagename, getcwd());
+  if ($IsPagePosted) PageIndexQueueUpdate($pagename);
 }
