@@ -241,7 +241,8 @@ function PageListProtect(&$list, &$opt, $pn, &$page) {
       $page = RetrieveAuthPage($pn, 'ALWAYS', false, READPAGE_CURRENT);
       $opt['=readc']++;
       if (!$page['=auth']['read']) $opt['=protectexclude'][$pn] = 1;
-      if (!$page['=passwd']['read']) $opt['=protectsafe'][$pn] = 1;
+      if (!$page['=passwd']['read']) $opt['=protectsafe'][$pn] = 1; 
+      else NoCache();
       return 1;
 
     case PAGELIST_POST:
@@ -429,8 +430,8 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
     foreach($list as $pn) $PCache[$pn]['=title'] = PageVar($pn, '$Title');
   if (@$order['group'])
     foreach($list as $pn) $PCache[$pn]['group'] = PageVar($pn, '$Group');
-  if (@$order['random'])
-    foreach($list as $pn) $PCache[$pn]['random'] = rand();
+  if (@$order['random']) 
+    { NoCache(); foreach($list as $pn) $PCache[$pn]['random'] = rand(); }
   foreach(preg_grep('/^\\$/', array_keys($order)) as $o) 
     foreach($list as $pn) 
       $PCache[$pn][$o] = PageVar($pn, $o);
