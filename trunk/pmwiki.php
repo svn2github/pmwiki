@@ -1485,6 +1485,7 @@ function HandleBrowse($pagename, $auth = 'read') {
     list($ctext) = unserialize(file_get_contents($PageCacheFile));
     $FmtV['$PageText'] = "<!--cached-->$ctext";
     $IsHTMLCached = 1;
+    StopWatch("HandleBrowse: using cached copy");
   } else {
     $IsHTMLCached = 0;
     $text = '(:groupheader:)'.@$text.'(:groupfooter:)';
@@ -1494,6 +1495,7 @@ function HandleBrowse($pagename, $auth = 'read') {
         && (time() - $t1 + 1) >= $EnableHTMLCache) {
       $fp = @fopen("$PageCacheFile,new", "x");
       if ($fp) { 
+        StopWatch("HandleBrowse: caching page");
         fwrite($fp, serialize(array($FmtV['$PageText']))); fclose($fp);
         rename("$PageCacheFile,new", $PageCacheFile);
       }
