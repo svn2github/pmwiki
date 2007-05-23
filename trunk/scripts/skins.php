@@ -68,6 +68,7 @@ function SetSkin($pagename, $skin) {
     LoadPageTemplate($pagename, "$SkinDir/skin.tmpl");
   else if (($dh = opendir($SkinDir))) {
     while (($fname = readdir($dh)) !== false) {
+      if ($fname[0] == '.') continue;
       if (substr($fname, -5) != '.tmpl') continue;
       if ($IsTemplateLoaded) 
         Abort("?unable to find unique template in $SkinDir");
