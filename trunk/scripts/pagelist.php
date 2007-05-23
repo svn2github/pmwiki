@@ -51,6 +51,7 @@ SDVA($FPLFormatOpt, array(
                      'class' => 'fplgroup'),
   'title'   => array('fn' => 'FPLTemplate', 'template' => '#title',
                      'class' => 'fpltitle', 'order' => 'title'),
+  'count'   => array('fn' => 'FPLCountA'),
   ));
 
 SDV($SearchResultsFmt, "<div class='wikisearch'>\$[SearchFor]
@@ -528,6 +529,13 @@ function CalcRange($range, $n) {
   else if ($r1 == 0) $r1 = $n;
   if ($r0 < 1 && $r1 < 1) return array($n+1, $n+1);
   return array(max($r0, 1), max($r1, 1));
+}
+
+
+##  FPLCountA handles fmt=count
+function FPLCountA($pagename, &$matches, $opt) {
+  $matches = array_values(MakePageList($pagename, $opt, 0));
+  return count($matches);
 }
 
 
