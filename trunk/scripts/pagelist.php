@@ -115,19 +115,20 @@ function SearchBox($pagename, $opt) {
   $opt['action'] = 'search';
   $target = (@$opt['target']) 
             ? MakePageName($pagename, $opt['target']) : $pagename;
+  $opt['n'] = IsEnabled($EnablePathInfo, 0) ? '' : $target;
   $out = FmtPageName(" class='wikisearch' action='\$PageUrl' method='get'>",
                      $target);
-  $opt['n'] = IsEnabled($EnablePathInfo, 0) ? '' : $target;
+  foreach($opt as $k => $v) {
+    if ($v == '' || is_array($v)) continue;
+    $v = str_replace("'", "&#039;", $v);
+    $opt[$k] = $v;
+    if ($k == 'q' || $k == 'label' || $k == 'value' || $k == 'size') continue;
+    $k = str_replace("'", "&#039;", $k);
+    $out .= "<input type='hidden' name='$k' value='$v' />";
+  }
   $out .= "<input type='text' name='q' value='{$opt['value']}' 
     class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
     class='inputbutton searchbutton' value='{$opt['label']}' />";
-  foreach($opt as $k => $v) {
-    if ($v == '' || is_array($v)) continue;
-    if ($k == 'q' || $k == 'label' || $k == 'value' || $k == 'size') continue;
-    $k = str_replace("'", "&#039;", $k);
-    $v = str_replace("'", "&#039;", $v);
-    $out .= "<input type='hidden' name='$k' value='$v' />";
-  }
   return '<form '.Keep($out).'</form>';
 }
 
