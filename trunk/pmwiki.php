@@ -336,6 +336,13 @@ foreach((array)$InterMapFiles as $f) {
 $LinkPattern = implode('|',array_keys($LinkFunctions));
 SDV($LinkPageCreateSpaceFmt,$LinkPageCreateFmt);
 
+$keys = array_keys($AuthCascade);
+while ($keys) {
+  $k = array_shift($keys); $t = $AuthCascade[$k];
+  if (in_array($t, $keys)) 
+    { unset($AuthCascade[$k]); $AuthCascade[$k] = $t; array_push($keys, $k); }
+}
+
 $ActionTitle = FmtPageName(@$ActionTitleFmt[$action], $pagename);
 if (!@$HandleActions[$action] || !function_exists($HandleActions[$action])) 
   $action='browse';
