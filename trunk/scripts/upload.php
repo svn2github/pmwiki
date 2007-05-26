@@ -92,6 +92,7 @@ XLSDV('en',array(
 SDV($PageAttributes['passwdupload'],'$[Set new upload password:]');
 SDV($DefaultPasswords['upload'],'*');
 SDV($AuthCascade['upload'], 'read');
+SDV($FmtPV['$PasswdUpload'], 'PasswdVar($pn, "upload")');
 
 Markup('attachlist', 'directives', 
   '/\\(:attachlist\\s*(.*?):\\)/ei',

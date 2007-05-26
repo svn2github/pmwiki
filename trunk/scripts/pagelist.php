@@ -87,9 +87,10 @@ SDVA($PageListFilters, array(
   'PageListCache' => 80,
   'PageListProtect' => 90,
   'PageListSources' => 100,
-  'PageListIf' => 108,
-  'PageListTermsTargets' => 110,
-  'PageListVariables' => 120,
+  'PageListPasswords' => 120,
+  'PageListIf' => 140,
+  'PageListTermsTargets' => 160,
+  'PageListVariables' => 180,
   'PageListSort' => 900,
 ));
 
@@ -286,6 +287,16 @@ function PageListSources(&$list, &$opt, $pn, &$page) {
 
   StopWatch("PageListSources end count=".count($list));
   return 0;
+}
+
+
+function PageListPasswords(&$list, &$opt, $pn, &$page) {
+  if ($opt['=phase'] == PAGELIST_PRE)
+    return (@$opt['passwd'] > '' && !@$opt['=cached']) ? PAGELIST_ITEM : 0;
+
+  if (!$page) { $page = ReadPage($pn, READPAGE_CURRENT); $opt['=readc']++; }
+  if (!$page) return 0;
+  return (boolean)preg_grep('/^passwd/', array_keys($page));
 }
 
 

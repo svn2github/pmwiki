@@ -143,6 +143,9 @@ $FmtPV = array(
   '$DefaultName'  => '$GLOBALS["DefaultName"]',
   '$BaseName'     => 'MakeBaseName($pn)',
   '$Action'       => '$GLOBALS["action"]',
+  '$PasswdRead'   => 'PasswdVar($pn, "read")',
+  '$PasswdEdit'   => 'PasswdVar($pn, "edit")',
+  '$PasswdAttr'   => 'PasswdVar($pn, "attr")',
   );
 $SaveProperties = array('title', 'description', 'keywords');
 $PageTextVarPatterns = array(
@@ -1874,6 +1877,30 @@ function SessionAuth($pagename, $auth = NULL) {
 }
 
 
+function PasswdVar($pagename, $level) {
+  global $PCache, $PasswdVarAuth, $FmtV;
+  $page = $PCache[$pagename];
+  if (!isset($page['=passwd'][$level])) {
+    $page = RetrieveAuthPage($pagename, 'ALWAYS', false, READPAGE_CURRENT);
+    if ($page) PCache($pagename, $page);
+  }
+  SDV($PasswdVarAuth, 'attr');
+  if ($PasswdVarAuth && !@$page['=auth'][$PasswdVarAuth]) return '(protected)';
+  $pwsource = $page['=pwsource'][$level];
+  if (strncmp($pwsource, 'cascade:', 8) == 0) {
+    $FmtV['$PWCascade'] = substr($pwsource, 8);
+    return FmtPageName('$[(using $PWCascade password)]', $pagename);
+  }
+  $setting = implode(' ', preg_replace('/^(?!@|\\w+:).+$/', '****',
+                                       (array)$page['=passwd'][$level]));
+  if ($pwsource == 'group' || $pwsource == 'site') {
+    $FmtV['$PWSource'] = $pwsource;
+    $setting = FmtPageName('$[(set by $PWSource)] ', $pagename) . $setting;
+  }
+  return $setting;
+}
+
+
 function PrintAttrForm($pagename) {
   global $PageAttributes, $PCache, $FmtV;
   echo FmtPageName("<form action='\$PageUrl' method='post'>
@@ -1883,21 +1910,10 @@ function PrintAttrForm($pagename) {
   $page = $PCache[$pagename];
   foreach($PageAttributes as $attr=>$p) {
     if (!$p) continue;
-    $setting = @$page[$attr];
-    $value = @$page[$attr];
     if (strncmp($attr, 'passwd', 6) == 0) {
-      $a = substr($attr, 6);
+      $setting = PageVar($pagename, '$Passwd'.ucfirst(substr($attr, 6)));
       $value = '';
-      $setting = implode(' ', 
-        preg_replace('/^(?!@|\\w+:).+$/', '****', (array)$page['=passwd'][$a]));
-      $pwsource = $page['=pwsource'][$a];
-      $FmtV['$PWSource'] = $pwsource;
-      $FmtV['$PWCascade'] = substr($pwsource, 8);
-      if ($pwsource == 'group' || $pwsource == 'site')
-        $setting = FmtPageName('$[(set by $PWSource)]', $pagename)." $setting";
-      if (strncmp($pwsource, 'cascade:', 8) == 0)
-        $setting = FmtPageName('$[(using $PWCascade password)]', $pagename);
-     }
+    } else { $setting = @$page[$attr]; $value = @$page[$attr]; }
     $prompt = FmtPageName($p,$pagename);
     echo "<tr><td>$prompt</td>
       <td><input type='text' name='$attr' value='$value' /></td>

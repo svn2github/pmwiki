@@ -13,6 +13,7 @@ if ($DraftSuffix)
 ##  set up a 'publish' authorization level, defaulting to 'edit' authorization
 SDV($DefaultPasswords['publish'], '');
 SDV($AuthCascade['publish'], 'edit');
+SDV($FmtPV['$PasswdPublish'], 'PasswdVar($pn, "publish")');
 if ($AuthCascade['attr'] == 'edit') $AuthCascade['attr'] = 'publish';
 
 ## Add a 'publish' page attribute if desired
