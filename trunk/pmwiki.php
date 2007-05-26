@@ -828,8 +828,9 @@ function CmpPageAttr($a, $b) {
 class PageStore {
   var $dirfmt;
   var $iswrite;
-  function PageStore($d='$WorkDir/$FullName', $w=0) { 
-    $this->dirfmt = $d; $this->iswrite = $w; 
+  var $attr;
+  function PageStore($d='$WorkDir/$FullName', $w=0, $a=NULL) { 
+    $this->dirfmt = $d; $this->iswrite = $w; $this->attr = (array)$a;
     $GLOBALS['PageExistsCache'] = array();
   }
   function pagefile($pagename) {
@@ -851,6 +852,7 @@ class PageStore {
     $urlencoded = false;
     $pagefile = $this->pagefile($pagename);
     if ($pagefile && ($fp=@fopen($pagefile, "r"))) {
+      $page = $this->attr;
       while (!feof($fp)) {
         $line = fgets($fp, 4096);
         while (substr($line, -1, 1) != "\n" && !feof($fp)) 
