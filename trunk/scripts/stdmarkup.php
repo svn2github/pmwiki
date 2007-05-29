@@ -434,7 +434,7 @@ function MarkupMarkup($pagename, $text, $opt = '') {
     { $sep = ''; $pretext = wordwrap($text, 40); } 
   else 
     { $sep = '</tr><tr>'; $pretext = wordwrap($text, 75); }
-  return Keep("<table class='markup $class' align='center'>$caption
+  return Keep(@"<table class='markup $class' align='center'>$caption
       <tr><td class='markup1' valign='top'><pre>$pretext</pre></td>$sep<td 
         class='markup2' valign='top'>$html</td></tr></table>");
 }
