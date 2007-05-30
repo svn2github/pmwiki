@@ -1460,7 +1460,8 @@ function MarkupToHTML($pagename, $text, $opt = NULL) {
     foreach($markrules as $p=>$r) {
       if ($p{0} == '/') $x=preg_replace($p,$r,$x); 
       elseif (strstr($x,$p)!==false) $x=eval($r);
-      if (isset($php_errormsg)) { echo "pat=$p"; unset($php_errormsg); }
+      if (isset($php_errormsg)) 
+        { echo "ERROR: pat=$p $php_errormsg"; unset($php_errormsg); }
       if ($RedoMarkupLine) { $lines=array_merge((array)$x,$lines); continue 2; }
     }
     if ($x>'') $out .= "$x\n";
