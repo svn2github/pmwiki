@@ -272,18 +272,18 @@ function PageListSources(&$list, &$opt, $pn, &$page) {
 
   if (@$opt['trail']) {
     $trail = ReadTrail($pn, $opt['trail']);
-    $list = array();
+    $tlist = array();
     foreach($trail as $tstop) {
       $n = $tstop['pagename'];
-      $list[] = $n;
+      $tlist[] = $n;
       $tstop['parentnames'] = array();
       PCache($n, $tstop);
     }
-    $list = MatchPageNames($list, $opt['=pnfilter']);
     foreach($trail as $tstop) 
       $PCache[$tstop['pagename']]['parentnames'][] = 
         @$trail[$tstop['parent']]['pagename'];
-  } else if (@!$opt['=cached']) $list = ListPages($opt['=pnfilter']);
+    if (!@$opt['=cached']) $list = MatchPageNames($tlist, $opt['=pnfilter']);
+  } else if (!@$opt['=cached']) $list = ListPages($opt['=pnfilter']);
 
   StopWatch("PageListSources end count=".count($list));
   return 0;
@@ -472,7 +472,7 @@ function PageListCache(&$list, &$opt, $pn, &$page) {
   if (isset($opt['cache']) && !$opt['cache']) return 0;
  
   $key = $opt['=key'];
-  $cache = "$PageListCacheDir/$key.txt"; 
+  $cache = "$PageListCacheDir/$key,cache"; 
   switch ($opt['=phase']) {
     case PAGELIST_PRE:
       if (!file_exists($cache) || filemtime($cache) <= $LastModTime)
