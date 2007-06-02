@@ -1147,7 +1147,7 @@ function TextSection($text, $sections, $args = NULL) {
   if ($aa) {
     if (strpos($text, "[[#$aa]]") === false) return false;
     $rep = (@$args['anchors']) ? '$1' : '';
-    $text = preg_replace("/^.*?\n([^\n]*\\[\\[#$aa\\]\\])/s", $rep, $text, 1);
+    $text = preg_replace("/^.*?([^\n]*\\[\\[#$aa\\]\\])/s", $rep, $text, 1);
   }
   if ($bb)
     $text = preg_replace("/(\n)[^\n]*\\[\\[#$bb\\]\\].*$/s", '$1', $text, 1);
