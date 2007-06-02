@@ -70,11 +70,15 @@ Markup('input-select', '<input',
 Markup('input+sp', '<split', 
   '/(\\(:input\\s+select\\s(?>.*?:\\)))\\s+(?=\\(:input\\s)/', '$1');
 
+SDV($InputFocusFmt, 
+  "<script language='javascript' type='text/javascript'><!--
+   document.getElementById('\$InputFocusId').focus();//--></script>");
 
 ##  InputToHTML performs standard processing on (:input ...:) arguments,
 ##  and returns the formatted HTML string.
 function InputToHTML($pagename, $type, $args, &$opt) {
-  global $InputTags, $InputAttrs, $InputValues, $FmtV;
+  global $InputTags, $InputAttrs, $InputValues, $FmtV,
+    $InputFocusLevel, $InputFocusId, $InputFocusFmt, $HTMLFooterFmt;
   if (!@$InputTags[$type]) return "(:input $type $args:)";
   ##  get input arguments
   if (!is_array($args)) $args = ParseArgs($args);
@@ -115,6 +119,15 @@ function InputToHTML($pagename, $type, $args, &$opt) {
     @session_start(); 
     $_SESSION['forms'][$md5] = $opt['value'];
     $opt['value'] = $md5;
+  }
+  ##  handle focus=# option
+  $focus = @$opt['focus'];
+  if (isset($focus)
+      && (!isset($InputFocusLevel) || $focus < $InputFocusLevel)) {
+    if (!isset($opt['id'])) $opt['id'] = "wikifocus$focus";
+    $InputFocusLevel = $focus;
+    $InputFocusId = $opt['id'];
+    $HTMLFooterFmt['inputfocus'] = $InputFocusFmt;
   }
   ##  build $InputFormArgs from $opt
   $attrlist = (isset($opt[':attr'])) ? $opt[':attr'] : $InputAttrs;
@@ -219,8 +232,6 @@ function RequestArgs($req = NULL) {
   return $req;
 }
 
-
-  
 
 ## Form-based authorization prompts (for use with PmWikiAuth)
 
