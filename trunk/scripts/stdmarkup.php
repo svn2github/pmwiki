@@ -455,7 +455,8 @@ SDV($HTMLStylesFmt['markup'], "
   div.faq p, div.faq pre { margin-left:2em; }
   div.faq p.question { margin:1em 0 0.75em 0; font-weight:bold; }
   div.faqtoc div.faq * { display:none; }
-  div.faqtoc div.faq p.question { display:block; font-weight:normal; }
+  div.faqtoc div.faq p.question 
+    { display:block; font-weight:normal; margin:0.5em 0 0.5em 20px; line-height:normal; }
   div.faqtoc div.faq p.question * { display:inline; }
   ");
 
