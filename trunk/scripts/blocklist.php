@@ -72,8 +72,10 @@ if ($EnableBlocklist >= 10) {
 ##   "update a page cycle"
 array_unshift($EditFunctions, 'CheckBlocklist');
 function CheckBlocklist($pagename, &$page, &$new) { 
+  StopWatch("CheckBlocklist: begin $pagename");
   $ptext = implode('', @$_POST);
   if (@$ptext) Blocklist($pagename, $ptext); 
+  StopWatch("CheckBlocklist: end $pagename");
 }
 
 
@@ -88,6 +90,8 @@ function Blocklist($pagename, $text) {
   global $BlocklistPages, $BlockedMessagesFmt, $BlocklistDownload,
     $BlocklistDownloadRefresh, $Now, $EnablePost, $WhyBlockedFmt,
     $MessagesFmt, $BlocklistMessageFmt, $EnableWhyBlocked, $IsBlocked;
+
+  StopWatch("Blocklist: begin $pagename");
 
   $BlocklistDownload = (array)@$BlocklistDownload;
   SDV($BlocklistPages, 
@@ -155,10 +159,12 @@ function Blocklist($pagename, $text) {
 
   ##  okay, we've loaded all of the terms, now subtract any 'unblock'
   ##  terms from the block set.
+  StopWatch("Blocklist: diff unblock");
   $blockterms = array_diff((array)@$terms['block'], (array)@$terms['unblock']);
 
   ##  go through each of the remaining blockterms and see if it matches the
   ##  text -- if so, disable posting and add a message to $WhyBlockedFmt.
+  StopWatch('Blocklist: blockterms (count='.count($blockterms).')');
   $itext = strtolower($text);
   foreach($blockterms as $b) {
     if ($b{0} == '/') {
@@ -168,6 +174,7 @@ function Blocklist($pagename, $text) {
     $IsBlocked = 1;
     $WhyBlockedFmt[] = $BlockedMessagesFmt['text'] . $b;
   }
+  StopWatch('Blocklist: blockterms done');
 
   ##  If we came across any reasons to block, let's provide a message
   ##  to the author that it was blocked.  If $EnableWhyBlocked is set,
@@ -178,6 +185,7 @@ function Blocklist($pagename, $text) {
       foreach((array)$WhyBlockedFmt as $why) 
         $MessagesFmt[] = "<pre class='blocklistmessage'>$why</pre>\n";
   }
+  StopWatch("Blocklist: end $pagename");
 }
 
 

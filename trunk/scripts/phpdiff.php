@@ -23,6 +23,7 @@
 ## in the standard diff(1) output format.
 function PHPDiff($old, $new) 
 {
+   StopWatch("PHPDiff: begin");
    # split the source text into arrays of lines
    $t1 = explode("\n", $old);
    $x = array_pop($t1); 
@@ -107,6 +108,7 @@ function PHPDiff($old, $new)
     $op = 0;
   }
   $out[] = '';
+  StopWatch("PHPDiff: end");
   return join("\n",$out);
 }
 
