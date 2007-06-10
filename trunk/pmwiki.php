@@ -1017,12 +1017,11 @@ function Abort($msg, $info='') {
   exit;
 }
 
-function Redirect($pagename,$urlfmt='$PageUrl') {
+function Redirect($pagename, $urlfmt='$PageUrl') {
   # redirect the browser to $pagename
-  global $EnableRedirect,$RedirectDelay;
-  SDV($RedirectDelay,0);
+  global $EnableRedirect, $RedirectDelay, $EnableStopWatch;
+  SDV($RedirectDelay, 0);
   clearstatcache();
-  #if (!PageExists($pagename)) $pagename=$DefaultPage;
   $pageurl = FmtPageName($urlfmt,$pagename);
   if (IsEnabled($EnableRedirect,1) && 
       (!isset($_REQUEST['redirect']) || $_REQUEST['redirect'])) {
@@ -1031,7 +1030,11 @@ function Redirect($pagename,$urlfmt='$PageUrl') {
     echo "<html><head>
       <meta http-equiv='Refresh' Content='$RedirectDelay; URL=$pageurl' />
      <title>Redirect</title></head><body></body></html>";
-  } else echo "<a href='$pageurl'>Redirect to $pageurl</a>";
+     exit;
+  }
+  echo "<a href='$pageurl'>Redirect to $pageurl</a>";
+  if (@$EnableStopWatch && function_exists('StopWatchHTML'))
+    StopWatchHTML($pagename, 1);
   exit;
 }
 
@@ -1528,9 +1531,14 @@ function HandleBrowse($pagename, $auth = 'read') {
 ## an optional list of functions to use instead of $EditFunctions.
 function UpdatePage(&$pagename, &$page, &$new, $fnlist = NULL) {
   global $EditFunctions, $IsPagePosted;
+  StopWatch("UpdatePage: begin $pagename");
   if (is_null($fnlist)) $fnlist = $EditFunctions;
   $IsPagePosted = false;
-  foreach((array)$fnlist as $fn) $fn($pagename, $page, $new);
+  foreach((array)$fnlist as $fn) {
+    StopWatch("UpdatePage: $fn ($pagename)");
+    $fn($pagename, $page, $new);
+  }
+  StopWatch("UpdatePage: end $pagename");
   return $IsPagePosted;
 }
 
@@ -1654,7 +1662,8 @@ function PostRecentChanges($pagename,&$page,&$new) {
     if (@$seen[$rcname]++) continue;
     $rcpage = ReadPage($rcname);
     $rcelim = preg_quote(preg_replace("/$RCDelimPattern.*$/",' ',$pgtext),'/');
-    $rcpage['text'] = preg_replace("/[^\n]*$rcelim.*\n/","",@$rcpage['text']);
+    # $rcpage['text'] = preg_replace("/[^\n]*$rcelim.*\n/","",@$rcpage['text']);
+    $rcpage['text'] = preg_replace("/^.*$rcelim.*\n/m", '', @$rcpage['text']);
     if (!preg_match("/$RCDelimPattern/",$rcpage['text'])) 
       $rcpage['text'] .= "$pgtext\n";
     else
