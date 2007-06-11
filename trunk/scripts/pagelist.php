@@ -175,7 +175,7 @@ function FmtPageList($outfmt, $pagename, $opt) {
   $FmtV['$MatchCount'] = count($matches);
   if ($outfmt != '$MatchList') 
     { $FmtV['$MatchList'] = $out; $out = FmtPageName($outfmt, $pagename); }
-  $out = preg_replace('/^(<[^>]+>)(.*)/esm', "PSS('$1').Keep(PSS('$2'))", $out);
+  if ($out[0] == '<') $out = Keep($out);
   return PRR($out);
 }
 
@@ -581,7 +581,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
     array_splice($tparts, $i, 3);
   }
 
-  SDV($opt['class'], 'fpltemplate');
+  SDVA($opt, array('class' => 'fpltemplate', 'wrap' => 'div'));
 
   ##  get the list of pages
   $matches = array_values(MakePageList($pagename, $opt, 0));
@@ -655,8 +655,12 @@ function FPLTemplate($pagename, &$matches, $opt) {
   }
 
   $class = preg_replace('/[^-a-zA-Z0-9\\x80-\\xff]/', ' ', @$opt['class']);
-  $div = ($class) ? "<div class='$class'>" : '<div>';
-  $out = $div.MarkupToHTML($pagename, $out, array('escape' => 0)).'</div>';
+  if ($class) $class = " class='$class'";
+  $wrap = @$opt['wrap'];
+  if ($wrap != 'inline') {
+    $out = MarkupToHTML($pagename, $out, array('escape' => 0));
+    if ($wrap != 'none') $out = "<div$class>$out</div>";
+  }
   $Cursor = $savecursor;
   StopWatch("FPLTemplate end");
   return $out;
