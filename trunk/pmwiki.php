@@ -1664,7 +1664,6 @@ function PostRecentChanges($pagename,&$page,&$new) {
     if (@$seen[$rcname]++) continue;
     $rcpage = ReadPage($rcname);
     $rcelim = preg_quote(preg_replace("/$RCDelimPattern.*$/",' ',$pgtext),'/');
-    # $rcpage['text'] = preg_replace("/[^\n]*$rcelim.*\n/","",@$rcpage['text']);
     $rcpage['text'] = preg_replace("/^.*$rcelim.*\n/m", '', @$rcpage['text']);
     if (!preg_match("/$RCDelimPattern/",$rcpage['text'])) 
       $rcpage['text'] .= "$pgtext\n";
