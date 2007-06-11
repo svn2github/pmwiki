@@ -1148,12 +1148,14 @@ function TextSection($text, $sections, $args = NULL) {
   @list($x, $aa, $dots, $b, $bb) = $match;
   if (!$dots && !$b) $bb = $npat;
   if ($aa) {
-    if (strpos($text, "[[#$aa]]") === false) return false;
-    $rep = (@$args['anchors']) ? '$1' : '';
-    $text = preg_replace("/^.*?([^\n]*\\[\\[#$aa\\]\\])/s", $rep, $text, 1);
+    $pos = strpos($text, "[[#$aa]]");  if ($pos === false) return false;
+    if (@$args['anchors']) 
+      while ($pos > 0 && $text[$pos-1] != "\n") $pos--;
+    else $pos += strlen("[[#$aa]]");
+    $text = substr($text, $pos);
   }
   if ($bb)
-    $text = preg_replace("/(\n)[^\n]*\\[\\[#$bb\\]\\].*$/s", '$1', $text, 1);
+    $text = preg_replace("/^[^\n]*\\[\\[#$bb\\]\\].*$/sm", '', $text, 1);
   return $text;
 }
 
