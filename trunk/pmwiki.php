@@ -466,7 +466,7 @@ function DRange($when) {
 ## of that string.  (It can be overridden via $AsSpacedFunction.)
 function AsSpaced($text) {
   $text = preg_replace("/([[:lower:]\\d])([[:upper:]])/", '$1 $2', $text);
-  $text = preg_replace('/(?<![-\\d])(\\d+( |$))/',' $1',$text);
+  $text = preg_replace('/([^-\\d])(\\d[-\\d]*( |$))/','$1 $2',$text);
   return preg_replace("/([[:upper:]])([[:upper:]][[:lower:]\\d])/",
     '$1 $2', $text);
 }
