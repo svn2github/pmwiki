@@ -699,8 +699,10 @@ function PageTextVar($pagename, $var) {
     if ($page) {
       foreach((array)$PageTextVarPatterns as $pat) 
         if (preg_match_all($pat, @$page['text'], $match, PREG_SET_ORDER))
-          foreach($match as $m)  
-            $pc["=p_{$m[2]}"] = Qualify($pagename, $m[3]);
+          foreach($match as $m) {
+            $t = preg_replace("/\\{\\$:{$m[2]}\\}/", '', $m[3]);
+            $pc["=p_{$m[2]}"] = Qualify($pagename, $t);
+          }
     }
   }
   return @$PCache[$pagename]["=p_$var"];
@@ -1155,7 +1157,7 @@ function TextSection($text, $sections, $args = NULL) {
     $text = substr($text, $pos);
   }
   if ($bb)
-    $text = preg_replace("/^[^\n]*\\[\\[#$bb\\]\\].*$/sm", '', $text, 1);
+    $text = preg_replace("/(\n)[^\n]*\\[\\[#$bb\\]\\].*$/s", '$1', $text, 1);
   return $text;
 }
 
