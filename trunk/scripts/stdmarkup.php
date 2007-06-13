@@ -259,7 +259,7 @@ Markup('[[->','>[[|',
   "Keep(MakeLink(\$pagename,PSS('$2'),PSS('$1'),'$3'),'L')");
 
 if (IsEnabled($EnableRelativePageLinks, 1))
-  SDV($QualifyPatterns['/(\\[\\[(?>[^\\]]+?->)?\\s*)([-\\w\\s\']+([|#?].*?)?\\]\\])/e'], "PSS('$1').\$group.PSS('/$2')");
+  SDV($QualifyPatterns['/(\\[\\[(?>[^\\]]+?->)?\\s*)([-\\w\\s\'()]+([|#?].*?)?\\]\\])/e'], "PSS('$1').\$group.PSS('/$2')");
 
 ## [[#anchor]]
 Markup('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/e',
