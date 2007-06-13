@@ -84,7 +84,7 @@ function AsSpacedUTF8($text) {
     $upper = implode('|', array_values($CaseConversions));
   }
   $text = preg_replace("/($lower|\\d)($upper)/", '$1 $2', $text);
-  $text = preg_replace('/(?<![-\\d])(\\d+( |$))/', ' $1', $text);
+  $text = preg_replace('/([^-\\d])(\\d[-\\d]*( |$))/', '$1 $2', $text);
   return preg_replace("/($upper)(($upper)($lower|\\d))/", '$1 $2', $text);
 }
 
