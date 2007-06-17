@@ -11,7 +11,7 @@
         $EnableBlocklist = 1;
 
     With $EnableBlocklist set to 1, this module will search through
-    the Site.Blocklist page, as well as any other pages given by
+    the SiteAdmin.Blocklist page, as well as any other pages given by
     the $Blocklist pages variable, looking for lines of the
     form "block:some phrase" or "block:/regex/", with "some phrase" 
     and "/regex/" indicating things to be excluded from any 
@@ -58,10 +58,10 @@ if (IsEnabled($EnableBlocklistImmediate, 1)) {
 ##   If $EnableBlocklist is set to 10 or higher, then arrange to 
 ##   periodically download the "chongqed" and "moinmaster" blacklists.
 if ($EnableBlocklist >= 10) {
-  SDVA($BlocklistDownload['Site.Blocklist-Chongqed'], array(
+  SDVA($BlocklistDownload['SiteAdmin.Blocklist-Chongqed'], array(
     'url' => 'http://blacklist.chongqed.org/',
     'format' => 'regex'));
-  SDVA($BlocklistDownload['Site.Blocklist-MoinMaster'], array(
+  SDVA($BlocklistDownload['SiteAdmin.Blocklist-MoinMaster'], array(
     'url' => 'http://moinmaster.wikiwikiweb.de/BadContent?action=raw',
     'format' => 'regex'));
 }
@@ -95,7 +95,8 @@ function Blocklist($pagename, $text) {
 
   $BlocklistDownload = (array)@$BlocklistDownload;
   SDV($BlocklistPages, 
-    array_merge(array('{$SiteGroup}.Blocklist', '{$SiteGroup}.Blocklist-Farm'),
+    array_merge(array('$SiteAdminGroup.Blocklist', 
+                      '$SiteAdminGroup.Blocklist-Farm'),
                 array_keys($BlocklistDownload)));
   SDV($BlocklistMessageFmt, "<h3 class='wikimessage'>$[This post has been blocked by the administrator]</h3>");
   SDVA($BlockedMessagesFmt, array(

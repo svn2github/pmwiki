@@ -100,6 +100,7 @@ $UrlLinkFmt =
 umask(002);
 $CookiePrefix = '';
 $SiteGroup = 'Site';
+$SiteAdminGroup = 'SiteAdmin';
 $DefaultGroup = 'Main';
 $DefaultName = 'HomePage';
 $GroupHeaderFmt = '(:include {$Group}.GroupHeader self=0 basepage={*$FullName}:)(:nl:)';

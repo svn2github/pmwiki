@@ -78,3 +78,9 @@ if (IsEnabled($EnableNotify,0))
 if (IsEnabled($EnableDiag,0)) 
   include_once("$FarmD/scripts/diag.php");
 
+if (IsEnabled($EnableUpgradeCheck,1)) {
+  SDV($StatusPageName, "$SiteAdminGroup.Status");
+  $page = ReadPage($StatusPageName, READPAGE_CURRENT);
+  if (@$page['updatedto'] != $VersionNum) 
+    { $action = 'upgrade'; include_once('scripts/upgrades.php'); }
+}

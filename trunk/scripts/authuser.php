@@ -44,8 +44,8 @@ function AuthUserId($pagename, $id, $pw=NULL) {
   foreach((array)$AuthUser as $k=>$v) $auth[$k] = (array)$v;
   $authid = '';
 
-  # load information from Site.AuthUser (or page in $AuthUserPageFmt)
-  SDV($AuthUserPageFmt, '$SiteGroup.AuthUser');
+  # load information from SiteAdmin.AuthUser (or page in $AuthUserPageFmt)
+  SDV($AuthUserPageFmt, '$SiteAdminGroup.AuthUser');
   SDVA($AuthUserFunctions, array(
     'htpasswd' => 'AuthUserHtPasswd',
     'ldap' => 'AuthUserLDAP',

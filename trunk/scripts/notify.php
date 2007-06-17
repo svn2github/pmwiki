@@ -47,7 +47,7 @@
 SDV($NotifyDelay, 0);
 SDV($NotifySquelch, 10800);
 SDV($NotifyFile, "$WorkDir/.notifylist");
-SDV($NotifyListPageFmt, '{$SiteGroup}.NotifyList');
+SDV($NotifyListPageFmt, '$SiteAdminGroup.NotifyList');
 SDV($NotifySubjectFmt, '[$WikiTitle] recent notify posts');
 SDV($NotifyBodyFmt, 
   "Recent \$WikiTitle posts:\n" 
