@@ -36,7 +36,7 @@ function HandleUpgrade($pagename, $auth = 'ALWAYS') {
 
     if (@$_REQUEST['migrate'] == 'yes') {
       ##  if the admin wants PmWiki to migrate, do it.
-      $page = RetrieveAuthPage($pagename, 'admin', true);
+      $page = RetrieveAuthPage($n0, 'admin', true);
       StopWatch("HandleUpgrade: copying $n0 -> $n1");
       if ($page) { 
         WritePage($n1, $page); 
