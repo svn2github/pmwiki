@@ -105,8 +105,8 @@ SDVA($HandleActions, array('upload' => 'HandleUpload',
   'postupload' => 'HandlePostUpload',
   'download' => 'HandleDownload'));
 SDVA($HandleAuth, array('upload' => 'upload',
-  'postupload' => 'upload',
   'download' => 'read'));
+SDV($HandleAuth['postupload'], $HandleAuth['upload']);
 SDV($UploadVerifyFunction, 'UploadVerifyBasic');
 
 function MakeUploadName($pagename,$x) {
