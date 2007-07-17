@@ -114,7 +114,7 @@ function MakeUploadName($pagename,$x) {
   SDV($UploadNameChars, "-\\w. ");
   $x = preg_replace("/[^$UploadNameChars]/", '', $x);
   $x = preg_replace('/\\.[^.]*$/e', "strtolower('$0')", $x);
-  $x = preg_replace('/^[^[:alnum:]]+/', '', $x);
+  $x = preg_replace('/^[^[:alnum:]_]+/', '', $x);
   return preg_replace('/[^[:alnum:]_]+$/', '', $x);
 }
 
