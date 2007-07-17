@@ -1,7 +1,13 @@
-version=pmwiki-2.1.beta34 ordered=1 urlencoded=1
+version=pmwiki-2.2.0-beta57 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (X11; U; Linux i686 (x86_64); en-US; rv:1.8.1.2) Gecko/20061023 SUSE/2.0.0.2-1.1 Firefox/2.0.0.2
+author=Pm
+charset=ISO-8859-1
+csum=
+host=76.183.97.54
 name=Site.AuthUser
-passwdattr=@lock
-passwdedit=@lock
-targets=SiteAdmin.AuthUser
-text=(:redirect SiteAdmin.AuthUser:)
-time=1000000000
+passwdattr=*
+passwdedit=*
+rev=12
+targets=
+text=(:redirect SiteAdmin.AuthUser:)%0a
+time=1182105286
