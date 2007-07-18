@@ -82,5 +82,5 @@ if (IsEnabled($EnableUpgradeCheck,1)) {
   SDV($StatusPageName, "$SiteAdminGroup.Status");
   $page = ReadPage($StatusPageName, READPAGE_CURRENT);
   if (@$page['updatedto'] != $VersionNum) 
-    { $action = 'upgrade'; include_once('scripts/upgrades.php'); }
+    { $action = 'upgrade'; include_once("$FarmD/scripts/upgrades.php"); }
 }
