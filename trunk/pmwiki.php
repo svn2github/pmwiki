@@ -1243,7 +1243,7 @@ function RedirectMarkup($pagename, $opt) {
     return '';
   if (preg_match('/^30[1237]$/', @$opt['status'])) 
      header("HTTP/1.1 {$opt['status']}");
-  Redirect($to, "{\$PageUrl}?from=$pagename$anchor");
+  Redirect($to, @"{\$PageUrl}?from=$pagename$anchor");
   exit();
 }
    
