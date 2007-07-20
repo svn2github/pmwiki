@@ -554,14 +554,15 @@ function FPLCountA($pagename, &$matches, $opt) {
 
 ##  FPLTemplate handles PagelistTemplates
 function FPLTemplate($pagename, &$matches, $opt) {
-  global $Cursor, $FPLTemplatePageFmt, $PageListArgPattern;
+  global $Cursor, $FPLTemplatePageFmt, $RASPageName, $PageListArgPattern;
   SDV($FPLTemplatePageFmt, array('{$FullName}',
     '{$SiteGroup}.LocalTemplates', '{$SiteGroup}.PageListTemplates'));
 
   StopWatch("FPLTemplate begin");
   $template = @$opt['template'];
   if (!$template) $template = @$opt['fmt'];
-  $ttext = PVSE(RetrieveAuthSection($pagename, $template, $FPLTemplatePageFmt));
+  $ttext = RetrieveAuthSection($pagename, $template, $FPLTemplatePageFmt);
+  $ttext = PVSE(Qualify($RASPageName, $ttext));
 
   ##  save any escapes
   $ttext = MarkupEscape($ttext);
