@@ -52,10 +52,12 @@ function CondOnTrail($pagename, $condparm) {
 }
 
 function ReadTrail($pagename, $trailname) {
-  global $SuffixPattern,$GroupPattern,$WikiWordPattern,$LinkWikiWords;
+  global $RASPageName, $SuffixPattern, $GroupPattern, $WikiWordPattern,
+    $LinkWikiWords;
   if (preg_match('/^\\[\\[(.+?)(-&gt;|\\|)(.+?)\\]\\]$/', $trailname, $m)) 
     $trailname = ($m[2] == '|') ? $m[1] : $m[3];
   $trailtext = RetrieveAuthSection($pagename, $trailname);
+  $trailname = $RASPageName;
   $t = array();
   $n = 0;
   foreach(explode("\n", htmlspecialchars(@$trailtext, ENT_NOQUOTES)) 

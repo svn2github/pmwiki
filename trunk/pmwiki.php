@@ -1167,11 +1167,11 @@ function TextSection($text, $sections, $args = NULL) {
 ##  If $pagesection starts with anything other than '#', it identifies
 ##  the page to extract text from.  Otherwise RetrieveAuthSection looks
 ##  in the pages given by $list, or in $pagename if $list is not specified.
-##  Any page variables in the text are pagename-qualified.
-##                    WARNING WARNING WARNING
-##  The return values of this function are likely to change, so don't
-##  rely on it just yet.
+##  The selected page is placed in the global $RASPageName variable.
+##  It's the caller's responsibility to Qualify() the returned text
+##  if needed.
 function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') {
+  global $RASPageName;
   if ($pagesection{0} != '#')
     $list = array(MakePageName($pagename, $pagesection));
   else if (is_null($list)) $list = array($pagename);
@@ -1181,8 +1181,9 @@ function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') 
     $tpage = RetrieveAuthPage($t, $auth, false, READPAGE_CURRENT);
     if (!$tpage) continue;
     $text = TextSection($tpage['text'], $pagesection);
-    if ($text !== false) return Qualify($t, $text);
+    if ($text !== false) { $RASPageName = $t; return $text; }
   }
+  $RASPageName = '';
   return false;
 }
 
