@@ -1168,8 +1168,7 @@ function TextSection($text, $sections, $args = NULL) {
 ##  the page to extract text from.  Otherwise RetrieveAuthSection looks
 ##  in the pages given by $list, or in $pagename if $list is not specified.
 ##  The selected page is placed in the global $RASPageName variable.
-##  It's the caller's responsibility to Qualify() the returned text
-##  if needed.
+##  The caller is responsible for calling Qualify() as needed.
 function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') {
   global $RASPageName;
   if ($pagesection{0} != '#')
