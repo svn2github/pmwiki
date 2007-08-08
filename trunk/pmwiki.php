@@ -435,22 +435,46 @@ function StopWatch($x) {
 ## DRange converts a variety of string formats into date (ranges).
 ## It returns the start and end timestamps (+1 second) of the specified date.
 function DRange($when) {
+  global $Now;
   ##  unix/posix @timestamp dates
   if (preg_match('/^\\s*@(\\d+)\\s*(.*)$/', $when, $m)) {
     $t0 = $m[2] ? strtotime($m[2], $m[1]) : $m[1];
     return array($t0, $t0+1);
   }
   ##  ISO-8601 dates
-  $dpat = '#(?<!\\d)(19\\d\\d|20[0-3]\\d)([-./]?)([01]\\d)(?:\\2([0-3]\\d))?(?!\\d)#';
+  $dpat = '/
+    (?<!\\d)                 # non-digit
+    (19\\d\\d|20[0-3]\\d)    # year ($1)
+    ([-.\\/]?)               # date separator ($2)
+    (0\\d|1[0-2])            # month ($3)
+    (?: \\2                  # repeat date separator
+      ([0-2]\\d|3[0-1])      # day ($4)
+      (?: T                  # time marker
+        ([01]\\d|2[0-4])     # hour ($5)
+        ([.:]?)              # time separator ($6)
+        ([0-5]\\d)           # minute ($7)
+        (?: \\6              # repeat time separator
+          ([0-5]\\d|60)      # seconds ($8)
+        )?                   # optional :ss
+      )?                     # optional Thh:mm:ss
+    )?                       # optional -ddThh:mm:ss
+    (?!\d)                   # non-digit
+    /x';
   if (preg_match($dpat, $when, $m)) {
-    if ($m[4] == '') { $m[4] = 1; $d1 = 0; $m1 = 1; }
-    else { $d1 = 1; $m1 = 0; }
-    $t0 = mktime(0, 0, 0, $m[3],       $m[4],       $m[1]);
-    $t1 = mktime(0, 0, 0, $m[3] + $m1, $m[4] + $d1, $m[1]);
+    $n = $m;
+    ##  if no day given, assume 1st of month and full month range
+    if (@$m[4] == '') { $m[4] = 1; $n[4] = 1; $n[3]++; }
+    ##  if no time given, assume range of 1 day
+    if (@$m[5] == '') { @$n[4]++; }
+    ##  if no seconds given, assume range of 1 minute
+    if (@$m[8] == '') { @$n[7]++; }
+    $t0 = @mktime($m[5], $m[7], $m[8], $m[3], $m[4], $m[1]);
+    $t1 = @mktime($n[5], $n[7], $n[8], $n[3], $n[4], $n[1]);
     return array($t0, $t1);
   }
-  ##  today, tomorrow, yesterday
+  ##  now, today, tomorrow, yesterday
   NoCache();
+  if ($when == 'now') return array($Now, $Now+1);
   $m = localtime(time());
   if ($when == 'tomorrow') { $m[3]++; $when = 'today'; }
   if ($when == 'yesterday') { $m[3]--; $when = 'today'; }
