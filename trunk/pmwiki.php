@@ -1366,17 +1366,17 @@ function FormatTableRow($x, $sep = '\\|\\|') {
   return "<:table,1><tr $trattr>$y</tr>";
 }
 
-function LinkIMap($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
+function LinkIMap($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   global $FmtV, $IMap, $IMapLinkFmt, $UrlLinkFmt;
   $FmtV['$LinkUrl'] = PUE(str_replace('$1',$path,$IMap[$imap]));
   $FmtV['$LinkText'] = $txt;
-  $FmtV['$LinkAlt'] = str_replace(array('"',"'"),array('&#34;','&#39;'),$title);
+  $FmtV['$LinkAlt'] = str_replace(array('"',"'"),array('&#34;','&#39;'),$alt);
   if (!$fmt) 
     $fmt = (isset($IMapLinkFmt[$imap])) ? $IMapLinkFmt[$imap] : $UrlLinkFmt;
   return str_replace(array_keys($FmtV),array_values($FmtV),$fmt);
 }
 
-function LinkPage($pagename,$imap,$path,$title,$txt,$fmt=NULL) {
+function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   global $QueryFragPattern, $LinkPageExistsFmt, $LinkPageSelfFmt,
     $LinkPageCreateSpaceFmt, $LinkPageCreateFmt, $LinkTargets,
     $EnableLinkPageRelative;

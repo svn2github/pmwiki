@@ -118,7 +118,7 @@ function MakeUploadName($pagename,$x) {
   return preg_replace('/[^[:alnum:]_]+$/', '', $x);
 }
 
-function LinkUpload($pagename, $imap, $path, $title, $txt, $fmt=NULL) {
+function LinkUpload($pagename, $imap, $path, $alt, $txt, $fmt=NULL) {
   global $FmtV, $UploadFileFmt, $LinkUploadCreateFmt, $UploadUrlFmt,
     $UploadPrefixFmt, $EnableDirectDownload;
   if (preg_match('!^(.*)/([^/]+)$!', $path, $match)) {
@@ -136,7 +136,7 @@ function LinkUpload($pagename, $imap, $path, $title, $txt, $fmt=NULL) {
                             ? "$UploadUrlFmt$UploadPrefixFmt/$upname"
                             : "{\$PageUrl}?action=download&amp;upname=$upname",
                           $pagename));
-  return LinkIMap($pagename, $imap, $path, $title, $txt, $fmt);
+  return LinkIMap($pagename, $imap, $path, $alt, $txt, $fmt);
 }
 
 function HandleUpload($pagename, $auth = 'upload') {
