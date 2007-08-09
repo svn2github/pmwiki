@@ -1429,13 +1429,13 @@ function MakeLink($pagename,$tgt,$txt=NULL,$suffix=NULL,$fmt=NULL) {
   return $out;
 }
 
-function Markup($id,$cmd,$pat=NULL,$rep=NULL) {
+function Markup($id, $when, $pat=NULL, $rep=NULL) {
   global $MarkupTable,$MarkupRules;
   unset($MarkupRules);
-  if (preg_match('/^([<>])?(.+)$/',$cmd,$m)) {
-    $MarkupTable[$id]['cmd']=$cmd;
+  if (preg_match('/^([<>])?(.+)$/', $when, $m)) {
+    $MarkupTable[$id]['cmd'] = $when;
     $MarkupTable[$m[2]]['dep'][$id] = $m[1];
-    if (!$m[1]) $m[1]='=';
+    if (!$m[1]) $m[1] = '=';
     if (@$MarkupTable[$m[2]]['seq']) {
       $MarkupTable[$id]['seq'] = $MarkupTable[$m[2]]['seq'].$m[1];
       foreach((array)@$MarkupTable[$id]['dep'] as $i=>$m)
@@ -1444,8 +1444,8 @@ function Markup($id,$cmd,$pat=NULL,$rep=NULL) {
     }
   }
   if ($pat && !isset($MarkupTable[$id]['pat'])) {
-    $MarkupTable[$id]['pat']=$pat;
-    $MarkupTable[$id]['rep']=$rep;
+    $MarkupTable[$id]['pat'] = $pat;
+    $MarkupTable[$id]['rep'] = $rep;
   }
 }
 
