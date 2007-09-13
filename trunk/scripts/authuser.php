@@ -130,7 +130,7 @@ function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
   global $AuthLDAPBindDN, $AuthLDAPBindPassword;
   if (!$pw) return false;
   if (!function_exists('ldap_connect')) 
-    Abort('authuser: LDAP authentication requires ldap functions', 'ldapfn');
+    Abort('authuser: LDAP authentication requires PHP ldap functions','ldapfn');
   foreach ((array)$pwlist as $ldap) {
     if (!preg_match('!(ldaps?://[^/]+)/(.*)$!', $ldap, $match))
       continue;
