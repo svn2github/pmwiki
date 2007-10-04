@@ -47,6 +47,8 @@ SDVA($UploadExts,array(
   'odt' => 'application/vnd.oasis.opendocument.text',
   'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
   'odp' => 'application/vnd.oasis.opendocument.presentation',
+  'kml' => 'application/vnd.google-earth.kml+xml',
+  'kmz' => 'application/vnd.google-earth.kmz',
   '' => 'text/plain'));
 
 SDV($UploadMaxSize,50000);
