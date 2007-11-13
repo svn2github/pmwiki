@@ -478,7 +478,7 @@ function CondDate($condparm) {
     if ($match[2] == '' && $x0 >= $t1) return false;
   }
   if ($match[3] > '') {
-    list($t0, $t1) = Drange($match[3]);
+    list($t0, $t1) = DRange($match[3]);
     if ($x0 >= $t1) return false;
   }
   return true;
