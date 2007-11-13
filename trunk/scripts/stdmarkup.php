@@ -64,6 +64,7 @@ if (IsEnabled($EnableRelativePageVars, 0))
 ## character entities
 Markup('&','<if','/&amp;(?>([A-Za-z0-9]+|#\\d+|#[xX][A-Fa-f0-9]+));/',
   '&$1;');
+Markup('&amp;amp;', '<&', '/&amp;amp;/', Keep('&amp;'));
 
 
 ## (:if:)/(:elseif:)/(:else:)
