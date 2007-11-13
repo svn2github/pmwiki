@@ -838,7 +838,7 @@ function XLPage($lang,$p) {
     }
     if (@$xl['Locale']) setlocale(LC_ALL,$xl['Locale']);
     if (@$xl['TimeFmt']) $TimeFmt=$xl['TimeFmt'];
-    array_unshift($XLLangs,$lang);
+    if (!in_array($lang, $XLLangs)) array_unshift($XLLangs, $lang);
     XLSDV($lang,$xl);
   }
 }
