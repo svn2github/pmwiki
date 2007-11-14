@@ -29,6 +29,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 StopWatch('PmWiki');
 @ini_set('magic_quotes_runtime', 0);
 @ini_set('magic_quotes_sybase', 0);
+if (@ini_get('pcre.backtrack_limit') < 1000000) 
+  @ini_set('pcre.backtrack_limit', 1000000);
 if (ini_get('register_globals')) 
   foreach($_REQUEST as $k=>$v) { 
     if (preg_match('/^(GLOBALS|_SERVER|_GET|_POST|_COOKIE|_FILES|_ENV|_REQUEST|_SESSION|FarmD|WikiDir)$/i', $k)) exit();
