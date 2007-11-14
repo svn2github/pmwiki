@@ -10,6 +10,7 @@
     software authors when debugging PmWiki or other scripts.
 */
 
+@ini_set('display_errors', '1');
 @ini_set('track_errors','1');
 
 if ($action=='diag') {
