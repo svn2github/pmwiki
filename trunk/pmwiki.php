@@ -1034,7 +1034,7 @@ function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0) {
 
 function Abort($msg, $info='') {
   # exit pmwiki with an abort message
-  global $ScriptUrl;
+  global $ScriptUrl, $Charset;
   if ($info) 
     $info = "<p class='vspace'><a target='_blank' rel='nofollow' href='http://www.pmwiki.org/pmwiki/info/$info'>$[More information]</a></p>";
   $msg = "<h3>$[PmWiki can't process your request]</h3>
@@ -1042,6 +1042,7 @@ function Abort($msg, $info='') {
     <p class='vspace'>We are sorry for any inconvenience.</p>
     $info
     <p class='vspace'><a href='$ScriptUrl'>$[Return to] $ScriptUrl</a></p>";
+  @header("Content-type: text/html; charset=$Charset");
   echo preg_replace('/\\$\\[([^\\]]+)\\]/e', "XL(PSS('$1'))", $msg);
   exit;
 }
