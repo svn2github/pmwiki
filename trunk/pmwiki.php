@@ -1167,7 +1167,7 @@ function CondText($pagename,$condspec,$condtext) {
 ##    #abc           - [[#abc]] to next anchor
 ##    #abc#def       - [[#abc]] up to [[#def]]
 ##    #abc#, #abc..  - [[#abc]] to end of text
-##    ##abc, ..#abc  - beginning of text to [[#abc]]
+##    ##abc, #..#abc - beginning of text to [[#abc]]
 ##  Returns the text unchanged if no sections are requested,
 ##  or false if a requested beginning anchor isn't in the text.
 function TextSection($text, $sections, $args = NULL) {
