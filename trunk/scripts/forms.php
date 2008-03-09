@@ -199,6 +199,7 @@ function InputSelect($pagename, $type, $markup) {
     $opt = array_merge($opt, $oo);
   }
   $attrlist = array_diff($InputAttrs, array('value'));
+  $attr = array();
   foreach($attrlist as $a) {
     if (!isset($opt[$a]) || $opt[$a]===false) continue;
     $attr[] = "$a='".str_replace("'", '&#39;', $opt[$a])."'";
