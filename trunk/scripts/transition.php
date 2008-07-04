@@ -62,6 +62,9 @@
 ## if ?trans=0 is specified, then we don't do any fixups.
 if (@$_REQUEST['trans']==='0') return;
 
+## set a default Transition version if we don't have one
+SDV($Transition['version'], $VersionNum);
+
 ## Transitions from 2.2.0-beta41
 if (@$Transition['version'] < 2001941)
   SDVA($Transition, array('wspre' => 1));
