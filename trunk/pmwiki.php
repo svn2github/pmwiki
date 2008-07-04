@@ -1849,9 +1849,10 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     $postvars .= "<input type='hidden' name='$k' value=\"$v\" />\n";
   }
   $FmtV['$PostVars'] = $postvars;
+  $r = str_replace("'", '%37', stripmagic($_SERVER['REQUEST_URI']));
   SDV($AuthPromptFmt,array(&$PageStartFmt,
     "<p><b>$[Password required]</b></p>
-      <form name='authform' action='{$_SERVER['REQUEST_URI']}' method='post'>
+      <form name='authform' action='$r' method='post'>
         $[Password]: <input tabindex='1' type='password' name='authpw' 
           value='' />
         <input type='submit' value='OK' />\$PostVars</form>
