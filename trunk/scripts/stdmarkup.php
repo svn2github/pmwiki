@@ -68,27 +68,32 @@ Markup('&amp;amp;', '<&', '/&amp;amp;/', Keep('&amp;'));
 
 
 ## (:if:)/(:elseif:)/(:else:)
-Markup('if', 'fulltext',
-  "/ \\(:if (?:end)? \\b[^\n]*?:\\)
+SDV($CondTextPattern, 
+  "/ \\(:if (\d*) (?:end)? \\b[^\n]*?:\\)
      .*?
-     (?: \\(: (?:if|ifend) \\s* :\\)
-     |   (?=\\(:(?:if|ifend)\\b[^\n]*?:\\) | $)
+     (?: \\(: (?:if\\1|if\\1end) \\s* :\\)
+     |   (?=\\(:(?:if\\1|if\\1end)\\b[^\n]*?:\\) | $)
      )
-   /seix",
-  "CondText2(\$pagename, PSS('$0'))");
+   /seix");
+SDV($CondTextReplacement, "CondText2(\$pagename, PSS('$0'), '$1')");
+Markup('if', 'fulltext', $CondTextPattern, $CondTextReplacement);
 
-function CondText2($pagename, $text) {
-  global $Conditions;
-  $parts = preg_split('/\\(:(?:ifend|if|else *if|else)\\b\\s*(.*?)\\s*:\\)/', 
+function CondText2($pagename, $text, $code = '') {
+  global $Conditions, $CondTextPattern, $CondTextReplacement;
+  $if = "if$code";
+  
+  $parts = preg_split("/\\(:(?:{$if}end|$if|else *$if|else$code)\\b\\s*(.*?)\\s*:\\)/", 
                       $text, -1, PREG_SPLIT_DELIM_CAPTURE);
   $x = array_shift($parts);
   while ($parts) {
     list($condspec, $condtext) = array_splice($parts, 0, 2);
     if (!preg_match("/^\\s*(!?)\\s*(\\S*)\\s*(.*?)\\s*$/", $condspec, $match)) continue;
     list($x, $not, $condname, $condparm) = $match;
-    if (!isset($Conditions[$condname])) return $condtext;
+    if (!isset($Conditions[$condname])) 
+      return preg_replace($CondTextPattern, $CondTextReplacement, $condtext);
     $tf = @eval("return ({$Conditions[$condname]});");
-    if ($tf xor $not) return $condtext;
+    if ($tf xor $not)
+      return preg_replace($CondTextPattern, $CondTextReplacement, $condtext);
   }
   return '';
 }
