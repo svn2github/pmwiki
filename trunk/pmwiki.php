@@ -207,6 +207,8 @@ $ActionTitleFmt = array(
 $DefaultPasswords = array('admin'=>'*','read'=>'','edit'=>'','attr'=>'');
 $AuthCascade = array('edit'=>'read', 'attr'=>'edit');
 $AuthList = array('' => 1, 'nopass:' => 1, '@nopass' => 1);
+$SessionEncode = 'base64_encode';
+$SessionDecode = 'base64_decode';
 
 $Conditions['enabled'] = '(boolean)@$GLOBALS[$condparm]';
 $Conditions['false'] = 'false';
@@ -1902,7 +1904,8 @@ function IsAuthorized($chal, $source, &$from) {
 ## to set the corresponding values of $AuthId, $AuthPw, and $AuthList
 ## as needed.
 function SessionAuth($pagename, $auth = NULL) {
-  global $AuthId, $AuthList, $AuthPw;
+  global $AuthId, $AuthList, $AuthPw, $SessionEncode, $SessionDecode,
+    $EnableSessionPasswords;
   static $called;
 
   @$called++;
@@ -1910,12 +1913,21 @@ function SessionAuth($pagename, $auth = NULL) {
 
   $sid = session_id();
   @session_start();
-  foreach((array)$auth as $k => $v)
-    if ($k) $_SESSION[$k] = (array)$v + (array)@$_SESSION[$k];
+  foreach((array)$auth as $k => $v) {
+    if ($k == 'authpw') {
+      foreach((array)$v as $pw => $pv) {
+        if ($SessionEncode) $pw = $SessionEncode($pw);
+        $_SESSION[$k][$pw] = $pv;
+      }
+    } 
+    else if ($k) $_SESSION[$k] = (array)$v + (array)@$_SESSION[$k];
+  }
 
   if (!isset($AuthId)) $AuthId = @end($_SESSION['authid']);
-  $AuthPw = array_keys((array)@$_SESSION['authpw']);
+  $AuthPw = array_map($SessionDecode, array_keys((array)@$_SESSION['authpw']));
+  if (!IsEnabled($EnableSessionPasswords, 1)) $_SESSION['authpw'] = array();
   $AuthList = array_merge($AuthList, (array)@$_SESSION['authlist']);
+  
   if (!$sid) session_write_close();
 }
 

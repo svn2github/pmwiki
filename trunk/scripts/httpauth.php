@@ -21,11 +21,8 @@ if (IsEnabled($EnableRemoteUserAuth, 1) && @$_SERVER['REMOTE_USER']) {
 
 ## If the browser supplied a password, add that password to the
 ## list of passwords used for authentication
-if (@$_SERVER['PHP_AUTH_PW']) {
-  @session_start();
-  @$_SESSION['authpw'][$_SERVER['PHP_AUTH_PW']]++;
-  $_REQUEST[session_name()] = 1;
-}
+if (@$_SERVER['PHP_AUTH_PW']) 
+  SessionAuth($pagename, array('authpw'=>array($_SERVER['PHP_AUTH_PW'] => 1)));
 
 
 ## $EnableHTTPBasicAuth tells PmWikiAuth to use the browser's

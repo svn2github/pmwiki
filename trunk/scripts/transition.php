@@ -14,6 +14,10 @@
 
     Transitions defined in this script:
 
+      $Transition['nosessionencode']    - turn off session encoding
+
+      $Transition['version'] < 2001967  - all transitions listed above
+
       $Transition['wspre']              - leading spaces are pre text
 
       $Transition['version'] < 2001941  - all transitions listed above
@@ -64,6 +68,15 @@ if (@$_REQUEST['trans']==='0') return;
 
 ## set a default Transition version if we don't have one
 SDV($Transition['version'], $VersionNum);
+
+## Transitions from 2.2.0-beta67
+if (@$Transition['version'] < 2001967)
+  SDVA($Transition, array('nosessionencode' => 1));
+
+if (@$Transition['nosessionencode']) {
+  $SessionEncode = NULL;
+  $SessionDecode = NULL;
+}
 
 ## Transitions from 2.2.0-beta41
 if (@$Transition['version'] < 2001941)
@@ -254,7 +267,7 @@ function GUIEdit($pagename, &$page, &$new) {
 ##   In 2.0.beta44 several utility pages change location to the new Site
 ##   group.  These settings cause some skins (that use translations)
 ##   to know to link to the new locations.
-if ($Transition['mainpages']) {
+if (@$Transition['mainpages']) {
   XLSDV('en', array(
     'Main/SearchWiki' => XL('Site/Search'),
     'PmWiki.EditQuickReference' => XL('Site/EditQuickReference'),
