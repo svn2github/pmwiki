@@ -44,7 +44,7 @@
 ##   but at some point we may change the default to disabled.
 if (IsEnabled($EnableBlocklistImmediate, 1)) {
   SDVA($BlocklistActions, array('comment' => 1));
-  if (isset($_POST['text']) && $BlocklistActions[$action]) {
+  if (isset($_POST['text']) && @$BlocklistActions[$action]) {
     Blocklist($pagename, $_POST['text']);
     if (!$EnablePost) {
       unset($_POST['post']);
@@ -130,7 +130,7 @@ function Blocklist($pagename, $text) {
     ##  them into $terms['block'] and continue to the next blocklist page.
     ##  Some regexes from remote sites aren't well-formed, so we have
     ##  to escape any slashes that aren't already escaped.
-    if (strpos($page['text'], 'blocklist-format: regex') !==false) {
+    if (strpos(@$page['text'], 'blocklist-format: regex') !==false) {
       if (preg_match_all('/^([^\\s#].+)/m', $page['text'], $match)) 
         foreach($match[0] as $m) {
           $m = preg_replace('#(?<!\\\\)/#', '\\/', trim($m));
@@ -145,7 +145,7 @@ function Blocklist($pagename, $text) {
     ##  IP addresses.
     $ip = preg_quote($_SERVER['REMOTE_ADDR']);
     $ip = preg_replace('/\\d+$/', '($0\\b|\\*)', $ip);
-    if (preg_match("/\\b$ip/", $page['text'], $match)) {
+    if (preg_match("/\\b$ip/", @$page['text'], $match)) {
       $EnablePost = 0;
       $IsBlocked = 1;
       $WhyBlockedFmt[] = $BlockedMessagesFmt['ip'] . $match[0];
@@ -153,7 +153,7 @@ function Blocklist($pagename, $text) {
 
     ##  Now we'll load any "block:" or "unblock:" specifications
     ##  from the page text.
-    if (preg_match_all('/(un)?(?:block|regex):(.*)/', $page['text'], 
+    if (preg_match_all('/(un)?(?:block|regex):(.*)/', @$page['text'], 
                        $match, PREG_SET_ORDER)) 
       foreach($match as $m) $terms[$m[1].'block'][] = trim($m[2]);
   }
