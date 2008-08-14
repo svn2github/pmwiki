@@ -659,7 +659,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
   if ($class) $class = " class='$class'";
   $wrap = @$opt['wrap'];
   if ($wrap != 'inline') {
-    $out = MarkupToHTML($pagename, $out, array('escape' => 0));
+    $out = MarkupToHTML($pagename, $out, array('escape' => 0, 'redirect'=>1));
     if ($wrap != 'none') $out = "<div$class>$out</div>";
   }
   $Cursor = $savecursor;
