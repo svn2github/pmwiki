@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2007 Patrick R. Michaud
+    Copyright 2001-2009 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
