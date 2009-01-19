@@ -53,7 +53,6 @@ SDVA($FPLFormatOpt, array(
                      'class' => 'fpltitle', 'order' => 'title'),
   'count'   => array('fn' => 'FPLCountA'),
   ));
-SDV($FPLMarkupFunction, 'MarkupToHTML');
 
 SDV($SearchResultsFmt, "<div class='wikisearch'>\$[SearchFor]
   <div class='vspace'></div>\$MatchList
@@ -555,10 +554,11 @@ function FPLCountA($pagename, &$matches, $opt) {
 
 ##  FPLTemplate handles PagelistTemplates
 function FPLTemplate($pagename, &$matches, $opt) {
-  global $Cursor, $FPLTemplatePageFmt, $FPLMarkupFunction, $RASPageName,
+  global $Cursor, $FPLTemplatePageFmt, $FPLTemplateMarkupFunction, $RASPageName,
     $PageListArgPattern;
   SDV($FPLTemplatePageFmt, array('{$FullName}',
     '{$SiteGroup}.LocalTemplates', '{$SiteGroup}.PageListTemplates'));
+  SDV($FPLTemplateMarkupFunction, 'MarkupToHTML');
 
   StopWatch("FPLTemplate begin");
   $template = @$opt['template'];
@@ -661,7 +661,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
   if ($class) $class = " class='$class'";
   $wrap = @$opt['wrap'];
   if ($wrap != 'inline') {
-    $out = $FPLMarkupFunction($pagename, $out, array('escape' => 0, 'redirect'=>1));
+    $out = $FPLTemplateMarkupFunction($pagename, $out, array('escape' => 0, 'redirect'=>1));
     if ($wrap != 'none') $out = "<div$class>$out</div>";
   }
   $Cursor = $savecursor;
