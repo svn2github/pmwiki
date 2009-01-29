@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2007 Patrick R. Michaud
+    Copyright 2001-2009 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
@@ -1258,13 +1258,13 @@ function IncludeText($pagename, $inclspec) {
 
 function RedirectMarkup($pagename, $opt) {
   $k = Keep("(:redirect $opt:)");
-  global $MarkupFrame;
+  global $MarkupFrame, $EnableRedirectQuiet;
   if (!@$MarkupFrame[0]['redirect']) return $k;
   $opt = ParseArgs($opt);
   $to = @$opt['to']; if (!$to) $to = @$opt[''][0];
   if (!$to) return $k;
   if (preg_match('/^([^#]+)(#[A-Za-z][-\\w]*)$/', $to, $match)) 
-    { $to = $match[1]; $anchor = $match[2]; }
+    { $to = $match[1]; $anchor = @$match[2]; }
   $to = MakePageName($pagename, $to);
   if (!PageExists($to)) return $k;
   if ($to == $pagename) return '';
@@ -1273,7 +1273,10 @@ function RedirectMarkup($pagename, $opt) {
     return '';
   if (preg_match('/^30[1237]$/', @$opt['status'])) 
      header("HTTP/1.1 {$opt['status']}");
-  Redirect($to, @"{\$PageUrl}?from=$pagename$anchor");
+  Redirect($to, "{\$PageUrl}"
+    . (IsEnabled($EnableRedirectQuiet, 0) && IsEnabled($opt['quiet'], 0)
+      ? '' : "?from=$pagename")
+    . $anchor);
   exit();
 }
    
