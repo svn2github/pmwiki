@@ -58,6 +58,7 @@ function ReadTrail($pagename, $trailname) {
     $trailname = ($m[2] == '|') ? $m[1] : $m[3];
   $trailtext = RetrieveAuthSection($pagename, $trailname);
   $trailname = $RASPageName;
+  $trailtext = Qualify($trailname, $trailtext);
   $t = array();
   $n = 0;
   foreach(explode("\n", htmlspecialchars(@$trailtext, ENT_NOQUOTES)) 
