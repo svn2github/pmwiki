@@ -257,7 +257,7 @@ if (@$_REQUEST['editform']) {
   $PageEditForm=$_REQUEST['editform'];
   $PageEditFmt='$EditForm';
 }
-$Conditions['e_preview'] = '(boolean)$_POST["preview"]';
+$Conditions['e_preview'] = '(boolean)$_REQUEST["preview"]';
 
 XLSDV('en', array(
   'ak_save' => 's',

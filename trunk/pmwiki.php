@@ -1729,7 +1729,7 @@ function AutoCreateTargets($pagename, &$page, &$new) {
     
 function PreviewPage($pagename,&$page,&$new) {
   global $IsPageSaved, $FmtV;
-  if (@$_POST['preview']) {
+  if (@$_REQUEST['preview']) {
     $text = '(:groupheader:)'.$new['text'].'(:groupfooter:)';
     $FmtV['$PreviewText'] = MarkupToHTML($pagename,$text);
   } 
