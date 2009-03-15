@@ -38,7 +38,7 @@ $WikiTitle = 'PmWiki';
 # $DefaultPasswords['admin'] = crypt('secret');
 
 ## Unicode (UTF-8) allows the display of all languages and all alphabets.
-# include_once("$FarmD/scripts/xlpage-utf-8.php");}
+# include_once("$FarmD/scripts/xlpage-utf-8.php");
 
 ## If you're running a publicly available site and allow anyone to
 ## edit without requiring a password, you probably want to put some
