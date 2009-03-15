@@ -1,9 +1,11 @@
-version=pmwiki-2.0.devel27
-newline=²
-text=(:redirect WikiGroup:)
-time=1101494438
-author=EvanProdromou
+version=pmwiki-2.2.0-beta62 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1
+author=simon
+charset=ISO-8859-1
+csum=Add summary
+host=202.37.32.2
 name=PmWiki.WikiGroups
-host=24.1.28.47
-agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0
-rev=2
+rev=4
+targets=
+text=(:Summary: Redirects to [[PmWiki/Wiki Group]]:)%0a(:redirect PmWiki/WikiGroup:)
+time=1185140280
