@@ -58,7 +58,7 @@ function GUIButtonCode($pagename) {
   global $GUIButtons;
   $cmpfn = create_function('$a,$b', 'return $a[0]-$b[0];');
   usort($GUIButtons, $cmpfn);
-  $out = "<script language='javascript' type='text/javascript'>\n";
+  $out = "<script language='javascript' type='text/javascript'><!--\n";
   foreach ($GUIButtons as $k => $g) {
     if (!$g) continue;
     @list($when, $mopen, $mclose, $mtext, $tag, $mkey) = $g;
@@ -76,7 +76,7 @@ function GUIButtonCode($pagename) {
     $out .= 
       "insButton(\"$mopen\", \"$mclose\", '$mtext', \"$tag\", \"$mkey\");\n";
   }
-  $out .= '</script>';
+  $out .= '//--></script>';
   return $out;
 }
 
