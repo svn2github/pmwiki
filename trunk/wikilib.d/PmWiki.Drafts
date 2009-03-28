@@ -1,12 +1,12 @@
-version=pmwiki-2.2.0 ordered=1 urlencoded=1
-agent=Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; FDM; InfoPath.2; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)
-author=jkk
+version=pmwiki-2.2.1 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.7) Gecko/2009030422 Ubuntu/8.04 (hardy) Firefox/3.0.7
+author=Pm
 charset=ISO-8859-1
-csum=
+csum=Fix faq section
 ctime=1178938308
-host=117.192.132.41
+host=72.181.176.220
 name=PmWiki.Drafts
-rev=5
-targets=PmWiki.ReleaseNotes,PmWiki.BasicEditing,PmWiki.DocumentationIndex,PmWiki.MarkupMasterIndex,PITS.00755,PmWiki.Security,PmWiki.Drafts
-text=!!This documentation page needs to be written.%0a%0a* It was originally referenced in [[PmWiki/Release Notes]]%0a* It will need to be referenced in one or more of these pages:%0a** [[PmWiki/Basic Editing]]%0a** [[PmWiki/Documentation Index]]%0a** [[PmWiki/MarkupMasterIndex]]%0a%0aCross-references: Here are some places that you can go to find information about the Drafts feature to use in creating this page:%0a*  [[PmWiki/Release Notes]] %0a** Draft handling capabilities have been greatly improved. When $EnableDrafts is set, then the "Save" button is relabeled to "Publish" and a "Save draft" button appears. In addition, an $EnablePublishAttr configuration variable adds a new "publish" authorization level to distinguish editing from publishing. See PmWiki.Drafts? for more details.%0a* $EnableDrafts%0a* $EnablePublishAttr%0a* $DraftRecentChangesFmt%0a** If you set this variable, you may want to exclude @@*.RecentDraftChanges@@ pages in pagelists and searches. This is done by adding to config.php such a code: \\%0a   @@$SearchPatterns['default'][] = '!\\.RecentDraftChanges!';@@%0a%0a* [[PITS/00755]]%0a*[[PmWiki/Security]]%0a**How do I moderate all postings?%0a***Enable [[PmWiki.Drafts]]%0a***Set $EnableDrafts, this relabels the "Save" button to "Publish" and a "Save draft" button appears.%0a***Set $EnablePublishAttr, this adds a new "publish" authorization level to distinguish editing from publishing.%0a%0aEvery time a page that had been saved as a draft gets published, the draft gets deleted like a regular wiki page, which creates a {$FullName}.draft,del''timestamp'' file in the wiki directory. This might make housekeeping per ftp more neccessary than it has been before.
-time=1233670488
+rev=7
+targets=PmWiki.Passwords,PmWiki.Drafts
+text=PmWiki has the capability to stage ''draft'' versions of a page prior to them becoming "official".  Multiple interim edits to a page can be temporarily saved in a "-Draft" copy of a page until the draft is ready to be published to the original.%0a%0aWhen the site administrator sets $EnableDrafts in a local customization file, the "Save" button on the edit page is split into separate "Publish" and "Save draft" buttons.  %0a%0aThe "Save draft" button causes any edits to be saved to a "-Draft" copy of the original page, leaving the original page intact.  Subsequent requests to edit the page (either the original or -Draft) bring up the draft copy for further editing.%0a%0aThe "Publish" button saves back to the original non-Draft copy of the page, removing any -Draft page that may have been created.%0a%0aBy default, saving drafts and publishing are available to anyone with 'edit' permissions (see [[Passwords]]).  However, the site administrator can also set the $EnablePublishAttr configuration variable, which provides a separate 'publish' permission that is required to publish to the original page.%0a%0a>>faq%3c%3c [[#faq]]%0a%0aQ:  How do I moderate all postings?%0a%0aA:  Start by [[Drafts | enabling drafts]] to change the "Save" button into separate "Publish" and "Save draft" buttons.  Then set $EnablePublishAttr.  This adds a "publish" authorization level to distinguish editing of page drafts from publishing.%0a
+time=1238277381
