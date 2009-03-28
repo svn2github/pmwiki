@@ -1,0 +1,12 @@
+version=pmwiki-2.2.0 ordered=1 urlencoded=1
+agent=Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; FDM; InfoPath.2; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)
+author=jkk
+charset=ISO-8859-1
+csum=
+ctime=1178938308
+host=117.192.132.41
+name=PmWiki.Drafts
+rev=5
+targets=PmWiki.ReleaseNotes,PmWiki.BasicEditing,PmWiki.DocumentationIndex,PmWiki.MarkupMasterIndex,PITS.00755,PmWiki.Security,PmWiki.Drafts
+text=!!This documentation page needs to be written.%0a%0a* It was originally referenced in [[PmWiki/Release Notes]]%0a* It will need to be referenced in one or more of these pages:%0a** [[PmWiki/Basic Editing]]%0a** [[PmWiki/Documentation Index]]%0a** [[PmWiki/MarkupMasterIndex]]%0a%0aCross-references: Here are some places that you can go to find information about the Drafts feature to use in creating this page:%0a*  [[PmWiki/Release Notes]] %0a** Draft handling capabilities have been greatly improved. When $EnableDrafts is set, then the "Save" button is relabeled to "Publish" and a "Save draft" button appears. In addition, an $EnablePublishAttr configuration variable adds a new "publish" authorization level to distinguish editing from publishing. See PmWiki.Drafts? for more details.%0a* $EnableDrafts%0a* $EnablePublishAttr%0a* $DraftRecentChangesFmt%0a** If you set this variable, you may want to exclude @@*.RecentDraftChanges@@ pages in pagelists and searches. This is done by adding to config.php such a code: \\%0a   @@$SearchPatterns['default'][] = '!\\.RecentDraftChanges!';@@%0a%0a* [[PITS/00755]]%0a*[[PmWiki/Security]]%0a**How do I moderate all postings?%0a***Enable [[PmWiki.Drafts]]%0a***Set $EnableDrafts, this relabels the "Save" button to "Publish" and a "Save draft" button appears.%0a***Set $EnablePublishAttr, this adds a new "publish" authorization level to distinguish editing from publishing.%0a%0aEvery time a page that had been saved as a draft gets published, the draft gets deleted like a regular wiki page, which creates a {$FullName}.draft,del''timestamp'' file in the wiki directory. This might make housekeeping per ftp more neccessary than it has been before.
+time=1233670488
