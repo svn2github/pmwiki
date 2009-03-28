@@ -38,7 +38,7 @@ $WikiTitle = 'PmWiki';
 # $DefaultPasswords['admin'] = crypt('secret');
 
 ## Unicode (UTF-8) allows the display of all languages and all alphabets.
-# include_once("$FarmD/scripts/xlpage-utf-8.php");
+# include_once("scripts/xlpage-utf-8.php");
 
 ## If you're running a publicly available site and allow anyone to
 ## edit without requiring a password, you probably want to put some
@@ -52,7 +52,7 @@ $WikiTitle = 'PmWiki';
 
 ##  To enable markup syntax from the Creole common wiki markup language
 ##  (http://www.wikicreole.org/), include it here:
-# include_once("$FarmD/scripts/creole.php");
+# include_once("scripts/creole.php");
 
 ##  Some sites may want leading spaces on markup lines to indicate
 ##  "preformatted text blocks", set $EnableWSPre=1 if you want to do
@@ -104,14 +104,14 @@ $WikiTitle = 'PmWiki';
 
 ##  The refcount.php script enables ?action=refcount, which helps to
 ##  find missing and orphaned pages.  See PmWiki.RefCount.
-# if ($action == 'refcount') include_once("$FarmD/scripts/refcount.php");
+# if ($action == 'refcount') include_once("scripts/refcount.php");
 
 ##  The feeds.php script enables ?action=rss, ?action=atom, ?action=rdf,
 ##  and ?action=dc, for generation of syndication feeds in various formats.
-# if ($action == 'rss')  include_once("$FarmD/scripts/feeds.php");  # RSS 2.0
-# if ($action == 'atom') include_once("$FarmD/scripts/feeds.php");  # Atom 1.0
-# if ($action == 'dc')   include_once("$FarmD/scripts/feeds.php");  # Dublin Core
-# if ($action == 'rdf')  include_once("$FarmD/scripts/feeds.php");  # RSS 1.0
+# if ($action == 'rss')  include_once("scripts/feeds.php");  # RSS 2.0
+# if ($action == 'atom') include_once("scripts/feeds.php");  # Atom 1.0
+# if ($action == 'dc')   include_once("scripts/feeds.php");  # Dublin Core
+# if ($action == 'rdf')  include_once("scripts/feeds.php");  # RSS 1.0
 
 ##  In the 2.2.0-beta series, {$var} page variables are absolute by
 ##  default, but a future version will make them relative.  This setting
@@ -137,7 +137,7 @@ $EnableRelativePageVars = 1;
 ##  are turned into links, uncomment the line below.  See PmWiki.UrlApprovals.
 ##  Also, setting $UnapprovedLinkCountMax limits the number of unapproved
 ##  links that are allowed in a page (useful to control wikispam).
-# include_once("$FarmD/scripts/urlapprove.php");
+# include_once("scripts/urlapprove.php");
 # $UnapprovedLinkCountMax = 10;
 
 ##  The following lines make additional editing buttons appear in the
