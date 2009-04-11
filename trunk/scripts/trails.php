@@ -122,6 +122,6 @@ function MakeTrailPath($pagename,$trailname) {
       return "<span class='wikitrail'>$trailname$crumbs</span>";
     }
   }
-  return $trailname;
+  return "<span class='wikitrail'>$trailname</span>";
 }
 
