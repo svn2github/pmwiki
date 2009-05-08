@@ -16,7 +16,7 @@
     characters are "letters" and which are punctuation.
 */
 
-global $HTTPHeaders, $KeepToken, $pagename
+global $HTTPHeaders, $KeepToken, $pagename,
   $GroupPattern, $NamePattern, $WikiWordPattern, $SuffixPattern,
   $PageNameChars, $MakePageNamePatterns, $CaseConversions, $Charset,
   $HTMLHeaderFmt, $StrFoldFunction, $AsSpacedFunction;
