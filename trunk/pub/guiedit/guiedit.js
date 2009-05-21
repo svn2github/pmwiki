@@ -12,7 +12,7 @@
 
 function insButton(mopen, mclose, mtext, mlabel, mkey) {
   if (mkey > '') { mkey = 'accesskey="' + mkey + '" ' }
-  document.write("<a tabindex='-1' " + mkey + "href=\"javascript:insMarkup('"
+  document.write("<a tabindex='-1' " + mkey + "onclick=\"insMarkup('"
     + mopen + "','"
     + mclose + "','"
     + mtext + "');\">"

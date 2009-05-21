@@ -88,7 +88,7 @@ function PostNotify($pagename, &$page, &$new) {
 function NotifyUpdate($pagename, $dir='') {
   global $NotifyList, $NotifyListPageFmt, $NotifyFile, $IsPagePosted,
     $FmtV, $NotifyTimeFmt, $NotifyItemFmt, $SearchPatterns,
-    $NotifySquelch, $NotifyDelay, $Now,
+    $NotifySquelch, $NotifyDelay, $Now, $Charset, $EnableNotifySubjectEncode,
     $NotifySubjectFmt, $NotifyBodyFmt, $NotifyHeaders, $NotifyParameters;
 
   $abort = ignore_user_abort(true);
@@ -160,6 +160,9 @@ function NotifyUpdate($pagename, $dir='') {
     $nextevent = $nnow + 86400;
     $mailto = array_keys($notify);
     $subject = FmtPageName($NotifySubjectFmt, $pagename);
+    if(IsEnabled($EnableNotifySubjectEncode, 0)
+      && preg_match("/[^\x20-\x7E]/", $subject))
+        $subject = strtoupper("=?$Charset?B?"). base64_encode($subject)."?=";
     $body = FmtPageName($NotifyBodyFmt, $pagename);
     foreach ($mailto as $m) {
       $msquelch = @$notify[$m]['lastmail'] +
