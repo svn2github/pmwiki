@@ -203,7 +203,8 @@ $HandleAuth = array(
   'logout' => 'read', 'login' => 'login');
 $ActionTitleFmt = array(
   'edit' => '| $[Edit]',
-  'attr' => '| $[Attributes]');
+  'attr' => '| $[Attributes]',
+  'login' => '| $[Login]');
 $DefaultPasswords = array('admin'=>'*','read'=>'','edit'=>'','attr'=>'');
 $AuthCascade = array('edit'=>'read', 'attr'=>'edit');
 $AuthList = array('' => 1, 'nopass:' => 1, '@nopass' => 1);

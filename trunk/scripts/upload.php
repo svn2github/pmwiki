@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2007 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2009 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -63,6 +63,7 @@ SDV($UploadFileFmt,"$UploadDir$UploadPrefixFmt");
 $v = preg_replace('#^/(.*/)#', '', $UploadDir);
 SDV($UploadUrlFmt,preg_replace('#/[^/]*$#', "/$v", $PubDirUrl, 1));
 SDV($LinkUploadCreateFmt, "<a rel='nofollow' class='createlinktext' href='\$LinkUpload'>\$LinkText</a><a rel='nofollow' class='createlink' href='\$LinkUpload'>&nbsp;&Delta;</a>");
+SDVA($ActionTitleFmt, array('upload' => '| $[Attach]'));
 
 SDV($PageUploadFmt,array("
   <div id='wikiupload'>
