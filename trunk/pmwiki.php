@@ -374,7 +374,7 @@ function HandleDispatch($pagename, $action, $msg=NULL) {
 
 ## helper functions
 function stripmagic($x) 
-  { return get_magic_quotes_gpc() ? stripslashes($x) : strval($x); }
+  { return get_magic_quotes_gpc() ? stripslashes($x) : $x; }
 function pre_r(&$x)
   { return '<pre>'.htmlspecialchars(print_r($x, true)).'</pre>'; }
 function PSS($x) 

@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2007 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2009 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -65,8 +65,8 @@ function AuthUserId($pagename, $id, $pw=NULL) {
     }
   }
 
-  if (is_null($pw)) $authid = $id;
-  else 
+  if (func_num_args()==2) $authid = $id;
+  else
     foreach($AuthUserFunctions as $k => $fn) 
       if (@$auth[$k] && $fn($pagename, $id, $pw, $auth[$k])) 
         { $authid = $id; break; }
