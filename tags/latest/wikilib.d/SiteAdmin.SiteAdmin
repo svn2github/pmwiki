@@ -1,0 +1,13 @@
+version=pmwiki-2.2.0-beta62 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.5) Gecko/20070713 Firefox/2.0.0.5
+author=simon
+charset=ISO-8859-1
+csum=future proof
+ctime=1182106004
+host=203.97.214.12
+name=SiteAdmin.SiteAdmin
+rev=4
+targets=Site.Site
+text=(:title Website administration:)(:Summary: Website administration:)%0aHere you find some links to Site administration pages.%0aThe [[Site]] group contains configuration pages.%0a%0a(:pagelist group={$Group} list=all:)
+time=1185269934
+title=Website administration
