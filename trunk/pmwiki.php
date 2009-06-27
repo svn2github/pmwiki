@@ -2038,7 +2038,7 @@ function HandleLogoutA($pagename, $auth = 'read') {
   SDV($LogoutCookies, array());
   @session_start();
   $_SESSION = array();
-  if (isset($_COOKIE[session_name()]))
+  if ( session_id() != '' || isset($_COOKIE[session_name()]) )
     setcookie(session_name(), '', time()-43200, '/');
   foreach ($LogoutCookies as $c)
     if (isset($_COOKIE[$c])) setcookie($c, '', time()-43200, '/');
