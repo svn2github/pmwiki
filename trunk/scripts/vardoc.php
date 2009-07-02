@@ -50,7 +50,7 @@ function VarIndexLoad($pagename) {
       for($i=0;$i<count($t);$i++) 
         if (@!$loaded[$t[$i]['pagename']]) $vlist[]=$t[$i]['pagename'];
     foreach($vlist as $vname) {
-      $vpage = ReadPage($vname); @$loaded[$vname]++;
+      $vpage = ReadPage($vname, READPAGE_CURRENT); @$loaded[$vname]++;
       if (!$vpage) continue;
       if (!preg_match_all("/\n:\\$([[:upper:]]\\w+):/",@$vpage['text'],$match))
         continue;
