@@ -142,12 +142,23 @@ function LinkUpload($pagename, $imap, $path, $alt, $txt, $fmt=NULL) {
   return LinkIMap($pagename, $imap, $path, $alt, $txt, $fmt);
 }
 
+# Authenticate group downloads with the group password
+function UploadAuth($pagename, $auth, $cache=0){
+  global $GroupAttributesFmt, $EnableUploadGroupAuth;
+  if (IsEnabled($EnableUploadGroupAuth,0)){
+    SDV($GroupAttributesFmt,'$Group/GroupAttributes');
+    $pn_upload = FmtPageName($GroupAttributesFmt, $pagename);
+  } else $pn_upload = $pagename;
+  $page = RetrieveAuthPage($pn_upload, $auth, true, READPAGE_CURRENT);
+  if(!$page) Abort("?No '$auth' permissions for $pagename");
+  if($cache) PCache($pn_upload,$page);
+  return true;
+}
+
 function HandleUpload($pagename, $auth = 'upload') {
   global $FmtV,$UploadExtMax,
     $HandleUploadFmt,$PageStartFmt,$PageEndFmt,$PageUploadFmt;
-  $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
-  if (!$page) Abort("?cannot upload to $pagename");
-  PCache($pagename,$page);
+  UploadAuth($pagename, $auth, 1);
   $FmtV['$UploadName'] = MakeUploadName($pagename,@$_REQUEST['upname']);
   $upresult = htmlspecialchars(@$_REQUEST['upresult']);
   $uprname = htmlspecialchars(@$_REQUEST['uprname']);
@@ -162,8 +173,7 @@ function HandleUpload($pagename, $auth = 'upload') {
 function HandleDownload($pagename, $auth = 'read') {
   global $UploadFileFmt, $UploadExts, $DownloadDisposition;
   SDV($DownloadDisposition, "inline");
-  $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
-  if (!$page) Abort("?cannot read $pagename");
+  UploadAuth($pagename, $auth);
   $upname = MakeUploadName($pagename, @$_REQUEST['upname']);
   $filepath = FmtPageName("$UploadFileFmt/$upname", $pagename);
   if (!$upname || !file_exists($filepath)) {
@@ -182,13 +192,12 @@ function HandleDownload($pagename, $auth = 'read') {
     fclose($fp);
   }
   exit();
-}  
- 
+}
+
 function HandlePostUpload($pagename, $auth = 'upload') {
   global $UploadVerifyFunction, $UploadFileFmt, $LastModFile, 
     $EnableUploadVersions, $Now;
-  $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
-  if (!$page) Abort("?cannot upload to $pagename");
+  UploadAuth($pagename, $auth);
   $uploadfile = $_FILES['uploadfile'];
   $upname = $_REQUEST['upname'];
   if ($upname=='') $upname=$uploadfile['name'];
@@ -302,11 +311,9 @@ function AttachExist($pagename) {
   $count = 0;
   $dirp = @opendir($uploaddir);
   if ($dirp) {
-    while (($file = readdir($dirp)) !== false) 
+    while (($file = readdir($dirp)) !== false)
       if ($file{0} != '.') $count++;
     closedir($dirp);
   }
   return $count;
 }
-
-
