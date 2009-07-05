@@ -726,7 +726,7 @@ function PageTextVar($pagename, $var) {
   if (!@$PCache[$pagename]['=pagetextvars']) {
     $pc = &$PCache[$pagename];
     $pc['=pagetextvars'] = 1;
-    $page = RetrieveAuthPage($pagename, 'read', false, READPAGE_CURRENT);
+    $page = RetrieveAuthPage($pagename, 'read', false, READPAGE_CURRENT, true);
     if ($page) {
       foreach((array)$PageTextVarPatterns as $pat) 
         if (preg_match_all($pat, @$page['text'], $match, PREG_SET_ORDER))
@@ -1029,11 +1029,14 @@ function ListPages($pat=NULL) {
   return $out;
 }
 
-function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0) {
-  global $AuthFunction;
+function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0, $preview=false) {
+  global $AuthFunction, $EnablePreviewParse;
   SDV($AuthFunction,'PmWikiAuth');
-  if (!function_exists($AuthFunction)) return ReadPage($pagename, $since);
-  return $AuthFunction($pagename, $level, $authprompt, $since);
+  if (!function_exists($AuthFunction)) $page = ReadPage($pagename, $since);
+  else $page = $AuthFunction($pagename, $level, $authprompt, $since);
+  if($preview && IsEnabled($EnablePreviewParse, 1) && $pagename == @$_POST['n'] )
+    $page['text']=@$_POST['text']);
+  return $page;
 }
 
 function Abort($msg, $info='') {
@@ -1200,7 +1203,7 @@ function TextSection($text, $sections, $args = NULL) {
 ##  in the pages given by $list, or in $pagename if $list is not specified.
 ##  The selected page is placed in the global $RASPageName variable.
 ##  The caller is responsible for calling Qualify() as needed.
-function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') {
+function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read', $preview=false) {
   global $RASPageName;
   if ($pagesection{0} != '#')
     $list = array(MakePageName($pagename, $pagesection));
@@ -1208,7 +1211,7 @@ function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') 
   foreach((array)$list as $t) {
     $t = FmtPageName($t, $pagename);
     if (!PageExists($t)) continue;
-    $tpage = RetrieveAuthPage($t, $auth, false, READPAGE_CURRENT);
+    $tpage = RetrieveAuthPage($t, $auth, false, READPAGE_CURRENT, $preview);
     if (!$tpage) continue;
     $text = TextSection($tpage['text'], $pagesection);
     if ($text !== false) { $RASPageName = $t; return $text; }
@@ -1232,7 +1235,7 @@ function IncludeText($pagename, $inclspec) {
         if (isset($itext)) continue;
         $iname = MakePageName($pagename, $v);
         if (!$args['self'] && $iname == $pagename) continue;
-        $ipage = RetrieveAuthPage($iname, 'read', false, READPAGE_CURRENT);
+        $ipage = RetrieveAuthPage($iname, 'read', false, READPAGE_CURRENT, true);
         $itext = @$ipage['text'];
       }
       $itext = TextSection($itext, $v, array('anchors' => 1));
