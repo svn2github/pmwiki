@@ -1035,7 +1035,7 @@ function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0, $previe
   if (!function_exists($AuthFunction)) $page = ReadPage($pagename, $since);
   else $page = $AuthFunction($pagename, $level, $authprompt, $since);
   if($preview && IsEnabled($EnablePreviewParse, 1) && $pagename == @$_POST['n'] )
-    $page['text']=@$_POST['text']);
+    $page['text']=@$_POST['text'];
   return $page;
 }
 
