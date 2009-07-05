@@ -722,7 +722,10 @@ function SetProperty($pagename, $prop, $value, $sep = NULL) {
 ## $PageTextVarPatterns) into a page's $PCache entry, and returns
 ## the property associated with $var.
 function PageTextVar($pagename, $var) {
-  global $PCache, $PageTextVarPatterns;
+  global $PCache, $PageTextVarPatterns, $MaxPageTextVars;
+  SDV($MaxPageTextVars, 500);
+  static $status;
+  if(@$status["$pagename:$var"]++ > $MaxPageTextVars) return '';
   if (!@$PCache[$pagename]['=pagetextvars']) {
     $pc = &$PCache[$pagename];
     $pc['=pagetextvars'] = 1;
