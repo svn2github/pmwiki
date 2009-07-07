@@ -539,11 +539,12 @@ function mkdirp($dir) {
     rmdir($dir);
   }
   $parent = realpath(dirname($dir)); 
+  $bdir = basename($dir);
   $perms = decoct(fileperms($parent) & 03777);
   $msg = "PmWiki needs to have a writable <tt>$dir/</tt> directory 
     before it can continue.  You can create the directory manually 
     by executing the following commands on your server:
-    <pre>    mkdir $parent/$dir\n    chmod 777 $parent/$dir</pre>
+    <pre>    mkdir $parent/$bdir\n    chmod 777 $parent/$bdir</pre>
     Then, <a href='{$ScriptUrl}'>reload this page</a>.";
   $safemode = ini_get('safe_mode');
   if (!$safemode) $msg .= "<br /><br />Or, for a slightly more 
