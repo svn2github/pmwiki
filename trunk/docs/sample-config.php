@@ -137,8 +137,8 @@ $EnableRelativePageVars = 1;
 ##  are turned into links, uncomment the line below.  See PmWiki.UrlApprovals.
 ##  Also, setting $UnapprovedLinkCountMax limits the number of unapproved
 ##  links that are allowed in a page (useful to control wikispam).
-# include_once("scripts/urlapprove.php");
 # $UnapprovedLinkCountMax = 10;
+# include_once("scripts/urlapprove.php");
 
 ##  The following lines make additional editing buttons appear in the
 ##  edit page for subheadings, lists, tables, etc.
