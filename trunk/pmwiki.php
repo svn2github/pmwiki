@@ -1963,7 +1963,8 @@ function PasswdVar($pagename, $level) {
                                        (array)$page['=passwd'][$level]));
   if ($pwsource == 'group' || $pwsource == 'site') {
     $FmtV['$PWSource'] = $pwsource;
-    $setting = FmtPageName('$[(set by $PWSource)] ', $pagename) . $setting;
+    $setting = FmtPageName('$[(set by $PWSource)] ', $pagename)
+       . htmlspecialchars($setting);
   }
   return $setting;
 }
@@ -1981,7 +1982,7 @@ function PrintAttrForm($pagename) {
     if (strncmp($attr, 'passwd', 6) == 0) {
       $setting = PageVar($pagename, '$Passwd'.ucfirst(substr($attr, 6)));
       $value = '';
-    } else { $setting = @$page[$attr]; $value = @$page[$attr]; }
+    } else { $setting = $value = htmlspecialchars(@$page[$attr]); }
     $prompt = FmtPageName($p,$pagename);
     echo "<tr><td>$prompt</td>
       <td><input type='text' name='$attr' value='$value' /></td>
