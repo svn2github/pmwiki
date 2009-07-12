@@ -1038,7 +1038,7 @@ function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0, $previe
   SDV($AuthFunction,'PmWikiAuth');
   if (!function_exists($AuthFunction)) $page = ReadPage($pagename, $since);
   else $page = $AuthFunction($pagename, $level, $authprompt, $since);
-  if($preview && IsEnabled($EnablePreviewParse, 1) && $pagename == @$_POST['n'] )
+  if($preview && IsEnabled($EnablePreviewParse, 0) && $pagename == @$_POST['n'] )
     $page['text']=@$_POST['text'];
   return $page;
 }
