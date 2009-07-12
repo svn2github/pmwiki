@@ -15,7 +15,7 @@ SDV($ActionTitleFmt['crypt'],'| $[Password encryption]');
 function HandleCrypt($pagename, $auth='read') {
   global $ScriptUrl,$HTMLStartFmt,$HTMLEndFmt;
   PrintFmt($pagename,$HTMLStartFmt);
-  $passwd = @$_POST["passwd"];
+  $passwd = stripmagic(@$_POST["passwd"]);
   echo FmtPageName(
     "<form action='{\$ScriptUrl}' method='POST'><p>
       Enter password to encrypt: 
