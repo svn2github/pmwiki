@@ -39,7 +39,7 @@ if (IsEnabled($EnableAuthorSignature,1)) {
       => "FmtPageName('[[~\$Author]] \$CurrentTime', \$pagename)",
     '/(?<!~)~~~(?!~)/e' 
       => "FmtPageName('[[~\$Author]]', \$pagename)"));
-  Markup('~~~~','<links','/(?<!~)~~~~(?!~)/',"[[~$Author]] $CurrentTime");
+  Markup('~~~~','<[[~','/(?<!~)~~~~(?!~)/',"[[~$Author]] $CurrentTime");
   Markup('~~~','>~~~~','/(?<!~)~~~(?!~)/',"[[~$Author]]");
 }
 if (IsEnabled($EnablePostAuthorRequired,0))
