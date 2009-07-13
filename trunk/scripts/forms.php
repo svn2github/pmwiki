@@ -91,11 +91,14 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   }
   ##  merge defaults for input type with arguments
   $opt = array_merge($InputTags[$type], $args);
+  ## www.w3.org/TR/html4/types
+  if(isset($opt['id'])) $opt['id'] = preg_replace('/[^-A-Za-z0-9:_.]+/', '_', $opt['id']);
   ##  convert any remaining positional args to flags
   foreach ((array)@$opt[''] as $a) 
     { $a = strtolower($a); if (!isset($opt[$a])) $opt[$a] = $a; }
   if (isset($opt['name'])) {
     $opt['name'] = preg_replace('/^\\$:/', 'ptv_', @$opt['name']);
+    $opt['name'] = preg_replace('/[^-A-Za-z0-9:_.]+/', '_', $opt['name']);
     $name = $opt['name'];
     ##  set control values from $InputValues array
     ##  radio, checkbox, select, etc. require a flag of some sort,
