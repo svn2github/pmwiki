@@ -563,7 +563,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
   StopWatch("FPLTemplate begin");
   $template = @$opt['template'];
   if (!$template) $template = @$opt['fmt'];
-  $ttext = RetrievePreviewSection($pagename, $template, $FPLTemplatePageFmt);
+  $ttext = RetrieveAuthSection($pagename, $template, $FPLTemplatePageFmt, 'read', 1);
   $ttext = PVSE(Qualify($RASPageName, $ttext));
 
   ##  save any escapes
