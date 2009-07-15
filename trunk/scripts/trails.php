@@ -56,7 +56,7 @@ function ReadTrail($pagename, $trailname) {
     $LinkWikiWords;
   if (preg_match('/^\\[\\[(.+?)(-&gt;|\\|)(.+?)\\]\\]$/', $trailname, $m)) 
     $trailname = ($m[2] == '|') ? $m[1] : $m[3];
-  $trailtext = RetrieveAuthSection($pagename, $trailname, NULL, 'read', 1);
+  $trailtext = RetrieveAuthSection($pagename, $trailname);
   $trailname = $RASPageName;
   $trailtext = Qualify($trailname, $trailtext);
   $t = array();

@@ -730,7 +730,7 @@ function PageTextVar($pagename, $var) {
   if (!@$PCache[$pagename]['=pagetextvars']) {
     $pc = &$PCache[$pagename];
     $pc['=pagetextvars'] = 1;
-    $page = RetrieveAuthPreview($pagename);
+    $page = RetrieveAuthPage($pagename, 'read', false, READPAGE_CURRENT);
     if ($page) {
       foreach((array)$PageTextVarPatterns as $pat) 
         if (preg_match_all($pat, @$page['text'], $match, PREG_SET_ORDER))
@@ -1204,7 +1204,7 @@ function TextSection($text, $sections, $args = NULL) {
 ##  in the pages given by $list, or in $pagename if $list is not specified.
 ##  The selected page is placed in the global $RASPageName variable.
 ##  The caller is responsible for calling Qualify() as needed.
-function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read', $preview=0) {
+function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') {
   global $RASPageName;
   if ($pagesection{0} != '#')
     $list = array(MakePageName($pagename, $pagesection));
@@ -1212,8 +1212,7 @@ function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read', 
   foreach((array)$list as $t) {
     $t = FmtPageName($t, $pagename);
     if (!PageExists($t)) continue;
-    $tpage = $preview? RetrieveAuthPreview($t, $auth)
-      : RetrieveAuthPage($t, $auth, false, READPAGE_CURRENT);
+    $tpage = RetrieveAuthPage($t, $auth, false, READPAGE_CURRENT);
     if (!$tpage) continue;
     $text = TextSection($tpage['text'], $pagesection);
     if ($text !== false) { $RASPageName = $t; return $text; }
@@ -1221,18 +1220,6 @@ function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read', 
   $RASPageName = '';
   return false;
 }
-
-
-##  RetrieveAuthPreview allows correct previews of PageTextVars and templates
-##  if $EnablePreviewParse is set to 1.
-function RetrieveAuthPreview($pagename, $auth='read') {
-  global $EnablePreviewParse;
-  $p = RetrieveAuthPage($pagename, $auth, 0, READPAGE_CURRENT);
-  if(IsEnabled($EnablePreviewParse, 0) && $pagename != @$_POST['n'] )
-    $p['text']=@$_POST['text'];
-  return $p;
-}
-
 
 function IncludeText($pagename, $inclspec) {
   global $MaxIncludes, $IncludeOpt, $InclCount;
@@ -1248,7 +1235,7 @@ function IncludeText($pagename, $inclspec) {
         if (isset($itext)) continue;
         $iname = MakePageName($pagename, $v);
         if (!$args['self'] && $iname == $pagename) continue;
-        $ipage = RetrieveAuthPreview($iname);
+        $ipage = RetrieveAuthPage($iname, 'read', false, READPAGE_CURRENT);
         $itext = @$ipage['text'];
       }
       $itext = TextSection($itext, $v, array('anchors' => 1));
