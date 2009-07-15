@@ -1827,7 +1827,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     $AuthList["id:-$AuthId"] = -1;
     $AuthList["id:*"] = 1;
   }
-  ## To allow @site_edit in GroupAttributes, we cache it first
+  ## To allow @_site_edit in GroupAttributes, we cache it first
   if (!isset($acache['@site'])) {
     foreach($DefaultPasswords as $k => $v) {
       $x = array(2, array(), '');
