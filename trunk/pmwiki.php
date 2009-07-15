@@ -1827,14 +1827,19 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
     $AuthList["id:-$AuthId"] = -1;
     $AuthList["id:*"] = 1;
   }
-  $gn = FmtPageName($GroupAttributesFmt, $pagename);
-  if (!isset($acache[$gn])) {
-    $gp = ReadPage($gn, READPAGE_CURRENT);
+  ## To allow @site_edit in GroupAttributes, we cache it first
+  if (!isset($acache['@site'])) {
     foreach($DefaultPasswords as $k => $v) {
       $x = array(2, array(), '');
       $acache['@site'][$k] = IsAuthorized($v, 'site', $x);
       $AuthList["@_site_$k"] = $acache['@site'][$k][0] ? 1 : 0;
-      $acache[$gn][$k] = IsAuthorized(@$gp["passwd$k"], 'group', 
+    }
+  }
+  $gn = FmtPageName($GroupAttributesFmt, $pagename);
+  if (!isset($acache[$gn])) {
+    $gp = ReadPage($gn, READPAGE_CURRENT);
+    foreach($DefaultPasswords as $k => $v) {
+      $acache[$gn][$k] = IsAuthorized(@$gp["passwd$k"], 'group',
                                       $acache['@site'][$k]);
     }
   }
