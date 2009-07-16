@@ -1960,8 +1960,8 @@ function PasswdVar($pagename, $level) {
     $FmtV['$PWCascade'] = substr($pwsource, 8);
     return FmtPageName('$[(using $PWCascade password)]', $pagename);
   }
-  $setting = implode(' ', preg_replace('/^(?!@|\\w+:).+$/', '****',
-                                       (array)$page['=passwd'][$level]));
+  $setting = htmlspecialchars(implode(' ', preg_replace('/^(?!@|\\w+:).+$/', '****',
+                                       (array)$page['=passwd'][$level])));
   if ($pwsource == 'group' || $pwsource == 'site') {
     $FmtV['$PWSource'] = $pwsource;
     $setting = FmtPageName('$[(set by $PWSource)] ', $pagename)
