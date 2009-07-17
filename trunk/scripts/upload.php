@@ -29,7 +29,7 @@ SDVA($UploadExts,array(
   'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
   'mov' => 'video/quicktime', 'qt' => 'video/quicktime',
   'wmf' => 'text/plain', 'avi' => 'video/x-msvideo',
-  'zip' => 'application/zip', 
+  'zip' => 'application/zip', '7z' => 'application/x-7z-compressed',
   'gz' => 'application/x-gzip', 'tgz' => 'application/x-gzip',
   'rpm' => 'application/x-rpm', 
   'hqx' => 'application/mac-binhex40', 'sit' => 'application/x-stuffit',
