@@ -1994,7 +1994,7 @@ function PrintAttrForm($pagename) {
 }
 
 function HandleAttr($pagename, $auth = 'attr') {
-  global $PageAttrFmt,$PageStartFmt,$PageEndFmt;
+  global $HandleAttrFmt,$PageAttrFmt,$PageStartFmt,$PageEndFmt;
   $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
   if (!$page) { Abort("?unable to read $pagename"); }
   PCache($pagename,$page);
