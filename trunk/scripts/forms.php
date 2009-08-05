@@ -98,7 +98,7 @@ function InputToHTML($pagename, $type, $args, &$opt) {
     { $a = strtolower($a); if (!isset($opt[$a])) $opt[$a] = $a; }
   if (isset($opt['name'])) {
     $opt['name'] = preg_replace('/^\\$:/', 'ptv_', @$opt['name']);
-    $opt['name'] = preg_replace('/[^-A-Za-z0-9:_.]+/', '_', $opt['name']);
+    $opt['name'] = preg_replace('/[^-A-Za-z0-9:_.\\[\\]]+/', '_', $opt['name']);
     $name = $opt['name'];
     ##  set control values from $InputValues array
     ##  radio, checkbox, select, etc. require a flag of some sort,
