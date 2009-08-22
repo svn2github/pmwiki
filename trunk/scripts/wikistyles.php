@@ -123,7 +123,8 @@ function ApplyStyles($x) {
         else {
           $c = @$style['class'];
           $style=array_merge($style,(array)$WikiStyle[$m[1]]);
-          if ($c) $style['class'] = $c . ' ' . $style['class'];
+          if ($c && !preg_match("/(^| )$c( |$)/", $style['class']) )
+            $style['class'] = $c . ' ' . $style['class'];
         }
       }
       if (@$style['define']) {
