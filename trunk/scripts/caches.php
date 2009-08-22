@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2006 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2006-2009 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -37,8 +37,13 @@ if (@$EnableIMSCaching) {
     $HTTPLastMod = gmdate('D, d M Y H:i:s \G\M\T',$IMSTime);
     $HTTPHeaders[] = "Cache-Control: no-cache";
     $HTTPHeaders[] = "Last-Modified: $HTTPLastMod";
-    if (@$_SERVER['HTTP_IF_MODIFIED_SINCE']==$HTTPLastMod)
-      { header("HTTP/1.0 304 Not Modified"); exit(); }
+    if (@$_SERVER['HTTP_IF_MODIFIED_SINCE']==$HTTPLastMod) {
+      header("HTTP/1.0 304 Not Modified");
+      header("Cache-Control: no-cache");
+      header("Expires: ");
+      header("Last-Modified: $HTTPLastMod");
+      exit(); 
+    }
   }
 }
 
