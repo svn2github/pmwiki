@@ -408,7 +408,7 @@ function PageListVariables(&$list, &$opt, $pn, &$page) {
            if (preg_match($pat, PageVar($pn, $v))) return 0;
       return 1;
   }
-}        
+}
 
 
 function PageListSort(&$list, &$opt, $pn, &$page) {
@@ -551,16 +551,34 @@ function FPLCountA($pagename, &$matches, $opt) {
   return count($matches);
 }
 
+SDVA($FPLTemplateFunctions, array(
+  'FPLTemplateLoad' => 100,
+  'FPLTemplateDefaults' => 200,
+  'FPLTemplatePageList' => 300,
+  'FPLTemplateSliceList' => 400,
+  'FPLTemplateFormat' => 500
+  ));
 
-##  FPLTemplate handles PagelistTemplates
 function FPLTemplate($pagename, &$matches, $opt) {
-  global $Cursor, $FPLTemplatePageFmt, $RASPageName, $PageListArgPattern,
-    $FPLTemplateMarkupFunction;
+  global $FPLTemplateFunctions;
+  StopWatch("FPLTemplate: Chain begin");
+  asort($FPLTemplateFunctions, SORT_NUMERIC);
+  $fnlist = $FPLTemplateFunctions;
+  $output = '';
+  foreach($FPLTemplateFunctions as $fn=>$i) {
+    StopWatch("FPLTemplate: $fn");
+    $fn($pagename, $matches, $opt, $tparts, $output);
+  }
+  StopWatch("FPLTemplate: Chain end");
+  return $output;
+}
+
+## Loads a template section
+function FPLTemplateLoad($pagename, $matches, $opt, &$tparts){
+  global $Cursor, $FPLTemplatePageFmt, $RASPageName, $PageListArgPattern;
   SDV($FPLTemplatePageFmt, array('{$FullName}',
     '{$SiteGroup}.LocalTemplates', '{$SiteGroup}.PageListTemplates'));
-  SDV($FPLTemplateMarkupFunction, 'MarkupToHTML');
 
-  StopWatch("FPLTemplate begin");
   $template = @$opt['template'];
   if (!$template) $template = @$opt['fmt'];
   $ttext = RetrieveAuthSection($pagename, $template, $FPLTemplatePageFmt);
@@ -570,12 +588,15 @@ function FPLTemplate($pagename, &$matches, $opt) {
   $ttext = MarkupEscape($ttext);
   ##  remove any anchor markups to avoid duplications
   $ttext = preg_replace('/\\[\\[#[A-Za-z][-.:\\w]*\\]\\]/', '', $ttext);
-  
+
   ##  extract portions of template
   $tparts = preg_split('/\\(:(template)\\s+(\\w+)\\s*(.*?):\\)/i', $ttext, -1,
-                       PREG_SPLIT_DELIM_CAPTURE);
+    PREG_SPLIT_DELIM_CAPTURE);
+}
 
-  ##  handle (:template defaults:)
+## Merge parameters from (:template default :) with those in the (:pagelist:)
+function FPLTemplateDefaults($pagename, $matches, &$opt, &$tparts){
+  global $PageListArgPattern;
   $i = 0;
   while ($i < count($tparts)) {
     if ($tparts[$i] != 'template') { $i++; continue; }
@@ -583,12 +604,18 @@ function FPLTemplate($pagename, &$matches, $opt) {
     $opt = array_merge(ParseArgs($tparts[$i+2], $PageListArgPattern), $opt);
     array_splice($tparts, $i, 3);
   }
-
   SDVA($opt, array('class' => 'fpltemplate', 'wrap' => 'div'));
+}
 
-  ##  get the list of pages
-  $matches = array_values(MakePageList($pagename, $opt, 0));
-  ##  extract page subset according to 'count=' parameter
+##  get the list of pages
+function FPLTemplatePageList($pagename, &$matches, $opt){
+  $matches = array_unique(array_merge((array)$matches, MakePageList($pagename, $opt, 0)));
+  ## count matches before any slicing and save value as template var {$$PageListCount}
+  $opt['PageListCount'] = count($matches);
+}
+
+## extract page subset according to 'count=' parameter
+function FPLTemplateSliceList($pagename, &$matches, &$opt){
   if (@$opt['count']) {
     list($r0, $r1) = CalcRange($opt['count'], count($matches));
     if ($r1 < $r0) 
@@ -596,7 +623,12 @@ function FPLTemplate($pagename, &$matches, $opt) {
     else 
       $matches = array_slice($matches, $r0-1, $r1-$r0+1);
   }
+}
 
+
+function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
+  global $Cursor, $FPLTemplateMarkupFunction;
+  SDV($FPLTemplateMarkupFunction, 'MarkupToHTML');
   $savecursor = $Cursor;
   $pagecount = 0; $groupcount = 0; $grouppagecount = 0;
   $pseudovars = array('{$$PageCount}' => &$pagecount, 
@@ -611,6 +643,19 @@ function FPLTemplate($pagename, &$matches, $opt) {
   $vv = array_values($pseudovars);
 
   $lgroup = ''; $out = '';
+  if(count($matches)==0 )
+  {
+    $t = 0;
+    while($t < count($tparts))
+    {
+      if($tparts[$t]=='template' && $tparts[$t+1]=='none')
+      {
+         $out .= MarkupRestore($tparts[$t+3]);
+         $t+=3;
+      }
+      $t++;
+    }
+  } # else:
   foreach($matches as $i => $pn) {
     $group = PageVar($pn, '$Group');
     if ($group != $lgroup) { $groupcount++; $grouppagecount = 0; $lgroup = $group; }
@@ -621,6 +666,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
       if ($tparts[$t] != 'template') { $item = $tparts[$t]; $t++; }
       else {
         list($when, $control, $item) = array_slice($tparts, $t+1, 3); $t+=4;
+        if($when=='none') continue;
         if (!$control) {
           if ($when == 'first' && $i != 0) continue;
           if ($when == 'last' && $i != count($matches) - 1) continue;
@@ -665,10 +711,8 @@ function FPLTemplate($pagename, &$matches, $opt) {
     if ($wrap != 'none') $out = "<div$class>$out</div>";
   }
   $Cursor = $savecursor;
-  StopWatch("FPLTemplate end");
-  return $out;
+  $output .= $out;
 }
-
 
 ########################################################################
 ## The functions below optimize searches by maintaining a file of
