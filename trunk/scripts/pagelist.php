@@ -608,14 +608,14 @@ function FPLTemplateDefaults($pagename, $matches, &$opt, &$tparts){
 }
 
 ##  get the list of pages
-function FPLTemplatePageList($pagename, &$matches, $opt){
+function FPLTemplatePageList($pagename, &$matches, &$opt){
   $matches = array_unique(array_merge((array)$matches, MakePageList($pagename, $opt, 0)));
   ## count matches before any slicing and save value as template var {$$PageListCount}
   $opt['PageListCount'] = count($matches);
 }
 
 ## extract page subset according to 'count=' parameter
-function FPLTemplateSliceList($pagename, &$matches, &$opt){
+function FPLTemplateSliceList($pagename, &$matches, $opt){
   if (@$opt['count']) {
     list($r0, $r1) = CalcRange($opt['count'], count($matches));
     if ($r1 < $r0) 
