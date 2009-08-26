@@ -77,7 +77,7 @@ SDV($InputFocusFmt,
 ##  InputToHTML performs standard processing on (:input ...:) arguments,
 ##  and returns the formatted HTML string.
 function InputToHTML($pagename, $type, $args, &$opt) {
-  global $InputTags, $InputAttrs, $InputValues, $FmtV,
+  global $InputTags, $InputAttrs, $InputValues, $FmtV, $KeepToken,
     $InputFocusLevel, $InputFocusId, $InputFocusFmt, $HTMLFooterFmt;
   if (!@$InputTags[$type]) return "(:input $type $args:)";
   ##  get input arguments
@@ -137,6 +137,8 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   $attr = array();
   foreach ($attrlist as $a) {
     if (!isset($opt[$a]) || $opt[$a]===false) continue;
+    if(strpos($opt[$a], $KeepToken)!== false) # multiline textarea/hidden fields
+      $opt[$a] = Keep(str_replace("'", '&#39;', MarkupRestore($opt[$a]) ));
     $attr[] = "$a='".str_replace("'", '&#39;', $opt[$a])."'";
   }
   $FmtV['$InputFormArgs'] = implode(' ', $attr);
