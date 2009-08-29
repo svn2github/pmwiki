@@ -1444,8 +1444,8 @@ function MakeLink($pagename,$tgt,$txt=NULL,$suffix=NULL,$fmt=NULL) {
 }
 
 function Markup($id, $when, $pat=NULL, $rep=NULL) {
-  global $MarkupTable,$MarkupRules;
-  unset($MarkupRules);
+  global $MarkupTable;
+  unset($GLOBALS['MarkupRules']);
   if (preg_match('/^([<>])?(.+)$/', $when, $m)) {
     $MarkupTable[$id]['cmd'] = $when;
     $MarkupTable[$m[2]]['dep'][$id] = $m[1];
@@ -1454,7 +1454,7 @@ function Markup($id, $when, $pat=NULL, $rep=NULL) {
       $MarkupTable[$id]['seq'] = $MarkupTable[$m[2]]['seq'].$m[1];
       foreach((array)@$MarkupTable[$id]['dep'] as $i=>$m)
         Markup($i,"$m$id");
-      unset($MarkupTable[$id]['dep']);
+      unset($GLOBALS['MarkupTable'][$id]['dep']);
     }
   }
   if ($pat && !isset($MarkupTable[$id]['pat'])) {
@@ -1466,7 +1466,7 @@ function Markup($id, $when, $pat=NULL, $rep=NULL) {
 function DisableMarkup() {
   global $MarkupTable;
   $idlist = func_get_args();
-  unset($MarkupRules);
+  unset($GLOBALS['MarkupRules']);
   while (count($idlist)>0) {
     $id = array_shift($idlist);
     if (is_array($id)) { $idlist = array_merge($idlist, $id); continue; }
