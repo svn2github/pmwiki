@@ -1495,7 +1495,6 @@ function MarkupToHTML($pagename, $text, $opt = NULL) {
   StopWatch('MarkupToHTML begin');
   array_unshift($MarkupFrame, array_merge($MarkupFrameBase, (array)$opt));
   $MarkupFrame[0]['wwcount'] = $WikiWordCount;
-  $markrules = BuildMarkupRules();
   foreach((array)$text as $l) 
     $lines[] = $MarkupFrame[0]['escape'] ? PVSE($l) : $l;
   $lines[] = '(:closeall:)';
@@ -1503,6 +1502,7 @@ function MarkupToHTML($pagename, $text, $opt = NULL) {
   while (count($lines)>0) {
     $x = array_shift($lines);
     $RedoMarkupLine=0;
+    $markrules = BuildMarkupRules();
     foreach($markrules as $p=>$r) {
       if ($p{0} == '/') $x=preg_replace($p,$r,$x); 
       elseif (strstr($x,$p)!==false) $x=eval($r);
