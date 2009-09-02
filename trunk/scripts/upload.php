@@ -113,12 +113,15 @@ SDV($HandleAuth['postupload'], $HandleAuth['upload']);
 SDV($UploadVerifyFunction, 'UploadVerifyBasic');
 
 function MakeUploadName($pagename,$x) {
-  global $UploadNameChars;
+  global $UploadNameChars, $MakeUploadNamePatterns;
   SDV($UploadNameChars, "-\\w. ");
-  $x = preg_replace("/[^$UploadNameChars]/", '', $x);
-  $x = preg_replace('/\\.[^.]*$/e', "strtolower('$0')", $x);
-  $x = preg_replace('/^[^[:alnum:]_]+/', '', $x);
-  return preg_replace('/[^[:alnum:]_]+$/', '', $x);
+  SDV($MakeUploadNamePatterns, array(
+    "/[^$UploadNameChars]/" => '',
+    '/\\.[^.]*$/e' => 'strtolower("$0")',
+    '/^[^[:alnum:]_]+/' => '',
+    '/[^[:alnum:]_]+$/' => ''));
+   return preg_replace(array_keys($MakeUploadNamePatterns),
+            array_values($MakeUploadNamePatterns), $x);
 }
 
 function LinkUpload($pagename, $imap, $path, $alt, $txt, $fmt=NULL) {
