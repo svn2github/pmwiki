@@ -196,6 +196,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   asort($PageListFilters);
   $opt['=phase'] = PAGELIST_PRE; $list=array(); $pn=NULL; $page=NULL;
   foreach($PageListFilters as $fn => $v) {
+    if($v<0) continue;
     $ret = $fn($list, $opt, $pagename, $page);
     if ($ret & PAGELIST_ITEM) $itemfilters[] = $fn;
     if ($ret & PAGELIST_POST) $postfilters[] = $fn;
