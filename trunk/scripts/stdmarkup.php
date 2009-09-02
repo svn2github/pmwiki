@@ -429,6 +429,8 @@ Markup('^>><<', '<^>>',
 #### special stuff ####
 ## (:markup:) for displaying markup examples
 function MarkupMarkup($pagename, $text, $opt = '') {
+  global $MarkupWordwrapFunction;
+  SDV($MarkupWordwrapFunction, 'wordwrap');
   $MarkupMarkupOpt = array('class' => 'vert');
   $opt = array_merge($MarkupMarkupOpt, ParseArgs($opt));
   $html = MarkupToHTML($pagename, $text, array('escape' => 0));
@@ -437,9 +439,9 @@ function MarkupMarkup($pagename, $text, $opt = '') {
                            "<caption>{$opt['caption']}</caption>");
   $class = preg_replace('/[^-\\s\\w]+/', ' ', @$opt['class']);
   if (strpos($class, 'horiz') !== false) 
-    { $sep = ''; $pretext = wordwrap($text, 40); } 
+    { $sep = ''; $pretext = $MarkupWordwrapFunction($text, 40); } 
   else 
-    { $sep = '</tr><tr>'; $pretext = wordwrap($text, 75); }
+    { $sep = '</tr><tr>'; $pretext = $MarkupWordwrapFunction($text, 75); }
   return Keep(@"<table class='markup $class' align='center'>$caption
       <tr><td class='markup1' valign='top'><pre>$pretext</pre></td>$sep<td 
         class='markup2' valign='top'>$html</td></tr></table>");
