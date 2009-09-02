@@ -468,12 +468,12 @@ function DRange($when) {
     /x';
   if (preg_match($dpat, $when, $m)) {
     $n = $m;
+    ##  if no time given, assume range of 1 day (except when full month)
+    if (@$m[4]>'' && @$m[5] == '') { @$n[4]++; }
     ##  if no day given, assume 1st of month and full month range
     if (@$m[4] == '') { $m[4] = 1; $n[4] = 1; $n[3]++; }
-    ##  if no time given, assume range of 1 day
-    if (@$m[5] == '') { @$n[4]++; }
-    ##  if no seconds given, assume range of 1 minute
-    if (@$m[8] == '') { @$n[7]++; }
+    ##  if no seconds given, assume range of 1 minute (except when full day)
+    if (@$m[7]>'' && @$m[8] == '') { @$n[7]++; }
     $t0 = @mktime($m[5], $m[7], $m[8], $m[3], $m[4], $m[1]);
     $t1 = @mktime($n[5], $n[7], $n[8], $n[3], $n[4], $n[1]);
     return array($t0, $t1);
