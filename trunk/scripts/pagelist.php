@@ -567,6 +567,7 @@ function FPLTemplate($pagename, &$matches, $opt) {
   $fnlist = $FPLTemplateFunctions;
   $output = '';
   foreach($FPLTemplateFunctions as $fn=>$i) {
+    if ($i<0) continue;
     StopWatch("FPLTemplate: $fn");
     $fn($pagename, $matches, $opt, $tparts, $output);
   }
