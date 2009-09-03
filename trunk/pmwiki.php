@@ -1699,10 +1699,11 @@ function PostPage($pagename, &$page, &$new) {
   }
 }
 
-function PostRecentChanges($pagename,&$page,&$new) {
+function PostRecentChanges($pagename,$page,$new,$Fmt=null) {
   global $IsPagePosted, $RecentChangesFmt, $RCDelimPattern, $RCLinesMax;
-  if (!$IsPagePosted) return;
-  foreach($RecentChangesFmt as $rcfmt=>$pgfmt) {
+  if (!$IsPagePosted && $Fmt==null) return;
+  if ($Fmt==null) $Fmt = $RecentChangesFmt;
+  foreach($Fmt as $rcfmt=>$pgfmt) {
     $rcname = FmtPageName($rcfmt,$pagename);  if (!$rcname) continue;
     $pgtext = FmtPageName($pgfmt,$pagename);  if (!$pgtext) continue;
     if (@$seen[$rcname]++) continue;

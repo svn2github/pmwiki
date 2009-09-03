@@ -199,7 +199,7 @@ function HandleDownload($pagename, $auth = 'read') {
 
 function HandlePostUpload($pagename, $auth = 'upload') {
   global $UploadVerifyFunction, $UploadFileFmt, $LastModFile, 
-    $EnableUploadVersions, $Now;
+    $EnableUploadVersions, $Now, $RecentUploadsFmt, $FmtV;
   UploadAuth($pagename, $auth);
   $uploadfile = $_FILES['uploadfile'];
   $upname = $_REQUEST['upname'];
@@ -219,6 +219,11 @@ function HandlePostUpload($pagename, $auth = 'upload') {
     fixperms($filepath,0444);
     if ($LastModFile) { touch($LastModFile); fixperms($LastModFile); }
     $result = "upresult=success";
+    if (IsEnabled($RecentUploadsFmt, 0)) {
+      $FmtV['$upname'] = $upname;
+      $FmtV['$upsize'] = $uploadfile['size'];
+      PostRecentChanges($pagename, '', '', $RecentUploadsFmt);
+    }
   }
   Redirect($pagename,"{\$PageUrl}?action=upload&uprname=$upname&$result");
 }
