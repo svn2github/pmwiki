@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2005 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2009 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -21,10 +21,11 @@
     button) are specified in their respective cookbook module.
 */
 
-$HTMLHeaderFmt[] = "<script language='javascript' type='text/javascript'
-  src='\$FarmPubDirUrl/guiedit/guiedit.js'></script>\n";
 
 SDV($GUIButtonDirUrlFmt,'$FarmPubDirUrl/guiedit');
+
+SDVA($HTMLHeaderFmt, array('guiedit' => "<script type='text/javascript'
+  src='$GUIButtonDirUrlFmt/guiedit.js'></script>\n"));
 
 SDVA($GUIButtons, array(
   'em'       => array(100, "''", "''", '$[Emphasized]',
@@ -58,7 +59,7 @@ function GUIButtonCode($pagename) {
   global $GUIButtons;
   $cmpfn = create_function('$a,$b', 'return $a[0]-$b[0];');
   usort($GUIButtons, $cmpfn);
-  $out = "<script language='javascript' type='text/javascript'><!--\n";
+  $out = "<script type='text/javascript'><!--\n";
   foreach ($GUIButtons as $k => $g) {
     if (!$g) continue;
     @list($when, $mopen, $mclose, $mtext, $tag, $mkey) = $g;
