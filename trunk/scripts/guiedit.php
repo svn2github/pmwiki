@@ -21,11 +21,10 @@
     button) are specified in their respective cookbook module.
 */
 
+SDVA($HTMLHeaderFmt, array('guiedit' => "<script type='text/javascript'
+  src='\$FarmPubDirUrl/guiedit/guiedit.js'></script>\n"));
 
 SDV($GUIButtonDirUrlFmt,'$FarmPubDirUrl/guiedit');
-
-SDVA($HTMLHeaderFmt, array('guiedit' => "<script type='text/javascript'
-  src='$GUIButtonDirUrlFmt/guiedit.js'></script>\n"));
 
 SDVA($GUIButtons, array(
   'em'       => array(100, "''", "''", '$[Emphasized]',
