@@ -573,8 +573,8 @@ function fixperms($fname, $add = 0) {
 ## are treated as things to be excluded.
 function GlobToPCRE($pat) {
   $pat = preg_quote($pat, '/');
-  $pat = str_replace(array('\\*', '\\?', '\\[', '\\]', '\\^'),
-                     array('.*',  '.',   '[',   ']',   '^'), $pat);
+  $pat = str_replace(array('\\*', '\\?', '\\[', '\\]', '\\^', '\\-', '\\!'),
+                     array('.*',  '.',   '[',   ']',   '^', '-', '!'), $pat);
   $excl = array(); $incl = array();
   foreach(preg_split('/,+\s?/', $pat, -1, PREG_SPLIT_NO_EMPTY) as $p) {
     if ($p{0} == '-' || $p{0} == '!') $excl[] = '^'.substr($p, 1).'$';
