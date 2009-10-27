@@ -310,6 +310,9 @@ if (preg_match('/[\\x80-\\xbf]/',$pagename))
 $pagename = preg_replace('![^[:alnum:]\\x80-\\xff]+$!','',$pagename);
 $FmtPV['$RequestedPage'] = "'".htmlspecialchars($pagename, ENT_QUOTES)."'";
 $Cursor['*'] = &$pagename;
+if (function_exists("date_default_timezone_get") ) { # fix PHP5.3 warnings
+  @date_default_timezone_set(@date_default_timezone_get());
+}
 
 if (file_exists("$FarmD/local/farmconfig.php")) 
   include_once("$FarmD/local/farmconfig.php");
