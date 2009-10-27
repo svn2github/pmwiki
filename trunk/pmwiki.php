@@ -1927,7 +1927,8 @@ function SessionAuth($pagename, $auth = NULL) {
   static $called;
 
   @$called++;
-  if (!$auth && ($called > 1 || !@$_REQUEST[session_name()])) return;
+  $sn = session_name(); # in PHP5.3, $_REQUEST doesn't contain $_COOKIE
+  if (!$auth && ($called > 1 || (!@$_REQUEST[$sn] && !@$_COOKIE[$sn]))) return;
 
   $sid = session_id();
   @session_start();
