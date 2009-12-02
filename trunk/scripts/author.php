@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2006 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2009 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -27,7 +27,7 @@ if (!isset($Author)) {
     $x = stripmagic(@$_COOKIE[$AuthorCookie]);
   } else $x = @$AuthId;
   $Author = htmlspecialchars(preg_replace("/[^$AuthorNameChars]/", '', $x), 
-                ENT_QUOTES);
+                ENT_COMPAT);
 }
 if (!isset($AuthorPage)) $AuthorPage = 
     FmtPageName('$AuthorGroup/$Name', MakePageName($pagename, $Author));
