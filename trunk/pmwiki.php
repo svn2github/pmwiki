@@ -1962,7 +1962,7 @@ function PasswdVar($pagename, $level) {
     if ($page) PCache($pagename, $page);
   }
   SDV($PasswdVarAuth, 'attr');
-  if ($PasswdVarAuth && !@$page['=auth'][$PasswdVarAuth]) return '(protected)';
+  if ($PasswdVarAuth && !@$page['=auth'][$PasswdVarAuth]) return XL('(protected)');
   $pwsource = $page['=pwsource'][$level];
   if (strncmp($pwsource, 'cascade:', 8) == 0) {
     $FmtV['$PWCascade'] = substr($pwsource, 8);
