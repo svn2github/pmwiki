@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2009 Patrick R. Michaud
+    Copyright 2001-2010 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
@@ -597,6 +597,8 @@ function FixGlob($x, $rep = '$1*.$2') {
 ## regexes to include ('/'), regexes to exclude ('!'), or
 ## wildcard patterns (all others).
 function MatchPageNames($pagelist, $pat) {
+  global $Charset;
+  $pcre8 = ($Charset == 'UTF-8')? 'u' : ''; # allow range matches in utf8
   $pagelist = (array)$pagelist;
   foreach((array)$pat as $p) {
     if (count($pagelist) < 1) break;
@@ -611,9 +613,9 @@ function MatchPageNames($pagelist, $pat) {
       default:
         list($inclp, $exclp) = GlobToPCRE(str_replace('/', '.', $p));
         if ($exclp) 
-          $pagelist = array_diff($pagelist, preg_grep("/$exclp/i", $pagelist));
+          $pagelist = array_diff($pagelist, preg_grep("/$exclp/i$pcre8", $pagelist));
         if ($inclp)
-          $pagelist = preg_grep("/$inclp/i", $pagelist);
+          $pagelist = preg_grep("/$inclp/i$pcre8", $pagelist);
     }
   }
   return $pagelist;
