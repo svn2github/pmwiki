@@ -1700,7 +1700,7 @@ function PostPage($pagename, &$page, &$new) {
     $keys = array_keys($new);
     foreach($keys as $k)
       if (preg_match("/^\\w+:(\\d+)/",$k,$match) 
-        && $match[1]<$keepgmt && --$keepnum<0)
+        && --$keepnum<=0 && $match[1]<$keepgmt)
         unset($new[$k]);
     if (preg_match("/$DeleteKeyPattern/",$new['text'])){
       if(@$new['passwdattr']>'' && !CondAuth($pagename, 'attr'))
