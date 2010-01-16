@@ -20,7 +20,7 @@ Markup('**', 'inline',
 
 ## //emphasized//
 Markup('//', 'inline', 
-  '/(?<!https?:|ftp:)\\/\\/(.*?)\\/\\//',
+  '/(?<!http:|https:|ftp:)\\/\\/(.*?)\\/\\//',
   '<em>$1</em>');
 
 ## == Headings ==
