@@ -738,7 +738,8 @@ function PageTextVar($pagename, $var) {
     $page = RetrieveAuthPage($pagename, 'read', false, READPAGE_CURRENT);
     if ($page) {
       foreach((array)$PageTextVarPatterns as $pat) 
-        if (preg_match_all($pat, @$page['text'], $match, PREG_SET_ORDER))
+        if (preg_match_all($pat, IsEnabled($PCache[$pagename]['=preview'],@$page['text']), 
+          $match, PREG_SET_ORDER))
           foreach($match as $m) {
             $t = preg_replace("/\\{\\$:{$m[2]}\\}/", '', $m[3]);
             $pc["=p_{$m[2]}"] = Qualify($pagename, $t);
@@ -1210,7 +1211,7 @@ function TextSection($text, $sections, $args = NULL) {
 ##  The selected page is placed in the global $RASPageName variable.
 ##  The caller is responsible for calling Qualify() as needed.
 function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') {
-  global $RASPageName;
+  global $RASPageName, $PCache;
   if ($pagesection{0} != '#')
     $list = array(MakePageName($pagename, $pagesection));
   else if (is_null($list)) $list = array($pagename);
@@ -1219,7 +1220,7 @@ function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') 
     if (!PageExists($t)) continue;
     $tpage = RetrieveAuthPage($t, $auth, false, READPAGE_CURRENT);
     if (!$tpage) continue;
-    $text = TextSection($tpage['text'], $pagesection);
+    $text = TextSection(IsEnabled($PCache[$t]['=preview'],$tpage['text']),$pagesection);
     if ($text !== false) { $RASPageName = $t; return $text; }
   }
   $RASPageName = '';
@@ -1227,7 +1228,7 @@ function RetrieveAuthSection($pagename, $pagesection, $list=NULL, $auth='read') 
 }
 
 function IncludeText($pagename, $inclspec) {
-  global $MaxIncludes, $IncludeOpt, $InclCount;
+  global $MaxIncludes, $IncludeOpt, $InclCount, $PCache;
   SDV($MaxIncludes,50);
   SDVA($IncludeOpt, array('self'=>1));
   $npat = '[[:alpha:]][-\\w]*';
@@ -1241,7 +1242,7 @@ function IncludeText($pagename, $inclspec) {
         $iname = MakePageName($pagename, $v);
         if (!$args['self'] && $iname == $pagename) continue;
         $ipage = RetrieveAuthPage($iname, 'read', false, READPAGE_CURRENT);
-        $itext = @$ipage['text'];
+        $itext = IsEnabled($PCache[$iname]['=preview'], @$ipage['text']);
       }
       $itext = TextSection($itext, $v, array('anchors' => 1));
       continue;
@@ -1641,6 +1642,8 @@ function RestorePage($pagename,&$page,&$new,$restore=NULL) {
   }
   if ($nl) $t[]='';
   $new['text']=implode("\n",$t);
+  $new['=preview'] = $new['text'];
+  PCache($pagename, $new);
   return $new['text'];
 }
 
@@ -1652,9 +1655,12 @@ function ReplaceOnSave($pagename,&$page,&$new) {
   global $EnablePost, $ROSPatterns, $ROEPatterns;
   foreach ((array)@$ROEPatterns as $pat => $rep)
     $new['text'] = preg_replace($pat, $rep, $new['text']);
-  if (!$EnablePost) return;
-  foreach((array)@$ROSPatterns as $pat=>$rep) 
-    $new['text'] = preg_replace($pat, $rep, $new['text']);
+  if ($EnablePost) {
+    foreach((array)@$ROSPatterns as $pat=>$rep) 
+      $new['text'] = preg_replace($pat, $rep, $new['text']);
+  }
+  $new['=preview'] = $new['text'];
+  PCache($pagename, $new);
 }
 
 function SaveAttributes($pagename,&$page,&$new) {
@@ -1676,7 +1682,7 @@ function SaveAttributes($pagename,&$page,&$new) {
 
 function PostPage($pagename, &$page, &$new) {
   global $DiffKeepDays, $DiffFunction, $DeleteKeyPattern, $EnablePost,
-    $Now, $Charset, $Author, $WikiDir, $IsPagePosted;
+    $Now, $Charset, $Author, $WikiDir, $IsPagePosted, $DiffKeepNum;
   SDV($DiffKeepDays,3650);
   SDV($DeleteKeyPattern,"^\\s*delete\\s*$");
   $IsPagePosted = false;
@@ -1690,9 +1696,11 @@ function PostPage($pagename, &$page, &$new) {
       $new["diff:$Now:{$page['time']}:$diffclass"] =
         $DiffFunction($new['text'],@$page['text']);
     $keepgmt = $Now-$DiffKeepDays * 86400;
+    $keepnum = IsEnabled($DiffKeepNum, 20);
     $keys = array_keys($new);
     foreach($keys as $k)
-      if (preg_match("/^\\w+:(\\d+)/",$k,$match) && $match[1]<$keepgmt)
+      if (preg_match("/^\\w+:(\\d+)/",$k,$match) 
+        && $match[1]<$keepgmt && --$keepnum<0)
         unset($new[$k]);
     if (preg_match("/$DeleteKeyPattern/",$new['text'])){
       if(@$new['passwdattr']>'' && !CondAuth($pagename, 'attr'))
@@ -1759,13 +1767,14 @@ function HandleEdit($pagename, $auth = 'edit') {
   Lock(2);
   $page = RetrieveAuthPage($pagename, $auth, true);
   if (!$page) Abort("?cannot edit $pagename"); 
-  PCache($pagename,$page);
   $new = $page;
   foreach((array)$EditFields as $k) 
     if (isset($_POST[$k])) $new[$k]=str_replace("\r",'',stripmagic($_POST[$k]));
   $new['csum'] = $ChangeSummary;
   if ($ChangeSummary) $new["csum:$Now"] = $ChangeSummary;
   $EnablePost &= preg_grep('/^post/', array_keys(@$_POST));
+  $new['=preview'] = $new['text'];
+  PCache($pagename, $new);
   UpdatePage($pagename, $page, $new);
   Lock(0);
   if ($IsPagePosted && !@$_POST['postedit']) 
