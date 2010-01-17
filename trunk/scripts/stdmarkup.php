@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2009 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -57,7 +57,7 @@ Markup('textvar:', '<split',
   '/\\(:\\w[-\\w]*:(?!\\)).*?:\\)/s', '');
 
 ## handle relative text vars in includes
-if (IsEnabled($EnableRelativePageVars, 0)) 
+if (IsEnabled($EnableRelativePageVars, 1)) 
   SDV($QualifyPatterns["/\\{([-\\w\\x80-\\xfe]*)(\\$:?\\w+\\})/e"], 
     "'{' . ('$1' ? MakePageName(\$pagename, '$1') : \$pagename) . '$2'");
 
