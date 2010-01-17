@@ -710,8 +710,9 @@ function PCache($pagename, $page) {
 ## SetProperty saves a page property into $PCache.  For convenience
 ## it returns the $value of the property just set.  If $sep is supplied,
 ## then $value is appended to the current property (with $sep as
-## as separator) instead of replacing it.
-function SetProperty($pagename, $prop, $value, $sep = NULL) {
+## as separator) instead of replacing it. If $keep is suplied and the 
+## property already exists, then $value will be ignored.
+function SetProperty($pagename, $prop, $value, $sep=NULL, $keep=NULL) {
   global $PCache, $KeepToken;
   NoCache();
   $prop = "=p_$prop";
@@ -719,8 +720,8 @@ function SetProperty($pagename, $prop, $value, $sep = NULL) {
                         "\$GLOBALS['KPV']['$1']", $value);
   if (!is_null($sep) && isset($PCache[$pagename][$prop]))
     $value = $PCache[$pagename][$prop] . $sep . $value;
-  $PCache[$pagename][$prop] = $value;
-  return $value;
+  if (is_null($keep)) $PCache[$pagename][$prop] = $value;
+  return $PCache[$pagename][$prop];
 }
 
 

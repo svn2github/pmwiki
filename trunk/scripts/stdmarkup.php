@@ -180,11 +180,14 @@ Markup('messages', 'directives',
 ## (:comment:)
 Markup('comment', 'directives', '/\\(:comment .*?:\\)/i', '');
 
-## (:title:)
-Markup('title','directives',
+## (:title:) +fix for PITS:00266, 00779
+$tmpwhen = IsEnabled($EnablePageTitlePriority, 0) ? '<include' : 'directives';
+$tmpkeep = IsEnabled($EnablePageTitlePriority, 0) ? '1' : 'NULL';
+Markup('title', $tmpwhen,
   '/\\(:title\\s(.*?):\\)/ei',
   "PZZ(PCache(\$pagename, 
-         \$zz=array('title' => SetProperty(\$pagename, 'title', PSS('$1')))))");
+    \$zz=array('title' => SetProperty(\$pagename, 'title', PSS('$1'), NULL, $tmpkeep))))");
+unset($tmpwhen, $tmpkeep);
 
 ## (:keywords:), (:description:)
 Markup('keywords', 'directives', 
