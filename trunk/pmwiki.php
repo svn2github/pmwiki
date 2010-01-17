@@ -720,7 +720,8 @@ function SetProperty($pagename, $prop, $value, $sep=NULL, $keep=NULL) {
                         "\$GLOBALS['KPV']['$1']", $value);
   if (!is_null($sep) && isset($PCache[$pagename][$prop]))
     $value = $PCache[$pagename][$prop] . $sep . $value;
-  if (is_null($keep)) $PCache[$pagename][$prop] = $value;
+  if (is_null($keep) || !isset($PCache[$pagename][$prop]))
+    $PCache[$pagename][$prop] = $value;
   return $PCache[$pagename][$prop];
 }
 
