@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2006 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -24,7 +24,7 @@ SDV($PageDiffFmt,"<h2 class='wikiaction'>$[{\$FullName} History]</h2>
   <p>$DiffMinorFmt - $DiffSourceFmt</p>
   ");
 SDV($DiffStartFmt,"
-      <div class='diffbox'><div class='difftime'>\$DiffTime 
+  <div class='diffbox'><div class='difftime'><a name='diff\$DiffGMT' href='#diff\$DiffGMT'>\$DiffTime</a>
         \$[by] <span class='diffauthor' title='\$DiffHost'>\$DiffAuthor</span> - \$DiffChangeSum</div>");
 SDV($DiffDelFmt['a'],"
         <div class='difftype'>\$[Deleted line \$DiffLines:]</div>
@@ -61,75 +61,94 @@ SDV($HTMLStylesFmt['diff'], "
   .diffmarkup { font-family:monospace; } ");
 
 function PrintDiff($pagename) {
-  global $DiffShow,$DiffStartFmt,$TimeFmt,$DiffDelFmt,$DiffAddFmt,
-    $DiffEndDelAddFmt,$DiffEndFmt,$DiffRestoreFmt,$FmtV, $LinkFunctions;
+  global $DiffHTMLFunction,$DiffShow,$DiffStartFmt,$TimeFmt,
+    $DiffEndFmt,$DiffRestoreFmt,$FmtV, $LinkFunctions;
   $page = ReadPage($pagename);
   if (!$page) return;
   krsort($page); reset($page);
   $lf = $LinkFunctions;
   $LinkFunctions['http:'] = 'LinkSuppress';
   $LinkFunctions['https:'] = 'LinkSuppress';
+  SDV($DiffHTMLFunction, 'DiffHTML');
   foreach($page as $k=>$v) {
     if (!preg_match("/^diff:(\d+):(\d+):?([^:]*)/",$k,$match)) continue;
     $diffclass = $match[3];
     if ($diffclass=='minor' && $DiffShow['minor']!='y') continue;
-    $diffgmt = $match[1]; $FmtV['$DiffTime'] = strftime($TimeFmt,$diffgmt); 
+    $diffgmt = $FmtV['$DiffGMT'] = $match[1];
+    $FmtV['$DiffTime'] = strftime($TimeFmt,$diffgmt);
     $diffauthor = @$page["author:$diffgmt"]; 
     if (!$diffauthor) @$diffauthor=$page["host:$diffgmt"];
     if (!$diffauthor) $diffauthor="unknown";
     $FmtV['$DiffChangeSum'] = htmlspecialchars(@$page["csum:$diffgmt"]);
     $FmtV['$DiffHost'] = @$page["host:$diffgmt"];
     $FmtV['$DiffAuthor'] = $diffauthor;
-    $FmtV['$DiffId'] = $k; 
+    $FmtV['$DiffId'] = $k;
     echo FmtPageName($DiffStartFmt,$pagename);
-    $difflines = explode("\n",$v."\n");
-    $in=array(); $out=array(); $dtype='';
-    foreach($difflines as $d) {
-      if ($d>'') {
-        if ($d[0]=='-' || $d[0]=='\\') continue;
-        if ($d[0]=='<') { $out[]=substr($d,2); continue; }
-        if ($d[0]=='>') { $in[]=substr($d,2); continue; }
-      }
-      if (preg_match("/^(\\d+)(,(\\d+))?([adc])(\\d+)(,(\\d+))?/",
-          $dtype,$match)) {
-        if (@$match[7]>'') {
-          $lines='lines';
-          $count=$match[1].'-'.($match[1]+$match[7]-$match[5]);
-        } elseif ($match[3]>'') {
-          $lines='lines'; $count=$match[1].'-'.$match[3];
-        } else { $lines='line'; $count=$match[1]; }
-        if ($match[4]=='a' || $match[4]=='c') {
-          $txt = str_replace('line',$lines,$DiffDelFmt[$match[4]]);
-          $FmtV['$DiffLines'] = $count;
-          echo FmtPageName($txt,$pagename);
-          if ($DiffShow['source']=='y') 
-            echo "<div class='diffmarkup'>",
-              str_replace("\n","<br />",htmlspecialchars(join("\n",$in))),
-              "</div>";
-          else echo MarkupToHTML($pagename,
-            preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))", join("\n",$in)));
-        }
-        if ($match[4]=='d' || $match[4]=='c') {
-          $txt = str_replace('line',$lines,$DiffAddFmt[$match[4]]);
-          $FmtV['$DiffLines'] = $count;
-          echo FmtPageName($txt,$pagename);
-          if ($DiffShow['source']=='y') 
-            echo "<div class='diffmarkup'>",
-              str_replace("\n","<br />",htmlspecialchars(join("\n",$out))),
-              "</div>";
-          else echo MarkupToHTML($pagename,
-            preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))",join("\n",$out)));
-        }
-        echo FmtPageName($DiffEndDelAddFmt,$pagename);
-      }
-      $in=array(); $out=array(); $dtype=$d;
-    }
+    echo $DiffHTMLFunction($pagename, $v);
     echo FmtPageName($DiffEndFmt,$pagename);
     echo FmtPageName($DiffRestoreFmt,$pagename);
   }
   $LinkFunctions = $lf;
 }
 
+# This function converts a single diff entry from the wikipage file
+# into HTML, ready for display.
+function DiffHTML($pagename, $diff) {
+  global $FmtV, $DiffShow, $DiffAddFmt, $DiffDelFmt, $DiffEndDelAddFmt,
+  $DiffRenderFromFunction, $DiffRenderToFunction;
+  SDV($DiffRenderFromFunction, 'DiffRenderFrom');
+  SDV($DiffRenderToFunction, 'DiffRenderTo');
+  $difflines = explode("\n",$diff."\n");
+  $in=array(); $out=array(); $dtype=''; $html = '';
+  foreach($difflines as $d) {
+    if ($d>'') {
+      if ($d[0]=='-' || $d[0]=='\\') continue;
+      if ($d[0]=='<') { $out[]=substr($d,2); continue; }
+      if ($d[0]=='>') { $in[]=substr($d,2); continue; }
+    }
+    if (preg_match("/^(\\d+)(,(\\d+))?([adc])(\\d+)(,(\\d+))?/",
+        $dtype,$match)) {
+      if (@$match[7]>'') {
+        $lines='lines';
+        $count=$match[1].'-'.($match[1]+$match[7]-$match[5]);
+      } elseif ($match[3]>'') {
+        $lines='lines'; $count=$match[1].'-'.$match[3];
+      } else { $lines='line'; $count=$match[1]; }
+      if ($match[4]=='a' || $match[4]=='c') {
+        $txt = str_replace('line',$lines,$DiffDelFmt[$match[4]]);
+        $FmtV['$DiffLines'] = $count;
+        $html .= FmtPageName($txt,$pagename);
+        if ($DiffShow['source']=='y') 
+          $html .= "<div class='diffmarkup'>",
+            $DiffRenderFromFunction($in, $out),
+            "</div>";
+        else $html .= MarkupToHTML($pagename,
+          preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))", join("\n",$in)));
+      }
+      if ($match[4]=='d' || $match[4]=='c') {
+        $txt = str_replace('line',$lines,$DiffAddFmt[$match[4]]);
+        $FmtV['$DiffLines'] = $count;
+        $html .= FmtPageName($txt,$pagename);
+        if ($DiffShow['source']=='y') 
+          $html .= "<div class='diffmarkup'>",
+            $DiffRenderToFunction($in, $out),
+            "</div>";
+        else $html .= MarkupToHTML($pagename,
+          preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))",join("\n",$out)));
+      }
+      $html .= FmtPageName($DiffEndDelAddFmt,$pagename);
+    }
+    $in=array(); $out=array(); $dtype=$d;
+  }
+  return $html;
+}
+# Such 2 parametrizable functions allow custom diff rendering (inline...)
+function DiffRenderFrom($in, $out) {
+  return str_replace("\n","<br />",htmlspecialchars(join("\n",$in))),
+}
+function DiffRenderTo($in, $out) {
+  return str_replace("\n","<br />",htmlspecialchars(join("\n",$out))),
+}
 function HandleDiff($pagename, $auth='read') {
   global $HandleDiffFmt, $PageStartFmt, $PageDiffFmt, $PageEndFmt;
   $page = RetrieveAuthPage($pagename, $auth, true);
