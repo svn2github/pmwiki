@@ -24,7 +24,7 @@ SDV($PageDiffFmt,"<h2 class='wikiaction'>$[{\$FullName} History]</h2>
   <p>$DiffMinorFmt - $DiffSourceFmt</p>
   ");
 SDV($DiffStartFmt,"
-  <div class='diffbox'><div class='difftime'><a name='diff\$DiffGMT' href='#diff\$DiffGMT'>\$DiffTime</a>
+      <div class='diffbox'><div class='difftime'><a name='d\$DiffGMT' href='#d\$DiffGMT'>\$DiffTime</a>
         \$[by] <span class='diffauthor' title='\$DiffHost'>\$DiffAuthor</span> - \$DiffChangeSum</div>");
 SDV($DiffDelFmt['a'],"
         <div class='difftype'>\$[Deleted line \$DiffLines:]</div>
@@ -119,9 +119,9 @@ function DiffHTML($pagename, $diff) {
         $FmtV['$DiffLines'] = $count;
         $html .= FmtPageName($txt,$pagename);
         if ($DiffShow['source']=='y') 
-          $html .= "<div class='diffmarkup'>",
-            $DiffRenderFromFunction($in, $out),
-            "</div>";
+          $html .= "<div class='diffmarkup'>"
+            .$DiffRenderFromFunction($in, $out)
+            ."</div>";
         else $html .= MarkupToHTML($pagename,
           preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))", join("\n",$in)));
       }
@@ -130,9 +130,9 @@ function DiffHTML($pagename, $diff) {
         $FmtV['$DiffLines'] = $count;
         $html .= FmtPageName($txt,$pagename);
         if ($DiffShow['source']=='y') 
-          $html .= "<div class='diffmarkup'>",
-            $DiffRenderToFunction($in, $out),
-            "</div>";
+          $html .= "<div class='diffmarkup'>"
+            .$DiffRenderToFunction($in, $out)
+            ."</div>";
         else $html .= MarkupToHTML($pagename,
           preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))",join("\n",$out)));
       }
@@ -144,10 +144,10 @@ function DiffHTML($pagename, $diff) {
 }
 # Such 2 parametrizable functions allow custom diff rendering (inline...)
 function DiffRenderFrom($in, $out) {
-  return str_replace("\n","<br />",htmlspecialchars(join("\n",$in))),
+  return str_replace("\n","<br />",htmlspecialchars(join("\n",$in)));
 }
 function DiffRenderTo($in, $out) {
-  return str_replace("\n","<br />",htmlspecialchars(join("\n",$out))),
+  return str_replace("\n","<br />",htmlspecialchars(join("\n",$out)));
 }
 function HandleDiff($pagename, $auth='read') {
   global $HandleDiffFmt, $PageStartFmt, $PageDiffFmt, $PageEndFmt;
