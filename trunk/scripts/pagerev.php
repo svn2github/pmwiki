@@ -24,7 +24,7 @@ SDV($PageDiffFmt,"<h2 class='wikiaction'>$[{\$FullName} History]</h2>
   <p>$DiffMinorFmt - $DiffSourceFmt</p>
   ");
 SDV($DiffStartFmt,"
-      <div class='diffbox'><div class='difftime'><a name='d\$DiffGMT' href='#d\$DiffGMT'>\$DiffTime</a>
+      <div class='diffbox'><div class='difftime'><a name='diff\$DiffGMT' href='#diff\$DiffGMT'>\$DiffTime</a>
         \$[by] <span class='diffauthor' title='\$DiffHost'>\$DiffAuthor</span> - \$DiffChangeSum</div>");
 SDV($DiffDelFmt['a'],"
         <div class='difftype'>\$[Deleted line \$DiffLines:]</div>
