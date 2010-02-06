@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2007 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2007-2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -51,9 +51,6 @@
     results of other expressions; these values may be un-escaped
     by using "preg_replace($rpat, $rrep, $params)".
 */
-
-$RecipeInfo['MarkupExpressions']['Version'] = '2007-04-11';
-
 Markup('{(', '>{$var}',
   '/\\{(\\(\\w+\\b.*?\\))\\}/e',
   "MarkupExpression(\$pagename, PSS('$1'))");
