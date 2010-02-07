@@ -391,27 +391,27 @@ Markup('^!', 'block',
 Markup('^----','>^->','/^----+/','<:block,1><hr />');
 
 #### (:table:) markup (AdvancedTables)
-
 function Cells($name,$attr) {
   global $MarkupFrame;
   $attr = PQA($attr);
   $tattr = @$MarkupFrame[0]['tattr'];
   $name = strtolower($name);
   $key = preg_replace('/end$/', '', $name);
-  if (strncmp($key, 'cell', 4) == 0) $key = 'cell';
+  if (preg_match("/^(?:head|cell)/", $name)) $key = 'cell';
   $out = '<:block>'.MarkupClose($key);
   if (substr($name, -3) == 'end') return $out;
   $cf = & $MarkupFrame[0]['closeall'];
   if ($name == 'table') $MarkupFrame[0]['tattr'] = $attr; 
-  else if (strncmp($name, 'cell', 4) == 0) {
+  else if ($key == 'cell') {
     if (strpos($attr, "valign=")===false) $attr .= " valign='top'";
+    $t = (strpos($name, 'head')===0 ) ? 'th' : 'td';
     if (!@$cf['table']) {
        $tattr = @$MarkupFrame[0]['tattr'];
-       $out .= "<table $tattr><tr><td $attr>";
-       $cf['table'] = '</td></tr></table>';
-    } else if ($name == 'cellnr') $out .= "</td></tr><tr><td $attr>";
-    else $out .= "</td><td $attr>";
-    $cf['cell'] = '';
+       $out .= "<table $tattr><tr><$t $attr>";
+       $cf['table'] = '</tr></table>';
+    } else if ( preg_match("/nr$/", $name)) $out .= "</tr><tr><$t $attr>";
+    else $out .= "<$t $attr>";
+    $cf['cell'] = "</$t>";
   } else {
     $out .= "<div $attr>";
     $cf[$key] = '</div>';
@@ -420,7 +420,7 @@ function Cells($name,$attr) {
 }
 
 Markup('table', '<block',
-  '/^\\(:(table|cell|cellnr|tableend|div\\d*(?:end)?)(\\s.*?)?:\\)/ie',
+  '/^\\(:(table|cell|cellnr|head|headnr|tableend|div\\d*(?:end)?)(\\s.*?)?:\\)/ie',
   "Cells('$1',PSS('$2'))");
 Markup('^>>', '<table',
   '/^&gt;&gt;(.+?)&lt;&lt;(.*)$/',
