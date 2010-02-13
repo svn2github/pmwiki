@@ -34,8 +34,8 @@ if (!$pagename &&
 $pagename = preg_replace('!/+$!','',$pagename);
 $FmtPV['$RequestedPage'] = "'".htmlspecialchars($pagename, ENT_QUOTES)."'";
 
-$GroupPattern = '[\\w\\x80-\\xfe]+(?:-[[\\w\\x80-\\xfe]+)*';
-$NamePattern = '[\\w\\x80-\\xfe]+(?:-[[\\w\\x80-\\xfe]+)*';
+$GroupPattern = '[\\w\\x80-\\xfe]+(?:-[\\w\\x80-\\xfe]+)*';
+$NamePattern = '[\\w\\x80-\\xfe]+(?:-[\\w\\x80-\\xfe]+)*';
 $WikiWordPattern = 
   '[A-Z][A-Za-z0-9]*(?:[A-Z][a-z0-9]|[a-z0-9][A-Z])[A-Za-z0-9]*';
 $SuffixPattern = '(?:-?[A-Za-z0-9\\x80-\\xd6]+)*';
