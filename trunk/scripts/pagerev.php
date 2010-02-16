@@ -83,8 +83,10 @@ function PrintDiff($pagename) {
     $FmtV['$DiffHost'] = @$page["host:$diffgmt"];
     $FmtV['$DiffAuthor'] = $diffauthor;
     $FmtV['$DiffId'] = $k;
+    $html = $DiffHTMLFunction($pagename, $v);
+    if(!$html) continue;
     echo FmtPageName($DiffStartFmt,$pagename);
-    echo $DiffHTMLFunction($pagename, $v);
+    echo $html;
     echo FmtPageName($DiffEndFmt,$pagename);
     echo FmtPageName($DiffRestoreFmt,$pagename);
   }
