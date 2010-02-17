@@ -97,9 +97,8 @@ function PrintDiff($pagename) {
 # into HTML, ready for display.
 function DiffHTML($pagename, $diff) {
   global $FmtV, $DiffShow, $DiffAddFmt, $DiffDelFmt, $DiffEndDelAddFmt,
-  $DiffRenderFromFunction, $DiffRenderToFunction;
-  SDV($DiffRenderFromFunction, 'DiffRenderPlainText');
-  SDV($DiffRenderToFunction, 'DiffRenderPlainText');
+  $DiffRenderSourceFunction;
+  SDV($DiffRenderSourceFunction, 'DiffRenderSource');
   $difflines = explode("\n",$diff."\n");
   $in=array(); $out=array(); $dtype=''; $html = '';
   foreach($difflines as $d) {
@@ -122,7 +121,7 @@ function DiffHTML($pagename, $diff) {
         $html .= FmtPageName($txt,$pagename);
         if ($DiffShow['source']=='y') 
           $html .= "<div class='diffmarkup'>"
-            .$DiffRenderFromFunction($in, $out, 0)
+            .$DiffRenderSourceFunction($in, $out, 0)
             ."</div>";
         else $html .= MarkupToHTML($pagename,
           preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))", join("\n",$in)));
@@ -133,7 +132,7 @@ function DiffHTML($pagename, $diff) {
         $html .= FmtPageName($txt,$pagename);
         if ($DiffShow['source']=='y') 
           $html .= "<div class='diffmarkup'>"
-            .$DiffRenderToFunction($in, $out, 1)
+            .$DiffRenderSourceFunction($in, $out, 1)
             ."</div>";
         else $html .= MarkupToHTML($pagename,
           preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))",join("\n",$out)));
@@ -145,7 +144,7 @@ function DiffHTML($pagename, $diff) {
   return $html;
 }
 # Such parametrizable function allows custom diff rendering (inline...)
-function DiffRenderPlainText($in, $out, $x) {
+function DiffRenderSource($in, $out, $x) {
   $a = $x? $out : $in;
   return str_replace("\n","<br />",htmlspecialchars(join("\n",$a)));
 }
@@ -162,8 +161,7 @@ function HandleDiff($pagename, $auth='read') {
 
 ##### Functions for simple word-diff (written by Petko Yotov)
 if(IsEnabled($EnableDiffInline, 0)) {
-  $DiffRenderFromFunction = 
-  $DiffRenderToFunction = 'DiffRenderInline';
+  $DiffRenderSourceFunction = 'DiffRenderInline';
   SDV($HTMLStylesFmt['diffinline'], " 
     .diffmarkup del { background:#fdd; }
     .diffmarkup ins { background:#dfd; }");
