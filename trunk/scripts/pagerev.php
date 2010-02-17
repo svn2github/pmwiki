@@ -201,8 +201,8 @@ function DiffRenderInline($in, $out, $which) {
         }
       }
     }
-    if(count($x2)>2) $linesx[] = implode('', $x2);
-    if(count($y2)>2) $linesy[] = implode('', $y2);
+    if(strlen($x)) $linesx[] = implode('', $x2);
+    if(strlen($y)) $linesy[] = implode('', $y2);
   }
   return implode('<br/>', ($which? $linesy : $linesx));
 }
