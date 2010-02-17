@@ -201,8 +201,9 @@ function DiffRenderInline($in, $out, $which) {
         }
       }
     }
-    if(strlen($x)) $linesx[] = implode('', $x2);
-    if(strlen($y)) $linesy[] = implode('', $y2);
+    $linesx[] = implode('', $x2);
+    $linesy[] = implode('', $y2);
   }
-  return implode('<br/>', ($which? $linesy : $linesx));
+  $ret = trim(implode("\n", ($which? $linesy : $linesx)))
+  return str_replace("\n","<br />",$ret);
 }
