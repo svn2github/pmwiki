@@ -157,15 +157,10 @@ function HandleDiff($pagename, $auth='read') {
 ##### Functions for simple word-diff (written by Petko Yotov)
 function DiffRenderSource($in, $out, $which) {
   global $DiffFunction, $EnableDiffInline, $HTMLStylesFmt;
-  static $styles = -1;
   if(! IsEnabled($EnableDiffInline, 0)) {
     $a = $which? $out : $in;
     return str_replace("\n","<br />",htmlspecialchars(join("\n",$a)));  
   }
-  if(!$styles++)
-    SDV($HTMLStylesFmt['diffinline'], "
-      .diffmarkup del { background:#fdd; }
-      .diffmarkup ins { background:#dfd; }");
   $linesx = $linesy = array();
   for($i=0; $i<max(count($in), count($out)); $i++) {
     $x = DiffPrepareInline($in[$i]);
@@ -205,3 +200,8 @@ function DiffPrepareInline($x) {
     $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
   return implode("\n", $y);
 }
+## cannot be called from within the function
+if(! IsEnabled($EnableDiffInline, 0))
+  SDV($HTMLStylesFmt['diffinline'], "
+    .diffmarkup del { background:#fdd; }
+    .diffmarkup ins { background:#dfd; }");
