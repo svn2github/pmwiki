@@ -143,11 +143,6 @@ function DiffHTML($pagename, $diff) {
   }
   return $html;
 }
-# Such parametrizable function allows custom diff rendering (inline...)
-function DiffRenderSource($in, $out, $x) {
-  $a = $x? $out : $in;
-  return str_replace("\n","<br />",htmlspecialchars(join("\n",$a)));
-}
 function HandleDiff($pagename, $auth='read') {
   global $HandleDiffFmt, $PageStartFmt, $PageDiffFmt, $PageEndFmt;
   $page = RetrieveAuthPage($pagename, $auth, true);
@@ -160,22 +155,17 @@ function HandleDiff($pagename, $auth='read') {
 }
 
 ##### Functions for simple word-diff (written by Petko Yotov)
-if(IsEnabled($EnableDiffInline, 0)) {
-  $DiffRenderSourceFunction = 'DiffRenderInline';
-  SDV($HTMLStylesFmt['diffinline'], " 
-    .diffmarkup del { background:#fdd; }
-    .diffmarkup ins { background:#dfd; }");
-}
-## Split a line into pieces before passing it through `diff`
-function DiffPrepareInline($x) { 
-  global $DiffSplitInlineDelims;
-  SDV($DiffSplitInlineDelims, "-@!?#$%^&*()=+[]{}.'\"\\:|,<>");
-  $y = preg_split("/([".preg_quote($DiffSplitInlineDelims)."\\s])/", 
-    $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-  return implode("\n", $y);
-}
-function DiffRenderInline($in, $out, $which) {
-  global $DiffFunction;
+function DiffRenderSource($in, $out, $which) {
+  global $DiffFunction, $EnableDiffInline, $HTMLStylesFmt;
+  static $styles = 0;
+  if(! IsEnabled($EnableDiffInline, 0)) {
+    $a = $which? $out : $in;
+    return str_replace("\n","<br />",htmlspecialchars(join("\n",$a)));  
+  }
+  if(!$styles++)
+    SDV($HTMLStylesFmt['diffinline'], "
+      .diffmarkup del { background:#fdd; }
+      .diffmarkup ins { background:#dfd; }");
   $linesx = $linesy = array();
   for($i=0; $i<max(count($in), count($out)); $i++) {
     $x = DiffPrepareInline($in[$i]);
@@ -206,4 +196,12 @@ function DiffRenderInline($in, $out, $which) {
   }
   $ret = trim(implode("\n", ($which? $linesy : $linesx)));
   return str_replace("\n","<br />",$ret);
+}
+## Split a line into pieces before passing it through `diff`
+function DiffPrepareInline($x) { 
+  global $DiffSplitInlineDelims;
+  SDV($DiffSplitInlineDelims, "-@!?#$%^&*()=+[]{}.'\"\\:|,<>");
+  $y = preg_split("/([".preg_quote($DiffSplitInlineDelims)."\\s])/", 
+    $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+  return implode("\n", $y);
 }
