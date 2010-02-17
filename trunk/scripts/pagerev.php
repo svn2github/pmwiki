@@ -157,7 +157,7 @@ function HandleDiff($pagename, $auth='read') {
 ##### Functions for simple word-diff (written by Petko Yotov)
 function DiffRenderSource($in, $out, $which) {
   global $DiffFunction, $EnableDiffInline, $HTMLStylesFmt;
-  static $styles = 0;
+  static $styles = -1;
   if(! IsEnabled($EnableDiffInline, 0)) {
     $a = $which? $out : $in;
     return str_replace("\n","<br />",htmlspecialchars(join("\n",$a)));  
