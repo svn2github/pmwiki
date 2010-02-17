@@ -58,7 +58,9 @@ SDV($HTMLStylesFmt['diff'], "
   .diffdel { border-left:5px #ffff99 solid; padding-left:5px; }
   .diffrestore { clear:both; font-family:verdana,sans-serif; 
     font-size:66%; margin:1.5em 0px; }
-  .diffmarkup { font-family:monospace; } ");
+  .diffmarkup { font-family:monospace; } 
+  .diffmarkup del { background:#fdd; }
+  .diffmarkup ins { background:#dfd; }");
 
 function PrintDiff($pagename) {
   global $DiffHTMLFunction,$DiffShow,$DiffStartFmt,$TimeFmt,
@@ -156,7 +158,7 @@ function HandleDiff($pagename, $auth='read') {
 
 ##### Functions for simple word-diff (written by Petko Yotov)
 function DiffRenderSource($in, $out, $which) {
-  global $DiffFunction, $EnableDiffInline, $HTMLStylesFmt;
+  global $DiffFunction, $EnableDiffInline;
   if(! IsEnabled($EnableDiffInline, 0)) {
     $a = $which? $out : $in;
     return str_replace("\n","<br />",htmlspecialchars(join("\n",$a)));  
@@ -200,8 +202,3 @@ function DiffPrepareInline($x) {
     $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
   return implode("\n", $y);
 }
-## cannot be called from within the function
-if(! IsEnabled($EnableDiffInline, 0))
-  SDV($HTMLStylesFmt['diffinline'], "
-    .diffmarkup del { background:#fdd; }
-    .diffmarkup ins { background:#dfd; }");
