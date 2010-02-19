@@ -13,7 +13,7 @@ function LinkSuppress($pagename,$imap,$path,$title,$txt,$fmt=NULL)
   { return $txt; }
 
 SDV($DiffShow['minor'],(@$_REQUEST['minor']!='n')?'y':'n');
-SDV($DiffShow['source'],(@$_REQUEST['source']=='y')?'y':'n');
+SDV($DiffShow['source'],(@$_REQUEST['source']!='n')?'y':'n');
 SDV($DiffMinorFmt, ($DiffShow['minor']=='y') ?
   "<a href='{\$PageUrl}?action=diff&amp;source=".$DiffShow['source']."&amp;minor=n'>$[Hide minor edits]</a>" :
   "<a href='{\$PageUrl}?action=diff&amp;source=".$DiffShow['source']."&amp;minor=y'>$[Show minor edits]</a>" );
@@ -155,55 +155,59 @@ function HandleDiff($pagename, $auth='read') {
     &$PageEndFmt));
   PrintFmt($pagename,$HandleDiffFmt);
 }
-
 ##### Functions for simple word-diff (written by Petko Yotov)
 function DiffRenderSource($in, $out, $which) {
   global $WordDiffFunction, $EnableDiffInline;
-  if (!IsEnabled($EnableDiffInline, 0)) {
+  if (!IsEnabled($EnableDiffInline, 1)) {
     $a = $which? $out : $in;
     return str_replace("\n","<br />",htmlspecialchars(join("\n",$a)));  
   }
-  $linesx = $linesy = array();
-  for($i=0; $i<max(count($in), count($out)); $i++) {
-    $x = DiffPrepareInline(@$in[$i]);
-    $y = DiffPrepareInline(@$out[$i]);
-    $z = $WordDiffFunction($x, $y);
+  $lines = $cnt = $x2 = $y2 = array();
+  foreach($in as $line) {
+    $tmp = DiffPrepareInline($line);
+    if(!$which) $cnt[] = array(count($x2), count($tmp));
+    $x2 = array_merge($x2, $tmp);
+  }
+  foreach($out as $line) {
+    $tmp = DiffPrepareInline($line);
+    if($which) $cnt[] = array(count($y2), count($tmp));
+    $y2 = array_merge($y2, $tmp);
+  }
+  $z = $WordDiffFunction(implode("\n", $x2), implode("\n", $y2));
 
-    $x2 = explode("\n", htmlspecialchars("\n$x"));
-    $y2 = explode("\n", htmlspecialchars("\n$y"));
-    foreach (explode("\n", $z) as $zz) {
-      if (preg_match('/^(\\d+)(,(\\d+))?([adc])(\\d+)(,(\\d+))?/',$zz,$m)) {
-        $a1 = $a2 = $m[1];
-        if ($m[3]) $a2=$m[3];
-        $b1 = $b2 = $m[5];
-        if ($m[7]) $b2=$m[7];
+  $z2 = array_map('htmlspecialchars', ($which? $y2 : $x2));
+  array_unshift($z2, '');
+  foreach (explode("\n", $z) as $zz) {
+    if (preg_match('/^(\\d+)(,(\\d+))?([adc])(\\d+)(,(\\d+))?/',$zz,$m)) {
+      $a1 = $a2 = $m[1];
+      if ($m[3]) $a2=$m[3];
+      $b1 = $b2 = $m[5];
+      if ($m[7]) $b2=$m[7];
 
-        if ($m[4]=='c'||$m[4]=='d') {
-          $x2[$a1] = '<del>'. $x2[$a1];
-          $x2[$a2] .= '</del>';
-        }
-        if ($m[4]=='c'||$m[4]=='a') {
-          $y2[$b1] = '<ins>'.$y2[$b1];
-          $y2[$b2] .= '</ins>';
-        }
+      if (!$which && ($m[4]=='c'||$m[4]=='d')) {
+        $z2[$a1] = '<del>'. $z2[$a1];
+        $z2[$a2] .= '</del>';
+      }
+      if ($which && ($m[4]=='c'||$m[4]=='a')) {
+        $z2[$b1] = '<ins>'.$z2[$b1];
+        $z2[$b2] .= '</ins>';
       }
     }
-    $linesx[] = implode('', $x2);
-    $linesy[] = implode('', $y2);
   }
-  $ret = trim(implode("\n", ($which? $linesy : $linesx)));
+  $line = array_shift($z2);
+  $z2[0] = $line.$z2[0];
+  foreach ($cnt as $a) $lines[] = implode('', array_slice($z2, $a[0], $a[1]));
+  $ret = trim(implode("\n", $lines));
   return str_replace("\n","<br />",$ret);
 }
 ## Split a line into pieces before passing it through `diff`
 function DiffPrepareInline($x) {
   global $DiffSplitInlineDelims;
-  SDV($DiffSplitInlineDelims, "-@!?#$%^&*()=+[]{}.'\"\\:|,<>/");
-  $y = preg_split("/([".preg_quote($DiffSplitInlineDelims, '/')."\\s])/", 
+  SDV($DiffSplitInlineDelims, "-@!?#$%^&*()=+[]{}.'\"\\:|,<>_/");
+  return preg_split("/([".preg_quote($DiffSplitInlineDelims, '/')."\\s])/", 
     $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-  return implode("\n", $y);
 }
 
 SDV($WordDiffFunction, 'PHPDiff'); # faster than sysdiff for many calls
 if ($WordDiffFunction == 'PHPDiff' && !function_exists('PHPDiff'))
   include_once("$FarmD/scripts/phpdiff.php");
-
