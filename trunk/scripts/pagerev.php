@@ -203,7 +203,7 @@ function DiffRenderSource($in, $out, $which) {
 ## Split a line into pieces before passing it through `diff`
 function DiffPrepareInline($x) {
   global $DiffSplitInlineDelims;
-  SDV($DiffSplitInlineDelims, "-@!?#$%^&*()=+[]{}.'\"\\:|,<>_/");
+  SDV($DiffSplitInlineDelims, "-@!?#$%^&*()=+[]{}.'\"\\:|,<>_/;~");
   return preg_split("/([".preg_quote($DiffSplitInlineDelims, '/')."\\s])/", 
     $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 }
