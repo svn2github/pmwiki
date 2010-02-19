@@ -205,7 +205,7 @@ function DiffPrepareInline($x) {
   global $DiffSplitInlineDelims;
   SDV($DiffSplitInlineDelims, "-@!?#$%^&*()=+[]{}.'\"\\:|,<>_/;~");
   return preg_split("/([".preg_quote($DiffSplitInlineDelims, '/')."\\s])/", 
-    $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    $x, -1, PREG_SPLIT_DELIM_CAPTURE);
 }
 
 SDV($WordDiffFunction, 'PHPDiff'); # faster than sysdiff for many calls
