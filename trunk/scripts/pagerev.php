@@ -59,8 +59,8 @@ SDV($HTMLStylesFmt['diff'], "
   .diffrestore { clear:both; font-family:verdana,sans-serif; 
     font-size:66%; margin:1.5em 0px; }
   .diffmarkup { font-family:monospace; } 
-  .diffmarkup del { background:#fdd; }
-  .diffmarkup ins { background:#dfd; }");
+  .diffmarkup del { background:#ffff99; text-decoration: none; }
+  .diffmarkup ins { background:#99ff99; text-decoration: none; }");
 
 function PrintDiff($pagename) {
   global $DiffHTMLFunction,$DiffShow,$DiffStartFmt,$TimeFmt,
@@ -86,7 +86,7 @@ function PrintDiff($pagename) {
     $FmtV['$DiffAuthor'] = $diffauthor;
     $FmtV['$DiffId'] = $k;
     $html = $DiffHTMLFunction($pagename, $v);
-    if(!$html) continue;
+    if (!$html) continue;
     echo FmtPageName($DiffStartFmt,$pagename);
     echo $html;
     echo FmtPageName($DiffEndFmt,$pagename);
@@ -158,31 +158,31 @@ function HandleDiff($pagename, $auth='read') {
 
 ##### Functions for simple word-diff (written by Petko Yotov)
 function DiffRenderSource($in, $out, $which) {
-  global $DiffFunction, $EnableDiffInline;
-  if(! IsEnabled($EnableDiffInline, 0)) {
+  global $WordDiffFunction, $EnableDiffInline;
+  if (!IsEnabled($EnableDiffInline, 0)) {
     $a = $which? $out : $in;
     return str_replace("\n","<br />",htmlspecialchars(join("\n",$a)));  
   }
   $linesx = $linesy = array();
   for($i=0; $i<max(count($in), count($out)); $i++) {
-    $x = DiffPrepareInline($in[$i]);
-    $y = DiffPrepareInline($out[$i]);
-    $z = $DiffFunction($x, $y);
+    $x = DiffPrepareInline(@$in[$i]);
+    $y = DiffPrepareInline(@$out[$i]);
+    $z = $WordDiffFunction($x, $y);
 
-    $x2 = split("\n", htmlspecialchars("\n$x"));
-    $y2 = split("\n", htmlspecialchars("\n$y"));
-    foreach (split("\n", $z) as $zz) {
+    $x2 = explode("\n", htmlspecialchars("\n$x"));
+    $y2 = explode("\n", htmlspecialchars("\n$y"));
+    foreach (explode("\n", $z) as $zz) {
       if (preg_match('/^(\\d+)(,(\\d+))?([adc])(\\d+)(,(\\d+))?/',$zz,$m)) {
         $a1 = $a2 = $m[1];
         if ($m[3]) $a2=$m[3];
         $b1 = $b2 = $m[5];
         if ($m[7]) $b2=$m[7];
 
-        if($m[4]=='c'||$m[4]=='d') {
+        if ($m[4]=='c'||$m[4]=='d') {
           $x2[$a1] = '<del>'. $x2[$a1];
           $x2[$a2] .= '</del>';
         }
-        if($m[4]=='c'||$m[4]=='a') {
+        if ($m[4]=='c'||$m[4]=='a') {
           $y2[$b1] = '<ins>'.$y2[$b1];
           $y2[$b2] .= '</ins>';
         }
@@ -195,10 +195,15 @@ function DiffRenderSource($in, $out, $which) {
   return str_replace("\n","<br />",$ret);
 }
 ## Split a line into pieces before passing it through `diff`
-function DiffPrepareInline($x) { 
+function DiffPrepareInline($x) {
   global $DiffSplitInlineDelims;
-  SDV($DiffSplitInlineDelims, "-@!?#$%^&*()=+[]{}.'\"\\:|,<>");
-  $y = preg_split("/([".preg_quote($DiffSplitInlineDelims)."\\s])/", 
+  SDV($DiffSplitInlineDelims, "-@!?#$%^&*()=+[]{}.'\"\\:|,<>/");
+  $y = preg_split("/([".preg_quote($DiffSplitInlineDelims, '/')."\\s])/", 
     $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
   return implode("\n", $y);
 }
+
+SDV($WordDiffFunction, 'PHPDiff'); # faster than sysdiff for many calls
+if ($WordDiffFunction == 'PHPDiff' && !function_exists('PHPDiff'))
+  include_once("$FarmD/scripts/phpdiff.php");
+
