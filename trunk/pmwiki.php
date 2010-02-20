@@ -1686,6 +1686,7 @@ function PostPage($pagename, &$page, &$new) {
   global $DiffKeepDays, $DiffFunction, $DeleteKeyPattern, $EnablePost,
     $Now, $Charset, $Author, $WikiDir, $IsPagePosted, $DiffKeepNum;
   SDV($DiffKeepDays,3650);
+  SDV($DiffKeepNum,20);
   SDV($DeleteKeyPattern,"^\\s*delete\\s*$");
   $IsPagePosted = false;
   if ($EnablePost) {
@@ -1698,12 +1699,13 @@ function PostPage($pagename, &$page, &$new) {
       $new["diff:$Now:{$page['time']}:$diffclass"] =
         $DiffFunction($new['text'],@$page['text']);
     $keepgmt = $Now-$DiffKeepDays * 86400;
-    $keepnum = IsEnabled($DiffKeepNum, 20);
+    $keepnum = array(); 
     $keys = array_keys($new);
     foreach($keys as $k)
-      if (preg_match("/^\\w+:(\\d+)/",$k,$match) 
-        && --$keepnum<0 && $match[1]<$keepgmt)
-        unset($new[$k]);
+      if (preg_match("/^\\w+:(\\d+)/",$k,$match) && $match[1]<$keepgmt) {
+        $keepnum[$match[1]] = 1;
+        if(count($keepnum)>$DiffKeepNum) unset($new[$k]);
+      }
     if (preg_match("/$DeleteKeyPattern/",$new['text'])){
       if(@$new['passwdattr']>'' && !CondAuth($pagename, 'attr'))
         Abort('$[The page has an "attr" attribute and cannot be deleted.]');
