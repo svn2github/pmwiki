@@ -86,7 +86,7 @@ function PrintDiff($pagename) {
     $FmtV['$DiffAuthor'] = $diffauthor;
     $FmtV['$DiffId'] = $k;
     $html = $DiffHTMLFunction($pagename, $v);
-    if (!$html) continue;
+    if ($html===false) continue;
     echo FmtPageName($DiffStartFmt,$pagename);
     echo $html;
     echo FmtPageName($DiffEndFmt,$pagename);
