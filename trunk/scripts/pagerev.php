@@ -209,5 +209,6 @@ function DiffPrepareInline($x) {
 }
 
 SDV($WordDiffFunction, 'PHPDiff'); # faster than sysdiff for many calls
-if ($WordDiffFunction == 'PHPDiff' && !function_exists('PHPDiff'))
+if (IsEnabled($EnableDiffInline, 1) && $DiffShow['source'] == 'y' 
+  && $WordDiffFunction == 'PHPDiff' && !function_exists('PHPDiff'))
   include_once("$FarmD/scripts/phpdiff.php");
