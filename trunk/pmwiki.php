@@ -1702,9 +1702,10 @@ function PostPage($pagename, &$page, &$new) {
     $keepnum = array(); 
     $keys = array_keys($new);
     foreach($keys as $k)
-      if (preg_match("/^\\w+:(\\d+)/",$k,$match) && $match[1]<$keepgmt) {
+      if (preg_match("/^\\w+:(\\d+)/",$k,$match)) {
         $keepnum[$match[1]] = 1;
-        if(count($keepnum)>$DiffKeepNum) unset($new[$k]);
+        if(count($keepnum)>$DiffKeepNum && $match[1]<$keepgmt) 
+          unset($new[$k]);
       }
     if (preg_match("/$DeleteKeyPattern/",$new['text'])){
       if(@$new['passwdattr']>'' && !CondAuth($pagename, 'attr'))
