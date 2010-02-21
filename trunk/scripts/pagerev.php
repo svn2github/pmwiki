@@ -147,7 +147,7 @@ function DiffHTML($pagename, $diff) {
 }
 function HandleDiff($pagename, $auth='read') {
   global $HandleDiffFmt, $PageStartFmt, $PageDiffFmt, $PageEndFmt;
-  $page = RetrieveAuthPage($pagename, $auth, true);
+  $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
   if (!$page) { Abort("?cannot diff $pagename"); }
   PCache($pagename, $page);
   SDV($HandleDiffFmt,array(&$PageStartFmt,
@@ -155,7 +155,7 @@ function HandleDiff($pagename, $auth='read') {
     &$PageEndFmt));
   PrintFmt($pagename,$HandleDiffFmt);
 }
-##### Functions for simple word-diff (written by Petko Yotov)
+## Functions for simple word-diff (written by Petko Yotov)
 function DiffRenderSource($in, $out, $which) {
   global $WordDiffFunction, $EnableDiffInline;
   if (!IsEnabled($EnableDiffInline, 1)) {
