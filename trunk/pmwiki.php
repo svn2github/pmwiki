@@ -818,7 +818,7 @@ function FmtPageName($fmt, $pagename) {
 ##  FmtTemplateVars uses $vars to replace all occurrences of 
 ##  {$$key} in $text with $vars['key'].
 function FmtTemplateVars($text, $vars, $pagename = NULL) {
-  global $FmtPV;
+  global $FmtPV, $EnableRawTemplateVars;
   if ($pagename) {
     $pat = implode('|', array_map('preg_quote', array_keys($FmtPV)));
     $text = preg_replace("/\\{\\$($pat)\\}/e", 
@@ -827,6 +827,8 @@ function FmtTemplateVars($text, $vars, $pagename = NULL) {
   foreach(preg_grep('/^[\\w$]/', array_keys($vars)) as $k)
     if (!is_array($vars[$k]))
       $text = str_replace("{\$\$$k}", $vars[$k], $text);
+  if(! IsEnabled($EnableRawTemplateVars, 0))
+    $text = preg_replace("/\\{\\$\\$\\w+\\}/", '', $text);
   return $text;
 }
 
