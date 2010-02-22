@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2002-2009 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2002-2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -28,11 +28,11 @@
 */
 
 Markup('<<|','<links','/&lt;&lt;\\|([^|]+|\\[\\[(.+?)\\]\\])\\|&gt;&gt;/e',
-  "MakeTrailStop(\$pagename,'$1')");
+  "PRR(MakeTrailStop(\$pagename,'$1'))");
 Markup('<|','><<|','/&lt;\\|([^|]+|\\[\\[(.+?)\\]\\])\\|&gt;/e',
-  "MakeTrailStopB(\$pagename,'$1')");
+  "PRR(MakeTrailStopB(\$pagename,'$1'))");
 Markup('^|','<links','/\\^\\|([^|]+|\\[\\[(.+?)\\]\\])\\|\\^/e',
-  "MakeTrailPath(\$pagename,'$1')");
+  "PRR(MakeTrailPath(\$pagename,'$1'))");
 
 SDVA($SaveAttrPatterns, array(
    '/<<\\|([^|]+|\\[\\[(.+?)\\]\\])\\|>>/' => '$1',
