@@ -674,34 +674,19 @@ function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
           if ($when == 'last' && ($neg xor ($i != count($matches) - 1))) continue;
         } else {
           if ($when == 'first' || !isset($last[$t])) {
-            $Cursor['<'] = $Cursor['&lt;'] = (string)@$matches[$i-1];
-            $Cursor['='] = $pn;
-            $Cursor['>'] = $Cursor['&gt;'] = (string)@$matches[$i+1];
-            $curr = str_replace($vk, $vv, $control);
-            $curr = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
-                        "PageVar(\$pn, '$2', '$1')", $curr);
+            $curr = FPLExpandItemVars($control, $matches, $i, $pseudovars);
             if ($when == 'first' && ($neg xor (($i != 0) && ($last[$t] == $curr))))
               { $last[$t] = $curr; continue; }
             $last[$t] = $curr;
           }
           if ($when == 'last') {
-            $Cursor['<'] = $Cursor['&lt;'] = $pn;
-            $Cursor['='] = (string)@$matches[$i+1];
-            $Cursor['>'] = $Cursor['&gt;'] = (string)@$matches[$i+2];
-            $next = str_replace($vk, $vv, $control);
-            $next = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
-                        "PageVar(\$pn, '$2', '$1')", $next);
+            $next = FPLExpandItemVars($control, $matches, $i+1, $pseudovars);
             if ($neg xor ($next == $last[$t] && $i != count($matches) - 1)) continue;
             $last[$t] = $next;
           }
         }
       }
-      $Cursor['<'] = $Cursor['&lt;'] = (string)@$matches[$i-1];
-      $Cursor['='] = $pn;
-      $Cursor['>'] = $Cursor['&gt;'] = (string)@$matches[$i+1];
-      $item = str_replace($vk, $vv, $item);
-      $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
-                  "PVSE(PageVar(\$pn, '$2', '$1'))", $item);
+      $item = FPLExpandItemVars($item, $matches, $i, $pseudovars);
       $out .= MarkupRestore($item);
     }
   }
@@ -715,6 +700,19 @@ function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
   }
   $Cursor = $savecursor;
   $output .= $out;
+}
+## This function moves repeated code blocks out of FPLTemplateFormat()
+function FPLExpandItemVars($item, $matches, $idx, $psvars) {
+  global $Cursor, $EnableRawTemplateVars;
+  $Cursor['<'] = $Cursor['&lt;'] = (string)@$matches[$idx-1];
+  $Cursor['='] = (string)@$matches[$idx];
+  $Cursor['>'] = $Cursor['&gt;'] = (string)@$matches[$idx+1];
+  $item = str_replace(array_keys($psvars), array_values($psvars), $item);
+  $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
+              "PVSE(PageVar(\$pn, '$2', '$1'))", $item);
+  if(! IsEnabled($EnableRawTemplateVars, 0))
+    $item = preg_replace("/\\{\\$\\$\\w+\\}/", '', $item);
+  return $item;
 }
 
 ########################################################################
