@@ -98,7 +98,7 @@ $LinkPageCreateFmt =
     href='{\$PageUrl}?action=edit'>\$LinkText</a><a rel='nofollow' 
     class='createlink' href='{\$PageUrl}?action=edit'>?</a>";
 $UrlLinkFmt = 
-  "<a class='urllink' href='\$LinkUrl' rel='nofollow'>\$LinkText</a>";
+  "<a class='urllink' href='\$LinkUrl' title='\$LinkAlt' rel='nofollow'>\$LinkText</a>";
 umask(002);
 $CookiePrefix = '';
 $SiteGroup = 'Site';
@@ -137,7 +137,7 @@ $FmtPV = array(
   '$LastModified' => 'strftime($GLOBALS["TimeFmt"], $page["time"])',
   '$LastModifiedSummary' => '@$page["csum"]',
   '$LastModifiedTime' => '$page["time"]',
-  '$Description' => '@$page["description"]',
+  '$Description'  => '@$page["description"]',
   '$SiteGroup'    => '$GLOBALS["SiteGroup"]',
   '$VersionNum'   => '$GLOBALS["VersionNum"]',
   '$Version'      => '$GLOBALS["Version"]',
