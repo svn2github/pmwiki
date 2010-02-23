@@ -127,11 +127,8 @@ $FmtPV = array(
   '$Namespaced'   => '$AsSpacedFunction($name)',
   '$Group'        => '$group',
   '$Name'         => '$name',
-  '$Titlespaced'  => '@$page["title"] ?
-     str_replace("$", "&#036;", $page["title"]) : $AsSpacedFunction($name)',
-  '$Title'        =>  '@$page["title"] ?
-     str_replace("$", "&#036;", $page["title"]) :
-     ($GLOBALS["SpaceWikiWords"] ? $AsSpacedFunction($name) : $name)',
+  '$Titlespaced'  => 'FmtPageTitle(@$page["title"], $name, 1)',
+  '$Title'        => 'FmtPageTitle(@$page["title"], $name, 0)',
   '$LastModifiedBy' => '@$page["author"]',
   '$LastModifiedHost' => '@$page["host"]',
   '$LastModified' => 'strftime($GLOBALS["TimeFmt"], $page["time"])',
@@ -813,6 +810,23 @@ function FmtPageName($fmt, $pagename) {
   $fmt = preg_replace('/(?>(\\$[[:alpha:]]\\w+))/e', 
           "isset(\$FmtV['$1']) ? \$FmtV['$1'] : '$1'", $fmt); 
   return $fmt;
+}
+
+## FmtPageTitle returns the page title, or the page name
+## It localizes standard technical pages (RecentChanges...)
+function FmtPageTitle($title, $name, $spaced=0) {
+  if($title>'') return str_replace("$", "&#036;", $title);
+  global $SpaceWikiWords, $AsSpacedFunction;
+  if(preg_match("/^(Site(Admin)?
+    |(All)?(Site|Group)(Header|Footer|Attributes)
+    |(Side|Left|Right)Bar
+    |(Wiki)?Sand[Bb]ox
+    |(All)?Recent(Changes|Uploads)
+    |InterMap|PageActions|\\w+QuickReference|\\w+Templates
+    |NotifyList|AuthUser|ApprovedUrls|(Block|Auth)List
+    )$/x", $name) && $name != XL($name))
+      return XL($name);
+  return ($spaced || $SpaceWikiWords) ? $AsSpacedFunction($name) : $name;
 }
 
 ##  FmtTemplateVars uses $vars to replace all occurrences of 
