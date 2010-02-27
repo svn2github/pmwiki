@@ -1,1 +1,1 @@
-<?php $Version="pmwiki-2.2.13"; $VersionNum=2002013; 
+<?php $Version="pmwiki-2.2.14"; $VersionNum=2002014; 
