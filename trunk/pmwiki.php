@@ -227,8 +227,10 @@ function CompareArgs($arg)
 
 $Conditions['auth'] = 'NoCache(CondAuth($pagename, $condparm))';
 function CondAuth($pagename, $condparm) {
+  global $HandleAuth;
   @list($level, $pn) = explode(' ', $condparm, 2);
   $pn = ($pn > '') ? MakePageName($pagename, $pn) : $pagename;
+  if (@$HandleAuth[$level]>'') $level = $HandleAuth[$level];
   return (boolean)RetrieveAuthPage($pn, $level, false, READPAGE_CURRENT);
 }
 
