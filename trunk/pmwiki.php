@@ -97,12 +97,15 @@ $LinkPageCreateFmt =
   "<a class='createlinktext' rel='nofollow' 
     href='{\$PageUrl}?action=edit'>\$LinkText</a><a rel='nofollow' 
     class='createlink' href='{\$PageUrl}?action=edit'>?</a>";
+$LinkCategoryFmt = "<a class='categorylink' href='\$LinkUrl'>\$LinkText</a>";
 $UrlLinkFmt = 
   "<a class='urllink' href='\$LinkUrl' title='\$LinkAlt' rel='nofollow'>\$LinkText</a>";
 umask(002);
 $CookiePrefix = '';
 $SiteGroup = 'Site';
 $SiteAdminGroup = 'SiteAdmin';
+$CategoryGroup = 'Category';
+$AuthorGroup = 'Profiles';
 $DefaultGroup = 'Main';
 $DefaultName = 'HomePage';
 $GroupHeaderFmt = '(:include {$Group}.GroupHeader self=0 basepage={*$FullName}:)(:nl:)';
@@ -320,6 +323,8 @@ if (IsEnabled($EnableLocalConfig,1)) {
     include_once('config.php');
 }
 
+SDVA($LinkPrefixGroup, array('!'=>$CategoryGroup, '~'=>$AuthorGroup));
+SDVA($LinkPrefixFmt, array('!'=>$LinkCategoryFmt));
 SDV($CurrentTime, strftime($TimeFmt, $Now));
 SDV($CurrentTimeISO, strftime($TimeISOFmt, $Now));
 
@@ -682,6 +687,20 @@ function MakePageName($basepage, $str) {
   return preg_replace('/[^\\/.]+$/', $name, $basepage);
 }
 
+## MakePageNamePrefix returns an array of the normalized Group.Name
+## and the short prefixed variant !Name or ~Name
+function MakePageNamePrefix($pn, $str) {
+  global $LinkPrefixGroup;
+  $prefix = false;
+  if ( @$LinkPrefixGroup[$str{0}]>'' ) {
+    $prefix = $str{0};
+    $str = $LinkPrefixGroup[$str{0}]."/". substr($str, 1);
+  }
+  $fullname = MakePageName($pn, $str);
+  $shortname = ($prefix===false || !$fullname)? 
+    $fullname : $prefix.PageVar($fullname, '$Name');
+  return array($fullname, $shortname);
+}
 
 ## MakeBaseName uses $BaseNamePatterns to return the "base" form
 ## of a given pagename -- i.e., stripping any recipe-defined
@@ -1416,17 +1435,24 @@ function LinkIMap($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
 function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   global $QueryFragPattern, $LinkPageExistsFmt, $LinkPageSelfFmt,
     $LinkPageCreateSpaceFmt, $LinkPageCreateFmt, $LinkTargets,
-    $EnableLinkPageRelative;
+    $EnableLinkPageRelative, $LinkPrefixFmt;
   if (!$fmt && $path{0} == '#') {
     $path = preg_replace("/[^-.:\\w]/", '', $path);
     return ($path) ? "<a href='#$path'>$txt</a>" : '';
   }
   if (!preg_match("/^\\s*([^#?]+)($QueryFragPattern)?$/",$path,$match))
     return '';
-  $tgtname = MakePageName($pagename, $match[1]); 
+  list($tgtname, $pfxname) = MakePageNamePrefix($pagename, $match[1]); 
   if (!$tgtname) return '';
   $qf = @$match[2];
   @$LinkTargets[$tgtname]++;
+  if($pfxname != $tgtname) {
+    # add !Foo to .pageindex (PITS:00447). For backwards 
+    # compatibility we need both !Foo and Category.Foo
+    @$LinkTargets[$pfxname]++;
+    if ($fmt==NULL && @$LinkPrefixFmt[$pfxname{0}]>'')
+      $fmt = $LinkPrefixFmt[$pfxname{0}];
+  }
   if (!$fmt) {
     if (!PageExists($tgtname) && !preg_match('/[&?]action=/', $qf))
       $fmt = preg_match('/\\s/', $txt) 
@@ -1436,6 +1462,7 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
              ? $LinkPageSelfFmt : $LinkPageExistsFmt;
   }
   $url = PageVar($tgtname, '$PageUrl');
+  if (trim($txt) == '+') $txt = PageVar($tgtname, '$Title');
   $txt = str_replace("$", "&#036;", $txt);
   if (@$EnableLinkPageRelative)
     $url = preg_replace('!^[a-z]+://[^/]*!i', '', $url);
@@ -1445,7 +1472,8 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
 }
 
 function MakeLink($pagename,$tgt,$txt=NULL,$suffix=NULL,$fmt=NULL) {
-  global $LinkPattern,$LinkFunctions,$UrlExcludeChars,$ImgExtPattern,$ImgTagFmt;
+  global $LinkPattern,$LinkFunctions,$LinkPrefixGroup,
+    $UrlExcludeChars,$ImgExtPattern,$ImgTagFmt;
   $t = preg_replace('/[()]/','',trim($tgt));
   $t = preg_replace('/<[^>]*>/','',$t);
   preg_match("/^($LinkPattern)?(.+?)(\"(.*)\")?$/",$t,$m);
@@ -1459,6 +1487,7 @@ function MakeLink($pagename,$tgt,$txt=NULL,$suffix=NULL,$fmt=NULL) {
       if ($m[1]=='<:page>') {
         $txt = preg_replace('!/\\s*$!', '', $txt);
         $txt = preg_replace('!^.*[^<]/!', '', $txt);
+        if (@$LinkPrefixGroup[$txt{0}]>'') $txt = substr($txt, 1);
       }
     }
     $txt .= $suffix;
