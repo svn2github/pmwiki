@@ -840,7 +840,7 @@ function FmtPageTitle($title, $name, $spaced=0) {
     |(All)?(Site|Group)(Header|Footer|Attributes)
     |(Side|Left|Right)Bar
     |(Wiki)?Sand[Bb]ox
-    |(All)?Recent(Changes|Uploads)
+    |(All)?Recent(Changes|Uploads)|(Auth|Edit)Form
     |InterMap|PageActions|\\w+QuickReference|\\w+Templates
     |NotifyList|AuthUser|ApprovedUrls|(Block|Auth)List
     )$/x", $name) && $name != XL($name))
