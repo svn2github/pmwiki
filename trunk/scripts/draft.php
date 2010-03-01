@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2006 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2006, 2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -20,13 +20,14 @@ if ($AuthCascade['attr'] == 'edit') $AuthCascade['attr'] = 'publish';
 if (IsEnabled($EnablePublishAttr, 0))
   SDV($PageAttributes['passwdpublish'], '$[Set new publish password:]');
 
-##  with drafts enabled, the 'post' operation requires 'publish' permissions
-if ($action == 'edit' && $_POST['post'] && $HandleAuth['edit'] == 'edit')
-  $HandleAuth['edit'] = 'publish';
 
 $basename = preg_replace("/$DraftSuffix\$/", '', $pagename);
 ##  if no -Draft page, switch to $basename
 if (!PageExists($pagename) && PageExists($basename)) $pagename = $basename;
+
+## The section below handles specialized EditForm pages and handler.
+## We don't bother to load it if we're not editing.
+if ($action != 'edit') return;
 
 ##  set edit form button labels to reflect draft prompts
 SDVA($InputTags['e_savebutton'], array('value' => ' '.XL('Publish').' '));
@@ -36,12 +37,16 @@ SDVA($InputTags['e_savedraftbutton'], array(
     'name' => 'postdraft', 'value' => ' '.XL('Save draft').' ',
     'accesskey' => XL('ak_savedraft')));
 
+##  with drafts enabled, the 'post' operation requires 'publish' permissions
+if ($_POST['post'] && $HandleAuth['edit'] == 'edit')
+  $HandleAuth['edit'] = 'publish';
+
 ##  disable the 'publish' button if not authorized to publish
 if (!CondAuth($basename, 'publish')) 
   SDVA($InputTags['e_savebutton'], array('disabled' => 'disabled'));
 
 ##  add the draft handler into $EditFunctions
-if ($action == 'edit') array_unshift($EditFunctions, 'EditDraft');
+array_unshift($EditFunctions, 'EditDraft');
 function EditDraft(&$pagename, &$page, &$new) {
   global $WikiDir, $DraftSuffix, $DeleteKeyPattern, 
     $DraftRecentChangesFmt, $RecentChangesFmt;

@@ -872,6 +872,7 @@ function FmtTemplateVars($text, $vars, $pagename = NULL) {
 function XL($key) {
   global $XL,$XLLangs;
   foreach($XLLangs as $l) if (isset($XL[$l][$key])) return $XL[$l][$key];
+  if (strpos($key, 'ak_') === 0) return '';
   return $key;
 }
 function XLSDV($lang,$a) {
