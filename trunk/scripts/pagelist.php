@@ -650,10 +650,10 @@ function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
     $t = 0;
     while($t < count($tparts))
     {
-      if($tparts[$t]=='template' && $tparts[$t+1]=='none')
+      if($tparts[$t]=='template' && $tparts[$t+2]=='none')
       {
-         $out .= MarkupRestore($tparts[$t+3]);
-         $t+=3;
+         $out .= MarkupRestore($tparts[$t+4]);
+         $t+=4;
       }
       $t++;
     }
