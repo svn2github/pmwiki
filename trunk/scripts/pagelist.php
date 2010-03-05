@@ -346,8 +346,8 @@ function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
         $opt['=exclp'][] = '$'.implode('|', array_map('preg_quote',$excl)).'$i';
 
       if (@$opt['link']) {
-        list(, $link) = MakePageNamePrefix($pn, $opt['link']); 
-        $opt['=linkp'] = "/(^|,)".preg_quote($link, '/')."(,|$)/i";
+        $link = MakePageName($pn, $opt['link']);
+        $opt['=linkp'] = "/(^|,)$link(,|$)/i";
         $indexterms[] = " $link ";
       }
 

@@ -245,6 +245,11 @@ Markup('[[<<]]','inline','/\\[\\[&lt;&lt;\\]\\]/',"<br clear='all' />");
 Markup('[[','links',"/(?>\\[\\[\\s*(.*?)\\]\\])($SuffixPattern)/e",
   "Keep(MakeLink(\$pagename,PSS('$1'),NULL,'$2'),'L')");
 
+## [[!Category]]
+SDV($CategoryGroup,'Category');
+SDV($LinkCategoryFmt,"<a class='categorylink' href='\$LinkUrl'>\$LinkText</a>");
+Markup('[[!','<[[','/\\[\\[!(.*?)\\]\\]/e',
+  "Keep(MakeLink(\$pagename,PSS('$CategoryGroup/$1'),NULL,'',\$GLOBALS['LinkCategoryFmt']),'L')");
 # This is a temporary workaround for blank category pages.
 # It may be removed in a future release (Pm, 2006-01-24)
 if (preg_match("/^$CategoryGroup\\./", $pagename)) {
@@ -274,6 +279,13 @@ function TrackAnchors($x) { global $SeenAnchor; return @$SeenAnchor[$x]++; }
 Markup('[[|#', '<[[|',
   "/(?>\\[\\[([^|\\]]+))\\|\\s*#\\s*\\]\\]/e",  
   "Keep(MakeLink(\$pagename,PSS('$1'),'['.++\$MarkupFrame[0]['ref'].']'),'L')");
+
+## [[target |+]] title links
+Markup('[[|+', '<[[|',
+  "/(?>\\[\\[([^|\\]]+))\\|\\s*\\+\\s*]]/e",
+  "Keep(MakeLink(\$pagename, PSS('$1'),
+                 PageVar(MakePageName(\$pagename,PSS('$1')), '\$Title')
+                ),'L')");
 
 ## bare urllinks 
 Markup('urllink','>[[',

@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2009 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -12,8 +12,10 @@ SDV($AuthorNameChars, "- '\\w\\x80-\\xff");
 SDV($AuthorCookie, $CookiePrefix.'author');
 SDV($AuthorCookieExpires,$Now+60*60*24*30);
 SDV($AuthorCookieDir,'/');
+SDV($AuthorGroup,'Profiles');
 SDV($AuthorRequiredFmt,
   "<h3 class='wikimessage'>$[An author name is required.]</h3>");
+Markup('[[~','<links','/\\[\\[~(.*?)\\]\\]/',"[[$AuthorGroup/$1]]");
 
 $LogoutCookies[] = $AuthorCookie;
 
@@ -37,7 +39,7 @@ if (IsEnabled($EnableAuthorSignature,1)) {
       => "FmtPageName('[[~\$Author]] \$CurrentTime', \$pagename)",
     '/(?<!~)~~~(?!~)/e' 
       => "FmtPageName('[[~\$Author]]', \$pagename)"));
-  Markup('~~~~','<[[','/(?<!~)~~~~(?!~)/',"[[~$Author]] $CurrentTime");
+  Markup('~~~~','<[[~','/(?<!~)~~~~(?!~)/',"[[~$Author]] $CurrentTime");
   Markup('~~~','>~~~~','/(?<!~)~~~(?!~)/',"[[~$Author]]");
 }
 if (IsEnabled($EnablePostAuthorRequired,0))
