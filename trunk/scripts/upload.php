@@ -189,7 +189,7 @@ function HandleDownload($pagename, $auth = 'read') {
     header("Content-Type: {$UploadExts[@$match[1]]}");
   header("Content-Length: ".filesize($filepath));
   header("Content-disposition: $DownloadDisposition; filename=\"$upname\"");
-  $fp = fopen($filepath, "r");
+  $fp = fopen($filepath, "rb");
   if ($fp) {
     while (!feof($fp)) echo fread($fp, 4096);
     fclose($fp);
