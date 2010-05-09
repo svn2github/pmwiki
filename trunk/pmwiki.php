@@ -396,8 +396,8 @@ function PQA($x) {
     foreach($attr as $a) {
       if (preg_match('/^on/i', $a[1])) continue;
       $out .= $a[1] . '=' 
-              . preg_replace( '/^(?![\'"]).*$/e', 
-                  "\"'\".str_replace(\"'\", '&#39;', PSS('$0')).\"'\"", $a[2])
+              . preg_replace( '/^([\'"]?)(.*)\\1$/e', 
+                  "\"'\".str_replace(\"'\", '&#39;', PSS('$2')).\"'\"", $a[2])
               . ' ';
     }
   }
