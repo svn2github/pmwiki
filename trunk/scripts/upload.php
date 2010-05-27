@@ -174,7 +174,7 @@ function HandleUpload($pagename, $auth = 'upload') {
 }
 
 function HandleDownload($pagename, $auth = 'read') {
-  global $UploadFileFmt, $UploadExts, $DownloadDisposition;
+  global $UploadFileFmt, $UploadExts, $DownloadDisposition, $EnableIMSCaching;
   SDV($DownloadDisposition, "inline");
   UploadAuth($pagename, $auth);
   $upname = MakeUploadName($pagename, @$_REQUEST['upname']);
@@ -183,6 +183,14 @@ function HandleDownload($pagename, $auth = 'read') {
     header("HTTP/1.0 404 Not Found");
     Abort("?requested file not found");
     exit();
+  }
+  if (IsEnabled($EnableIMSCaching, 0)) {
+    header('Cache-Control: ');
+    header('Expires: ');
+    $filelastmod = gmdate('D, d M Y H:i:s \G\M\T', filemtime($filepath));
+    if (@$_SERVER['HTTP_IF_MODIFIED_SINCE'] == $filelastmod)
+      { header("HTTP/1.0 304 Not Modified"); exit(); }
+    header("Last-Modified: $filelastmod");
   }
   preg_match('/\\.([^.]+)$/',$filepath,$match); 
   if ($UploadExts[@$match[1]]) 
