@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2009 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -192,6 +192,7 @@ function HandleDownload($pagename, $auth = 'read') {
   $fp = fopen($filepath, "rb");
   if ($fp) {
     while (!feof($fp)) echo fread($fp, 4096);
+    flush();
     fclose($fp);
   }
   exit();
