@@ -185,7 +185,7 @@ function HandleDownload($pagename, $auth = 'read') {
     exit();
   }
   if (IsEnabled($EnableIMSCaching, 0)) {
-    header('Cache-Control: ');
+    header('Cache-Control: private');
     header('Expires: ');
     $filelastmod = gmdate('D, d M Y H:i:s \G\M\T', filemtime($filepath));
     if (@$_SERVER['HTTP_IF_MODIFIED_SINCE'] == $filelastmod)
