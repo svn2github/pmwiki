@@ -328,6 +328,15 @@ SDV($CurrentTimeISO, strftime($TimeISOFmt, $Now));
 if (IsEnabled($EnableStdConfig,1))
   include_once("$FarmD/scripts/stdconfig.php");
 
+if (IsEnabled($EnablePostConfig, 1) && is_array($PostConfig)) {
+  asort($PostConfig, SORT_NUMERIC);
+  foreach ($PostConfig as $k=>$v) {
+    if (!$k || !$v) continue;
+    if (function_exists($k)) $k($pagename);
+    elseif (file_exists($k)) include_once($k);
+  }
+}
+
 foreach((array)$InterMapFiles as $f) {
   $f = FmtPageName($f, $pagename);
   if (($v = @file($f))) 
