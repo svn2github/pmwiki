@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2009 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -38,7 +38,7 @@ else SessionAuth($pagename);
 
 function AuthUserId($pagename, $id, $pw=NULL) {
   global $AuthUser, $AuthUserPageFmt, $AuthUserFunctions, 
-    $AuthId, $MessagesFmt;
+    $AuthId, $MessagesFmt, $AuthUserPat;
 
   $auth = array();
   foreach((array)$AuthUser as $k=>$v) $auth[$k] = (array)$v;
@@ -52,9 +52,10 @@ function AuthUserId($pagename, $id, $pw=NULL) {
 #    'mysql' => 'AuthUserMySQL',
     $id => 'AuthUserConfig'));
 
+  SDV($AuthUserPat, "/^\\s*([@\\w][^\\s:]*):(.*)/m");
   $pn = FmtPageName($AuthUserPageFmt, $pagename);
   $apage = ReadPage($pn, READPAGE_CURRENT);
-  if ($apage && preg_match_all("/^\\s*([@\\w][^\\s:]*):(.*)/m", 
+  if ($apage && preg_match_all($AuthUserPat, 
                                $apage['text'], $matches, PREG_SET_ORDER)) {
     foreach($matches as $m) {
       if (!preg_match_all('/\\bldaps?:\\S+|[^\\s,]+/', $m[2], $v))
@@ -68,7 +69,7 @@ function AuthUserId($pagename, $id, $pw=NULL) {
   if (func_num_args()==2) $authid = $id;
   else
     foreach($AuthUserFunctions as $k => $fn) 
-      if (@$auth[$k] && $fn($pagename, $id, $pw, $auth[$k])) 
+      if (@$auth[$k] && $fn($pagename, $id, $pw, $auth[$k], $authlist)) 
         { $authid = $id; break; }
 
   if (!$authid) { $GLOBALS['InvalidLogin'] = 1; return; }
