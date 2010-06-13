@@ -328,7 +328,7 @@ SDV($CurrentTimeISO, strftime($TimeISOFmt, $Now));
 if (IsEnabled($EnableStdConfig,1))
   include_once("$FarmD/scripts/stdconfig.php");
 
-if (IsEnabled($EnablePostConfig, 1) && is_array($PostConfig)) {
+if (is_array($PostConfig) && IsEnabled($EnablePostConfig, 1)) {
   asort($PostConfig, SORT_NUMERIC);
   foreach ($PostConfig as $k=>$v) {
     if (!$k || !$v) continue;
@@ -1949,10 +1949,10 @@ function IsAuthorized($chal, $source, &$from) {
         if (@$AuthList[$pw]) $auth = $AuthList[$pw];
         continue;
       }
-      if (crypt($AllowPassword, $pw) == $pw)           # nopass
+      if (_crypt($AllowPassword, $pw) == $pw)           # nopass
         { $auth=1; continue; }
       foreach((array)$AuthPw as $pwresp)                       # password
-        if (crypt($pwresp, $pw) == $pw) { $auth=1; continue; }
+        if (_crypt($pwresp, $pw) == $pw) { $auth=1; continue; }
     }
   }
   if (!$passwd) return $from;
@@ -1960,6 +1960,51 @@ function IsAuthorized($chal, $source, &$from) {
   return array($auth, $passwd, $source);
 }
 
+## The _crypt function provides support for SHA1 encrypted passwords 
+## (keyed by '{SHA}') and Apache MD5 encrypted passwords (keyed by 
+## '$apr1$'); otherwise it just calls PHP's crypt() for the rest.
+## The APR compatible MD5 encryption algorithm in _crypt() below is 
+## based on code Copyright 2005 by D. Faure and the File::Passwd
+## PEAR library module by Mike Wallner <mike@php.net>.
+function _crypt($plain, $salt=null) {
+  if (strncmp($salt, '{SHA}', 5) == 0) 
+    return '{SHA}'.base64_encode(pack('H*', sha1($plain)));
+  if (strncmp($salt, '$apr1$', 6) == 0) {
+    preg_match('/^\\$apr1\\$([^$]+)/', $salt, $match);
+    $salt = $match[1];
+    $length = strlen($plain);
+    $context = $plain . '$apr1$' . $salt;
+    $binary = pack('H32', md5($plain . $salt . $plain));
+    for($i = $length; $i > 0; $i -= 16) 
+      $context .= substr($binary, 0, min(16, $i));
+    for($i = $length; $i > 0; $i >>= 1)
+      $context .= ($i & 1) ? chr(0) : $plain{0};
+    $binary = pack('H32', md5($context));
+    for($i = 0; $i < 1000; $i++) {
+      $new = ($i & 1) ? $plain : $binary;
+      if ($i % 3) $new .= $salt;
+      if ($i % 7) $new .= $plain;
+      $new .= ($i & 1) ? $binary : $plain;
+      $binary = pack('H32', md5($new));
+    }
+    $q = '';
+    for ($i = 0; $i < 5; $i++) {
+      $k = $i + 6;
+      $j = $i + 12;
+      if ($j == 16) $j = 5;
+      $q = $binary{$i}.$binary{$k}.$binary{$j} . $q;
+    }
+    $q = chr(0).chr(0).$binary{11} . $q;
+    $q = strtr(strrev(substr(base64_encode($q), 2)),
+           'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+           './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
+    return "\$apr1\$$salt\$$q";
+  }
+  if (md5($plain) == $salt) return $salt;
+  $hash = crypt($plain, $salt); # Test for http://bugs.php.net/bug.php?id=49954
+  if(crypt($plain, $hash)!=$hash) return crypt("PmWiki$plain", $salt);
+  return $hash;
+}
 
 ## SessionAuth works with PmWikiAuth to manage authorizations
 ## as stored in sessions.  First, it can be used to set session
@@ -2076,7 +2121,7 @@ function HandlePostAttr($pagename, $auth = 'attr') {
       preg_match_all('/"[^"]*"|\'[^\']*\'|\\S+/', $v, $match);
       foreach($match[0] as $pw) 
         $a[] = preg_match('/^(@|\\w+:)/', $pw) ? $pw 
-                   : crypt(preg_replace('/^([\'"])(.*)\\1$/', '$2', $pw));
+                   : _crypt(preg_replace('/^([\'"])(.*)\\1$/', '$2', $pw));
       if ($a) $page[$attr] = implode(' ',$a);
     }
   }
