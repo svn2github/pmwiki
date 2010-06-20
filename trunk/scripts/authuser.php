@@ -5,6 +5,10 @@
     by the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.  See pmwiki.php for full details.
 
+    The APR compatible MD5 encryption algorithm in _crypt() below is 
+    based on code Copyright 2005 by D. Faure and the File::Passwd
+    PEAR library module by Mike Wallner <mike@php.net>.
+
     This script enables simple authentication based on username and 
     password combinations.  At present this script can authenticate
     from passwords held in arrays or in .htpasswd-formatted files,
@@ -160,4 +164,48 @@ function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
     ldap_close($ds);
   }
   return false;
+}
+
+
+#  The _crypt function provides support for SHA1 encrypted passwords 
+#  (keyed by '{SHA}') and Apache MD5 encrypted passwords (keyed by 
+#  '$apr1$'); otherwise it just calls PHP's crypt() for the rest.
+#  The APR MD5 encryption code was contributed by D. Faure.
+
+function _crypt($plain, $salt=null) {
+  if (strncmp($salt, '{SHA}', 5) == 0) 
+    return '{SHA}'.base64_encode(pack('H*', sha1($plain)));
+  if (strncmp($salt, '$apr1$', 6) == 0) {
+    preg_match('/^\\$apr1\\$([^$]+)/', $salt, $match);
+    $salt = $match[1];
+    $length = strlen($plain);
+    $context = $plain . '$apr1$' . $salt;
+    $binary = pack('H32', md5($plain . $salt . $plain));
+    for($i = $length; $i > 0; $i -= 16) 
+      $context .= substr($binary, 0, min(16, $i));
+    for($i = $length; $i > 0; $i >>= 1)
+      $context .= ($i & 1) ? chr(0) : $plain{0};
+    $binary = pack('H32', md5($context));
+    for($i = 0; $i < 1000; $i++) {
+      $new = ($i & 1) ? $plain : $binary;
+      if ($i % 3) $new .= $salt;
+      if ($i % 7) $new .= $plain;
+      $new .= ($i & 1) ? $binary : $plain;
+      $binary = pack('H32', md5($new));
+    }
+    $q = '';
+    for ($i = 0; $i < 5; $i++) {
+      $k = $i + 6;
+      $j = $i + 12;
+      if ($j == 16) $j = 5;
+      $q = $binary{$i}.$binary{$k}.$binary{$j} . $q;
+    }
+    $q = chr(0).chr(0).$binary{11} . $q;
+    $q = strtr(strrev(substr(base64_encode($q), 2)),
+           'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+           './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
+    return "\$apr1\$$salt\$$q";
+  }
+  if (md5($plain) == $salt) return $salt;
+  return crypt($plain, $salt);
 }
