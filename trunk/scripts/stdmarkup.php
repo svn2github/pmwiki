@@ -109,7 +109,7 @@ Markup('redirect', '<include',
   '/\\(:redirect\\s+(\\S.*?):\\)/ei',
   "RedirectMarkup(\$pagename, PSS('$1'))");
 
-$SaveAttrPatterns['/\\(:(if|include|redirect)(\\s.*?)?:\\)/i'] = ' ';
+$SaveAttrPatterns['/\\(:(if\\d*|include|redirect)(\\s.*?)?:\\)/i'] = ' ';
 
 ## GroupHeader/GroupFooter handling
 Markup('nogroupheader', '>include',
