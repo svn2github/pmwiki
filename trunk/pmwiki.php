@@ -1762,7 +1762,7 @@ function PostRecentChanges($pagename,$page,$new,$Fmt=null) {
       $rcpage['text'] .= "$pgtext\n";
     else
       $rcpage['text'] = preg_replace("/([^\n]*$RCDelimPattern.*\n)/",
-        "$pgtext\n$1", $rcpage['text'], 1);
+        str_replace("$", "\\$", $pgtext) . "\n$1", $rcpage['text'], 1);
     if (@$RCLinesMax > 0) 
       $rcpage['text'] = implode("\n", array_slice(
           explode("\n", $rcpage['text'], $RCLinesMax + 1), 0, $RCLinesMax));
