@@ -808,19 +808,17 @@ function FmtPageName($fmt, $pagename, $expand_globals=1) {
     $fmt);
   if (strpos($fmt,'$')===false) return $fmt;
   static $g;
-  if($expand_globals) {
-    if ($GCount != count($GLOBALS)+count($FmtV)) {
-      $g = array();
-      foreach($GLOBALS as $n=>$v) {
-        if (is_array($v) || is_object($v) ||
-          isset($FmtV["\$$n"]) || in_array($n,$UnsafeGlobals)) continue;
-        $g["\$$n"] = $v;
-      }
-      $GCount = count($GLOBALS)+count($FmtV);
-      krsort($g); reset($g);
+  if ($GCount != count($GLOBALS)+count($FmtV)) {
+    $g = array();
+    foreach($GLOBALS as $n=>$v) {
+      if (is_array($v) || is_object($v) ||
+        isset($FmtV["\$$n"]) || in_array($n,$UnsafeGlobals)) continue;
+      $g["\$$n"] = $v;
     }
-    $fmt = str_replace(array_keys($g),array_values($g),$fmt);
+    $GCount = count($GLOBALS)+count($FmtV);
+    krsort($g); reset($g);
   }
+  $fmt = str_replace(array_keys($g),array_values($g),$fmt);
   $fmt = preg_replace('/(?>(\\$[[:alpha:]]\\w+))/e', 
           "isset(\$FmtV['$1']) ? \$FmtV['$1'] : '$1'", $fmt); 
   return $fmt;
