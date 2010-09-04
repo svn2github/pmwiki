@@ -65,7 +65,7 @@ $EditFunctions = array('EditTemplate', 'RestorePage', 'ReplaceOnSave',
   'SaveAttributes', 'PostPage', 'PostRecentChanges', 'AutoCreateTargets',
   'PreviewPage');
 $EnablePost = 1;
-$ChangeSummary = str_replace('$', '&#036;' substr(preg_replace('/[\\x00-\\x1f]|=\\]/', '', 
+$ChangeSummary = str_replace('$', '&#036;', substr(preg_replace('/[\\x00-\\x1f]|=\\]/', '', 
         stripmagic(@$_REQUEST['csum'])), 0, 100));
 $AsSpacedFunction = 'AsSpaced';
 $SpaceWikiWords = 0;
