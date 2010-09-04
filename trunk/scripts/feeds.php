@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2007 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -202,9 +202,9 @@ function HandleFeed($pagename, $auth = 'read') {
       { $page = ReadPage($pn, READPAGE_CURRENT); PCache($pn, $page); }
     $pc = & $PCache[$pn];
     $pl[] = $pn;
-    if (@$opt['count'] && count($pl) >= $opt['count']) break;
     $rdfseq .= FmtPageName("<rdf:li resource=\"{\$PageUrl}\" />\n", $pn);
     if ($pc['time'] > $feedtime) $feedtime = $pc['time'];
+    if (@$opt['count'] && count($pl) >= $opt['count']) break;
   }
   $pagelist = $pl;
 
