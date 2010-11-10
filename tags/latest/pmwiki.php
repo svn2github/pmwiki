@@ -875,7 +875,7 @@ function XLPage($lang,$p) {
   if (!$page) return;
   $text = preg_replace("/=>\\s*\n/",'=> ',@$page['text']);
   foreach(explode("\n",$text) as $l)
-    if (preg_match('/^\\s*[\'"](.+?)[\'"]\\s*=>\\s*[\'"](.*)[\'"]/',$l,$match))
+    if (preg_match('/^\\s*[\'"](.+?)[\'"]\\s*=>\\s*[\'"](.+)[\'"]/',$l,$match))
       $xl[stripslashes($match[1])] = stripslashes($match[2]);
   if (isset($xl)) {
     if (@$xl['xlpage-i18n']) {
