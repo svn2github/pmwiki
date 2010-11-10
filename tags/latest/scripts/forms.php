@@ -253,7 +253,7 @@ SDV($AuthPromptFmt, array(&$PageStartFmt, 'page:$SiteGroup.AuthForm',
   &$PageEndFmt));
 
 ## PITS:01188, these should exist in "browse" mode
-## NOTE; also defined in prefs.php
+## NOTE: also defined in prefs.php
 XLSDV('en', array(
   'ak_save' => 's',
   'ak_saveedit' => 'u',

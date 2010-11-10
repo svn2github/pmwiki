@@ -35,7 +35,7 @@ XLSDV('en', array(
   'ak_view' => '',
   'ak_edit' => 'e',
   'ak_history' => 'h',
-  'ak_attach' => '',
+  'ak_attach'  => '',
   'ak_backlinks' => '',
   'ak_logout' => '',
   'ak_print' => '',
