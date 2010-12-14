@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2009 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -118,7 +118,7 @@ function ApplyStyles($x) {
         $p, $match, PREG_SET_ORDER);
       while ($match) {
         $m = array_shift($match);
-        if (@$m[2]) $style[$m[1]]=preg_replace('/^([\'"])(.*)\\1$/','$2',$m[3]);
+        if (@$m[2]) $style[$m[1]]=preg_replace('/^([\'"])(.*?)\\1$/','$2',$m[3]);
         else if (!isset($WikiStyle[$m[1]])) @$style['class'] .= ' ' . $m[1];
         else {
           $c = @$style['class'];
