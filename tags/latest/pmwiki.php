@@ -1399,7 +1399,7 @@ function FormatTableRow($x, $sep = '\\|\\|') {
     elseif (preg_match('/^!(.*)$/',$td[$i],$match)) 
       { $td[$i]=$match[1]; $t='th'; }
     else $t='td';
-    if (preg_match('/^\\s.*\\s$/',$td[$i])) { $attr .= " align='center'"; }
+    if (preg_match('/^\\s.*\\s$/',$td[$i])) { if ($t!='caption')  $attr .= " align='center'"; }
     elseif (preg_match('/^\\s/',$td[$i])) { $attr .= " align='right'"; }
     elseif (preg_match('/\\s$/',$td[$i])) { $attr .= " align='left'"; }
     for ($colspan=1;$i+$colspan<count($td);$colspan++) 
@@ -1573,7 +1573,8 @@ function HandleBrowse($pagename, $auth = 'read') {
   SDV($PageRedirectFmt,"<p><i>($[redirected from] <a rel='nofollow' 
     href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\$HTMLVSpace\n");
   if (@!$_GET['from']) { $opt['redirect'] = 1; $PageRedirectFmt = ''; }
-  else $PageRedirectFmt = FmtPageName($PageRedirectFmt, $_GET['from']);
+  else $PageRedirectFmt = FmtPageName($PageRedirectFmt, 
+    MakePageName($pagename, $_GET['from']));
   if (@$EnableHTMLCache && !$NoHTMLCache && $PageCacheFile && 
       @filemtime($PageCacheFile) > $LastModTime) {
     list($ctext) = unserialize(file_get_contents($PageCacheFile));
