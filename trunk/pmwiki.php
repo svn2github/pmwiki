@@ -1573,7 +1573,8 @@ function HandleBrowse($pagename, $auth = 'read') {
   SDV($PageRedirectFmt,"<p><i>($[redirected from] <a rel='nofollow' 
     href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\$HTMLVSpace\n");
   if (@!$_GET['from']) { $opt['redirect'] = 1; $PageRedirectFmt = ''; }
-  else $PageRedirectFmt = FmtPageName($PageRedirectFmt, $_GET['from']);
+  else $PageRedirectFmt = FmtPageName($PageRedirectFmt, 
+    MakePageName($pagename, $_GET['from']));
   if (@$EnableHTMLCache && !$NoHTMLCache && $PageCacheFile && 
       @filemtime($PageCacheFile) > $LastModTime) {
     list($ctext) = unserialize(file_get_contents($PageCacheFile));
