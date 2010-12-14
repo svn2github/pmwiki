@@ -652,7 +652,7 @@ function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
     {
       if($tparts[$t]=='template' && $tparts[$t+2]=='none')
       {
-         $out .= MarkupRestore($tparts[$t+4]);
+         $out .= MarkupRestore( FPLExpandItemVars($tparts[$t+4], $matches, 0, $pseudovars));
          $t+=4;
       }
       $t++;

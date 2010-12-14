@@ -5,4 +5,5 @@ UseMod:		http://www.usemod.com/cgi-bin/wiki.pl?
 Meatball:	http://www.usemod.com/cgi-bin/mb.pl?
 Wikipedia:	http://www.wikipedia.com/wiki/
 PITS:		http://www.pmwiki.org/PITS/
+PmL10n:		http://www.pmwiki.org/wiki/Localization/
 Path:            

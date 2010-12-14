@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2009 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2010 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -252,6 +252,16 @@ SDV($AuthPromptFmt, array(&$PageStartFmt, 'page:$SiteGroup.AuthForm',
     catch(e) { document.authform.authpw.focus(); } //--></script>",
   &$PageEndFmt));
 
+## PITS:01188, these should exist in "browse" mode
+## NOTE: also defined in prefs.php
+XLSDV('en', array(
+  'ak_save' => 's',
+  'ak_saveedit' => 'u',
+  'ak_preview' => 'p',
+  'ak_textedit' => ',',
+  'e_rows' => '23',
+  'e_cols' => '60'));
+
 ## The section below handles specialized EditForm pages.
 ## We don't bother to load it if we're not editing.
 
@@ -264,14 +274,6 @@ if (@$_REQUEST['editform']) {
   $PageEditFmt='$EditForm';
 }
 $Conditions['e_preview'] = '(boolean)$_REQUEST["preview"]';
-
-XLSDV('en', array(
-  'ak_save' => 's',
-  'ak_saveedit' => 'u',
-  'ak_preview' => 'p',
-  'ak_textedit' => ',',
-  'e_rows' => '23',
-  'e_cols' => '60'));
 
 # (:e_preview:) displays the preview of formatted text.
 Markup('e_preview', 'directives',
