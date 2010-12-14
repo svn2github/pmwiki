@@ -1399,7 +1399,7 @@ function FormatTableRow($x, $sep = '\\|\\|') {
     elseif (preg_match('/^!(.*)$/',$td[$i],$match)) 
       { $td[$i]=$match[1]; $t='th'; }
     else $t='td';
-    if (preg_match('/^\\s.*\\s$/',$td[$i])) { $attr .= " align='center'"; }
+    if (preg_match('/^\\s.*\\s$/',$td[$i])) { if ($t!='caption') $attr .= " align='center'"; }
     elseif (preg_match('/^\\s/',$td[$i])) { $attr .= " align='right'"; }
     elseif (preg_match('/\\s$/',$td[$i])) { $attr .= " align='left'"; }
     for ($colspan=1;$i+$colspan<count($td);$colspan++) 
