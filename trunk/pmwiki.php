@@ -1449,6 +1449,7 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   }
   $url = PageVar($tgtname, '$PageUrl');
   $txt = str_replace("$", "&#036;", $txt);
+  $alt = str_replace(array('"',"'"),array('&#34;','&#39;'),$alt);
   if (@$EnableLinkPageRelative)
     $url = preg_replace('!^[a-z]+://[^/]*!i', '', $url);
   $fmt = str_replace(array('$LinkUrl', '$LinkText', '$LinkAlt'),
