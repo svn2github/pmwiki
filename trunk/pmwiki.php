@@ -1451,8 +1451,8 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   $txt = str_replace("$", "&#036;", $txt);
   if (@$EnableLinkPageRelative)
     $url = preg_replace('!^[a-z]+://[^/]*!i', '', $url);
-  $fmt = str_replace(array('$LinkUrl', '$LinkText'),
-                     array($url.PUE($qf), $txt), $fmt);
+  $fmt = str_replace(array('$LinkUrl', '$LinkText', '$LinkAlt'),
+                     array($url.PUE($qf), $txt, $alt), $fmt);
   return FmtPageName($fmt,$tgtname);
 }
 
