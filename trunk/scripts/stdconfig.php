@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2002-2011 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2002-2007 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -25,76 +25,65 @@ if (!IsEnabled($EnableStdConfig,1)) return;
 if (!function_exists('session_start') && IsEnabled($EnableRequireSession, 1))
   Abort('PHP is lacking session support', 'session');
 
-
 if (IsEnabled($EnablePGCust,1))
-  SDVA($PmConfig, array("$FarmD/scripts/pgcust.php" => 10));
+  include_once("$FarmD/scripts/pgcust.php");
 
 if (IsEnabled($EnableRobotControl,1))
-  SDVA($PmConfig, array("$FarmD/scripts/robots.php" => 20));
+  include_once("$FarmD/scripts/robots.php");
 
 if (IsEnabled($EnableCaches, 1))
-  SDVA($PmConfig, array("$FarmD/scripts/caches.php" => 30));
+  include_once("$FarmD/scripts/caches.php");
 
 ## Scripts that are part of a standard PmWiki distribution.
 if (IsEnabled($EnableAuthorTracking,1)) 
-  SDVA($PmConfig, array("$FarmD/scripts/author.php" => 40));
+  include_once("$FarmD/scripts/author.php");
 if (IsEnabled($EnablePrefs, 1))
-  SDVA($PmConfig, array("$FarmD/scripts/prefs.php" => 50));
+  include_once("$FarmD/scripts/prefs.php");
 if (IsEnabled($EnableSimulEdit, 1))
-  SDVA($PmConfig, array("$FarmD/scripts/simuledit.php" => 60));
+  include_once("$FarmD/scripts/simuledit.php");
 if (IsEnabled($EnableDrafts, 0))
-  SDVA($PmConfig, array("$FarmD/scripts/draft.php" => 70));        # after simuledit + prefs
+  include_once("$FarmD/scripts/draft.php");        # after simuledit + prefs
 if (IsEnabled($EnableSkinLayout,1))
-  SDVA($PmConfig, array("$FarmD/scripts/skins.php" => 80));        # must come after prefs
+  include_once("$FarmD/scripts/skins.php");        # must come after prefs
 if (@$Transition || IsEnabled($EnableTransitions, 0))
-  SDVA($PmConfig, array("$FarmD/scripts/transition.php" => 90));   # must come after skins
+  include_once("$FarmD/scripts/transition.php");   # must come after skins
 if (@$LinkWikiWords || IsEnabled($EnableWikiWords, 0))
-  SDVA($PmConfig, array("$FarmD/scripts/wikiwords.php" => 100));   # must come before stdmarkup
+  include_once("$FarmD/scripts/wikiwords.php");    # must come before stdmarkup
 if (IsEnabled($EnableStdMarkup,1))
-  SDVA($PmConfig, array("$FarmD/scripts/stdmarkup.php" => 110));   # must come after transition
+  include_once("$FarmD/scripts/stdmarkup.php");    # must come after transition
 if ($action=='diff' && @!$HandleActions['diff'])
-  SDVA($PmConfig, array("$FarmD/scripts/pagerev.php" => 120));
+  include_once("$FarmD/scripts/pagerev.php");
 if (IsEnabled($EnableWikiTrails,1))
-  SDVA($PmConfig, array("$FarmD/scripts/trails.php" => 130));
+  include_once("$FarmD/scripts/trails.php");
 if (IsEnabled($EnableWikiStyles,1))
-  SDVA($PmConfig, array("$FarmD/scripts/wikistyles.php" => 140));
+  include_once("$FarmD/scripts/wikistyles.php");
 if (IsEnabled($EnableMarkupExpressions, 1) 
     && !function_exists('MarkupExpression'))
-  SDVA($PmConfig, array("$FarmD/scripts/markupexpr.php" => 150));
+  include_once("$FarmD/scripts/markupexpr.php");
 if (IsEnabled($EnablePageList,1))
-  SDVA($PmConfig, array("$FarmD/scripts/pagelist.php" => 160));
+  include_once("$FarmD/scripts/pagelist.php");
 if (IsEnabled($EnableVarMarkup,1))
-  SDVA($PmConfig, array("$FarmD/scripts/vardoc.php" => 170));
+  include_once("$FarmD/scripts/vardoc.php");
 if (!function_exists(@$DiffFunction)) 
-  SDVA($PmConfig, array("$FarmD/scripts/phpdiff.php" => 180));
+  include_once("$FarmD/scripts/phpdiff.php");
 if ($action=='crypt')
-  SDVA($PmConfig, array("$FarmD/scripts/crypt.php" => 190));
+  include_once("$FarmD/scripts/crypt.php");
 if ($action=='edit' && IsEnabled($EnableGUIButtons,0))
-  SDVA($PmConfig, array("$FarmD/scripts/guiedit.php" => 200));
+  include_once("$FarmD/scripts/guiedit.php");
 if (IsEnabled($EnableForms,1))                     
-  SDVA($PmConfig, array("$FarmD/scripts/forms.php" => 210));       # must come after prefs
+  include_once("$FarmD/scripts/forms.php");       # must come after prefs
 if (IsEnabled($EnableUpload,0))
-  SDVA($PmConfig, array("$FarmD/scripts/upload.php" => 220));      # must come after forms
+  include_once("$FarmD/scripts/upload.php");      # must come after forms
 if (IsEnabled($EnableBlocklist, 0))
-  SDVA($PmConfig, array("$FarmD/scripts/blocklist.php" => 230));
+  include_once("$FarmD/scripts/blocklist.php");
 if (IsEnabled($EnableNotify,0))
-  SDVA($PmConfig, array("$FarmD/scripts/notify.php" => 240));
+  include_once("$FarmD/scripts/notify.php");
 if (IsEnabled($EnableDiag,0)) 
-  SDVA($PmConfig, array("$FarmD/scripts/diag.php" => 250));
+  include_once("$FarmD/scripts/diag.php");
 
-if (IsEnabled($EnableUpgradeCheck,1))
-  SDVA($PmConfig, array("UpgradeCheck" => 260));
-
-SDVA($PmConfig, array(
-  "LoadInterMaps" => 270, 
-  "CascadeAuth"   => 280
-  ));
-
-function UpgradeCheck() {
-  global $StatusPageName, $SiteAdminGroup, $VersionNum, $action;
+if (IsEnabled($EnableUpgradeCheck,1)) {
   SDV($StatusPageName, "$SiteAdminGroup.Status");
   $page = ReadPage($StatusPageName, READPAGE_CURRENT);
   if (@$page['updatedto'] != $VersionNum) 
     { $action = 'upgrade'; include_once("$FarmD/scripts/upgrades.php"); }
 }
-

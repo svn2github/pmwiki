@@ -329,50 +329,42 @@ SDV($CurrentTimeISO, strftime($TimeISOFmt, $Now));
 if (IsEnabled($EnableStdConfig,1))
   include_once("$FarmD/scripts/stdconfig.php");
 
-if (is_array($PmConfig)) {
-  asort($PmConfig, SORT_NUMERIC);
-  foreach ($PmConfig as $k=>$v) {
+if (is_array($PostConfig)) {
+  asort($PostConfig, SORT_NUMERIC);
+  foreach ($PostConfig as $k=>$v) {
     if (!$k || !$v || $v<0) continue;
     if (function_exists($k)) $k($pagename);
     elseif (file_exists($k)) include_once($k);
   }
 }
 
-function LoadInterMaps($pagename) {
-  global $InterMapFiles, $LinkFunctions, $IMap;
-  foreach((array)$InterMapFiles as $f) {
-    $f = FmtPageName($f, $pagename);
-    if (($v = @file($f))) 
-      $v = preg_replace('/^\\s*(?>\\w[-\\w]*)(?!:)/m', '$0:', implode('', $v));
-    else if (PageExists($f)) {
-      $p = ReadPage($f, READPAGE_CURRENT);
-      $v = $p['text'];
-    } else continue;
-    if (!preg_match_all("/^\\s*(\\w[-\\w]*:)[^\\S\n]+(\\S*)/m", $v, 
-                        $match, PREG_SET_ORDER)) continue;
-    foreach($match as $m) {
-      if (strpos($m[2], '$1') === false) $m[2] .= '$1';
-      $LinkFunctions[$m[1]] = 'LinkIMap';
-      $IMap[$m[1]] = FmtPageName($m[2], $pagename);
-    }
+foreach((array)$InterMapFiles as $f) {
+  $f = FmtPageName($f, $pagename);
+  if (($v = @file($f))) 
+    $v = preg_replace('/^\\s*(?>\\w[-\\w]*)(?!:)/m', '$0:', implode('', $v));
+  else if (PageExists($f)) {
+    $p = ReadPage($f, READPAGE_CURRENT);
+    $v = $p['text'];
+  } else continue;
+  if (!preg_match_all("/^\\s*(\\w[-\\w]*:)[^\\S\n]+(\\S*)/m", $v, 
+                      $match, PREG_SET_ORDER)) continue;
+  foreach($match as $m) {
+    if (strpos($m[2], '$1') === false) $m[2] .= '$1';
+    $LinkFunctions[$m[1]] = 'LinkIMap';
+    $IMap[$m[1]] = FmtPageName($m[2], $pagename);
   }
 }
 
-function CascadeAuth() {
-  global $AuthCascade;
-  $keys = array_keys($AuthCascade);
-  while ($keys) {
-    $k = array_shift($keys); $t = $AuthCascade[$k];
-    if (in_array($t, $keys)) 
-      { unset($AuthCascade[$k]); $AuthCascade[$k] = $t; array_push($keys, $k); }
-  }
+$keys = array_keys($AuthCascade);
+while ($keys) {
+  $k = array_shift($keys); $t = $AuthCascade[$k];
+  if (in_array($t, $keys)) 
+    { unset($AuthCascade[$k]); $AuthCascade[$k] = $t; array_push($keys, $k); }
 }
 
 $LinkPattern = implode('|',array_keys($LinkFunctions));  # after InterMaps
 SDV($LinkPageCreateSpaceFmt,$LinkPageCreateFmt);
 $ActionTitle = FmtPageName(@$ActionTitleFmt[$action], $pagename);
-
-
 
 if (!@$HandleActions[$action] || !function_exists($HandleActions[$action])) 
   $action='browse';
