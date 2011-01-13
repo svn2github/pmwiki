@@ -22,11 +22,13 @@ $pagename = ResolvePageName($pagename);
 
 if (!IsEnabled($EnableStdConfig,1)) return;
 
+
 if (!function_exists('session_start') && IsEnabled($EnableRequireSession, 1))
   Abort('PHP is lacking session support', 'session');
 
 if (IsEnabled($EnablePGCust,1))
   include_once("$FarmD/scripts/pgcust.php");
+
 
 if (IsEnabled($EnableRobotControl,1))
   include_once("$FarmD/scripts/robots.php");

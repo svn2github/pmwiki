@@ -366,6 +366,7 @@ $LinkPattern = implode('|',array_keys($LinkFunctions));  # after InterMaps
 SDV($LinkPageCreateSpaceFmt,$LinkPageCreateFmt);
 $ActionTitle = FmtPageName(@$ActionTitleFmt[$action], $pagename);
 
+
 if (!@$HandleActions[$action] || !function_exists($HandleActions[$action])) 
   $action='browse';
 if (IsEnabled($EnableActions, 1)) HandleDispatch($pagename, $action);
