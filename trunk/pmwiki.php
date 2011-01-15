@@ -764,7 +764,7 @@ function PageTextVar($pagename, $var) {
 
 function PageVar($pagename, $var, $pn = '') {
   global $Cursor, $PCache, $FmtPV, $AsSpacedFunction, $ScriptUrl,
-    $EnablePathInfo;
+    $EnablePathInfo, $EnablePageVarAuth, $Now;
   if ($var == '$ScriptUrl') return PUE($ScriptUrl);
   if ($pn) {
     $pn = isset($Cursor[$pn]) ? $Cursor[$pn] : MakePageName($pagename, $pn);
@@ -772,8 +772,13 @@ function PageVar($pagename, $var, $pn = '') {
   if ($pn) {
     if (preg_match('/^(.+)[.\\/]([^.\\/]+)$/', $pn, $match)
         && !isset($PCache[$pn]['time']) 
-        && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) 
-      { $page = ReadPage($pn, READPAGE_CURRENT); PCache($pn, $page); }
+        && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) { 
+      $page = IsEnabled($EnablePageVarAuth, 1) ?
+        RetrieveAuthPage($pn, 'read', false, READPAGE_CURRENT) 
+          || array('ctime'=>$Now, 'time'=>$Now)
+        : ReadPage($pn, READPAGE_CURRENT);
+      PCache($pn, $page);
+    }
     @list($d, $group, $name) = $match;
     $page = &$PCache[$pn];
   } else { $group = ''; $name = ''; }
