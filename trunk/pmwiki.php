@@ -774,9 +774,9 @@ function PageVar($pagename, $var, $pn = '') {
         && !isset($PCache[$pn]['time']) 
         && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) { 
       $page = IsEnabled($EnablePageVarAuth, 1) ?
-        RetrieveAuthPage($pn, 'read', false, READPAGE_CURRENT) 
-          || array('ctime'=>$Now, 'time'=>$Now)
+        RetrieveAuthPage($pn, 'read', false, READPAGE_CURRENT)
         : ReadPage($pn, READPAGE_CURRENT);
+      if(!$page) $page = array('ctime'=>$Now, 'time'=>$Now);
       PCache($pn, $page);
     }
     @list($d, $group, $name) = $match;
