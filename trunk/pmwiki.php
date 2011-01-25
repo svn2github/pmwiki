@@ -773,7 +773,7 @@ function PageVar($pagename, $var, $pn = '') {
     if (preg_match('/^(.+)[.\\/]([^.\\/]+)$/', $pn, $match)
         && !isset($PCache[$pn]['time']) 
         && (!@$FmtPV[$var] || strpos($FmtPV[$var], '$page') !== false)) { 
-      $page = IsEnabled($EnablePageVarAuth, 1) ?
+      $page = IsEnabled($EnablePageVarAuth, 0) ?
         RetrieveAuthPage($pn, 'read', false, READPAGE_CURRENT)
         : ReadPage($pn, READPAGE_CURRENT);
       if(!$page) $page = array('ctime'=>$Now, 'time'=>$Now);
