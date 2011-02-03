@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2011 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -285,7 +285,6 @@ function PageListSources(&$list, &$opt, $pn, &$page) {
         @$trail[$tstop['parent']]['pagename'];
     if (!@$opt['=cached']) $list = MatchPageNames($tlist, $opt['=pnfilter']);
   } else if (!@$opt['=cached']) $list = ListPages($opt['=pnfilter']);
-
   StopWatch("PageListSources end count=".count($list));
   return 0;
 }
@@ -629,13 +628,14 @@ function FPLTemplateSliceList($pagename, &$matches, $opt){
 
 
 function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
-  global $Cursor, $FPLTemplateMarkupFunction;
+  global $Cursor, $FPLTemplateMarkupFunction, $PCache;
   SDV($FPLTemplateMarkupFunction, 'MarkupToHTML');
   $savecursor = $Cursor;
-  $pagecount = 0; $groupcount = 0; $grouppagecount = 0;
+  $pagecount = $groupcount = $grouppagecount = $traildepth = 0;
   $pseudovars = array('{$$PageCount}' => &$pagecount, 
                       '{$$GroupCount}' => &$groupcount, 
-                      '{$$GroupPageCount}' => &$grouppagecount);
+                      '{$$GroupPageCount}' => &$grouppagecount,
+                      '{$$PageTrailDepth}' => &$traildepth);
 
   foreach(preg_grep('/^[\\w$]/', array_keys($opt)) as $k) 
     if (!is_array($opt[$k]))
@@ -645,20 +645,18 @@ function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
   $vv = array_values($pseudovars);
 
   $lgroup = ''; $out = '';
-  if(count($matches)==0 )
-  {
+  if(count($matches)==0 ) {
     $t = 0;
-    while($t < count($tparts))
-    {
-      if($tparts[$t]=='template' && $tparts[$t+2]=='none')
-      {
-         $out .= MarkupRestore( FPLExpandItemVars($tparts[$t+4], $matches, 0, $pseudovars));
+    while($t < count($tparts)) {
+      if($tparts[$t]=='template' && $tparts[$t+2]=='none') {
+         $out .= MarkupRestore(FPLExpandItemVars($tparts[$t+4], $matches, 0, $pseudovars));
          $t+=4;
       }
       $t++;
     }
   } # else:
   foreach($matches as $i => $pn) {
+    $traildepth = intval(@$PCache[$pn]['depth']);
     $group = PageVar($pn, '$Group');
     if ($group != $lgroup) { $groupcount++; $grouppagecount = 0; $lgroup = $group; }
     $grouppagecount++; $pagecount++;
