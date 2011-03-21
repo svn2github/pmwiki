@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2011 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -208,7 +208,9 @@ function HandleDownload($pagename, $auth = 'read') {
 
 function HandlePostUpload($pagename, $auth = 'upload') {
   global $UploadVerifyFunction, $UploadFileFmt, $LastModFile, 
-    $EnableUploadVersions, $Now, $RecentUploadsFmt, $FmtV;
+    $EnableUploadVersions, $Now, $RecentUploadsFmt, $FmtV,
+    $NotifyItemUploadFmt, $NotifyItemFmt, $IsUploadPosted,
+    $UploadRedirectFunction;
   UploadAuth($pagename, $auth);
   $uploadfile = $_FILES['uploadfile'];
   $upname = $_REQUEST['upname'];
@@ -228,13 +230,19 @@ function HandlePostUpload($pagename, $auth = 'upload') {
     fixperms($filepath,0444);
     if ($LastModFile) { touch($LastModFile); fixperms($LastModFile); }
     $result = "upresult=success";
+    $FmtV['$upname'] = $upname;
+    $FmtV['$upsize'] = $uploadfile['size'];
     if (IsEnabled($RecentUploadsFmt, 0)) {
-      $FmtV['$upname'] = $upname;
-      $FmtV['$upsize'] = $uploadfile['size'];
       PostRecentChanges($pagename, '', '', $RecentUploadsFmt);
     }
+    if (IsEnabled($NotifyItemUploadFmt, 0) && function_exists('NotifyUpdate')) {
+      $NotifyItemFmt = $NotifyItemUploadFmt;
+      $IsUploadPosted = 1;
+      register_shutdown_function('NotifyUpdate', $pagename, getcwd());
+    }
   }
-  Redirect($pagename,"{\$PageUrl}?action=upload&uprname=$upname&$result");
+  SDV($UploadRedirectFunction, 'Redirect');
+  $UploadRedirectFunction($pagename,"{\$PageUrl}?action=upload&uprname=$upname&$result");
 }
 
 function UploadVerifyBasic($pagename,$uploadfile,$filepath) {

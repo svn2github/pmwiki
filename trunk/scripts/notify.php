@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2006-2009 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2006-2011 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -64,7 +64,7 @@ if (@$NotifyFrom)
 $EditFunctions[] = 'PostNotify';
 
 ##   check if we need to do notifications
-if ($action != 'edit') NotifyCheck($pagename);
+if ($action != 'edit' && $action != 'postupload') NotifyCheck($pagename);
 
 
 function NotifyCheck($pagename) {
@@ -86,7 +86,7 @@ function PostNotify($pagename, &$page, &$new) {
 
 
 function NotifyUpdate($pagename, $dir='') {
-  global $NotifyList, $NotifyListPageFmt, $NotifyFile, $IsPagePosted,
+  global $NotifyList, $NotifyListPageFmt, $NotifyFile, $IsPagePosted, $IsUploadPosted,
     $FmtV, $NotifyTimeFmt, $NotifyItemFmt, $SearchPatterns,
     $NotifySquelch, $NotifyDelay, $Now, $Charset, $EnableNotifySubjectEncode,
     $NotifySubjectFmt, $NotifyBodyFmt, $NotifyHeaders, $NotifyParameters;
@@ -121,7 +121,7 @@ function NotifyUpdate($pagename, $dir='') {
   if (!is_array($notify)) $notify = array();
 
   ##   if this is for a newly posted page, get its information
-  if ($IsPagePosted) {
+  if ($IsPagePosted || $IsUploadPosted) {
     $page = ReadPage($pagename, READPAGE_CURRENT);
     $FmtV['$PostTime'] = strftime($NotifyTimeFmt, $Now);
     $item = urlencode(FmtPageName($NotifyItemFmt, $pagename));
