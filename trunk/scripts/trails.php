@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2002-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2002-2011 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -71,8 +71,7 @@ function ReadTrail($pagename, $trailname) {
     if (@$match[6]) {
        if (!$LinkWikiWords) continue;
        $tgt = MakePageName($trailname, $match[6]);
-    } else $tgt = MakePageName($trailname,
-                               preg_replace('/[#?].+/', '', $match[3]));
+    } else $tgt = MakePageName($trailname, $match[3]);
     $t[$n]['depth'] = $depth = strlen($match[1]);
     $t[$n]['pagename'] = $tgt;
     $t[$n]['markup'] = $match[2];
