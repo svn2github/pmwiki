@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2011 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -53,7 +53,7 @@ if (IsEnabled($EnableStdWikiStyles,1)) {
   foreach(array('item', 'list', 'block', 'p', 'div') as $c)
     SDV($WikiStyle[$c],array('apply'=>$c));
   ## block justifications
-  foreach(array('left','right','center') as $c)
+  foreach(array('left','right','center','justify') as $c)
     SDV($WikiStyle[$c],array('apply'=>'block','text-align'=>$c));
   ## frames, floating frames, and floats
   SDV($HTMLStylesFmt['wikistyles'], " 
