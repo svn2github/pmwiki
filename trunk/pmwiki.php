@@ -1582,7 +1582,7 @@ function HandleBrowse($pagename, $auth = 'read') {
   }
   $opt = array();
   SDV($PageRedirectFmt,"<p><i>($[redirected from] <a rel='nofollow' 
-    href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\$HTMLVSpace\n");
+    href='{\$PageUrl}?action=edit'>{\$FullName}</a>)</i></p>\n");
   if (@!$_GET['from']) { $opt['redirect'] = 1; $PageRedirectFmt = ''; }
   else {
     $frompage = MakePageName($pagename, $_GET['from']);
