@@ -879,14 +879,14 @@ function XLSDV($lang,$a) {
   global $XL;
   foreach($a as $k=>$v) { if (!isset($XL[$lang][$k])) $XL[$lang][$k]=$v; }
 }
-function XLPage($lang,$p) {
+function XLPage($lang,$p,$nohtml=false) {
   global $TimeFmt,$XLLangs,$FarmD, $EnableXLPageScriptLoad;
   $page = ReadPage($p, READPAGE_CURRENT);
   if (!$page) return;
   $text = preg_replace("/=>\\s*\n/",'=> ',@$page['text']);
   foreach(explode("\n",$text) as $l)
-    if (preg_match('/^\\s*[\'"](.+?)[\'"]\\s*=>\\s*[\'"](.+)[\'"]/',$l,$match))
-      $xl[stripslashes($match[1])] = stripslashes($match[2]);
+    if (preg_match('/^\\s*[\'"](.+?)[\'"]\\s*=>\\s*[\'"](.+)[\'"]/',$l,$m))
+      $xl[stripslashes($m[1])] = stripslashes($nohtml? htmlspecialchars($m[2]): $m[2]);
   if (isset($xl)) {
     if (IsEnabled($EnableXLPageScriptLoad, 1) && @$xl['xlpage-i18n']) {
       $i18n = preg_replace('/[^-\\w]/','',$xl['xlpage-i18n']);
