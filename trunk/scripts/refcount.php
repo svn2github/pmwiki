@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2006 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2011 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -36,7 +36,7 @@ function PrintRefCount($pagename) {
   $tlist = isset($_REQUEST['tlist']) ? $_REQUEST['tlist'] : array('all');
   $flist = isset($_REQUEST['flist']) ? $_REQUEST['flist'] : array('all');
   $whichrefs = @$_REQUEST['whichrefs'];
-  $showrefs = @$_REQUEST['showrefs'];
+  $showrefs = (@$_REQUEST['showrefs']=='checked')? "checked='checked'" : '';
   $submit = @$_REQUEST['submit'];
 
   echo FmtPageName($PageRefCountFmt,$pagename);
