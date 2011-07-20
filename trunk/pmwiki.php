@@ -1427,6 +1427,9 @@ function FormatTableRow($x, $sep = '\\|\\|') {
 
 function LinkIMap($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   global $FmtV, $IMap, $IMapLinkFmt, $UrlLinkFmt;
+  if(strpos($IMap[$imap], '$1')===0 && preg_match('/^\\w+:/', $path, $m)) {
+    $path = preg_replace('/^\\w+:/', urlencode($m[0]), $path);
+  }
   $FmtV['$LinkUrl'] = PUE(str_replace('$1',$path,$IMap[$imap]));
   $FmtV['$LinkText'] = $txt;
   $FmtV['$LinkAlt'] = str_replace(array('"',"'"),array('&#34;','&#39;'),$alt);
