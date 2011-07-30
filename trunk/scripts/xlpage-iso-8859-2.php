@@ -11,7 +11,7 @@
     handles the conversion of pagenames from utf-8 (sent by browsers)
     into iso-8859-2 if needed.  
 */
-  global $HTTPHeaders, $pagename, $KeepToken;
+  global $HTTPHeaders, $pagename, $KeepToken, $Charset;
 
   $Charset = "ISO-8859-2";
   $HTTPHeaders[] = "Content-Type: text/html; charset=iso-8859-2;";

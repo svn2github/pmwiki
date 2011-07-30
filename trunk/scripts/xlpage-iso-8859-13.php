@@ -6,7 +6,7 @@
     (at your option) any later version.  See pmwiki.php for full details.
 */
 
-  global $HTTPHeaders;
+  global $HTTPHeaders, $Charset;
 
   $Charset = "ISO-8859-13";
   $HTTPHeaders[] = "Content-type: text/html; charset=iso-8859-13;";
