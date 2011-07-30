@@ -607,8 +607,9 @@ function FixGlob($x, $rep = '$1*.$2') {
 ## regexes to include ('/'), regexes to exclude ('!'), or
 ## wildcard patterns (all others).
 function MatchPageNames($pagelist, $pat) {
-  global $Charset;
-  $pcre8 = ($Charset == 'UTF-8')? 'u' : ''; # allow range matches in utf8
+  global $Charset, $EnableRangeMatchUTF8;
+  # allow range matches in utf8; doesn't work on pmwiki.org and possibly elsewhere
+  $pcre8 = (IsEnabled($EnableRangeMatchUTF8,0) && $Charset=='UTF-8')? 'u' : '';
   $pagelist = (array)$pagelist;
   foreach((array)$pat as $p) {
     if (count($pagelist) < 1) break;
