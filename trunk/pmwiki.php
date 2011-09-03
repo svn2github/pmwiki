@@ -963,10 +963,11 @@ class PageStore {
       }
       fclose($fp);
     }
-    return @$page;
+    return $this->recode(@$page);
   }
   function write($pagename,$page) {
-    global $Now, $Version;
+    global $Now, $Version, $Charset;
+    $page['charset'] = $Charset;
     $page['name'] = $pagename;
     $page['time'] = $Now;
     $page['host'] = $_SERVER['REMOTE_ADDR'];
@@ -1035,6 +1036,20 @@ class PageStore {
     }
     StopWatch("PageStore::ls end {$this->dirfmt}");
     return $out;
+  }
+  function recode($a) {
+    global $Charset, $PageRecodeFunction;
+    if (!$a || !@$a['charset'] || $Charset==$a['charset']) return $a;
+    if (@$PageRecodeFunction && function_exists($PageRecodeFunction)) $F = $PageRecodeFunction;
+    elseif ($Charset=='ISO-8859-1' && $a['charset']=='UTF-8') $F = 'utf8_decode'; # 2.2.31+ documentation
+# TODO:
+#    elseif ($Charset=='UTF-8' && $a['charset']=='ISO-8859-1') $F = 'utf8_encode'; # utf8 wiki & pre-2.2.30 doc
+#    elseif (function_exists('iconv')) {$F = 'iconv'; $params = array($a['charset'], "$Charset//IGNORE", 'str');}
+#    elseif (function_exists('mb_convert_encoding')) $F = 'mb_convert_encoding';
+    else return $a;
+    foreach($a as $k=>$v) $a[$k] = $F($v, $Charset, $a['charset']);
+    $a['charset'] = $Charset;
+    return $a;
   }
 }
 
@@ -1738,7 +1753,7 @@ function PostPage($pagename, &$page, &$new) {
   SDV($DeleteKeyPattern,"^\\s*delete\\s*$");
   $IsPagePosted = false;
   if ($EnablePost) {
-    $new['charset'] = $Charset;
+    $new['charset'] = $Charset; # kept for now, may be needed if custom PageStore
     $new['author'] = @$Author;
     $new["author:$Now"] = @$Author;
     $new["host:$Now"] = $_SERVER['REMOTE_ADDR'];
