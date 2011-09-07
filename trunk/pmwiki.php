@@ -1040,14 +1040,14 @@ class PageStore {
   function recode($a) {
     global $Charset, $PageRecodeFunction;
     if (!$a || !@$a['charset'] || $Charset==$a['charset']) return $a;
-    if (@$PageRecodeFunction && function_exists($PageRecodeFunction)) $F = $PageRecodeFunction;
-    elseif ($Charset=='ISO-8859-1' && $a['charset']=='UTF-8') $F = 'utf8_decode'; # 2.2.31+ documentation
+    if (@$PageRecodeFunction && function_exists($PageRecodeFunction)) return $PageRecodeFunction($a);
+    if ($Charset=='ISO-8859-1' && $a['charset']=='UTF-8') $F = 'utf8_decode'; # 2.2.31+ documentation
 # TODO:
 #    elseif ($Charset=='UTF-8' && $a['charset']=='ISO-8859-1') $F = 'utf8_encode'; # utf8 wiki & pre-2.2.30 doc
 #    elseif (function_exists('iconv')) {$F = 'iconv'; $params = array($a['charset'], "$Charset//IGNORE", 'str');}
 #    elseif (function_exists('mb_convert_encoding')) $F = 'mb_convert_encoding';
     else return $a;
-    foreach($a as $k=>$v) $a[$k] = $F($v, $Charset, $a['charset']);
+    foreach($a as $k=>$v) $a[$k] = $F($v);
     $a['charset'] = $Charset;
     return $a;
   }
@@ -1540,7 +1540,7 @@ function DisableMarkup() {
     $MarkupTable[$id] = array('cmd' => 'none', 'pat'=>'');
   }
 }
-    
+
 function mpcmp($a,$b) { return @strcmp($a['seq'].'=',$b['seq'].'='); }
 function BuildMarkupRules() {
   global $MarkupTable,$MarkupRules,$LinkPattern;
