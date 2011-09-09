@@ -1038,14 +1038,17 @@ class PageStore {
     return $out;
   }
   function recode($a) {
-    global $Charset, $PageRecodeFunction;
+    global $Charset, $PageRecodeFunction, $ForcePageCharset;
     if (!$a || !@$a['charset'] || $Charset==$a['charset']) return $a;
-    if (@$PageRecodeFunction && function_exists($PageRecodeFunction)) return $PageRecodeFunction($a);
+    if (function_exists($PageRecodeFunction)) return $PageRecodeFunction($a);
+    if($a['charset'] == 'ISO-8859-1' && @$ForcePageCharset)
+      $a['charset'] = $ForcePageCharset; # wrong pre-2.2.30 encs. *-2, *-9, *-13
     if ($Charset=='ISO-8859-1' && $a['charset']=='UTF-8') $F = 'utf8_decode'; # 2.2.31+ documentation
-# TODO:
-#    elseif ($Charset=='UTF-8' && $a['charset']=='ISO-8859-1') $F = 'utf8_encode'; # utf8 wiki & pre-2.2.30 doc
-#    elseif (function_exists('iconv')) {$F = 'iconv'; $params = array($a['charset'], "$Charset//IGNORE", 'str');}
-#    elseif (function_exists('mb_convert_encoding')) $F = 'mb_convert_encoding';
+    elseif ($Charset=='UTF-8' && $a['charset']=='ISO-8859-1') $F = 'utf8_encode'; # utf8 wiki & pre-2.2.30 doc
+    elseif (function_exists('iconv'))
+      $F = create_function('$s', "return iconv('{$a['charset']}', '$Charset//IGNORE', \$s);");
+    elseif (function_exists('mb_convert_encoding'))
+      $F = create_function('$s', "return mb_convert_encoding(\$s, '$Charset', '{$a['charset']}');");
     else return $a;
     foreach($a as $k=>$v) $a[$k] = $F($v);
     $a['charset'] = $Charset;
