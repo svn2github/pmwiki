@@ -1,11 +1,11 @@
-version=pmwiki-2.2.4 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.19) Gecko/20081216 Ubuntu/8.04 (hardy) Firefox/2.0.0.19
+version=pmwiki-2.2.30 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (X11; Linux x86_64; rv:5.0) Gecko/20100101 Firefox/5.0
 author=Petko
-charset=ISO-8859-1
+charset=UTF-8
 csum=redirect GroupCustomizations
-host=86.69.109.9
+host=85.171.160.186
 name=PmWiki.PerGroupCustomizations
-rev=38
+rev=39
 targets=
 text=(:redirect GroupCustomizations:)%0a(:Summary: Redirects to [[PmWiki.GroupCustomizations]]:)
-time=1250689588
+time=1315670897
