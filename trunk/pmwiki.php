@@ -1038,11 +1038,12 @@ class PageStore {
     return $out;
   }
   function recode($a) {
-    global $Charset, $PageRecodeFunction, $ForcePageCharset;
-    if (!$a || !@$a['charset'] || $Charset==$a['charset']) return $a;
+    global $Charset, $PageRecodeFunction, $DefaultPageCharset;
     if (function_exists($PageRecodeFunction)) return $PageRecodeFunction($a);
-    if($a['charset'] == 'ISO-8859-1' && @$ForcePageCharset)
-      $a['charset'] = $ForcePageCharset; # wrong pre-2.2.30 encs. *-2, *-9, *-13
+    SDVA($DefaultPageCharset, array(''=>$Charset)); # pre-2.2.31 RecentChanges
+    if (@$DefaultPageCharset[$a['charset']])  # wrong pre-2.2.30 encs. *-2, *-9, *-13
+      $a['charset'] = $DefaultPageCharset[$a['charset']];
+    if (!$a || !$a['charset'] || $Charset==$a['charset']) return $a;
     if ($Charset=='ISO-8859-1' && $a['charset']=='UTF-8') $F = 'utf8_decode'; # 2.2.31+ documentation
     elseif ($Charset=='UTF-8' && $a['charset']=='ISO-8859-1') $F = 'utf8_encode'; # utf8 wiki & pre-2.2.30 doc
     elseif (function_exists('iconv'))

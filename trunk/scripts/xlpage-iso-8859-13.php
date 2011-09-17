@@ -6,8 +6,8 @@
     (at your option) any later version.  See pmwiki.php for full details.
 */
 
-  global $HTTPHeaders, $Charset;
+  global $HTTPHeaders, $Charset, $DefaultPageCharset;
 
-  $Charset = "ISO-8859-13";
   $HTTPHeaders[] = "Content-type: text/html; charset=iso-8859-13;";
-
+  $Charset = "ISO-8859-13";
+  SDVA($DefaultPageCharset, array('ISO-8859-1'=>$Charset));

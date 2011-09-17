@@ -11,10 +11,11 @@
     handles the conversion of pagenames from utf-8 (sent by browsers)
     into iso-8859-2 if needed.  
 */
-  global $HTTPHeaders, $pagename, $KeepToken, $Charset;
+  global $HTTPHeaders, $pagename, $KeepToken, $Charset, $DefaultPageCharset;
 
-  $Charset = "ISO-8859-2";
   $HTTPHeaders[] = "Content-Type: text/html; charset=iso-8859-2;";
+  $Charset = "ISO-8859-2";
+  SDVA($DefaultPageCharset, array('ISO-8859-1'=>$Charset));
 
   $KeepToken = "\263\263\263";
 
