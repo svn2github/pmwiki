@@ -963,7 +963,7 @@ class PageStore {
       }
       fclose($fp);
     }
-    return $this->recode(@$page);
+    return $this->recode($pagename, @$page);
   }
   function write($pagename,$page) {
     global $Now, $Version, $Charset;
@@ -1037,13 +1037,14 @@ class PageStore {
     StopWatch("PageStore::ls end {$this->dirfmt}");
     return $out;
   }
-  function recode($a) {
+  function recode($pagename, $a) {
+    if(!$a) return false;
     global $Charset, $PageRecodeFunction, $DefaultPageCharset;
     if (function_exists($PageRecodeFunction)) return $PageRecodeFunction($a);
     SDVA($DefaultPageCharset, array(''=>$Charset)); # pre-2.2.31 RecentChanges
-    if (@$DefaultPageCharset[$a['charset']])  # wrong pre-2.2.30 encs. *-2, *-9, *-13
+    if (@$DefaultPageCharset[$a['charset']]>'')  # wrong pre-2.2.30 encs. *-2, *-9, *-13
       $a['charset'] = $DefaultPageCharset[$a['charset']];
-    if (!$a || !$a['charset'] || $Charset==$a['charset']) return $a;
+    if (!$a['charset'] || $Charset==$a['charset']) return $a;
     if ($Charset=='ISO-8859-1' && $a['charset']=='UTF-8') $F = 'utf8_decode'; # 2.2.31+ documentation
     elseif ($Charset=='UTF-8' && $a['charset']=='ISO-8859-1') $F = 'utf8_encode'; # utf8 wiki & pre-2.2.30 doc
     elseif (function_exists('iconv'))
