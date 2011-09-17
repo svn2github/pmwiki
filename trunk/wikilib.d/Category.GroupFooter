@@ -1,11 +1,11 @@
-version=pmwiki-2.2.1 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.19) Gecko/20081216 Ubuntu/8.04 (hardy) Firefox/2.0.0.19
+version=pmwiki-2.2.30 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (X11; Linux x86_64; rv:5.0) Gecko/20100101 Firefox/5.0
 author=Petko
-charset=ISO-8859-1
+charset=UTF-8
 csum=$FullName
-host=81.65.14.164
+host=85.171.160.186
 name=Category.GroupFooter
-rev=66
+rev=67
 targets=
 text=(:Summary:content generated for Category list pages:)%0a----%0a[--'''{*$:Summary}'''--]%0a(:pagelist link={*$FullName} list=normal:)%0a
-time=1238273681
+time=1315676760
