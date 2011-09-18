@@ -1,0 +1,8 @@
+version=pmwiki-2.2.30 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (X11; Linux x86_64; rv:5.0) Gecko/20100101 Firefox/5.0
+charset=UTF-8
+host=85.171.160.186
+name=SiteAdmin.GroupAttributes
+passwdattr=@lock
+rev=3
+time=1315674224
