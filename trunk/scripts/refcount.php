@@ -21,7 +21,7 @@ SDV($RefCountTimeFmt," <small>%Y-%b-%d %H:%M</small>");
 SDV($HandleActions['refcount'], 'HandleRefCount');
 
 function PrintRefCount($pagename) {
-  global $GroupPattern,$NamePattern,$PageRefCountFmt,$RefCountTimeFmt;
+  global $GroupPattern,$NamePattern,$PageRefCountFmt,$RefCountTimeFmt, $ScriptUrl;
   $pagelist = ListPages();
   $grouplist = array();
   foreach($pagelist as $pname) {
@@ -40,23 +40,23 @@ function PrintRefCount($pagename) {
   $submit = @$_REQUEST['submit'];
 
   echo FmtPageName($PageRefCountFmt,$pagename);
-  echo "<form method='post'><input type='hidden' action='refcount'>
+  echo "<form method='post' action='$ScriptUrl'><input type='hidden' name='action' value='refcount'/>
     <table cellspacing='10'><tr><td valign='top'>Show
-    <br><select name='whichrefs'>";
+    <br/><select name='whichrefs'>";
   foreach($wlist as $w)
-    echo "<option ",($whichrefs==$w) ? 'selected' : ''," value='$w'>$w\n";
-  echo "</select></td><td valign='top'> page names in group<br>
-    <select name='tlist[]' multiple size='4'>";
+    echo "<option ",($whichrefs==$w) ? 'selected="selected"' : ''," value='$w'>$w</option>\n";
+  echo "</select></td><td valign='top'> page names in group<br/>
+    <select name='tlist[]' multiple='multiple' size='4'>";
   foreach($grouplist as $g=>$t)
-    echo "<option ",in_array($g,$tlist) ? 'selected' : ''," value='$g'>$t\n";
-  echo "</select></td><td valign='top'> referenced from pages in<br>
-    <select name='flist[]' multiple size='4'>";
+    echo "<option ",in_array($g,$tlist) ? 'selected="selected"' : ''," value='$g'>$t</option>\n";
+  echo "</select></td><td valign='top'> referenced from pages in<br/>
+    <select name='flist[]' multiple='multiple' size='4'>";
   foreach($grouplist as $g=>$t)
-    echo "<option ",in_array($g,$flist) ? 'selected' : ''," value='$g'>$t\n";
+    echo "<option ",in_array($g,$flist) ? 'selected="selected"' : ''," value='$g'>$t</option>\n";
   echo "</select></td></tr></table>
-    <p><input type='checkbox' name='showrefs' value='checked' $showrefs>
+    <p><input type='checkbox' name='showrefs' value='checked' $showrefs/>
       Display referencing pages
-    <p><input type='submit' name='submit' value='Search'></form><p><hr>";
+    </p><p><input type='submit' name='submit' value='Search'/></p></form><hr/>";
 
   if ($submit) {
     foreach($pagelist as $pname) {
