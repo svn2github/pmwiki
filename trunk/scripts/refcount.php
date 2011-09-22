@@ -40,9 +40,9 @@ function PrintRefCount($pagename) {
   $submit = @$_REQUEST['submit'];
 
   echo FmtPageName($PageRefCountFmt,$pagename);
-  echo "<form method='post' action='$ScriptUrl'><input type='hidden' name='action' value='refcount'/>
+  echo FmtPageName("<form method='post' action='{\$PageUrl}'><input type='hidden' name='action' value='refcount'/>
     <table cellspacing='10'><tr><td valign='top'>Show
-    <br/><select name='whichrefs'>";
+    <br/><select name='whichrefs'>",$pagename);
   foreach($wlist as $w)
     echo "<option ",($whichrefs==$w) ? 'selected="selected"' : ''," value='$w'>$w</option>\n";
   echo "</select></td><td valign='top'> page names in group<br/>
