@@ -87,7 +87,7 @@ include_once("scripts/xlpage-utf-8.php");
 
 ##  Set $EnableWikiWords if you want to allow WikiWord links.
 ##  For more options with WikiWords, see scripts/wikiwords.php .
-# $EnableWikiWords = 1;                      # enable WikiWord links
+# $EnableWikiWords = 1;                    # enable WikiWord links
 
 ##  $DiffKeepDays specifies the minimum number of days to keep a page's
 ##  revision history.  The default is 3650 (approximately 10 years).
@@ -99,8 +99,7 @@ include_once("scripts/xlpage-utf-8.php");
 ## of each page.  Setting $EnablePageListProtect to zero will
 ## speed things up considerably, but it will also mean that
 ## viewers may learn of the existence of read-protected pages.
-## (It does not enable them to access the contents of the
-## pages.)
+## (It does not enable them to access the contents of the pages.)
 # $EnablePageListProtect = 0;
 
 ##  The refcount.php script enables ?action=refcount, which helps to

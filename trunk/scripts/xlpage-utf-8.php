@@ -90,6 +90,34 @@ function AsSpacedUTF8($text) {
 }
 
 
+if(function_exists('mb_internal_encoding') && mb_internal_encoding("UTF-8")) {
+  if (function_exists('mb_substr'))
+    SDVA($MarkupExpr, array('substr' => 'call_user_func_array("mb_substr", $args)'));
+  if (function_exists('mb_strlen'))
+    SDVA($MarkupExpr, array('strlen' => 'mb_strlen($args[0])'));
+  if (function_exists('mb_strtolower'))
+    SDVA($MarkupExpr, array('tolower' => 'mb_strtolower($args[0])'));
+  if (function_exists('mb_strtoupper'))
+    SDVA($MarkupExpr, array('toupper' => 'mb_strtoupper($args[0])'));
+  if (function_exists('mb_substr') && function_exists('mb_strtoupper'))
+    SDVA($MarkupExpr, array(
+      'ucfirst' => 'mb_strtoupper(mb_substr($args[0], 0, 1)).mb_substr($args[0], 1)',
+      'ucwords' => 'ME_ucwords($args[0])',
+    ));
+}
+# At least these 2 should work without mb_*
+SDVA($MarkupExpr, array(
+  'tolower' => 'utf8fold($args[0])',
+  'toupper' => 'utf8toupper($args[0])',
+));
+
+function ME_ucwords($x) {
+  $parts = preg_split('/(\\s+)/', $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+  $r = '';
+  foreach ($parts as $s) $r .= mb_strtoupper(mb_substr($s, 0, 1)).mb_substr($s, 1);
+  return $r;
+}
+
 ##   Conversion tables.  
 ##   $CaseConversion maps lowercase utf8 sequences to 
 ##   their uppercase equivalents.  The table was derived from [1].
