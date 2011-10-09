@@ -19,7 +19,7 @@
 global $HTTPHeaders, $KeepToken, $pagename,
   $GroupPattern, $NamePattern, $WikiWordPattern, $SuffixPattern,
   $PageNameChars, $MakePageNamePatterns, $CaseConversions, $StringFolding,
-  $Charset, $HTMLHeaderFmt, $StrFoldFunction, $AsSpacedFunction, $LowerCaseUTF8Char;
+  $Charset, $HTMLHeaderFmt, $StrFoldFunction, $AsSpacedFunction;
 
 $Charset = 'UTF-8';
 $HTTPHeaders['utf-8'] = 'Content-type: text/html; charset=UTF-8';
@@ -608,21 +608,22 @@ SDVA($MarkupExpr, array(
   'toupper' => 'utf8string($args[0], "toupper")',
 ));
 
-$LowerCaseUTF8Char = implode('|', array_keys($CaseConversions));
 function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo for UTF-8
-  global $LowerCaseUTF8Char;
-  $mbyte = preg_match('/[\\x80-\\xFF]/', $str);
+  global $CaseConversions;
+  static $lower;
+  if (!@$lower) $lower = implode('|', array_keys($CaseConversions));
+  $ascii = preg_match('/[\\x80-\\xFF]/', $str)? 0:1;
   switch ($start) {
-    case 'ucfirst': 
-      return $mbyte ? preg_replace("/^($LowerCaseUTF8Char)/e", 
-        '$GLOBALS["CaseConversions"]["$1"]', $str) : ucfirst($str);
-    case 'ucwords': 
-      return $mbyte ? preg_replace("/(^|\\s+)($LowerCaseUTF8Char)/e", 
-        '"$1".$GLOBALS["CaseConversions"]["$2"]', $str) : ucwords($str);
-    case 'tolower': return $mbyte ? utf8fold($str) : strtolower($str);
-    case 'toupper': return $mbyte ? utf8toupper($str) : strtoupper($str);
-  }  
-  if (!$mbyte) {
+    case 'ucfirst':
+      return $ascii ? ucfirst($str) :
+        preg_replace("/^($lower)/e", '$GLOBALS["CaseConversions"]["$1"]', $str);
+    case 'ucwords':
+      return $ascii ? ucwords($str) :
+        preg_replace("/(^|\\s+)($lower)/e", '"$1".$GLOBALS["CaseConversions"]["$2"]', $str);
+    case 'tolower': return $ascii ? strtolower($str) : utf8fold($str);
+    case 'toupper': return $ascii ? strtoupper($str) : utf8toupper($str);
+  }
+  if ($ascii) {
     if ($start=='strlen') return strlen($str);
     if ($len===false) $len = strlen($str);
     return substr($str, $start, $len);
