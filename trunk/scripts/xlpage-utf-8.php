@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2011 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -19,7 +19,7 @@
 global $HTTPHeaders, $KeepToken, $pagename,
   $GroupPattern, $NamePattern, $WikiWordPattern, $SuffixPattern,
   $PageNameChars, $MakePageNamePatterns, $CaseConversions, $StringFolding,
-  $Charset, $HTMLHeaderFmt, $StrFoldFunction, $AsSpacedFunction;
+  $Charset, $HTMLHeaderFmt, $StrFoldFunction, $AsSpacedFunction, $SingleUTF8Char;
 
 $Charset = 'UTF-8';
 $HTTPHeaders['utf-8'] = 'Content-type: text/html; charset=UTF-8';
@@ -89,33 +89,27 @@ function AsSpacedUTF8($text) {
   return preg_replace("/($upper)(($upper)($lower|\\d))/", '$1 $2', $text);
 }
 
-
-if(function_exists('mb_internal_encoding') && mb_internal_encoding("UTF-8")) {
-  if (function_exists('mb_substr'))
-    SDVA($MarkupExpr, array('substr' => 'call_user_func_array("mb_substr", $args)'));
-  if (function_exists('mb_strlen'))
-    SDVA($MarkupExpr, array('strlen' => 'mb_strlen($args[0])'));
-  if (function_exists('mb_strtolower'))
-    SDVA($MarkupExpr, array('tolower' => 'mb_strtolower($args[0])'));
-  if (function_exists('mb_strtoupper'))
-    SDVA($MarkupExpr, array('toupper' => 'mb_strtoupper($args[0])'));
-  if (function_exists('mb_substr') && function_exists('mb_strtoupper'))
-    SDVA($MarkupExpr, array(
-      'ucfirst' => 'mb_strtoupper(mb_substr($args[0], 0, 1)).mb_substr($args[0], 1)',
-      'ucwords' => 'ME_ucwords($args[0])',
-    ));
-}
-# At least these 2 should work without mb_*
+$SingleUTF8Char = '([\\x{00}-\\x{7f}]|[\\x{c2}-\\x{df}].|[\\x{e0}-\\x{ef}]..|[\\x{f0}-\\x{f4}]...)';
 SDVA($MarkupExpr, array(
+  'substr' => 'call_user_func_array("utf8string", $args)',
+  'strlen'  => 'utf8string($args[0])',
+  'ucfirst' => "preg_replace('/^$SingleUTF8Char/e', 'utf8toupper(\"$0\")', \$args[0])",
+  'ucwords' => "preg_replace('/(^|\\s+)$SingleUTF8Char/e', 'utf8toupper(\"$0\")', \$args[0])",
   'tolower' => 'utf8fold($args[0])',
   'toupper' => 'utf8toupper($args[0])',
 ));
 
-function ME_ucwords($x) {
-  $parts = preg_split('/(\\s+)/', $x, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-  $r = '';
-  foreach ($parts as $s) $r .= mb_strtoupper(mb_substr($s, 0, 1)).mb_substr($s, 1);
-  return $r;
+function utf8string($str, $start=false, $len=false) { # strlen+substr combo for UTF-8
+  global $SingleUTF8Char;
+  if(! preg_match('/[\\x80-\\xFF]/', $str)) {
+    if($start===false && $len===false) return strlen($str);
+    if($len===false) $len = strlen($str);
+    return substr($str, $start, $len);
+  }
+  $letters = preg_split("/$SingleUTF8Char/", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+  if($start===false && $len===false) return count($letters);
+  if($len===false) $len = count($letters);
+  return implode('', array_slice($letters, $start, $len));
 }
 
 ##   Conversion tables.  
