@@ -91,7 +91,7 @@ function AsSpacedUTF8($text) {
 
 $SingleUTF8Char = '([\\x{00}-\\x{7f}]|[\\x{c2}-\\x{df}].|[\\x{e0}-\\x{ef}]..|[\\x{f0}-\\x{f4}]...)';
 SDVA($MarkupExpr, array(
-  'substr' => 'call_user_func_array("utf8string", $args)',
+  'substr'  => 'call_user_func_array("utf8string", $args)',
   'strlen'  => 'utf8string($args[0])',
   'ucfirst' => "preg_replace('/^$SingleUTF8Char/e', 'utf8toupper(\"$0\")', \$args[0])",
   'ucwords' => "preg_replace('/(^|\\s+)$SingleUTF8Char/e', 'utf8toupper(\"$0\")', \$args[0])",
@@ -101,14 +101,14 @@ SDVA($MarkupExpr, array(
 
 function utf8string($str, $start=false, $len=false) { # strlen+substr combo for UTF-8
   global $SingleUTF8Char;
-  if(! preg_match('/[\\x80-\\xFF]/', $str)) {
-    if($start===false && $len===false) return strlen($str);
-    if($len===false) $len = strlen($str);
+  if (!preg_match('/[\\x80-\\xFF]/', $str)) {
+    if ($start===false && $len===false) return strlen($str);
+    if ($len===false) $len = strlen($str);
     return substr($str, $start, $len);
   }
   $letters = preg_split("/$SingleUTF8Char/", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-  if($start===false && $len===false) return count($letters);
-  if($len===false) $len = count($letters);
+  if ($start===false && $len===false) return count($letters);
+  if ($len===false) $len = count($letters);
   return implode('', array_slice($letters, $start, $len));
 }
 
