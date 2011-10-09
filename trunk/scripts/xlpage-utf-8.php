@@ -19,7 +19,7 @@
 global $HTTPHeaders, $KeepToken, $pagename,
   $GroupPattern, $NamePattern, $WikiWordPattern, $SuffixPattern,
   $PageNameChars, $MakePageNamePatterns, $CaseConversions, $StringFolding,
-  $Charset, $HTMLHeaderFmt, $StrFoldFunction, $AsSpacedFunction, $SingleUTF8Char;
+  $Charset, $HTMLHeaderFmt, $StrFoldFunction, $AsSpacedFunction, $LowerCaseUTF8Char;
 
 $Charset = 'UTF-8';
 $HTTPHeaders['utf-8'] = 'Content-type: text/html; charset=UTF-8';
@@ -89,29 +89,6 @@ function AsSpacedUTF8($text) {
   return preg_replace("/($upper)(($upper)($lower|\\d))/", '$1 $2', $text);
 }
 
-$SingleUTF8Char = '([\\x{00}-\\x{7f}]|[\\x{c2}-\\x{df}].|[\\x{e0}-\\x{ef}]..|[\\x{f0}-\\x{f4}]...)';
-SDVA($MarkupExpr, array(
-  'substr'  => 'call_user_func_array("utf8string", $args)',
-  'strlen'  => 'utf8string($args[0])',
-  'ucfirst' => "preg_replace('/^$SingleUTF8Char/e', 'utf8toupper(\"$0\")', \$args[0])",
-  'ucwords' => "preg_replace('/(^|\\s+)$SingleUTF8Char/e', 'utf8toupper(\"$0\")', \$args[0])",
-  'tolower' => 'utf8fold($args[0])',
-  'toupper' => 'utf8toupper($args[0])',
-));
-
-function utf8string($str, $start=false, $len=false) { # strlen+substr combo for UTF-8
-  global $SingleUTF8Char;
-  if (!preg_match('/[\\x80-\\xFF]/', $str)) {
-    if ($start===false && $len===false) return strlen($str);
-    if ($len===false) $len = strlen($str);
-    return substr($str, $start, $len);
-  }
-  $letters = preg_split("/$SingleUTF8Char/", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-  if ($start===false && $len===false) return count($letters);
-  if ($len===false) $len = count($letters);
-  return implode('', array_slice($letters, $start, $len));
-}
-
 ##   Conversion tables.  
 ##   $CaseConversion maps lowercase utf8 sequences to 
 ##   their uppercase equivalents.  The table was derived from [1].
@@ -159,7 +136,7 @@ SDV($CaseConversions, array(
     "\xc4\xa5" => "\xc4\xa4",  "\xc4\xa7" => "\xc4\xa6",
     "\xc4\xa9" => "\xc4\xa8",  "\xc4\xab" => "\xc4\xaa",
     "\xc4\xad" => "\xc4\xac",  "\xc4\xaf" => "\xc4\xae",
-    "\xc4\xb1" => "I",  "\xc4\xb3" => "\xc4\xb2",
+    "\xc4\xb1" => "I",         "\xc4\xb3" => "\xc4\xb2",
     "\xc4\xb5" => "\xc4\xb4",  "\xc4\xb7" => "\xc4\xb6",
     "\xc4\xba" => "\xc4\xb9",  "\xc4\xbc" => "\xc4\xbb",
     "\xc4\xbe" => "\xc4\xbd",  
@@ -622,3 +599,37 @@ SDV($StringFolding, array(
   ));  
 
 
+SDVA($MarkupExpr, array(
+  'substr'  => 'call_user_func_array("utf8string", $args)',
+  'strlen'  => 'utf8string($args[0], "strlen")',
+  'ucfirst' => 'utf8string($args[0], "ucfirst")',
+  'ucwords' => 'utf8string($args[0], "ucwords")',
+  'tolower' => 'utf8string($args[0], "tolower")',
+  'toupper' => 'utf8string($args[0], "toupper")',
+));
+
+$LowerCaseUTF8Char = implode('|', array_keys($CaseConversions));
+function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo for UTF-8
+  global $LowerCaseUTF8Char;
+  $mbyte = preg_match('/[\\x80-\\xFF]/', $str);
+  switch ($start) {
+    case 'ucfirst': 
+      return $mbyte ? preg_replace("/^($LowerCaseUTF8Char)/e", 
+        '$GLOBALS["CaseConversions"]["$1"]', $str) : ucfirst($str);
+    case 'ucwords': 
+      return $mbyte ? preg_replace("/(^|\\s+)($LowerCaseUTF8Char)/e", 
+        '"$1".$GLOBALS["CaseConversions"]["$2"]', $str) : ucwords($str);
+    case 'tolower': return $mbyte ? utf8fold($str) : strtolower($str);
+    case 'toupper': return $mbyte ? utf8toupper($str) : strtoupper($str);
+  }  
+  if (!$mbyte) {
+    if ($start=='strlen') return strlen($str);
+    if ($len===false) $len = strlen($str);
+    return substr($str, $start, $len);
+  }
+  $SingleUTF8Char = '([\\x{00}-\\x{7f}]|[\\x{c2}-\\x{df}].|[\\x{e0}-\\x{ef}]..|[\\x{f0}-\\x{f4}]...)';
+  $letters = preg_split("/$SingleUTF8Char/", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+  if ($start=='strlen') return count($letters);
+  if ($len===false) $len = count($letters);
+  return implode('', array_slice($letters, $start, $len));
+}
