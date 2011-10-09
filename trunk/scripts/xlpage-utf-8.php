@@ -628,8 +628,8 @@ function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo fo
     if ($len===false) $len = strlen($str);
     return substr($str, $start, $len);
   }
-  $SingleUTF8Char = '([\\x{00}-\\x{7f}]|[\\x{c2}-\\x{df}].|[\\x{e0}-\\x{ef}]..|[\\x{f0}-\\x{f4}]...)';
-  $letters = preg_split("/$SingleUTF8Char/", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+  $uChar = '([\\x00-\\x7f]|[\\xc2-\\xdf].|[\\xe0-\\xef]..|[\\xf0-\\xf4]...)';
+  $letters = preg_split("/$uChar/", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
   if ($start=='strlen') return count($letters);
   if ($len===false) $len = count($letters);
   return implode('', array_slice($letters, $start, $len));
