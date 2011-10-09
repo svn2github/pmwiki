@@ -89,6 +89,41 @@ function AsSpacedUTF8($text) {
   return preg_replace("/($upper)(($upper)($lower|\\d))/", '$1 $2', $text);
 }
 
+
+SDVA($MarkupExpr, array(
+  'substr'  => 'call_user_func_array("utf8string", $args)',
+  'strlen'  => 'utf8string($args[0], "strlen")',
+  'ucfirst' => 'utf8string($args[0], "ucfirst")',
+  'ucwords' => 'utf8string($args[0], "ucwords")',
+  'tolower' => 'utf8string($args[0], "tolower")',
+  'toupper' => 'utf8string($args[0], "toupper")',
+));
+
+function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo for UTF-8
+  global $CaseConversions;
+  static $lower;
+  if (!@$lower) $lower = implode('|', array_keys($CaseConversions));
+  $ascii = preg_match('/[\\x80-\\xFF]/', $str)? 0:1;
+  switch ((string)$start) {
+    case 'ucfirst': return $ascii ? ucfirst($str) :
+      preg_replace("/^($lower)/e", '$GLOBALS["CaseConversions"]["$1"]', $str);
+    case 'ucwords': return $ascii ? ucwords($str) :
+      preg_replace("/(^|\\s+)($lower)/e", '"$1".$GLOBALS["CaseConversions"]["$2"]', $str);
+    case 'tolower': return $ascii ? strtolower($str) : utf8fold($str);
+    case 'toupper': return $ascii ? strtoupper($str) : utf8toupper($str);
+  }
+  if ($ascii) {
+    if ($start==='strlen') return strlen($str);
+    if ($len===false) $len = strlen($str);
+    return substr($str, $start, $len);
+  }
+  $uChar = '([\\x00-\\x7f]|[\\xc2-\\xdf].|[\\xe0-\\xef]..|[\\xf0-\\xf4]...)';
+  $letters = preg_split("/$uChar/", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+  if ($start==='strlen') return count($letters);
+  if ($len===false) $len = count($letters);
+  return implode('', array_slice($letters, $start, $len));
+}
+
 ##   Conversion tables.  
 ##   $CaseConversion maps lowercase utf8 sequences to 
 ##   their uppercase equivalents.  The table was derived from [1].
@@ -597,40 +632,3 @@ SDV($StringFolding, array(
     "\xd5\x94" => "\xd6\x84",  "\xd5\x95" => "\xd6\x85",
     "\xd5\x96" => "\xd6\x86",  "\xd6\x87" => "\xd5\xa5\xd6\x82"
   ));  
-
-
-SDVA($MarkupExpr, array(
-  'substr'  => 'call_user_func_array("utf8string", $args)',
-  'strlen'  => 'utf8string($args[0], "strlen")',
-  'ucfirst' => 'utf8string($args[0], "ucfirst")',
-  'ucwords' => 'utf8string($args[0], "ucwords")',
-  'tolower' => 'utf8string($args[0], "tolower")',
-  'toupper' => 'utf8string($args[0], "toupper")',
-));
-
-function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo for UTF-8
-  global $CaseConversions;
-  static $lower;
-  if (!@$lower) $lower = implode('|', array_keys($CaseConversions));
-  $ascii = preg_match('/[\\x80-\\xFF]/', $str)? 0:1;
-  switch ($start) {
-    case 'ucfirst':
-      return $ascii ? ucfirst($str) :
-        preg_replace("/^($lower)/e", '$GLOBALS["CaseConversions"]["$1"]', $str);
-    case 'ucwords':
-      return $ascii ? ucwords($str) :
-        preg_replace("/(^|\\s+)($lower)/e", '"$1".$GLOBALS["CaseConversions"]["$2"]', $str);
-    case 'tolower': return $ascii ? strtolower($str) : utf8fold($str);
-    case 'toupper': return $ascii ? strtoupper($str) : utf8toupper($str);
-  }
-  if ($ascii) {
-    if ($start=='strlen') return strlen($str);
-    if ($len===false) $len = strlen($str);
-    return substr($str, $start, $len);
-  }
-  $uChar = '([\\x00-\\x7f]|[\\xc2-\\xdf].|[\\xe0-\\xef]..|[\\xf0-\\xf4]...)';
-  $letters = preg_split("/$uChar/", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-  if ($start=='strlen') return count($letters);
-  if ($len===false) $len = count($letters);
-  return implode('', array_slice($letters, $start, $len));
-}
