@@ -200,7 +200,7 @@ function DiffRenderSource($in, $out, $which) {
   $z2[0] = $line.$z2[0];
   foreach ($cnt as $a) $lines[] = implode('', array_slice($z2, $a[0], $a[1]));
   $ret = trim(implode("\n", $lines));
-  $ret = preg_replace('!</(del|ins)> <\1>!', ' ', $ret);
+  $ret = str_replace(array('</del> <del>', '</ins> <ins>'), ' ', $ret);
   return str_replace("\n","<br />",$ret);
 }
 ## Split a line into pieces before passing it through `diff`

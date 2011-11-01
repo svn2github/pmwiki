@@ -91,10 +91,10 @@ $TableRowIndexMax = 1;
 $UrlExcludeChars = '<>"{}|\\\\^`()[\\]\'';
 $QueryFragPattern = "[?#][^\\s$UrlExcludeChars]*";
 $SuffixPattern = '(?:-?[[:alnum:]]+)*';
-$LinkPageSelfFmt = "<a class='selflink' href='\$LinkUrl'>\$LinkText</a>";
-$LinkPageExistsFmt = "<a class='wikilink' href='\$LinkUrl'>\$LinkText</a>";
+$LinkPageSelfFmt = "<a class='selflink' href='\$LinkUrl' title='\$LinkAlt'>\$LinkText</a>";
+$LinkPageExistsFmt = "<a class='wikilink' href='\$LinkUrl' title='\$LinkAlt'>\$LinkText</a>";
 $LinkPageCreateFmt = 
-  "<a class='createlinktext' rel='nofollow' 
+  "<a class='createlinktext' rel='nofollow' title='\$LinkAlt'
     href='{\$PageUrl}?action=edit'>\$LinkText</a><a rel='nofollow' 
     class='createlink' href='{\$PageUrl}?action=edit'>?</a>";
 $UrlLinkFmt = 
@@ -889,7 +889,7 @@ function XLPage($lang,$p,$nohtml=false) {
     if (preg_match('/^\\s*[\'"](.+?)[\'"]\\s*=>\\s*[\'"](.+)[\'"]/',$l,$m))
       $xl[stripslashes($m[1])] = stripslashes($nohtml? htmlspecialchars($m[2]): $m[2]);
   if (isset($xl)) {
-    if (IsEnabled($EnableXLPageScriptLoad, 1) && @$xl['xlpage-i18n']) {
+    if (IsEnabled($EnableXLPageScriptLoad, 0) && @$xl['xlpage-i18n']) {
       $i18n = preg_replace('/[^-\\w]/','',$xl['xlpage-i18n']);
       include_once("$FarmD/scripts/xlpage-$i18n.php");
     }
@@ -1483,6 +1483,7 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
              ? $LinkPageSelfFmt : $LinkPageExistsFmt;
   }
   $url = PageVar($tgtname, '$PageUrl');
+  if (trim($txt) == '+') $txt = PageVar($tgtname, '$Title');
   $txt = str_replace("$", "&#036;", $txt);
   $alt = str_replace(array('"',"'"),array('&#34;','&#39;'),$alt);
   if (@$EnableLinkPageRelative)
@@ -1493,17 +1494,20 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
 }
 
 function MakeLink($pagename,$tgt,$txt=NULL,$suffix=NULL,$fmt=NULL) {
-  global $LinkPattern,$LinkFunctions,$UrlExcludeChars,$ImgExtPattern,$ImgTagFmt;
+  global $LinkPattern,$LinkFunctions,$UrlExcludeChars,$ImgExtPattern,$ImgTagFmt,
+    $LinkTitleFunction;
   $t = preg_replace('/[()]/','',trim($tgt));
   $t = preg_replace('/<[^>]*>/','',$t);
   preg_match("/^($LinkPattern)?(.+?)(\"(.*)\")?$/",$t,$m);
   if (!$m[1]) $m[1]='<:page>';
+  if (preg_match("/\"(.*)\"$/",trim($tgt),$x)) $m[4]=$x[1];
   if (preg_match("/(($LinkPattern)([^$UrlExcludeChars]+$ImgExtPattern))(\"(.*)\")?$/",$txt,$tm)) 
     $txt = $LinkFunctions[$tm[2]]($pagename,$tm[2],$tm[3],@$tm[5],
       $tm[1],$ImgTagFmt);
   else {
     if (is_null($txt)) {
       $txt = preg_replace('/\\([^)]*\\)/','',$tgt);
+      if (@$m[3]) $txt = preg_replace('/"(.*)"(\\s*)$/','$2',$txt);
       if ($m[1]=='<:page>') {
         $txt = preg_replace('!/\\s*$!', '', $txt);
         $txt = preg_replace('!^.*[^<]/!', '', $txt);
@@ -1511,8 +1515,9 @@ function MakeLink($pagename,$tgt,$txt=NULL,$suffix=NULL,$fmt=NULL) {
     }
     $txt .= $suffix;
   }
+  if (@$LinkTitleFunction) $m[4] = $LinkTitleFunction($pagename,$m,$txt);
   $out = $LinkFunctions[$m[1]]($pagename,$m[1],$m[2],@$m[4],$txt,$fmt);
-  return $out;
+  return preg_replace('/(<[^>]+) title=(""|\'\')/', '$1', $out);
 }
 
 function Markup($id, $when, $pat=NULL, $rep=NULL) {

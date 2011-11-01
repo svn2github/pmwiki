@@ -65,7 +65,7 @@ function ReadTrail($pagename, $trailname) {
           as $x) {
     $x = preg_replace("/\\[\\[([^\\]]*)-&gt;([^\\]]*)\\]\\]/",'[[$2|$1]]',$x);
     if (!preg_match("/^([#*:]+) \\s* 
-          (\\[\\[([^:#!|][^|:]*?)(\\|.*?)?\\]\\]($SuffixPattern)
+          (\\[\\[([^:#!|][^|:]*?)(?:\".*?\")?(\\|.*?)?\\]\\]($SuffixPattern)
           | (($GroupPattern([\\/.]))?$WikiWordPattern)) (.*)/x",$x,$match))
        continue;
     if (@$match[6]) {

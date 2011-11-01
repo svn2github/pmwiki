@@ -114,13 +114,13 @@ function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo fo
   }
   if ($ascii) {
     if ($start==='strlen') return strlen($str);
-    if ($len===false) $len = strlen($str);
+    if ($len===false) return substr($str, $start);
     return substr($str, $start, $len);
   }
-  $uChar = '([\\x00-\\x7f]|[\\xc2-\\xdf].|[\\xe0-\\xef]..|[\\xf0-\\xf4]...)';
-  $letters = preg_split("/$uChar/", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+  $letters = preg_split("/([\\x00-\\x7f]|[\\xc2-\\xdf].|[\\xe0-\\xef]..|[\\xf0-\\xf4]...)/", 
+              $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
   if ($start==='strlen') return count($letters);
-  if ($len===false) $len = count($letters);
+  if ($len===false) return implode('', array_slice($letters, $start));
   return implode('', array_slice($letters, $start, $len));
 }
 
