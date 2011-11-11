@@ -189,6 +189,7 @@ function MakePageList($pagename, $opt, $retpages = 1) {
   SDVA($MakePageListOpt, array('list' => 'default'));
   $opt = array_merge((array)$MakePageListOpt, (array)$opt);
   if (!@$opt['order'] && !@$opt['trail']) $opt['order'] = 'name';
+  $opt['order'] = preg_replace('/[^-\\w:$]+/', ',', $opt['order']);
 
   ksort($opt); $opt['=key'] = md5(serialize($opt));
 
