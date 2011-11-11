@@ -419,7 +419,7 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
   switch ($opt['=phase']) {
     case PAGELIST_PRE:
       $ret = 0;
-      foreach(preg_split('/[\\s,|]+/', @$opt['order'], -1, PREG_SPLIT_NO_EMPTY) 
+      foreach(preg_split('/[^-\\w:$]+/', @$opt['order'], -1, PREG_SPLIT_NO_EMPTY) 
               as $o) {
         $ret |= PAGELIST_POST;
         $r = '+';
