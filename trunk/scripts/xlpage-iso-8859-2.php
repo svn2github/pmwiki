@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('PmWiki')) exit();
 /*  Copyright 2004-2011 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published

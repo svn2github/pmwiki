@@ -54,7 +54,7 @@ Markup('{$var}', '>$[phrase]',
 
 # invisible (:textvar:...:) definition
 Markup('textvar:', '<split',
-  '/\\(:\\w[-\\w]*:(?!\\)).*?:\\)/s', '');
+  '/\\(: *\\w[-\\w]* *:(?!\\)).*?:\\)/s', '');
 
 ## handle relative text vars in includes
 if (IsEnabled($EnableRelativePageVars, 1)) 
