@@ -1039,9 +1039,9 @@ class PageStore {
   }
   function recode($pagename, $a) {
     if(!$a) return false;
-    global $Charset, $PageRecodeFunction, $DefaultPageCharset;
+    global $Charset, $PageRecodeFunction, $DefaultPageCharset, $EnableOldCharset;
     if (function_exists($PageRecodeFunction)) return $PageRecodeFunction($a);
-    $a['=oldcharset'] = @$a['charset'];
+    if (IsEnabled($EnableOldCharset)) $a['=oldcharset'] = @$a['charset'];
     SDVA($DefaultPageCharset, array(''=>$Charset)); # pre-2.2.31 RecentChanges
     if (@$DefaultPageCharset[$a['charset']]>'')  # wrong pre-2.2.30 encs. *-2, *-9, *-13
       $a['charset'] = $DefaultPageCharset[$a['charset']];
