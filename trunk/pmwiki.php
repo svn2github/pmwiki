@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2011 Patrick R. Michaud
+    Copyright 2001-2012 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
@@ -48,6 +48,8 @@ $BlockPattern = 'form|div|table|t[rdh]|p|[uo]l|d[ltd]|h[1-6r]|pre|blockquote';
 $WikiWordPattern = '[[:upper:]][[:alnum:]]*(?:[[:upper:]][[:lower:]0-9]|[[:lower:]0-9][[:upper:]])[[:alnum:]]*';
 $WikiDir = new PageStore('wiki.d/{$FullName}');
 $WikiLibDirs = array(&$WikiDir,new PageStore('$FarmD/wikilib.d/{$FullName}'));
+$PageFileEncodeFunction = 'PUE'; # only used if $WikiDir->encodefilenames is set
+$PageFileDecodeFunction = 'urldecode';
 $LocalDir = 'local';
 $InterMapFiles = array("$FarmD/scripts/intermap.txt",
   "$FarmD/local/farmmap.txt", '$SiteGroup.InterMap', 'local/localmap.txt');
@@ -915,6 +917,7 @@ function CmpPageAttr($a, $b) {
 class PageStore {
   var $dirfmt;
   var $iswrite;
+  var $encodefilenames;
   var $attr;
   function PageStore($d='$WorkDir/$FullName', $w=0, $a=NULL) { 
     $this->dirfmt = $d; $this->iswrite = $w; $this->attr = (array)$a;
@@ -926,13 +929,23 @@ class PageStore {
     if ($pagename > '') {
       $pagename = str_replace('/', '.', $pagename);
       if ($dfmt == 'wiki.d/{$FullName}')               # optimizations for
-        return "wiki.d/$pagename";                     # standard locations
+        return $this->PFE("wiki.d/$pagename");         # standard locations
       if ($dfmt == '$FarmD/wikilib.d/{$FullName}')     # 
-        return "$FarmD/wikilib.d/$pagename";           #
+        return $this->PFE("$FarmD/wikilib.d/$pagename");
       if ($dfmt == 'wiki.d/{$Group}/{$FullName}')
-        return preg_replace('/([^.]+).*/', 'wiki.d/$1/$0', $pagename);
+        return $this->PFE(preg_replace('/([^.]+).*/', 'wiki.d/$1/$0', $pagename));
     }
-    return FmtPageName($dfmt, $pagename);
+    return $this->PFE(FmtPageName($dfmt, $pagename));
+  }
+  function PFE($f) { # pagefile_encode
+    if (!$this->encodefilenames) return $f;
+    global $PageFileEncodeFunction;
+    return $PageFileEncodeFunction($f);
+  }
+  function PFD($f) { # pagefile_decode
+    if (!$this->encodefilenames) return $f;
+    global $PageFileDecodeFunction;
+    return $PageFileDecodeFunction($f);
   }
   function read($pagename, $since=0) {
     $newline = '';
@@ -1028,7 +1041,7 @@ class PageStore {
         if ($pagefile{0} == '.') continue;
         if ($dirslash < $maxslash && is_dir("$dir/$pagefile"))
           { array_push($dirlist,"$dir/$pagefile"); continue; }
-        if ($dirslash == $maxslash) $o[] = $pagefile;
+        if ($dirslash == $maxslash) $o[] = $this->PFD($pagefile);
       }
       closedir($dfp);
       StopWatch("PageStore::ls merge {$this->dirfmt}");
@@ -1504,9 +1517,9 @@ function MakeLink($pagename,$tgt,$txt=NULL,$suffix=NULL,$fmt=NULL) {
   preg_match("/^($LinkPattern)?(.+?)(\"(.*)\")?$/",$t,$m);
   if (!$m[1]) $m[1]='<:page>';
   if (preg_match("/\"(.*)\"$/",trim($tgt),$x)) $m[4]=$x[1];
-  if (preg_match("/(($LinkPattern)([^$UrlExcludeChars]+$ImgExtPattern))(\"(.*)\")?$/",$txt,$tm)) 
-    $txt = $LinkFunctions[$tm[2]]($pagename,$tm[2],$tm[3],@$tm[5],
-      $tm[1],$ImgTagFmt);
+  if (preg_match("/^(.*)(($LinkPattern)([^$UrlExcludeChars]+$ImgExtPattern))(\"(.*)\")?(.*)$/",$txt,$tm)) 
+    $txt = $tm[1]. $LinkFunctions[$tm[3]]($pagename,$tm[3],$tm[4],@$tm[6],
+      $tm[2],$ImgTagFmt). $tm[7];
   else {
     if (is_null($txt)) {
       $txt = preg_replace('/\\([^)]*\\)/','',$tgt);
