@@ -1263,12 +1263,13 @@ function CondText($pagename,$condspec,$condtext) {
 ##  or false if a requested beginning anchor isn't in the text.
 function TextSection($text, $sections, $args = NULL) {
   $args = (array)$args;
-  $npat = '[[:alpha:]][-\\w*]*';
+  $npat = '[[:alpha:]][-\\w.]*';
   if (!preg_match("/#($npat)?(\\.\\.)?(#($npat)?)?/", $sections, $match))
     return $text;
   @list($x, $aa, $dots, $b, $bb) = $match;
   if (!$dots && !$b) $bb = $npat;
   if ($aa) {
+    $aa = preg_replace('/\\.\\.$/', '', $aa);
     $pos = strpos($text, "[[#$aa]]");  if ($pos === false) return false;
     if (@$args['anchors']) 
       while ($pos > 0 && $text[$pos-1] != "\n") $pos--;
@@ -1308,7 +1309,6 @@ function IncludeText($pagename, $inclspec) {
   global $MaxIncludes, $IncludeOpt, $InclCount, $PCache;
   SDV($MaxIncludes,50);
   SDVA($IncludeOpt, array('self'=>1));
-  $npat = '[[:alpha:]][-\\w]*';
   if ($InclCount++>=$MaxIncludes) return Keep($inclspec);
   $args = array_merge($IncludeOpt, ParseArgs($inclspec));
   while (count($args['#'])>0) {
