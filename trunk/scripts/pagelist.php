@@ -603,7 +603,9 @@ function FPLTemplateDefaults($pagename, $matches, &$opt, &$tparts){
   while ($i < count($tparts)) {
     if ($tparts[$i] != 'template') { $i++; continue; }
     if ($tparts[$i+2] != 'defaults' && $tparts[$i+2] != 'default') { $i+=5; continue; }
-    $opt = array_merge(ParseArgs($tparts[$i+3], $PageListArgPattern), $opt);
+    $pvars = $GLOBALS['MarkupTable']['{$var}']; # expand {$PVars}
+    $ttext = preg_replace($pvars['pat'], $pvars['rep'], $tparts[$i+3]);
+    $opt = array_merge(ParseArgs($ttext, $PageListArgPattern), $opt);
     array_splice($tparts, $i, 4);
   }
   SDVA($opt, array('class' => 'fpltemplate', 'wrap' => 'div'));
