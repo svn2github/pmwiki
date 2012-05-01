@@ -919,9 +919,15 @@ class PageStore {
   var $iswrite;
   var $encodefilenames;
   var $attr;
+  var $recodefn;
   function PageStore($d='$WorkDir/$FullName', $w=0, $a=NULL) { 
     $this->dirfmt = $d; $this->iswrite = $w; $this->attr = (array)$a;
     $GLOBALS['PageExistsCache'] = array();
+    if (function_exists('iconv') && @iconv("UTF-8", "WINDOWS-1252//IGNORE", 'test')=='test' ) 
+      $this->recodefn = create_function('$s,$from,$to', 'return iconv($from,"$to//IGNORE",$s);');
+    elseif (function_exists('mb_convert_encoding') && @mb_convert_encoding("test", "WINDOWS-1252", "UTF-8")=="test")
+      $this->recodefn = create_function('$s,$from,$to', 'return mb_convert_encoding($s,$to,$from);');
+    else $this->recodefn = false;
   }
   function pagefile($pagename) {
     global $FarmD;
@@ -1059,16 +1065,13 @@ class PageStore {
     if (@$DefaultPageCharset[$a['charset']]>'')  # wrong pre-2.2.30 encs. *-2, *-9, *-13
       $a['charset'] = $DefaultPageCharset[$a['charset']];
     if (!$a['charset'] || $Charset==$a['charset']) return $a;
-    $from = ($a['charset']=='ISO-8859-1') ? 'Windows-1252' : $a['charset'];
-    $to = ($Charset=='ISO-8859-1') ? 'Windows-1252' : $Charset;
-    if (function_exists('iconv'))
-      $F = create_function('$s', "return iconv('$from', '$to//IGNORE', \$s);");
-    elseif (function_exists('mb_convert_encoding'))
-      $F = create_function('$s', "return mb_convert_encoding(\$s, '$to', '$from');");
-    elseif ($Charset=='UTF-8' && $a['charset']=='ISO-8859-1') $F = 'utf8_encode'; # utf8 wiki & pre-2.2.30 doc
-    elseif ($Charset=='ISO-8859-1' && $a['charset']=='UTF-8') $F = 'utf8_decode'; # 2.2.31+ documentation
+    $from = ($a['charset']=='ISO-8859-1') ? 'WINDOWS-1252' : $a['charset'];
+    $to = ($Charset=='ISO-8859-1') ? 'WINDOWS-1252' : $Charset;
+    if ($this->recodefn) $F = $this->recodefn;
+    elseif ($to=='UTF-8' && $from=='WINDOWS-1252') $F = 'utf8_encode'; # utf8 wiki & pre-2.2.30 doc
+    elseif ($to=='WINDOWS-1252' && $from=='UTF-8') $F = 'utf8_decode'; # 2.2.31+ documentation
     else return $a;
-    foreach($a as $k=>$v) $a[$k] = $F($v);
+    foreach($a as $k=>$v) $a[$k] = $F($v,$from,$to);
     $a['charset'] = $Charset;
     return $a;
   }
