@@ -1068,8 +1068,10 @@ class PageStore {
     $from = ($a['charset']=='ISO-8859-1') ? 'WINDOWS-1252' : $a['charset'];
     $to = ($Charset=='ISO-8859-1') ? 'WINDOWS-1252' : $Charset;
     if ($this->recodefn) $F = $this->recodefn;
-    elseif ($to=='UTF-8' && $from=='WINDOWS-1252') $F = 'utf8_encode'; # utf8 wiki & pre-2.2.30 doc
-    elseif ($to=='WINDOWS-1252' && $from=='UTF-8') $F = 'utf8_decode'; # 2.2.31+ documentation
+    elseif ($to=='UTF-8' && $from=='WINDOWS-1252') # utf8 wiki & pre-2.2.30 doc
+      $F = create_function('$s,$from,$to', 'return utf8_encode($s);');
+    elseif ($to=='WINDOWS-1252' && $from=='UTF-8') # 2.2.31+ documentation
+      $F = create_function('$s,$from,$to', 'return utf8_decode($s);');
     else return $a;
     foreach($a as $k=>$v) $a[$k] = $F($v,$from,$to);
     $a['charset'] = $Charset;
