@@ -168,10 +168,10 @@ function HandleUpload($pagename, $auth = 'upload') {
     $HandleUploadFmt,$PageStartFmt,$PageEndFmt,$PageUploadFmt;
   UploadAuth($pagename, $auth, 1);
   $FmtV['$UploadName'] = MakeUploadName($pagename,@$_REQUEST['upname']);
-  $upresult = htmlspecialchars(@$_REQUEST['upresult']);
-  $uprname = htmlspecialchars(@$_REQUEST['uprname']);
-  $FmtV['$upext'] = htmlspecialchars(@$_REQUEST['upext']);
-  $FmtV['$upmax'] = htmlspecialchars(@$_REQUEST['upmax']);
+  $upresult = PHSC(@$_REQUEST['upresult']);
+  $uprname = PHSC(@$_REQUEST['uprname']);
+  $FmtV['$upext'] = PHSC(@$_REQUEST['upext']);
+  $FmtV['$upmax'] = PHSC(@$_REQUEST['upmax']);
   $FmtV['$UploadResult'] = ($upresult) ?
     FmtPageName("<i>$uprname</i>: $[UL$upresult]",$pagename) : '';
   SDV($HandleUploadFmt,array(&$PageStartFmt,&$PageUploadFmt,&$PageEndFmt));

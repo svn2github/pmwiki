@@ -310,7 +310,7 @@ if (!$pagename &&
 if (preg_match('/[\\x80-\\xbf]/',$pagename)) 
   $pagename=utf8_decode($pagename);
 $pagename = preg_replace('![^[:alnum:]\\x80-\\xff]+$!','',$pagename);
-$FmtPV['$RequestedPage'] = "'".htmlspecialchars($pagename, ENT_QUOTES)."'";
+$FmtPV['$RequestedPage'] = "'".PHSC($pagename, ENT_QUOTES)."'";
 $Cursor['*'] = &$pagename;
 if (function_exists("date_default_timezone_get") ) { # fix PHP5.3 warnings
   @date_default_timezone_set(@date_default_timezone_get());
@@ -391,12 +391,12 @@ function HandleDispatch($pagename, $action, $msg=NULL) {
 function stripmagic($x) 
   { return get_magic_quotes_gpc() ? stripslashes($x) : $x; }
 function pre_r(&$x)
-  { return '<pre>'.htmlspecialchars(print_r($x, true)).'</pre>'; }
+  { return '<pre>'.PHSC(print_r($x, true)).'</pre>'; }
 function PSS($x) 
   { return str_replace('\\"','"',$x); }
 function PVS($x) 
   { return preg_replace("/\n[^\\S\n]*(?=\n)/", "\n<:vspace>", $x); }
-function PVSE($x) { return PVS(htmlspecialchars($x, ENT_NOQUOTES)); }
+function PVSE($x) { return PVS(PHSC($x, ENT_NOQUOTES)); }
 function PZZ($x,$y='') { return ''; }
 function PRR($x=NULL) 
   { if ($x || is_null($x)) $GLOBALS['RedoMarkupLine']++; return $x; }
@@ -435,6 +435,10 @@ function ParseArgs($x, $optpat = '(?>(\\w+)[:=])') {
     $z['#'][] = $v;
   }
   return $z;
+}
+function PHSC($x, $flags=ENT_COMPAT, $enc=null) { # for PHP 5.4
+  if(is_null($enc)) $enc = $GLOBALS['Charset'];
+  return htmlspecialchars($x, $flags, $enc);
 }
 function StopWatch($x) { 
   global $StopWatch, $EnableStopWatch;
@@ -889,7 +893,7 @@ function XLPage($lang,$p,$nohtml=false) {
   $text = preg_replace("/=>\\s*\n/",'=> ',@$page['text']);
   foreach(explode("\n",$text) as $l)
     if (preg_match('/^\\s*[\'"](.+?)[\'"]\\s*=>\\s*[\'"](.+)[\'"]/',$l,$m))
-      $xl[stripslashes($m[1])] = stripslashes($nohtml? htmlspecialchars($m[2]): $m[2]);
+      $xl[stripslashes($m[1])] = stripslashes($nohtml? PHSC($m[2]): $m[2]);
   if (isset($xl)) {
     if (IsEnabled($EnableXLPageScriptLoad, 0) && @$xl['xlpage-i18n']) {
       $i18n = preg_replace('/[^-\\w]/','',$xl['xlpage-i18n']);
@@ -1881,7 +1885,7 @@ function HandleEdit($pagename, $auth = 'edit') {
   $FmtV['$DiffClassMinor'] = 
     (@$_POST['diffclass']=='minor') ?  "checked='checked'" : '';
   $FmtV['$EditText'] = 
-    str_replace('$','&#036;',htmlspecialchars(@$new['text'],ENT_NOQUOTES));
+    str_replace('$','&#036;',PHSC(@$new['text'],ENT_NOQUOTES));
   $FmtV['$EditBaseTime'] = $Now;
   if (@$PageEditForm) {
     $efpage = FmtPageName($PageEditForm, $pagename);
@@ -1977,9 +1981,9 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
   $postvars = '';
   foreach($_POST as $k=>$v) {
     if ($k == 'authpw' || $k == 'authid') continue;
-    $k = htmlspecialchars(stripmagic($k), ENT_QUOTES);
+    $k = PHSC(stripmagic($k), ENT_QUOTES);
     $v = str_replace('$', '&#036;', 
-             htmlspecialchars(stripmagic($v), ENT_COMPAT));
+             PHSC(stripmagic($v), ENT_COMPAT));
     $postvars .= "<input type='hidden' name='$k' value=\"$v\" />\n";
   }
   $FmtV['$PostVars'] = $postvars;
@@ -2078,12 +2082,12 @@ function PasswdVar($pagename, $level) {
     $FmtV['$PWCascade'] = substr($pwsource, 8);
     return FmtPageName('$[(using $PWCascade password)]', $pagename);
   }
-  $setting = htmlspecialchars(implode(' ', preg_replace('/^(?!@|\\w+:).+$/', '****',
+  $setting = PHSC(implode(' ', preg_replace('/^(?!@|\\w+:).+$/', '****',
                                        (array)$page['=passwd'][$level])));
   if ($pwsource == 'group' || $pwsource == 'site') {
     $FmtV['$PWSource'] = $pwsource;
     $setting = FmtPageName('$[(set by $PWSource)] ', $pagename)
-       . htmlspecialchars($setting);
+       . PHSC($setting);
   }
   return $setting;
 }
@@ -2101,7 +2105,7 @@ function PrintAttrForm($pagename) {
     if (strncmp($attr, 'passwd', 6) == 0) {
       $setting = PageVar($pagename, '$Passwd'.ucfirst(substr($attr, 6)));
       $value = '';
-    } else { $setting = $value = htmlspecialchars(@$page[$attr]); }
+    } else { $setting = $value = PHSC(@$page[$attr]); }
     $prompt = FmtPageName($p,$pagename);
     echo "<tr><td>$prompt</td>
       <td><input type='text' name='$attr' value='$value' /></td>

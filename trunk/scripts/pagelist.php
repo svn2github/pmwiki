@@ -58,7 +58,7 @@ SDV($SearchResultsFmt, "<div class='wikisearch'>\$[SearchFor]
   <div class='vspace'></div>\$MatchList
   <div class='vspace'></div>\$[SearchFound]</div>");
 SDV($SearchQuery, str_replace('$', '&#036;', 
-  htmlspecialchars(stripmagic(@$_REQUEST['q']), ENT_NOQUOTES)));
+  PHSC(stripmagic(@$_REQUEST['q']), ENT_NOQUOTES)));
 XLSDV('en', array(
   'SearchFor' => 'Results of search for <em>$Needle</em>:',
   'SearchFound' => 
@@ -140,7 +140,7 @@ function FmtPageList($outfmt, $pagename, $opt) {
   global $GroupPattern, $FmtV, $PageListArgPattern, 
     $FPLFormatOpt, $FPLFunctions;
   # get any form or url-submitted request
-  $rq = htmlspecialchars(stripmagic(@$_REQUEST['q']), ENT_NOQUOTES);
+  $rq = PHSC(stripmagic(@$_REQUEST['q']), ENT_NOQUOTES);
   # build the search string
   $FmtV['$Needle'] = $opt['o'] . ' ' . $rq;
   # Handle "group/" at the beginning of the form-submitted request
@@ -642,7 +642,7 @@ function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
 
   foreach(preg_grep('/^[\\w$]/', array_keys($opt)) as $k) 
     if (!is_array($opt[$k]))
-      $pseudovars["{\$\$$k}"] = htmlspecialchars($opt[$k], ENT_NOQUOTES);
+      $pseudovars["{\$\$$k}"] = PHSC($opt[$k], ENT_NOQUOTES);
 
   $vk = array_keys($pseudovars);
   $vv = array_values($pseudovars);
