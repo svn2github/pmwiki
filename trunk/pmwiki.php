@@ -404,7 +404,7 @@ function PUE($x)
   { return preg_replace('/[\\x80-\\xff \'"<>]/e', "'%'.dechex(ord('$0'))", $x); }
 function PQA($x) { 
   $out = '';
-  if (preg_match_all('/([a-zA-Z]+)\\s*=\\s*("[^"]*"|\'[^\']*\'|\\S*)/',
+  if (preg_match_all('/([a-zA-Z][-\\w]*)\\s*=\\s*("[^"]*"|\'[^\']*\'|\\S*)/',
                      $x, $attr, PREG_SET_ORDER)) {
     foreach($attr as $a) {
       if (preg_match('/^on/i', $a[1])) continue;
