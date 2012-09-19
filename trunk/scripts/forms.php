@@ -278,7 +278,7 @@ $Conditions['e_preview'] = '(boolean)$_REQUEST["preview"]';
 # (:e_preview:) displays the preview of formatted text.
 Markup('e_preview', 'directives',
   '/^\\(:e_preview:\\)/e',
-  "Keep(\$GLOBALS['FmtV']['\$PreviewText'])");
+  "isset(\$GLOBALS['FmtV']['\$PreviewText']) ? Keep(\$GLOBALS['FmtV']['\$PreviewText']): ''");
 
 # If we didn't load guiedit.php, then set (:e_guibuttons:) to
 # simply be empty.
