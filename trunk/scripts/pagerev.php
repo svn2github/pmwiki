@@ -199,9 +199,9 @@ function DiffRenderSource($in, $out, $which) {
   $line = array_shift($z2);
   $z2[0] = $line.$z2[0];
   foreach ($cnt as $a) $lines[] = implode('', array_slice($z2, $a[0], $a[1]));
-  $ret = trim(implode("\n", $lines));
+  $ret = implode("\n", $lines);
   $ret = str_replace(array('</del> <del>', '</ins> <ins>'), ' ', $ret);
-  $ret = preg_replace('/(<(ins|del)>) /', '$1&nbsp;', $ret);
+  $ret = preg_replace('/(<(ins|del)>|^) /', '$1&nbsp;', $ret);
   return str_replace(array("  ", "\n ", "\n"),array("&nbsp; ", "<br />&nbsp;", "<br />"),$ret);
 }
 ## Split a line into pieces before passing it through `diff`
