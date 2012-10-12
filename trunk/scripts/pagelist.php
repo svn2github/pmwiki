@@ -709,7 +709,7 @@ function FPLExpandItemVars($item, $matches, $idx, $psvars) {
   $Cursor['='] = (string)@$matches[$idx];
   $Cursor['>'] = $Cursor['&gt;'] = (string)@$matches[$idx+1];
   $item = str_replace(array_keys($psvars), array_values($psvars), $item);
-  $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
+  $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w[-\\w]*)\\}/e',
               "PVSE(PageVar(\$pn, '$2', '$1'))", $item);
   if(! IsEnabled($EnableUndefinedTemplateVars, 0))
     $item = preg_replace("/\\{\\$\\$\\w+\\}/", '', $item);
