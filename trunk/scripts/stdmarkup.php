@@ -49,7 +49,7 @@ Markup('$[phrase]', '>[=',
 
 # {$var} substitutions
 Markup('{$var}', '>$[phrase]',
-  '/\\{(\\*|!?[-\\w.\\/\\x80-\\xff]*)(\\$:?\\w+)\\}/e', 
+  '/\\{(\\*|!?[-\\w.\\/\\x80-\\xff]*)(\\$:?\\w[-\\w]*)\\}/e', 
   "PRR(PVSE(PageVar(\$pagename, '$2', '$1')))");
 
 # invisible (:textvar:...:) definition
