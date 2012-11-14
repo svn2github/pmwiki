@@ -331,7 +331,7 @@ SDV($CurrentTimeISO, strftime($TimeISOFmt, $Now));
 if (IsEnabled($EnableStdConfig,1))
   include_once("$FarmD/scripts/stdconfig.php");
 
-if (is_array($PostConfig)) {
+if (isset($PostConfig) && is_array($PostConfig)) {
   asort($PostConfig, SORT_NUMERIC);
   foreach ($PostConfig as $k=>$v) {
     if (!$k || !$v || $v<0) continue;
@@ -1065,7 +1065,7 @@ class PageStore {
     global $Charset, $PageRecodeFunction, $DefaultPageCharset, $EnableOldCharset;
     if (function_exists($PageRecodeFunction)) return $PageRecodeFunction($a);
     if (IsEnabled($EnableOldCharset)) $a['=oldcharset'] = @$a['charset'];
-    SDVA($DefaultPageCharset, array(''=>$Charset)); # pre-2.2.31 RecentChanges
+    SDVA($DefaultPageCharset, array(''=>@$Charset)); # pre-2.2.31 RecentChanges
     if (@$DefaultPageCharset[$a['charset']]>'')  # wrong pre-2.2.30 encs. *-2, *-9, *-13
       $a['charset'] = $DefaultPageCharset[$a['charset']];
     if (!$a['charset'] || $Charset==$a['charset']) return $a;
