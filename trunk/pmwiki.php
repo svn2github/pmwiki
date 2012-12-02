@@ -2064,7 +2064,7 @@ function SessionAuth($pagename, $auth = NULL) {
   if (!IsEnabled($EnableSessionPasswords, 1)) $_SESSION['authpw'] = array();
   $AuthList = array_merge($AuthList, (array)@$_SESSION['authlist']);
   
-  if (!$sid) session_write_close();
+  if (!@$sid) session_write_close();
 }
 
 
