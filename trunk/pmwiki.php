@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2012 Patrick R. Michaud
+    Copyright 2001-2013 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
@@ -579,15 +579,17 @@ function mkdirp($dir) {
 function fixperms($fname, $add = 0, $set = 0) {
   clearstatcache();
   if (!file_exists($fname)) Abort('?no such file');
-  if ($set) $bp = $set; # advanced admins, $UploadPermSet
+  if ($set) { # advanced admins, $UploadPermSet
+    if (fileperms($fname) != $set) @chmod($fname,$set);
+  }
   else {
     $bp = 0;
     if (fileowner($fname)!=@fileowner('.')) $bp = (is_dir($fname)) ? 007 : 006;
     if (filegroup($fname)==@filegroup('.')) $bp <<= 3;
     $bp |= $add;
+    if ($bp && (fileperms($fname) & $bp) != $bp)
+      @chmod($fname,fileperms($fname)|$bp);
   }
-  if ($bp && (fileperms($fname) & $bp) != $bp)
-    @chmod($fname,fileperms($fname)|$bp);
 }
 
 ## GlobToPCRE converts wildcard patterns into pcre patterns for
