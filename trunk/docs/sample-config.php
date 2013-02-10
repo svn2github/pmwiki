@@ -68,8 +68,8 @@ include_once("scripts/xlpage-utf-8.php");
 ##  passwords on individual groups and pages.  For more information
 ##  see PmWiki.UploadsAdmin.
 # $EnableUpload = 1;
-# $DefaultPasswords['upload'] = crypt('secret');
 # $UploadPermAdd = 0;
+# $DefaultPasswords['upload'] = crypt('secret');
 
 ##  Setting $EnableDiag turns on the ?action=diag and ?action=phpinfo
 ##  actions, which often helps others to remotely troubleshoot 
