@@ -1494,13 +1494,11 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   global $QueryFragPattern, $LinkPageExistsFmt, $LinkPageSelfFmt,
     $LinkPageCreateSpaceFmt, $LinkPageCreateFmt, $LinkTargets,
     $EnableLinkPageRelative;
-  if (trim($txt) == '+') $txt = PageVar($tgtname, '$Title');
-  $txt = str_replace("$", "&#036;", $txt);
   $alt = str_replace(array('"',"'"),array('&#34;','&#39;'),$alt);
   if (!$fmt && $path{0} == '#') {
     $path = preg_replace("/[^-.:\\w]/", '', $path);
     if($alt) $alt = " title='$alt'";
-    return ($path) ? "<a href='#$path'$alt>$txt</a>" : '';
+    return ($path) ? "<a href='#$path'$alt>".str_replace("$", "&#036;", $txt)."</a>" : '';
   }
   if (!preg_match("/^\\s*([^#?]+)($QueryFragPattern)?$/",$path,$match))
     return '';
@@ -1517,6 +1515,8 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
              ? $LinkPageSelfFmt : $LinkPageExistsFmt;
   }
   $url = PageVar($tgtname, '$PageUrl');
+  if (trim($txt) == '+') $txt = PageVar($tgtname, '$Title');
+  $txt = str_replace("$", "&#036;", $txt);
   if (@$EnableLinkPageRelative)
     $url = preg_replace('!^[a-z]+://[^/]*!i', '', $url);
   $fmt = str_replace(array('$LinkUrl', '$LinkText', '$LinkAlt'),
