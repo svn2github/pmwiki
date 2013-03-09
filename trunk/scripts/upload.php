@@ -55,8 +55,8 @@ SDVA($UploadExts,array(
   'kmz' => 'application/vnd.google-earth.kmz',
   '' => 'text/plain'));
 
-# RegExp containing forbidden strings in a filename, eg '/\\.(php[3456]?|cgi|pl)/i'
-SDV($UploadBlacklist, '');
+# Array containing forbidden strings in a filename, array('.php', '.cgi')
+SDV($UploadBlacklist, array());
 
 SDV($UploadMaxSize,50000);
 SDV($UploadPrefixQuota,0);
@@ -258,9 +258,12 @@ function HandlePostUpload($pagename, $auth = 'upload') {
 function UploadVerifyBasic($pagename,$uploadfile,$filepath) {
   global $EnableUploadOverwrite,$UploadExtSize,$UploadPrefixQuota,
     $UploadDirQuota,$UploadDir, $UploadBlacklist;
-  $upname = end(explode("/", $filepath));
-  if ($UploadBlacklist && preg_match($UploadBlacklist, $upname))
-    return 'upresult=badname';
+  if (count($UploadBlacklist)) {
+    $upname = strtolower(end(explode("/", $filepath)));
+    foreach($UploadBlacklist as $needle) {
+      if (strpos($upname, $needle)!==false) return 'upresult=badname';
+    }
+  }
   if (!$EnableUploadOverwrite && file_exists($filepath)) 
     return 'upresult=exists';
   preg_match('/\\.([^.\\/]+)$/',$filepath,$match); $ext=@$match[1];
