@@ -30,7 +30,7 @@ if (!isset($Author)) {
                 ENT_COMPAT);
 }
 if (!isset($AuthorPage)) $AuthorPage = 
-    FmtPageName('$AuthorGroup/$Name', MakePageName($pagename, $Author));
+    FmtPageName('$AuthorGroup/$Name', MakePageName("$AuthorGroup.$AuthorGroup", $Author));
 SDV($AuthorLink,($Author) ? "[[~$Author]]" : '?');
 
 if (IsEnabled($EnableAuthorSignature,1)) {
