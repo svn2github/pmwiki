@@ -889,7 +889,13 @@ function XL($key) {
 }
 function XLSDV($lang,$a) {
   global $XL;
-  foreach($a as $k=>$v) { if (!isset($XL[$lang][$k])) $XL[$lang][$k]=$v; }
+  foreach($a as $k=>$v) {
+    if (!isset($XL[$lang][$k])) {
+      if(preg_match('/^e_(rows|cols)$/', $k)) $v = intval($v);
+      elseif(preg_match('/^ak_/', $k)) $v = $v{0};
+      $XL[$lang][$k]=$v;
+    }
+  }
 }
 function XLPage($lang,$p,$nohtml=false) {
   global $TimeFmt,$XLLangs,$FarmD, $EnableXLPageScriptLoad;

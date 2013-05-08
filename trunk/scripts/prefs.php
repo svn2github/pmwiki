@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2011 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -26,10 +26,20 @@ $LogoutCookies[] = $PrefsCookie;
 $sp = '';
 if (@$_COOKIE[$PrefsCookie]) $sp = $_COOKIE[$PrefsCookie];
 if (isset($_GET['setprefs'])) {
-  $sp = $_GET['setprefs'];
+  $sp = MakePageName($pagename, $_GET['setprefs']);
   setcookie($PrefsCookie, $sp, $PrefsCookieExpires, '/');
 }
 if ($sp && PageExists($sp)) XLPage('prefs', $sp, true);
+
+if(is_array($XL['prefs'])) {
+  foreach($XL['prefs'] as $k=>$v) {
+    if(! preg_match('/^(e_rows|e_cols|TimeFmt|Locale|Site\\.EditForm)$|^ak_/', $k))
+      unset($XL['prefs'][$k]);
+  }
+}
+
+if(preg_match('/^e_(rows|cols)$/', $k)) $v = intval($v);
+      elseif(preg_match('/^ak_/', $k)) $v = $v{0};
 
 XLSDV('en', array(
   'ak_view' => '',
