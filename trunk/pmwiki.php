@@ -25,7 +25,8 @@
     write me at <pmichaud@pobox.com> with your question(s) and I'll
     provide explanations (and add comments) that answer them.
 */
-error_reporting(E_ALL ^ E_NOTICE);
+if(!defined('E_DEPRECATED')) error_reporting(E_ALL ^ E_NOTICE);
+else error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED); # PHP 5.5 preg_replace /e flag
 StopWatch('PmWiki');
 @ini_set('magic_quotes_runtime', 0);
 @ini_set('magic_quotes_sybase', 0);
