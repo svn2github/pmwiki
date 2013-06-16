@@ -114,13 +114,15 @@ function HandleApprove($pagename, $auth='edit') {
 }
 
 function BlockUnapprovedPosts($pagename, &$page, &$new) {
-  global $EnableUrlApprovalRequired, $UnapprovedLinkCount, $WhyBlockedFmt,
-    $UnapprovedLinkCountMax, $EnablePost, $MessagesFmt, $BlockMessageFmt;
+  global $EnableUrlApprovalRequired, $UnapprovedLinkCount,
+    $UnapprovedLinkCountMax, $EnablePost, $MessagesFmt, $BlockMessageFmt,
+    $WhyBlockedFmt, $IsBlocked;
   if (!IsEnabled($EnableUrlApprovalRequired, 1)) return;
   if ($UnapprovedLinkCount <= $UnapprovedLinkCountMax) return;
   if ($page['=auth']['admin']) return;
   $EnablePost = 0;
+  $IsBlocked = 1;
   $MessagesFmt[] = $BlockMessageFmt;
   $WhyBlockedFmt[] = XL('Too many unapproved external links.');
 }
-    
+
