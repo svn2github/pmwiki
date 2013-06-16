@@ -115,14 +115,12 @@ function HandleApprove($pagename, $auth='edit') {
 
 function BlockUnapprovedPosts($pagename, &$page, &$new) {
   global $EnableUrlApprovalRequired, $UnapprovedLinkCount,
-    $UnapprovedLinkCountMax, $EnablePost, $MessagesFmt, $BlockMessageFmt,
-    $WhyBlockedFmt, $IsBlocked;
+    $UnapprovedLinkCountMax, $EnablePost, $MessagesFmt, $BlockMessageFmt;
   if (!IsEnabled($EnableUrlApprovalRequired, 1)) return;
   if ($UnapprovedLinkCount <= $UnapprovedLinkCountMax) return;
   if ($page['=auth']['admin']) return;
   $EnablePost = 0;
-  $IsBlocked = 1;
   $MessagesFmt[] = $BlockMessageFmt;
-  $WhyBlockedFmt[] = XL('Too many unapproved external links.');
+  $MessagesFmt[] = XL('Too many unapproved external links.');
 }
 
