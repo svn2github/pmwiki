@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2006, 2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2006-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -56,7 +56,7 @@ function EditDraft(&$pagename, &$page, &$new) {
   if ($_POST['postdraft'] || $_POST['postedit']) $pagename = $draftname; 
   else if ($_POST['post'] && !preg_match("/$DeleteKeyPattern/", $new['text'])) { 
     $pagename = $basename; 
-    $page = ReadPage($basename);
+    # $page = ReadPage($basename); # breaks restores, PITS:01007, Test:DraftRestore
     $WikiDir->delete($draftname);
   }
   else if (PageExists($draftname) && $pagename != $draftname)
@@ -64,5 +64,3 @@ function EditDraft(&$pagename, &$page, &$new) {
   if ($pagename == $draftname && isset($DraftRecentChangesFmt))
     $RecentChangesFmt = $DraftRecentChangesFmt;
 }
-
-
