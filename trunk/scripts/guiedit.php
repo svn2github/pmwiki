@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -50,8 +50,8 @@ SDVA($GUIButtons, array(
   'center'   => array(410, '%center%', '', '',
                   '$GUIButtonDirUrlFmt/center.gif"$[Center]"')));
 
-Markup('e_guibuttons', 'directives',
-  '/\\(:e_guibuttons:\\)/e',
+Markup_e('e_guibuttons', 'directives',
+  '/\\(:e_guibuttons:\\)/',
   "Keep(FmtPageName(GUIButtonCode(\$pagename), \$pagename))");
 
 function GUIButtonCode($pagename) {

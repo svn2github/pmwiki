@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2012 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -127,7 +127,7 @@ function DiffHTML($pagename, $diff) {
             .$DiffRenderSourceFunction($in, $out, 0)
             ."</div>";
         else $html .= MarkupToHTML($pagename,
-          preg_replace('/\\(:.*?:\\)/e',"Keep(PHSC(PSS('$0')))", join("\n",$in)));
+          PPRE('/\\(:.*?:\\)/',"Keep(PHSC(PSS(\$m[0])))", join("\n",$in)));
       }
       if ($match[4]=='d' || $match[4]=='c') {
         $txt = str_replace('line',$lines,$DiffAddFmt[$match[4]]);
@@ -138,7 +138,7 @@ function DiffHTML($pagename, $diff) {
             .$DiffRenderSourceFunction($in, $out, 1)
             ."</div>";
         else $html .= MarkupToHTML($pagename,
-          preg_replace('/\\(:.*?:\\)/e',"Keep(PHSC(PSS('$0')))",join("\n",$out)));
+          PPRE('/\\(:.*?:\\)/',"Keep(PHSC(PSS(\$m[0])))",join("\n",$out)));
       }
       $html .= FmtPageName($DiffEndDelAddFmt,$pagename);
     }

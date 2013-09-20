@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2011 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -66,16 +66,16 @@ XLSDV('en', array(
 
 SDV($PageListArgPattern, '((?:\\$:?)?\\w+)[:=]');
 
-Markup('pagelist', 'directives',
-  '/\\(:pagelist(\\s+.*?)?:\\)/ei',
-  "FmtPageList('\$MatchList', \$pagename, array('o' => PSS('$1 ')))");
-Markup('searchbox', 'directives',
-  '/\\(:searchbox(\\s.*?)?:\\)/e',
-  "SearchBox(\$pagename, ParseArgs(PSS('$1'), '$PageListArgPattern'))");
-Markup('searchresults', 'directives',
-  '/\\(:searchresults(\\s+.*?)?:\\)/ei',
+Markup_e('pagelist', 'directives',
+  '/\\(:pagelist(\\s+.*?)?:\\)/i',
+  "FmtPageList('\$MatchList', \$pagename, array('o' => PSS(\$m[1].' ')))");
+Markup_e('searchbox', 'directives',
+  '/\\(:searchbox(\\s.*?)?:\\)/',
+  "SearchBox(\$pagename, ParseArgs(PSS(\$m[1]), '$PageListArgPattern'))");
+Markup_e('searchresults', 'directives',
+  '/\\(:searchresults(\\s+.*?)?:\\)/i',
   "FmtPageList(\$GLOBALS['SearchResultsFmt'], \$pagename, 
-       array('req' => 1, 'request'=>1, 'o' => PSS('$1')))");
+       array('req' => 1, 'request'=>1, 'o' => PSS(\$m[1])))");
 
 SDV($SaveAttrPatterns['/\\(:(searchresults|pagelist)(\\s+.*?)?:\\)/i'], ' ');
 
@@ -312,8 +312,8 @@ function PageListIf(&$list, &$opt, $pn, &$page) {
   $Cursor['='] = $pn;
   $varpat = '\\{([=*]|!?[-\\w.\\/\\x80-\\xff]*)(\\$:?\\w+)\\}';
   while (preg_match("/$varpat/", $condspec, $match)) {
-    $condspec = preg_replace("/$varpat/e", 
-                    "PVSE(PageVar(\$pn, '$2', '$1'))", $condspec);
+    $condspec = PPRE("/$varpat/",
+                    "PVSE(PageVar('$pn', \$m[2], \$m[1]))", $condspec);
   }
   if (!preg_match("/^\\s*(!?)\\s*(\\S*)\\s*(.*?)\\s*$/", $condspec, $match)) 
     return 0;
@@ -706,11 +706,11 @@ function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
 function FPLExpandItemVars($item, $matches, $idx, $psvars) {
   global $Cursor, $EnableUndefinedTemplateVars;
   $Cursor['<'] = $Cursor['&lt;'] = (string)@$matches[$idx-1];
-  $Cursor['='] = (string)@$matches[$idx];
+  $Cursor['='] = $pn = (string)@$matches[$idx];
   $Cursor['>'] = $Cursor['&gt;'] = (string)@$matches[$idx+1];
   $item = str_replace(array_keys($psvars), array_values($psvars), $item);
-  $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w[-\\w]*)\\}/e',
-              "PVSE(PageVar(\$pn, '$2', '$1'))", $item);
+  $item = PPRE('/\\{(=|&[lg]t;)(\\$:?\\w[-\\w]*)\\}/',
+              "PVSE(PageVar('$pn',  \$m[2], \$m[1]))", $item);
   if(! IsEnabled($EnableUndefinedTemplateVars, 0))
     $item = preg_replace("/\\{\\$\\$\\w+\\}/", '', $item);
   return $item;

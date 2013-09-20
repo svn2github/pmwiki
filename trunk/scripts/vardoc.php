@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2002-2005 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2002-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -14,12 +14,12 @@
 */
 
 SDV($VarPagesFmt,array('$[PmWiki.Variables]'));
-Markup('varlink','<wikilink',"/\\$($WikiWordPattern)\\b/e",
-  "Keep(VarLink(\$pagename,'$1','$$1'))");
+Markup_e('varlink','<wikilink',"/\\$($WikiWordPattern)\\b/",
+  "Keep(VarLink(\$pagename,\$m[1],'$'.\$m[1]))");
 Markup('vardef','<links',"/^:\\$($WikiWordPattern):/",
   ':[[#$1]]$$1:');
-Markup('varindex', 'directives',
-  '/\\(:varindex:\\)/ei',
+Markup_e('varindex', 'directives',
+  '/\\(:varindex:\\)/i',
   "Keep(VarIndexList(\$pagename))");
 
 $HTMLStylesFmt['vardoc'] = "a.varlink { text-decoration:none; }\n";

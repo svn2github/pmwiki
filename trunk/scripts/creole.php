@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2007-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2007-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -24,31 +24,31 @@ Markup('//', 'inline',
   '<em>$1</em>');
 
 ## == Headings ==
-Markup('^=', 'block',
-  '/^(={1,6})\\s?(.*?)(\\s*=*\\s*)$/e',
-  "'<:block,1><h'.strlen('$1').PSS('>$2</h').strlen('$1').'>'");
+Markup_e('^=', 'block',
+  '/^(={1,6})\\s?(.*?)(\\s*=*\\s*)$/',
+  "'<:block,1><h'.strlen(\$m[1]).PSS('>'.\$m[2].'</h').strlen(\$m[1]).'>'");
 
 ## Line breaks
 Markup('\\\\', 'inline', '/\\\\\\\\/', '<br />');
 
 ## Preformatted
-Markup('^{{{', '[=',
-  "/^\\{\\{\\{\n(.*?\n)\\}\\}\\}[^\\S\n]*\n/sme",
-  "Keep(PSS('<pre class=\"escaped\">$1</pre>'))");
-Markup('{{{', '>{{{',
-  '/\\{\\{\\{(.*?)\\}\\}\\}/se',
-  "Keep(PSS('<code class=\"escaped\">$1</code>'))");
+Markup_e('^{{{', '[=',
+  "/^\\{\\{\\{\n(.*?\n)\\}\\}\\}[^\\S\n]*\n/sm",
+  "Keep(PSS('<pre class=\"escaped\">'.\$m[1].'</pre>'))");
+Markup_e('{{{', '>{{{',
+  '/\\{\\{\\{(.*?)\\}\\}\\}/s',
+  "Keep(PSS('<code class=\"escaped\">'.\$m[1].'</code>'))");
 
 ## Tables
-Markup('|-table', '>^||',
-  '/^\\|(.*)$/e',
-  "FormatTableRow(PSS('$0'), '\\|')");
+Markup_e('|-table', '>^||',
+  '/^\\|(.*)$/',
+  "FormatTableRow(PSS(\$m[0]), '\\|')");
 
 ## Images
-Markup('{{', 'inline',
-  '/\\{\\{(?>(\\L))([^|\\]]*)(?:\\|\\s*(.*?)\\s*)?\\}\\}/e',
-  "Keep(\$GLOBALS['LinkFunctions']['$1'](\$pagename, '$1', '$2', '$3',
-     '$1$2', \$GLOBALS['ImgTagFmt']),'L')");
+Markup_e('{{', 'inline',
+  '/\\{\\{(?>(\\L))([^|\\]]*)(?:\\|\\s*(.*?)\\s*)?\\}\\}/',
+  "Keep(\$GLOBALS['LinkFunctions'][\$m[1]](\$pagename, \$m[1], \$m[2], \$m[3],
+     \$m[1].\$m[2], \$GLOBALS['ImgTagFmt']),'L')");
 
 
 ## GUIButtons

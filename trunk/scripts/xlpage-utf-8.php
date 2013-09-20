@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2011 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -45,8 +45,8 @@ SDV($MakePageNamePatterns, array(
     '/[?#].*$/' => '',                     # strip everything after ? or #
     "/'/" => '',                           # strip single-quotes
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
-    '/(?<=^| )([a-z])/e' => "strtoupper('$1')", 
-    '/(?<=^| )([\\xc0-\\xdf].)/e' => "utf8toupper('$1')", 
+    '/(?<=^| )([a-z])/' => PCCF("return strtoupper(\$m[1]);"),
+    '/(?<=^| )([\\xc0-\\xdf].)/' => PCCF("return utf8toupper(\$m[1]);"),
     '/ /' => ''));
 SDV($StrFoldFunction, 'utf8fold');
 
@@ -106,9 +106,9 @@ function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo fo
   $ascii = preg_match('/[\\x80-\\xFF]/', $str)? 0:1;
   switch ((string)$start) {
     case 'ucfirst': return $ascii ? ucfirst($str) :
-      preg_replace("/^($lower)/e", '$GLOBALS["CaseConversions"]["$1"]', $str);
+      PPRE("/^($lower)/", '$GLOBALS["CaseConversions"][$m[1]]', $str);
     case 'ucwords': return $ascii ? ucwords($str) :
-      preg_replace("/(^|\\s+)($lower)/e", '"$1".$GLOBALS["CaseConversions"]["$2"]', $str);
+      PPRE("/(^|\\s+)($lower)/", '$m[1].$GLOBALS["CaseConversions"][$m[2]]', $str);
     case 'tolower': return $ascii ? strtolower($str) : utf8fold($str);
     case 'toupper': return $ascii ? strtoupper($str) : utf8toupper($str);
   }

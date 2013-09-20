@@ -35,10 +35,9 @@ SDV($AuthorLink,($Author) ? "[[~$Author]]" : '?');
 
 if (IsEnabled($EnableAuthorSignature,1)) {
   SDVA($ROSPatterns, array(
-    '/(?<!~)~~~~(?!~)/e' 
-      => "FmtPageName('[[~\$Author]] \$CurrentTime', \$pagename)",
-    '/(?<!~)~~~(?!~)/e' 
-      => "FmtPageName('[[~\$Author]]', \$pagename)"));
+    '/(?<!~)~~~~(?!~)/' => "[[~$Author]] $CurrentTime",
+    '/(?<!~)~~~(?!~)/' => "[[~$Author]]",
+  ));
   Markup('~~~~','<[[~','/(?<!~)~~~~(?!~)/',"[[~$Author]] $CurrentTime");
   Markup('~~~','>~~~~','/(?<!~)~~~(?!~)/',"[[~$Author]]");
 }

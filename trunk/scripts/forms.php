@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -56,14 +56,14 @@ SDVA($InputTags['default'], array(':fn' => 'InputDefault'));
 SDVA($InputTags['defaults'], array(':fn' => 'InputDefault'));
 
 ##  (:input ...:) directives
-Markup('input', 'directives',
-  '/\\(:input\\s+(\\w+)(.*?):\\)/ei',
-  "InputMarkup(\$pagename, '$1', PSS('$2'))");
+Markup_e('input', 'directives',
+  '/\\(:input\\s+(\\w+)(.*?):\\)/i',
+  "InputMarkup(\$pagename, \$m[1], PSS(\$m[2]))");
 
 ##  (:input select:) has its own markup processing
-Markup('input-select', '<input',
-  '/\\(:input\\s+select\\s.*?:\\)(?:\\s*\\(:input\\s+select\\s.*?:\\))*/ei',
-  "InputSelect(\$pagename, 'select', PSS('$0'))");
+Markup_e('input-select', '<input',
+  '/\\(:input\\s+select\\s.*?:\\)(?:\\s*\\(:input\\s+select\\s.*?:\\))*/i',
+  "InputSelect(\$pagename, 'select', PSS(\$m[0]))");
 
 ##  The 'input+sp' rule combines multiple (:input select ... :)
 ##  into a single markup line (to avoid split line effects)
@@ -276,8 +276,8 @@ if (@$_REQUEST['editform']) {
 $Conditions['e_preview'] = '(boolean)$_REQUEST["preview"]';
 
 # (:e_preview:) displays the preview of formatted text.
-Markup('e_preview', 'directives',
-  '/^\\(:e_preview:\\)/e',
+Markup_e('e_preview', 'directives',
+  '/^\\(:e_preview:\\)/',
   "isset(\$GLOBALS['FmtV']['\$PreviewText']) ? Keep(\$GLOBALS['FmtV']['\$PreviewText']): ''");
 
 # If we didn't load guiedit.php, then set (:e_guibuttons:) to

@@ -109,9 +109,9 @@ SDV($DefaultPasswords['upload'],'*');
 SDV($AuthCascade['upload'], 'read');
 SDV($FmtPV['$PasswdUpload'], 'PasswdVar($pn, "upload")');
 
-Markup('attachlist', 'directives', 
-  '/\\(:attachlist\\s*(.*?):\\)/ei',
-  "Keep('<ul>'.FmtUploadList('$pagename',PSS('$1')).'</ul>')");
+Markup_e('attachlist', 'directives',
+  '/\\(:attachlist\\s*(.*?):\\)/i',
+  "Keep('<ul>'.FmtUploadList('$pagename',PSS(\$m[1])).'</ul>')");
 SDV($GUIButtons['attach'], array(220, 'Attach:', '', '$[file.ext]',
   '$GUIButtonDirUrlFmt/attach.gif"$[Attach file]"'));
 SDV($LinkFunctions['Attach:'], 'LinkUpload');
@@ -129,11 +129,10 @@ function MakeUploadName($pagename,$x) {
   SDV($UploadNameChars, "-\\w. ");
   SDV($MakeUploadNamePatterns, array(
     "/[^$UploadNameChars]/" => '',
-    '/\\.[^.]*$/e' => 'strtolower("$0")',
+    '/\\.[^.]*$/' => PCCF('return strtolower($m[0]);'),
     '/^[^[:alnum:]_]+/' => '',
     '/[^[:alnum:]_]+$/' => ''));
-   return preg_replace(array_keys($MakeUploadNamePatterns),
-            array_values($MakeUploadNamePatterns), $x);
+   return PPRA($MakeUploadNamePatterns, $x);
 }
 
 function LinkUpload($pagename, $imap, $path, $alt, $txt, $fmt=NULL) {

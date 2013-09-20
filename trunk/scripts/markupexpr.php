@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2007-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2007-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -51,9 +51,9 @@
     results of other expressions; these values may be un-escaped
     by using "preg_replace($rpat, $rrep, $params)".
 */
-Markup('{(', '>{$var}',
-  '/\\{(\\(\\w+\\b.*?\\))\\}/e',
-  "MarkupExpression(\$pagename, PSS('$1'))");
+Markup_e('{(', '>{$var}',
+  '/\\{(\\(\\w+\\b.*?\\))\\}/',
+  "MarkupExpression(\$pagename, PSS(\$m[1]))");
 
 SDVA($MarkupExpr, array(
   'substr' => 'call_user_func_array("substr", $args)',
@@ -65,15 +65,15 @@ SDVA($MarkupExpr, array(
   'tolower' => 'strtolower($args[0])',
   'toupper' => 'strtoupper($args[0])',
   'asspaced' => '$GLOBALS["AsSpacedFunction"]($args[0])',
-  'pagename' => 'MakePageName($pagename, preg_replace($rpat, $rrep, $params))',
+  'pagename' => 'MakePageName($pagename, PPRE($rpat, $rrep, $params))',
 ));
 
 function MarkupExpression($pagename, $expr) {
   global $KeepToken, $KPV, $MarkupExpr;
-  $rpat = "/$KeepToken(\\d+P)$KeepToken/e";
-  $rrep = '$KPV[\'$1\']';
-  $expr = preg_replace('/([\'"])(.*?)\\1/e', "Keep(PSS('$2'),'P')", $expr);
-  $expr = preg_replace('/\\(\\W/e', "Keep(PSS('$2'),'P')", $expr);
+  $rpat = "/$KeepToken(\\d+P)$KeepToken/";
+  $rrep = '$GLOBALS["KPV"][$m[1]]';
+  $expr = PPRE('/([\'"])(.*?)\\1/', "Keep(PSS(\$m[2]),'P')", $expr);
+  $expr = PPRE('/\\(\\W/', "Keep(PSS(\$m[0]),'P')", $expr);
   while (preg_match('/\\((\\w+)(\\s[^()]*)?\\)/', $expr, $match)) {
     list($repl, $func, $params) = $match;
     $code = @$MarkupExpr[$func];
@@ -92,16 +92,16 @@ function MarkupExpression($pagename, $expr) {
     while ($x) {
       list($k, $v) = array_splice($x, 0, 2);
       if ($k == '' || $k == '+' || $k == '-') 
-        $args[] = $k.preg_replace($rpat, $rrep, $v);
+        $args[] = $k.PPRE($rpat, $rrep, $v);
     }
     ##  fix any quoted arguments
     foreach ($argp as $k => $v)
-      if (!is_array($v)) $argp[$k] = preg_replace($rpat, $rrep, $v);
+      if (!is_array($v)) $argp[$k] = PPRE($rpat, $rrep, $v);
     $out = eval("return ({$code});");
     if ($expr == $repl) { $expr = $out; break; }
     $expr = str_replace($repl, Keep($out, 'P'), $expr);
   }
-  return preg_replace($rpat, $rrep, $expr);
+  return PPRE($rpat, $rrep, $expr);
 }
 
 ##   ME_ftime handles {(ftime ...)} expressions.
