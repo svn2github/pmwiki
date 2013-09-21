@@ -705,7 +705,7 @@ function MakePageName($basepage, $str) {
   SDV($MakePageNamePatterns, array(
     "/'/" => '',			   # strip single-quotes
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
-    '/((^|[^-\\w])\\w)/e' => PCCF("return strtoupper(\$m[1]);"), # TODO
+    '/((^|[^-\\w])\\w)/' => PCCF("return strtoupper(\$m[1]);"), # TODO
     '/ /' => ''));
   $str = preg_replace('/[#?].*$/', '', $str);
   $m = preg_split('/[.\\/]/', $str);
