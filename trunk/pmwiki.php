@@ -446,12 +446,13 @@ function PHSC($x, $flags=ENT_COMPAT, $enc=null) { # for PHP 5.4
   if(is_null($enc)) $enc = "ISO-8859-1"; # $GLOBALS['Charset']
   return htmlspecialchars($x, $flags, $enc);
 }
-function PCCF($code, $template = 'default') {
+function PCCF($code, $template = 'default', $args = '$m') {
   global $CallbackFnTemplates, $CallbackFunctions;
-  if(!isset($CallbackFnTemplates[$template])) Abort("No \$CallbackFnTemplates[$template]).");
+  if(!isset($CallbackFnTemplates[$template]))
+    Abort("No \$CallbackFnTemplates[$template]).");
   $code = sprintf($CallbackFnTemplates[$template], $code);
   if(!isset($CallbackFunctions[$code])) {
-    $fn = create_function('$m', $code);
+    $fn = create_function($args, $code);
     $CallbackFunctions[$code] = $fn;
   }
   return $CallbackFunctions[$code];
