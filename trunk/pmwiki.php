@@ -463,8 +463,9 @@ function PPRE($pat, $rep, $x) {
 }
 function PPRA($array, $x) {
   foreach($array as $pat => $rep) {
-     if(is_callable($rep)) $x = preg_replace_callback($pat,$rep,$x);
-     else $x = preg_replace($pat,$rep,$x);
+    $fmt = $x; # for $FmtP
+    if(is_callable($rep)) $x = preg_replace_callback($pat,$rep,$x);
+    else $x = preg_replace($pat,$rep,$x);
   }
   return $x;
 }
@@ -843,7 +844,7 @@ function FmtPageName($fmt, $pagename) {
   $fmt = 
     PPRE('/\\{(\\$[A-Z]\\w+)\\}/', "PageVar('$pagename', \$m[1])", $fmt);
   if (strpos($fmt,'$')===false) return $fmt;
-  if ($FmtP) $fmt = PPRA($FmtP, $fmt);
+  if ($FmtP) $fmt = PPRA($FmtP, $fmt); # FIXME
   static $pv, $pvpat;
   if ($pv != count($FmtPV)) {
     $pvpat = str_replace('$', '\\$', implode('|', array_keys($FmtPV)));
