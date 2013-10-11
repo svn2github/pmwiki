@@ -74,9 +74,7 @@ SDV($UploadPrefixFmt,'/$Group');
 SDV($UploadFileFmt,"$UploadDir$UploadPrefixFmt");
 $v = preg_replace('#^/(.*/)#', '', $UploadDir);
 SDV($UploadUrlFmt,preg_replace('#/[^/]*$#', "/$v", $PubDirUrl, 1));
-
 SDV($LinkUploadCreateFmt, "<a rel='nofollow' class='createlinktext' href='\$LinkUpload'>\$LinkText</a><a rel='nofollow' class='createlink' href='\$LinkUpload'>&nbsp;&Delta;</a>");
-
 SDVA($ActionTitleFmt, array('upload' => '| $[Attach]'));
 
 SDV($PageUploadFmt,array("
@@ -147,7 +145,7 @@ function LinkUpload($pagename, $imap, $path, $alt, $txt, $fmt=NULL) {
   $upname = MakeUploadName($pagename, $path);
   $encname = rawurlencode($upname);
   $filepath = FmtPageName("$UploadFileFmt/$upname", $pagename);
-  $FmtV['$LinkUpload'] = 
+  $FmtV['$LinkUpload'] = $FmtV['$LinkUrl'] =
     FmtPageName("\$PageUrl?action=upload&amp;upname=$encname", $pagename);
   $FmtV['$LinkText'] = $txt;
   if (!file_exists($filepath)) 
@@ -336,7 +334,7 @@ function FmtUploadList($pagename, $args) {
   $overwrite = '';
   $fmt = IsEnabled($IMapLinkFmt['Attach:'], $UrlLinkFmt);
   foreach($filelist as $file=>$encfile) {
-    $FmtV['$LinkUrl'] = PUE("$uploadurl$encfile");
+    $FmtV['$LinkUpload'] = $FmtV['$LinkUrl'] = PUE("$uploadurl$encfile");
     $FmtV['$LinkText'] = $file;
     $stat = stat("$uploaddir/$file");
     if ($EnableUploadOverwrite) 
