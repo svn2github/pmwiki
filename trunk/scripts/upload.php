@@ -75,7 +75,6 @@ SDV($UploadFileFmt,"$UploadDir$UploadPrefixFmt");
 $v = preg_replace('#^/(.*/)#', '', $UploadDir);
 SDV($UploadUrlFmt,preg_replace('#/[^/]*$#', "/$v", $PubDirUrl, 1));
 
-SDV($LinkUploadExistsFmt, "<a class='attachlink' href='\$LinkUpload'>\$LinkText</a>");
 SDV($LinkUploadCreateFmt, "<a rel='nofollow' class='createlinktext' href='\$LinkUpload'>\$LinkText</a><a rel='nofollow' class='createlink' href='\$LinkUpload'>&nbsp;&Delta;</a>");
 
 SDVA($ActionTitleFmt, array('upload' => '| $[Attach]'));
@@ -139,7 +138,7 @@ function MakeUploadName($pagename,$x) {
 }
 
 function LinkUpload($pagename, $imap, $path, $alt, $txt, $fmt=NULL) {
-  global $FmtV, $UploadFileFmt, $LinkUploadCreateFmt, $LinkUploadExistsFmt,
+  global $FmtV, $UploadFileFmt, $LinkUploadCreateFmt,
     $UploadUrlFmt, $UploadPrefixFmt, $EnableDirectDownload;
   if (preg_match('!^(.*)/([^/]+)$!', $path, $match)) {
     $pagename = MakePageName($pagename, $match[1]);
@@ -157,7 +156,7 @@ function LinkUpload($pagename, $imap, $path, $alt, $txt, $fmt=NULL) {
                             ? "$UploadUrlFmt$UploadPrefixFmt/$encname"
                             : "{\$PageUrl}?action=download&amp;upname=$encname",
                           $pagename));
-  return LinkIMap($pagename, $imap, $path, $alt, $txt, $LinkUploadExistsFmt);
+  return LinkIMap($pagename, $imap, $path, $alt, $txt, $fmt);
 }
 
 # Authenticate group downloads with the group password
@@ -308,7 +307,7 @@ function dirsize($dir) {
 
 function FmtUploadList($pagename, $args) {
   global $UploadDir, $UploadPrefixFmt, $UploadUrlFmt, $EnableUploadOverwrite,
-    $TimeFmt, $EnableDirectDownload, $LinkUploadExistsFmt, $FmtV;
+    $TimeFmt, $EnableDirectDownload, $IMapLinkFmt, $UrlLinkFmt, $FmtV;
 
   $opt = ParseArgs($args);
   if (@$opt[''][0]) $pagename = MakePageName($pagename, $opt[''][0]);
@@ -335,15 +334,16 @@ function FmtUploadList($pagename, $args) {
   $out = array();
   natcasesort($filelist);
   $overwrite = '';
+  $fmt = IsEnabled($IMapLinkFmt['Attach:'], $UrlLinkFmt);
   foreach($filelist as $file=>$encfile) {
-    $FmtV['$LinkUpload'] = PUE("$uploadurl$encfile");
+    $FmtV['$LinkUrl'] = PUE("$uploadurl$encfile");
     $FmtV['$LinkText'] = $file;
     $stat = stat("$uploaddir/$file");
     if ($EnableUploadOverwrite) 
       $overwrite = FmtPageName("<a rel='nofollow' class='createlink'
         href='\$PageUrl?action=upload&amp;upname=$encfile'>&nbsp;&Delta;</a>", 
         $pagename);
-    $lnk = FmtPageName($LinkUploadExistsFmt, $pagename);
+    $lnk = FmtPageName($fmt, $pagename);
     $out[] = "<li> $lnk$overwrite ... ".
       number_format($stat['size']) . " bytes ... " . 
       strftime($TimeFmt, $stat['mtime']) . "</li>";
