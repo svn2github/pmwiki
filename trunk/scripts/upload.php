@@ -145,7 +145,7 @@ function LinkUpload($pagename, $imap, $path, $alt, $txt, $fmt=NULL) {
   $upname = MakeUploadName($pagename, $path);
   $encname = rawurlencode($upname);
   $filepath = FmtPageName("$UploadFileFmt/$upname", $pagename);
-  $FmtV['$LinkUpload'] = $FmtV['$LinkUrl'] =
+  $FmtV['$LinkUpload'] =
     FmtPageName("\$PageUrl?action=upload&amp;upname=$encname", $pagename);
   $FmtV['$LinkText'] = $txt;
   if (!file_exists($filepath)) 
@@ -334,7 +334,7 @@ function FmtUploadList($pagename, $args) {
   $overwrite = '';
   $fmt = IsEnabled($IMapLinkFmt['Attach:'], $UrlLinkFmt);
   foreach($filelist as $file=>$encfile) {
-    $FmtV['$LinkUpload'] = $FmtV['$LinkUrl'] = PUE("$uploadurl$encfile");
+    $FmtV['$LinkUrl'] = PUE("$uploadurl$encfile");
     $FmtV['$LinkText'] = $file;
     $stat = stat("$uploaddir/$file");
     if ($EnableUploadOverwrite) 
