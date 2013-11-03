@@ -701,7 +701,7 @@ function ResolvePageName($pagename) {
 ## group of the returned pagename.
 function MakePageName($basepage, $str) {
   global $MakePageNameFunction, $PageNameChars, $PagePathFmt,
-    $MakePageNamePatterns;
+    $MakePageNamePatterns, $MakePageNameSplitPattern;
   if (@$MakePageNameFunction) return $MakePageNameFunction($basepage, $str);
   SDV($PageNameChars,'-[:alnum:]');
   SDV($MakePageNamePatterns, array(
@@ -709,8 +709,9 @@ function MakePageName($basepage, $str) {
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
     '/((^|[^-\\w])\\w)/' => PCCF("return strtoupper(\$m[1]);"),
     '/ /' => ''));
+  SDV($MakePageNameSplitPattern, '/[.\\/]/');
   $str = preg_replace('/[#?].*$/', '', $str);
-  $m = preg_split('/[.\\/]/', $str);
+  $m = preg_split($MakePageNameSplitPattern, $str);
   if (count($m)<1 || count($m)>2 || $m[0]=='') return '';
   ##  handle "Group.Name" conversions
   if (@$m[1] > '') {
