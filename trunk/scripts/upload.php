@@ -336,10 +336,12 @@ function FmtUploadList($pagename, $args) {
   foreach($filelist as $file=>$encfile) {
     $FmtV['$LinkUrl'] = PUE("$uploadurl$encfile");
     $FmtV['$LinkText'] = $file;
+    $FmtV['$LinkUpload'] =
+      FmtPageName("\$PageUrl?action=upload&amp;upname=$encfile", $pagename);
     $stat = stat("$uploaddir/$file");
     if ($EnableUploadOverwrite) 
       $overwrite = FmtPageName("<a rel='nofollow' class='createlink'
-        href='\$PageUrl?action=upload&amp;upname=$encfile'>&nbsp;&Delta;</a>", 
+        href='\$LinkUpload'>&nbsp;&Delta;</a>",
         $pagename);
     $lnk = FmtPageName($fmt, $pagename);
     $out[] = "<li> $lnk$overwrite ... ".
