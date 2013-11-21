@@ -1480,7 +1480,7 @@ function MarkupClose($key = '') {
 
 
 function FormatTableRow($x, $sep = '\\|\\|') {
-  global $Block, $TableCellAttrFmt, $MarkupFrame, $TableRowAttrFmt, 
+  global $TableCellAttrFmt, $MarkupFrame, $TableRowAttrFmt,
     $TableRowIndexMax, $FmtV;
   static $rowcount;
   $x = preg_replace("/$sep\\s*$/",'',$x);
