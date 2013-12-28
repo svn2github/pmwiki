@@ -1607,7 +1607,8 @@ function Markup($id, $when, $pat=NULL, $rep=NULL) {
 }
 
 function Markup_e($id, $when, $pat, $rep) {
-  Markup($id, $when, $pat, PCCF($rep, 'markup_e'));
+  if (!is_callable($rep)) $rep = PCCF($rep, 'markup_e');
+  Markup($id, $when, $pat, $rep);
 }
 
 function DisableMarkup() {
