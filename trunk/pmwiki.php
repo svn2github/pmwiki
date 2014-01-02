@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2013 Patrick R. Michaud
+    Copyright 2001-2014 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
@@ -1532,6 +1532,7 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   $alt = str_replace(array('"',"'"),array('&#34;','&#39;'),$alt);
   if (!$fmt && $path{0} == '#') {
     $path = preg_replace("/[^-.:\\w]/", '', $path);
+    if (trim($txt) == '+') $txt = PageVar($pagename, '$Title');
     if($alt) $alt = " title='$alt'";
     return ($path) ? "<a href='#$path'$alt>".str_replace("$", "&#036;", $txt)."</a>" : '';
   }
