@@ -296,7 +296,7 @@ foreach(array('http:','https:','mailto:','ftp:','news:','gopher:','nap:',
   { $LinkFunctions[$m] = 'LinkIMap';  $IMap[$m]="$m$1"; }
 $LinkFunctions['<:page>'] = 'LinkPage';
 
-$q = preg_replace('/(\\?|%3f)([-\\w]+=)/', '&$2', @$_SERVER['QUERY_STRING']);
+$q = preg_replace('/(\\?|%3f)([-\\w]+=)/i', '&$2', @$_SERVER['QUERY_STRING']);
 if ($q != @$_SERVER['QUERY_STRING']) {
   unset($_GET);
   parse_str($q, $_GET);
