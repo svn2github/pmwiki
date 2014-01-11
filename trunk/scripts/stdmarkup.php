@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -82,6 +82,7 @@ Markup_e('if', 'fulltext', $CondTextPattern, $CondTextReplacement);
 function CondText2($pagename, $text, $code = '') {
   global $Conditions, $CondTextPattern, $CondTextReplacement;
   $if = "if$code";
+  $repl = str_replace('$pagename', "'$pagename'", $CondTextReplacement);
   
   $parts = preg_split("/\\(:(?:{$if}end|$if|else *$if|else$code)\\b\\s*(.*?)\\s*:\\)/", 
                       $text, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -90,11 +91,12 @@ function CondText2($pagename, $text, $code = '') {
     list($condspec, $condtext) = array_splice($parts, 0, 2);
     if (!preg_match("/^\\s*(!?)\\s*(\\S*)\\s*(.*?)\\s*$/", $condspec, $match)) continue;
     list($x, $not, $condname, $condparm) = $match;
+
     if (!isset($Conditions[$condname])) 
-      return PPRE($CondTextPattern, $CondTextReplacement, $condtext);
+      return PPRE($CondTextPattern, $repl, $condtext);
     $tf = @eval("return ({$Conditions[$condname]});");
     if ($tf xor $not)
-      return PPRE($CondTextPattern, $CondTextReplacement, $condtext);
+      return PPRE($CondTextPattern, $repl, $condtext);
   }
   return '';
 }
