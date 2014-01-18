@@ -1480,9 +1480,10 @@ function MarkupClose($key = '') {
 
 
 function FormatTableRow($x, $sep = '\\|\\|') {
-  global $TableCellAttrFmt, $MarkupFrame, $TableRowAttrFmt,
-    $TableRowIndexMax, $FmtV;
+  global $TableCellAttrFmt, $TableCellAlignFmt, $TableRowAttrFmt,
+    $TableRowIndexMax, $MarkupFrame, $FmtV;
   static $rowcount;
+  SDV($TableCellAlignFmt, " align='%s'");
   $x = preg_replace("/$sep\\s*$/",'',$x);
   $td = preg_split("/$sep/", $x); $y = '';
   for($i=0;$i<count($td);$i++) {
@@ -1495,9 +1496,11 @@ function FormatTableRow($x, $sep = '\\|\\|') {
     elseif (preg_match('/^!(.*)$/',$td[$i],$match)) 
       { $td[$i]=$match[1]; $t='th'; }
     else $t='td';
-    if (preg_match('/^\\s.*\\s$/',$td[$i])) { if ($t!='caption') $attr .= " align='center'"; }
-    elseif (preg_match('/^\\s/',$td[$i])) { $attr .= " align='right'"; }
-    elseif (preg_match('/\\s$/',$td[$i])) { $attr .= " align='left'"; }
+    if (preg_match('/^\\s.*\\s$/',$td[$i])) {
+      if ($t!='caption') $attr .= sprintf($TableCellAlignFmt, 'center');
+    }
+    elseif (preg_match('/^\\s/',$td[$i])) { $attr .= sprintf($TableCellAlignFmt, 'right'); }
+    elseif (preg_match('/\\s$/',$td[$i])) { $attr .= sprintf($TableCellAlignFmt, 'left'); }
     for ($colspan=1;$i+$colspan<count($td);$colspan++) 
       if ($td[$colspan+$i]!='') break;
     if ($colspan>1) { $attr .= " colspan='$colspan'"; }
