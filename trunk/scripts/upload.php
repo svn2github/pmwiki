@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -111,7 +111,7 @@ SDV($FmtPV['$PasswdUpload'], 'PasswdVar($pn, "upload")');
 
 Markup_e('attachlist', 'directives',
   '/\\(:attachlist\\s*(.*?):\\)/i',
-  "Keep('<ul>'.FmtUploadList('$pagename',PSS(\$m[1])).'</ul>')");
+  "Keep('<ul>'.FmtUploadList('$pagename',\$m[1]).'</ul>')");
 SDV($GUIButtons['attach'], array(220, 'Attach:', '', '$[file.ext]',
   '$GUIButtonDirUrlFmt/attach.gif"$[Attach file]"'));
 SDV($LinkFunctions['Attach:'], 'LinkUpload');

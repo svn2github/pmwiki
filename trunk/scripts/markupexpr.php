@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2007-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2007-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -53,7 +53,7 @@
 */
 Markup_e('{(', '>{$var}',
   '/\\{(\\(\\w+\\b.*?\\))\\}/',
-  "MarkupExpression(\$pagename, PSS(\$m[1]))");
+  "MarkupExpression(\$pagename, \$m[1])");
 
 SDVA($MarkupExpr, array(
   'substr' => 'call_user_func_array("substr", $args)',
@@ -72,8 +72,8 @@ function MarkupExpression($pagename, $expr) {
   global $KeepToken, $KPV, $MarkupExpr;
   $rpat = "/$KeepToken(\\d+P)$KeepToken/";
   $rrep = '$GLOBALS["KPV"][$m[1]]';
-  $expr = PPRE('/([\'"])(.*?)\\1/', "Keep(PSS(\$m[2]),'P')", $expr);
-  $expr = PPRE('/\\(\\W/', "Keep(PSS(\$m[0]),'P')", $expr);
+  $expr = PPRE('/([\'"])(.*?)\\1/', "Keep(\$m[2],'P')", $expr);
+  $expr = PPRE('/\\(\\W/', "Keep(\$m[0],'P')", $expr);
   while (preg_match('/\\((\\w+)(\\s[^()]*)?\\)/', $expr, $match)) {
     list($repl, $func, $params) = $match;
     $code = @$MarkupExpr[$func];

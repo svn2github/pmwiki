@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -14,7 +14,7 @@ Markup('%%','style','%','return ApplyStyles($x);');
 ## %define=...% markup on a line by itself
 Markup_e('%define=', '>split',
   "/^(?=%define=)((?:$WikiStylePattern)\\s*)+$/",
-  "PZZ(ApplyStyles(PSS(\$m[0])))");
+  "PZZ(ApplyStyles(\$m[0]))");
 
 ## restore links before applying styles
 Markup_e('restorelinks','<%%',"/$KeepToken(\\d+L)$KeepToken/",
@@ -100,7 +100,7 @@ function ApplyStyles($x) {
     $WikiStyleTag, $imgTag, $aTag, $spanTag, $WikiStyleAttrPrefix;
   $wt = @$WikiStyleTag; $ns = $WikiStyleAttrPrefix; $ws = '';
   $x = PPRE("/\\b(href|src)=(['\"]?)[^$UrlExcludeChars]+\\2/",
-                    "Keep(PSS(\$m[0]))", $x);
+                    "Keep(\$m[0])", $x);
   $x = PPRE("/\\bhttps?:[^$UrlExcludeChars]+/", "Keep(\$m[0])", $x);
   $parts = preg_split("/($WikiStylePattern)/",$x,-1,PREG_SPLIT_DELIM_CAPTURE);
   $parts[] = NULL;

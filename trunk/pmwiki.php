@@ -416,7 +416,7 @@ function PQA($x) {
       if (preg_match('/^on/i', $a[1])) continue;
       $out .= $a[1] . '=' 
               . PPRE( '/^([\'"]?)(.*)\\1$/',
-                  "\"'\".str_replace(\"'\", '&#39;', PSS(\$m[2])).\"'\"", $a[2])
+                  "\"'\".str_replace(\"'\", '&#39;', \$m[2]).\"'\"", $a[2])
               . ' ';
     }
   }
@@ -840,7 +840,7 @@ function FmtPageName($fmt, $pagename) {
     $GCount, $UnsafeGlobals, $FmtV, $FmtP, $FmtPV, $PCache, $AsSpacedFunction;
   if (strpos($fmt,'$')===false) return $fmt;                  
   $fmt = PPRE('/\\$([A-Z]\\w*Fmt)\\b/','$GLOBALS[$m[1]]',$fmt);
-  $fmt = PPRE('/\\$\\[(?>([^\\]]+))\\]/',"XL(PSS(\$m[1]))",$fmt);
+  $fmt = PPRE('/\\$\\[(?>([^\\]]+))\\]/',"XL(\$m[1])",$fmt);
   $fmt = str_replace('{$ScriptUrl}', '$ScriptUrl', $fmt);
   $fmt = 
     PPRE('/\\{(\\$[A-Z]\\w+)\\}/', "PageVar('$pagename', \$m[1])", $fmt);
@@ -1183,7 +1183,7 @@ function Abort($msg, $info='') {
     $info
     <p class='vspace'><a href='$ScriptUrl'>$[Return to] $ScriptUrl</a></p>";
   @header("Content-type: text/html; charset=$Charset");
-  echo PPRE('/\\$\\[([^\\]]+)\\]/', "XL(PSS(\$m[1]))", $msg);
+  echo PPRE('/\\$\\[([^\\]]+)\\]/', "XL(\$m[1])", $msg);
   exit;
 }
 
@@ -1267,7 +1267,7 @@ function Keep($x, $pool=NULL) {
 function MarkupEscape($text) {
   global $EscapePattern;
   SDV($EscapePattern, '\\[([=@]).*?\\1\\]');
-  return PPRE("/$EscapePattern/s", "Keep(PSS(\$m[0]))", $text);
+  return PPRE("/$EscapePattern/s", "Keep(\$m[0])", $text);
 }
 function MarkupRestore($text) {
   global $KeepToken, $KPV;

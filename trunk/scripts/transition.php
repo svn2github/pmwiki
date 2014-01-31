@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -148,7 +148,7 @@ if (@$Transition['nodivnest']) {
 
   Markup_e('table', '<block',
     '/^\\(:(table|cell|cellnr|tableend|div|divend)(\\s.*?)?:\\)/i',
-    "TCells(\$m[1],PSS(\$m[2]))");
+    "TCells(\$m[1],\$m[2])");
 }
 
 

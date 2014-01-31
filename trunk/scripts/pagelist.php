@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -68,14 +68,14 @@ SDV($PageListArgPattern, '((?:\\$:?)?\\w+)[:=]');
 
 Markup_e('pagelist', 'directives',
   '/\\(:pagelist(\\s+.*?)?:\\)/i',
-  "FmtPageList('\$MatchList', \$pagename, array('o' => PSS(\$m[1].' ')))");
+  "FmtPageList('\$MatchList', \$pagename, array('o' => \$m[1].' '))");
 Markup_e('searchbox', 'directives',
   '/\\(:searchbox(\\s.*?)?:\\)/',
-  "SearchBox(\$pagename, ParseArgs(PSS(\$m[1]), '$PageListArgPattern'))");
+  "SearchBox(\$pagename, ParseArgs(\$m[1], '$PageListArgPattern'))");
 Markup_e('searchresults', 'directives',
   '/\\(:searchresults(\\s+.*?)?:\\)/i',
   "FmtPageList(\$GLOBALS['SearchResultsFmt'], \$pagename, 
-       array('req' => 1, 'request'=>1, 'o' => PSS(\$m[1])))");
+       array('req' => 1, 'request'=>1, 'o' => \$m[1]))");
 
 SDV($SaveAttrPatterns['/\\(:(searchresults|pagelist)(\\s+.*?)?:\\)/i'], ' ');
 

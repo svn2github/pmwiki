@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2007-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2007-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -26,7 +26,7 @@ Markup('//', 'inline',
 ## == Headings ==
 Markup_e('^=', 'block',
   '/^(={1,6})\\s?(.*?)(\\s*=*\\s*)$/',
-  "'<:block,1><h'.strlen(\$m[1]).PSS('>'.\$m[2].'</h').strlen(\$m[1]).'>'");
+  "'<:block,1><h'.strlen(\$m[1]).'>'.\$m[2].'</h'.strlen(\$m[1]).'>'");
 
 ## Line breaks
 Markup('\\\\', 'inline', '/\\\\\\\\/', '<br />');
@@ -34,15 +34,15 @@ Markup('\\\\', 'inline', '/\\\\\\\\/', '<br />');
 ## Preformatted
 Markup_e('^{{{', '[=',
   "/^\\{\\{\\{\n(.*?\n)\\}\\}\\}[^\\S\n]*\n/sm",
-  "Keep(PSS('<pre class=\"escaped\">'.\$m[1].'</pre>'))");
+  "Keep('<pre class=\"escaped\">'.\$m[1].'</pre>')");
 Markup_e('{{{', '>{{{',
   '/\\{\\{\\{(.*?)\\}\\}\\}/s',
-  "Keep(PSS('<code class=\"escaped\">'.\$m[1].'</code>'))");
+  "Keep('<code class=\"escaped\">'.\$m[1].'</code>')");
 
 ## Tables
 Markup_e('|-table', '>^||',
   '/^\\|(.*)$/',
-  "FormatTableRow(PSS(\$m[0]), '\\|')");
+  "FormatTableRow(\$m[0], '\\|')");
 
 ## Images
 Markup_e('{{', 'inline',

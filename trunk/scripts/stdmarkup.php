@@ -28,7 +28,7 @@ function PreserveText($sigil, $text, $lead) {
 }
 
 Markup_e('[=','_begin',"/(\n[^\\S\n]*)?\\[([=@])(.*?)\\2\\]/s",
-    "PreserveText(\$m[2], PSS(\$m[3]), \$m[1])");
+    "PreserveText(\$m[2], \$m[3], \$m[1])");
 Markup_e('restore','<_end',"/$KeepToken(\\d.*?)$KeepToken/",
     '$GLOBALS[\'KPV\'][$m[1]]');
 Markup('<:', '>restore',
@@ -45,7 +45,7 @@ Markup('\\r','<[=','/\\r/','');
 
 # $[phrase] substitutions
 Markup_e('$[phrase]', '>[=',
-  '/\\$\\[(?>([^\\]]+))\\]/', "NoCache(XL(PSS(\$m[1])))");
+  '/\\$\\[(?>([^\\]]+))\\]/', "NoCache(XL(\$m[1]))");
 
 # {$var} substitutions
 Markup_e('{$var}', '>$[phrase]',
@@ -76,7 +76,7 @@ SDV($CondTextPattern,
      |   (?=\\(:(?:if\\1|if\\1end)\\b[^\n]*?:\\) | $)
      )
    /six");
-SDV($CondTextReplacement, "CondText2(\$pagename, PSS(\$m[0]), \$m[1])");
+SDV($CondTextReplacement, "CondText2(\$pagename, \$m[0], \$m[1])");
 Markup_e('if', 'fulltext', $CondTextPattern, $CondTextReplacement);
 
 function CondText2($pagename, $text, $code = '') {
@@ -105,12 +105,12 @@ function CondText2($pagename, $text, $code = '') {
 ## (:include:)
 Markup_e('include', '>if',
   '/\\(:include\\s+(\\S.*?):\\)/i',
-  "PRR(IncludeText(\$pagename, PSS(\$m[1])))");
+  "PRR(IncludeText(\$pagename, \$m[1]))");
 
 ## (:redirect:)
 Markup_e('redirect', '<include',
   '/\\(:redirect\\s+(\\S.*?):\\)/i',
-  "RedirectMarkup(\$pagename, PSS(\$m[1]))");
+  "RedirectMarkup(\$pagename, \$m[1])");
 
 $SaveAttrPatterns['/\\(:(if\\d*|include|redirect)(\\s.*?)?:\\)/i'] = ' ';
 
@@ -189,16 +189,16 @@ $tmpkeep = IsEnabled($EnablePageTitlePriority, 0) ? '1' : 'NULL';
 Markup_e('title', $tmpwhen,
   '/\\(:title\\s(.*?):\\)/i',
   "PZZ(PCache(\$pagename, 
-    \$zz=array('title' => SetProperty(\$pagename, 'title', PSS(\$m[1]), NULL, $tmpkeep))))");
+    \$zz=array('title' => SetProperty(\$pagename, 'title', \$m[1], NULL, $tmpkeep))))");
 unset($tmpwhen, $tmpkeep);
 
 ## (:keywords:), (:description:)
 Markup_e('keywords', 'directives',
   "/\\(:keywords?\\s+(.+?):\\)/i",
-  "PZZ(SetProperty(\$pagename, 'keywords', PSS(\$m[1]), ', '))");
+  "PZZ(SetProperty(\$pagename, 'keywords', \$m[1], ', '))");
 Markup_e('description', 'directives',
   "/\\(:description\\s+(.+?):\\)/i",
-  "PZZ(SetProperty(\$pagename, 'description', PSS(\$m[1]), '\n'))");
+  "PZZ(SetProperty(\$pagename, 'description', \$m[1], '\n'))");
 $HTMLHeaderFmt['meta'] = 'function:PrintMetaTags';
 function PrintMetaTags($pagename, $args) {
   global $PCache;
@@ -234,7 +234,7 @@ Markup("'_","<'''''","/'_(.*?)_'/",'<sub>$1</sub>');
 ## [+big+], [-small-]
 Markup_e('[+','inline','/\\[(([-+])+)(.*?)\\1\\]/',
   "'<span style=\'font-size:'.(round(pow(6/5,(\$m[2]=='-'? -1:1)*strlen(\$m[1]))*100,0)).'%\'>'.
-    PSS(\$m[3].'</span>')");
+    \$m[3].'</span>'");
 
 ## {+ins+}, {-del-}
 Markup('{+','inline','/\\{\\+(.*?)\\+\\}/','<ins>$1</ins>');
@@ -246,13 +246,13 @@ Markup('[[<<]]','inline','/\\[\\[&lt;&lt;\\]\\]/',"<br clear='all' />");
 ###### Links ######
 ## [[free links]]
 Markup_e('[[','links',"/(?>\\[\\[\\s*(.*?)\\]\\])($SuffixPattern)/",
-  "Keep(MakeLink(\$pagename,PSS(\$m[1]),NULL,\$m[2]),'L')");
+  "Keep(MakeLink(\$pagename,\$m[1],NULL,\$m[2]),'L')");
 
 ## [[!Category]]
 SDV($CategoryGroup,'Category');
 SDV($LinkCategoryFmt,"<a class='categorylink' href='\$LinkUrl'>\$LinkText</a>");
 Markup_e('[[!','<[[','/\\[\\[!(.*?)\\]\\]/',
-  "Keep(MakeLink(\$pagename,PSS('$CategoryGroup/'.\$m[1]),NULL,'',\$GLOBALS['LinkCategoryFmt']),'L')");
+  "Keep(MakeLink(\$pagename,'$CategoryGroup/'.\$m[1],NULL,'',\$GLOBALS['LinkCategoryFmt']),'L')");
 # This is a temporary workaround for blank category pages.
 # It may be removed in a future release (Pm, 2006-01-24)
 if (preg_match("/^$CategoryGroup\\./", $pagename)) {
@@ -263,16 +263,16 @@ if (preg_match("/^$CategoryGroup\\./", $pagename)) {
 ## [[target | text]]
 Markup_e('[[|','<[[',
   "/(?>\\[\\[([^|\\]]*)\\|\\s*)(.*?)\\s*\\]\\]($SuffixPattern)/",
-  "Keep(MakeLink(\$pagename,PSS(\$m[1]),PSS(\$m[2]),\$m[3]),'L')");
+  "Keep(MakeLink(\$pagename,\$m[1],\$m[2],\$m[3]),'L')");
 
 ## [[text -> target ]]
 Markup_e('[[->','>[[|',
   "/(?>\\[\\[([^\\]]+?)\\s*-+&gt;\\s*)(.*?)\\]\\]($SuffixPattern)/",
-  "Keep(MakeLink(\$pagename,PSS(\$m[2]),PSS(\$m[1]),\$m[3]),'L')");
+  "Keep(MakeLink(\$pagename,\$m[2],\$m[1],\$m[3]),'L')");
 
 if (IsEnabled($EnableRelativePageLinks, 1))
   SDV($QualifyPatterns['/(\\[\\[(?>[^\\]]+?->)?\\s*)([-\\w\\x80-\\xfe\\s\'()]+([|#?].*?)?\\]\\])/'],
-    PCCF("PSS(\$m[1]).\$group.PSS('/'.\$m[2])", 'qualify'));
+    PCCF("\$m[1].\$group.'/'.\$m[2]", 'qualify'));
 
 ## [[#anchor]]
 Markup_e('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/',
@@ -282,7 +282,7 @@ function TrackAnchors($x) { global $SeenAnchor; return @$SeenAnchor[$x]++; }
 ## [[target |#]] reference links
 Markup_e('[[|#', '<[[|',
   "/(?>\\[\\[([^|\\]]+))\\|\\s*#\\s*\\]\\]/",
-  "Keep(MakeLink(\$pagename,PSS(\$m[1]),'['.++\$GLOBALS['MarkupFrame'][0]['ref'].']'),'L')");
+  "Keep(MakeLink(\$pagename,\$m[1],'['.++\$GLOBALS['MarkupFrame'][0]['ref'].']'),'L')");
 
 ## [[target |+]] title links moved inside LinkPage()
 
@@ -328,8 +328,8 @@ Markup('^!<:', '<^<:',
 ## pipe following the image indicates a "caption" (generates a linebreak).
 Markup_e('^img', 'block',
   "/^((?>(\\s+|%%|%[A-Za-z][-,=:#\\w\\s'\".]*%)*)$KeepToken(\\d+L)$KeepToken)(\\s*\\|\\s?)?(.*)$/",
-  "PSS((strpos(\$GLOBALS['KPV'][\$m[3]],'<img')===false) ? \$m[0] :
-       '<:block,1><div>'.\$m[1] . (\$m[4] ? '<br />' : '') .\$m[5].'</div>')");
+  "(strpos(\$GLOBALS['KPV'][\$m[3]],'<img')===false) ? \$m[0] :
+       '<:block,1><div>'.\$m[1] . (\$m[4] ? '<br />' : '') .\$m[5].'</div>'");
 
 
 ## Whitespace at the beginning of lines can be used to maintain the
@@ -376,16 +376,16 @@ Markup('^A:', 'block', '/^A:/', Keep(''));
 ## ||cell||, ||!header cell||, ||!caption!||
 Markup_e('^||||', 'block',
   '/^\\|\\|.*\\|\\|.*$/',
-  "FormatTableRow(PSS(\$m[0]))");
+  "FormatTableRow(\$m[0])");
 ## ||table attributes
 Markup_e('^||','>^||||','/^\\|\\|(.*)$/',
-  "PZZ(\$GLOBALS['BlockMarkups']['table'][0] = '<table '.PQA(PSS(\$m[1])).'>')
+  "PZZ(\$GLOBALS['BlockMarkups']['table'][0] = '<table '.PQA(\$m[1]).'>')
     .'<:block,1>'");
 
 ## headings
 Markup_e('^!', 'block',
   '/^(!{1,6})\\s?(.*)$/',
-  "'<:block,1><h'.strlen(\$m[1]).PSS('>'.\$m[2].'</h').strlen(\$m[1]).'>'");
+  "'<:block,1><h'.strlen(\$m[1]).'>'.\$m[2].'</h'.strlen(\$m[1]).'>'");
 
 ## horiz rule
 Markup('^----','>^->','/^----+/','<:block,1><hr />');
@@ -421,7 +421,7 @@ function Cells($name,$attr) {
 
 Markup_e('table', '<block',
   '/^\\(:(table|cell|cellnr|head|headnr|tableend|div\\d*(?:end)?)(\\s.*?)?:\\)/i',
-  "Cells(\$m[1],PSS(\$m[2]))");
+  "Cells(\$m[1],\$m[2])");
 Markup('^>>', '<table',
   '/^&gt;&gt;(.+?)&lt;&lt;(.*)$/',
   '(:div:)%div $1 apply=div%$2 ');
@@ -452,10 +452,10 @@ function MarkupMarkup($pagename, $text, $opt = '') {
 
 Markup_e('markup', '<[=',
   "/\\(:markup(\\s+([^\n]*?))?:\\)[^\\S\n]*\\[([=@])(.*?)\\3\\]/si",
-  "MarkupMarkup(\$pagename, PSS(\$m[4]), PSS(\$m[2]))");
+  "MarkupMarkup(\$pagename, \$m[4], \$m[2])");
 Markup_e('markupend', '>markup',
   "/\\(:markup(\\s+([^\n]*?))?:\\)[^\\S\n]*\n(.*?)\\(:markupend:\\)/si",
-  "MarkupMarkup(\$pagename, PSS(\$m[3]), PSS(\$m[1]))");
+  "MarkupMarkup(\$pagename, \$m[3], \$m[1])");
 
 SDV($HTMLStylesFmt['markup'], "
   table.markup { border:2px dotted #ccf; width:90%; }
@@ -496,5 +496,5 @@ function CondDate($condparm) {
 
 # This pattern enables the (:encrypt <phrase>:) markup/replace-on-save
 # pattern.
-SDV($ROSPatterns['/\\(:encrypt\\s+([^\\s:=]+).*?:\\)/'], PCCF("return crypt(PSS(\$m[1]));"));
+SDV($ROSPatterns['/\\(:encrypt\\s+([^\\s:=]+).*?:\\)/'], PCCF("return crypt(\$m[1]);"));
 

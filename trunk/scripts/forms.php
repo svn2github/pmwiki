@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -58,12 +58,12 @@ SDVA($InputTags['defaults'], array(':fn' => 'InputDefault'));
 ##  (:input ...:) directives
 Markup_e('input', 'directives',
   '/\\(:input\\s+(\\w+)(.*?):\\)/i',
-  "InputMarkup(\$pagename, \$m[1], PSS(\$m[2]))");
+  "InputMarkup(\$pagename, \$m[1], \$m[2])");
 
 ##  (:input select:) has its own markup processing
 Markup_e('input-select', '<input',
   '/\\(:input\\s+select\\s.*?:\\)(?:\\s*\\(:input\\s+select\\s.*?:\\))*/i',
-  "InputSelect(\$pagename, 'select', PSS(\$m[0]))");
+  "InputSelect(\$pagename, 'select', \$m[0])");
 
 ##  The 'input+sp' rule combines multiple (:input select ... :)
 ##  into a single markup line (to avoid split line effects)
