@@ -212,8 +212,9 @@ $SessionDecode = 'base64_decode';
 
 $CallbackFnTemplates = array(
   'default' => '%s',
+  'return' => 'return %s;',
   'markup_e' => 'extract($GLOBALS["MarkupToHTML"]); return %s;',
-  'qualify'  => 'global $tmp_qualify; extract($tmp_qualify); return %s;',
+  'qualify'  => 'extract($GLOBALS["tmp_qualify"]); return %s;',
 );
 
 $Conditions['enabled'] = '(boolean)@$GLOBALS[$condparm]';
@@ -1610,8 +1611,8 @@ function Markup($id, $when, $pat=NULL, $rep=NULL) {
   }
 }
 
-function Markup_e($id, $when, $pat, $rep) {
-  if (!is_callable($rep)) $rep = PCCF($rep, 'markup_e');
+function Markup_e($id, $when, $pat, $rep, $template = 'markup_e') {
+  if (!is_callable($rep)) $rep = PCCF($rep, $template);
   Markup($id, $when, $pat, $rep);
 }
 
