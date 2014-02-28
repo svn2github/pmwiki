@@ -392,7 +392,7 @@ Markup('^----','>^->','/^----+/','<:block,1><hr />');
 
 #### (:table:) markup (AdvancedTables)
 function Cells($name,$attr) {
-  global $MarkupFrame;
+  global $MarkupFrame, $EnableTableAutoValignTop;
   $attr = PQA($attr);
   $tattr = @$MarkupFrame[0]['tattr'];
   $name = strtolower($name);
@@ -403,7 +403,8 @@ function Cells($name,$attr) {
   $cf = & $MarkupFrame[0]['closeall'];
   if ($name == 'table') $MarkupFrame[0]['tattr'] = $attr; 
   else if ($key == 'cell') {
-    if (strpos($attr, "valign=")===false) $attr .= " valign='top'";
+    if (IsEnabled($EnableTableAutoValignTop, 1) && strpos($attr, "valign=")===false)
+      $attr .= " valign='top'";
     $t = (strpos($name, 'head')===0 ) ? 'th' : 'td';
     if (!@$cf['table']) {
        $tattr = @$MarkupFrame[0]['tattr'];
