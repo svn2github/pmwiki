@@ -81,7 +81,7 @@ function InputToHTML($pagename, $type, $args, &$opt) {
     $InputFocusLevel, $InputFocusId, $InputFocusFmt, $HTMLFooterFmt;
   if (!@$InputTags[$type]) return "(:input $type $args:)";
   ##  get input arguments
-  if (!is_array($args)) $args = ParseArgs($args);
+  if (!is_array($args)) $args = ParseArgs($args, '(?>([\\w-]+)[:=])');
   ##  convert any positional arguments to named arguments
   $posnames = @$InputTags[$type][':args'];
   if (!$posnames) $posnames = array('name', 'value');
