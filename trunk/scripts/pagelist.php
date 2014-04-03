@@ -150,8 +150,13 @@ function FmtPageList($outfmt, $pagename, $opt) {
   }
   $opt = array_merge($opt, ParseArgs($opt['o'], $PageListArgPattern));
   # merge markup options with form and url
-  if (@$opt['request']) 
-    $opt = array_merge($opt, ParseArgs($rq, $PageListArgPattern), @$_REQUEST);
+  if (@$opt['request']) {
+    $cleanrequest = array();
+    if(@$_REQUEST)foreach($_REQUEST as $k=>$v)
+      $cleanrequest[$k] = stripmagic($v);
+    $opt = array_merge($opt, ParseArgs($rq, $PageListArgPattern), $cleanrequest);
+  }
+
   # non-posted blank search requests return nothing
   if (@($opt['req'] && !$opt['-'] && !$opt[''] && !$opt['+'] && !$opt['q']))
     return '';
