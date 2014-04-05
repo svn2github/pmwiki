@@ -9,7 +9,9 @@
 # $InputAttrs are the attributes we allow in output tags
 SDV($InputAttrs, array('name', 'value', 'id', 'class', 'rows', 'cols', 
   'size', 'maxlength', 'action', 'method', 'accesskey', 'tabindex', 'multiple',
-  'checked', 'disabled', 'readonly', 'enctype', 'src', 'alt'));
+  'checked', 'disabled', 'readonly', 'enctype', 'src', 'alt',
+  'required', 'placeholder', 'autocomplete'
+  ));
 
 # Set up formatting for text, submit, hidden, radio, etc. types
 foreach(array('text', 'submit', 'hidden', 'password', 'radio', 'checkbox',
