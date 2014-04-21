@@ -56,14 +56,15 @@ Markup_e('{(', '>{$var}',
   "MarkupExpression(\$pagename, \$m[1])");
 
 SDVA($MarkupExpr, array(
-  'substr' => 'call_user_func_array("substr", $args)',
-  'strlen' => 'strlen($args[0])',
-  'ftime' => 'ME_ftime(@$args[0], @$args[1], $argp)',
-  'rand'   => '($args) ? rand($args[0], $args[1]) : rand()',
-  'ucfirst' => 'ucfirst($args[0])',
-  'ucwords' => 'ucwords($args[0])',
-  'tolower' => 'strtolower($args[0])',
-  'toupper' => 'strtoupper($args[0])',
+  'substr'   => 'call_user_func_array("substr", $args)',
+  'strlen'   => 'strlen($args[0])',
+  'ftime'    => 'ME_ftime(@$args[0], @$args[1], $argp)',
+  'rand'     => '($args) ? rand($args[0], $args[1]) : rand()',
+  'ucfirst'  => 'ucfirst($args[0])',
+  'ucwords'  => 'ucwords($args[0])',
+  'tolower'  => 'strtolower($args[0])',
+  'toupper'  => 'strtoupper($args[0])',
+  'mod'      => '0 + ($args[0] % $args[1])',
   'asspaced' => '$GLOBALS["AsSpacedFunction"]($args[0])',
   'pagename' => 'MakePageName($pagename, PPRE($rpat, $rrep, $params))',
 ));
