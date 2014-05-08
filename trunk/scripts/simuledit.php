@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2006 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@ $HTMLStylesFmt['simuledit'] = ".editconflict { color:green;
   font-style:italic; margin-top:1.33em; margin-bottom:1.33em; }\n";
 
 function Merge($newtext,$oldtext,$pagetext) {
-  global $WorkDir,$SysMergeCmd;
+  global $WorkDir,$SysMergeCmd, $SysMergePassthru;
   SDV($SysMergeCmd,"/usr/bin/diff3 -L '' -L '' -L '' -m -E");
   if (substr($newtext,-1,1)!="\n") $newtext.="\n";
   if (substr($oldtext,-1,1)!="\n") $oldtext.="\n";
@@ -28,10 +28,17 @@ function Merge($newtext,$oldtext,$pagetext) {
   if ($oldfp=fopen($tempold,'w')) { fputs($oldfp,$oldtext); fclose($oldfp); }
   if ($pagfp=fopen($temppag,'w')) { fputs($pagfp,$pagetext); fclose($pagfp); }
   $mergetext = '';
-  $merge_handle = popen("$SysMergeCmd $tempnew $tempold $temppag",'r');
-  if ($merge_handle) {
-    while (!feof($merge_handle)) $mergetext .= fread($merge_handle,4096);
-    pclose($merge_handle);
+  if (IsEnabled($SysMergePassthru, 0)) {
+    ob_start();
+    passthru("$SysMergeCmd $tempnew $tempold $temppag");
+    $mergetext = ob_get_clean();
+  }
+  else {
+    $merge_handle = popen("$SysMergeCmd $tempnew $tempold $temppag",'r');
+    if ($merge_handle) {
+      while (!feof($merge_handle)) $mergetext .= fread($merge_handle,4096);
+      pclose($merge_handle);
+    }
   }
   @unlink($tempnew); @unlink($tempold); @unlink($temppag);
   return $mergetext;

@@ -293,7 +293,7 @@ $BlockMarkups = array(
   'table' => array("<table width='100%'>",'','</table>',0));
 
 foreach(array('http:','https:','mailto:','ftp:','news:','gopher:','nap:',
-    'file:') as $m) 
+    'file:', 'tel:', 'geo:') as $m)
   { $LinkFunctions[$m] = 'LinkIMap';  $IMap[$m]="$m$1"; }
 $LinkFunctions['<:page>'] = 'LinkPage';
 
