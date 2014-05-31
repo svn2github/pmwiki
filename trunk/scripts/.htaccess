@@ -1,5 +1,5 @@
-# This file is cookbook/.htaccess -- the default distribution contains this
-# file to prevent cookbook/ scripts from being accessed directly by browsers
+# This file is script/.htaccess -- the default distribution contains this
+# file to prevent script/ files from being accessed directly by browsers
 # (this is a potential, albeit very unlikely, security hole).
 #
 # If you alter or replace this file, it will likely be overwritten when
