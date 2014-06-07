@@ -615,7 +615,8 @@ function fixperms($fname, $add = 0, $set = 0) {
   }
   else {
     $bp = 0;
-    if (fileowner($fname)!=@fileowner('.')) $bp = (is_dir($fname)) ? 007 : 006;
+    if (fileowner($fname)!=@fileowner('.') && @fileowner('.')!==0)
+      $bp = (is_dir($fname)) ? 007 : 006;
     if (filegroup($fname)==@filegroup('.')) $bp <<= 3;
     $bp |= $add;
     if ($bp && (fileperms($fname) & $bp) != $bp)
