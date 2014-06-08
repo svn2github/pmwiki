@@ -54,7 +54,7 @@ SDV($NotifyBodyFmt,
   . "  \$ScriptUrl/$[{\$SiteGroup}/AllRecentChanges]\n\n\$NotifyItems\n");
 SDV($NotifyTimeFmt, $TimeFmt);
 SDV($NotifyItemFmt, 
-  ' * {$FullName} . . . $PostTime by {$LastModifiedBy}');
+  ' * {$FullName} . . . $PostTime by {$Author}');
 SDV($NotifyHeaders, '');
 SDV($NotifyParameters, '');
 
