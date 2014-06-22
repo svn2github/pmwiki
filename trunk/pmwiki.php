@@ -465,7 +465,7 @@ function PPRE($pat, $rep, $x) {
 function PPRA($array, $x) {
   foreach($array as $pat => $rep) {
     $fmt = $x; # for $FmtP
-    if(is_callable($rep)) $x = preg_replace_callback($pat,$rep,$x);
+    if(is_callable($rep) && $rep != '_') $x = preg_replace_callback($pat,$rep,$x);
     else $x = preg_replace($pat,$rep,$x);
   }
   return $x;
