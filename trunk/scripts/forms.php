@@ -183,7 +183,7 @@ function InputDefault($pagename, $type, $args) {
         if (preg_match_all($pat, IsEnabled($PCache[$source]['=preview'], $page['text']), 
           $match, PREG_SET_ORDER))
           foreach($match as $m)
-            if (!isset($InputValues['ptv_'.$m[2]]))
+#           if (!isset($InputValues['ptv_'.$m[2]])) PITS:01337
               $InputValues['ptv_'.$m[2]] = 
                 PHSC(Qualify($source, $m[3]), ENT_NOQUOTES);
     }
