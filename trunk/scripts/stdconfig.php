@@ -29,6 +29,14 @@ if (!function_exists('session_start') && IsEnabled($EnableRequireSession, 1))
 if (IsEnabled($EnablePGCust,1))
   include_once("$FarmD/scripts/pgcust.php");
 
+if (isset($PostConfig) && is_array($PostConfig)) {
+  asort($PostConfig, SORT_NUMERIC);
+  foreach ($PostConfig as $k=>$v) {
+    if (!$k || !$v || $v<0 || $v>=50) continue;
+    if (function_exists($k)) $k($pagename);
+    elseif (file_exists($k)) include_once($k);
+  }
+}
 
 if (IsEnabled($EnableRobotControl,1))
   include_once("$FarmD/scripts/robots.php");

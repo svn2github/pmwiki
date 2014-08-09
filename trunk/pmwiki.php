@@ -341,7 +341,7 @@ if (IsEnabled($EnableStdConfig,1))
 if (isset($PostConfig) && is_array($PostConfig)) {
   asort($PostConfig, SORT_NUMERIC);
   foreach ($PostConfig as $k=>$v) {
-    if (!$k || !$v || $v<0) continue;
+    if (!$k || !$v || $v<50) continue;
     if (function_exists($k)) $k($pagename);
     elseif (file_exists($k)) include_once($k);
   }
