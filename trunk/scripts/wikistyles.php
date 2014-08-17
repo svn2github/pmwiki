@@ -32,11 +32,11 @@ if (IsEnabled($EnableStdWikiStyles,1)) {
   SDV($WikiStyle['comment']['display'],'none');
   ## display, margin, padding, and border css properties
   $WikiStyleCSS[] = 
-    'float|display|(margin|padding|border)(-(left|right|top|bottom))?';
+    'float|clear|display|(margin|padding|border)(-(left|right|top|bottom))?';
   $WikiStyleCSS[] = 'white-space';
+  $WikiStyleCSS[] = '((min|max)-)?(width|height)';
   ## list-styles
   $WikiStyleCSS[] = 'list-style';
-  $WikiStyleCSS[] = 'width|height';
   foreach(array('decimal'=>'decimal', 'roman'=>'lower-roman',
     'ROMAN'=>'upper-roman', 'alpha'=>'lower-alpha', 'ALPHA'=>'upper-alpha')
     as $k=>$v) 
@@ -48,8 +48,8 @@ if (IsEnabled($EnableStdWikiStyles,1)) {
     'div' => 'div',
     'pre' => 'pre',
     'img' => 'img',
-    'block' => 'p(?!\\sclass=)|div|ul|ol|dl|li|dt|pre|h[1-6]',
-    'p' => 'p(?!\\sclass=)'));
+    'block' => 'p(?!\\s+class=)|div|ul|ol|dl|li|dt|pre|h[1-6]',
+    'p' => 'p(?!\\s+class=)'));
   foreach(array('item', 'list', 'block', 'p', 'div') as $c)
     SDV($WikiStyle[$c],array('apply'=>$c));
   ## block justifications
