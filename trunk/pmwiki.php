@@ -516,7 +516,7 @@ function DRange($when) {
     )?                       # optional -ddThh:mm:ss
     (?!\d)                   # non-digit
     /x';
-  if (preg_match($dpat, $when, $m)) {
+  if (preg_match($dpat, $when, $m) && !preg_match('/[+-]\\s*\\d+\\s*(day|week|month|year)s?/i', $when)) {
     $n = $m;
     ##  if no time given, assume range of 1 day (except when full month)
     if (@$m[4]>'' && @$m[5] == '') { @$n[4]++; }
