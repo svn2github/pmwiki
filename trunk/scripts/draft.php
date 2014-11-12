@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2006-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2006-2014 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -27,7 +27,8 @@ if (!PageExists($pagename) && PageExists($basename)) $pagename = $basename;
 
 ## The section below handles specialized EditForm pages and handler.
 ## We don't bother to load it if we're not editing.
-if ($action != 'edit') return;
+SDV($DraftActionsPattern, 'edit');
+if (! preg_match("/($DraftActionsPattern)/", $action)) return;
 
 ##  set edit form button labels to reflect draft prompts
 SDVA($InputTags['e_savebutton'], array('value' => ' '.XL('Publish').' '));
