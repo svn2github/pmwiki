@@ -150,10 +150,17 @@ function FmtPageList($outfmt, $pagename, $opt) {
   }
   $opt = array_merge($opt, ParseArgs($opt['o'], $PageListArgPattern));
   # merge markup options with form and url
-  if (@$opt['request']) {
+  if (@$opt['request'] && @$_REQUEST) {
+    $rkeys = preg_grep('/^=/', array_keys($_REQUEST), PREG_GREP_INVERT);
+    if ($opt['request'] != '1') {
+      list($incl, $excl) = GlobToPCRE($opt['request']);
+      if ($excl) $rkeys = array_diff($rkeys, preg_grep("/$excl/", $rkeys));
+      if ($incl) $rkeys = preg_grep("/$incl/", $rkeys);
+    }
     $cleanrequest = array();
-    if(@$_REQUEST)foreach($_REQUEST as $k=>$v)
-      $cleanrequest[$k] = stripmagic($v);
+    foreach($rkeys as $k) {
+      $cleanrequest[$k] = stripmagic($_REQUEST[$k]);
+    }
     $opt = array_merge($opt, ParseArgs($rq, $PageListArgPattern), $cleanrequest);
   }
 

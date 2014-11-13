@@ -174,11 +174,13 @@ function InputDefault($pagename, $type, $args) {
       if (!isset($InputValues[$k])) 
         $InputValues[$k] = PHSC(stripmagic($v), ENT_NOQUOTES);
   }
-  $source = @$args['source'];
-  if ($source) {
-    $source = MakePageName($pagename, $source);
-    $page = RetrieveAuthPage($source, 'read', false, READPAGE_CURRENT);
-    if ($page) {
+  $sources = @$args['source'];
+  if ($sources) {
+    foreach(explode(',', $sources) as $source) {
+      $source = MakePageName($pagename, $source);
+      if (!PageExists($source)) continue;
+      $page = RetrieveAuthPage($source, 'read', false, READPAGE_CURRENT);
+      if (! $page || ! isset($page['text'])) continue;
       foreach((array)$PageTextVarPatterns as $pat)
         if (preg_match_all($pat, IsEnabled($PCache[$source]['=preview'], $page['text']), 
           $match, PREG_SET_ORDER))
@@ -186,6 +188,7 @@ function InputDefault($pagename, $type, $args) {
 #           if (!isset($InputValues['ptv_'.$m[2]])) PITS:01337
               $InputValues['ptv_'.$m[2]] = 
                 PHSC(Qualify($source, $m[3]), ENT_NOQUOTES);
+      break;
     }
   }
   return '';
