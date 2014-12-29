@@ -441,9 +441,9 @@ function MarkupMarkup($pagename, $text, $opt = '') {
                            "<caption>{$opt['caption']}</caption>");
   $class = preg_replace('/[^-\\s\\w]+/', ' ', @$opt['class']);
   $sep = (strpos($class, 'horiz') !== false) ? '' : '</tr><tr>';
-  
+  $pretext = str_replace("  ", " &nbsp;", nl2br($text));
   return Keep(@"<table class='markup $class' align='center'>$caption
-      <tr><td class='markup1' valign='top'><pre>$text</pre></td>$sep<td 
+      <tr><td class='markup1' valign='top'><code>$pretext</code></td>$sep<td 
         class='markup2' valign='top'>$html</td></tr></table>");
 }
 
@@ -459,7 +459,6 @@ SDV($HTMLStylesFmt['markup'], "
   td.markup1, td.markup2 { padding-left:10px; padding-right:10px; }
   table.vert td.markup1 { border-bottom:1px solid #ccf;  }
   table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; }
-  td.markup1 pre { width:100%; overflow: auto;}
   table.markup caption { text-align:left; }
   div.faq p, div.faq pre { margin-left:2em; }
   div.faq p.question { margin:1em 0 0.75em 0; font-weight:bold; }
