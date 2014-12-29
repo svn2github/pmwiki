@@ -457,8 +457,9 @@ Markup_e('markupend', '>markup',
 SDV($HTMLStylesFmt['markup'], "
   table.markup { border:2px dotted #ccf; width:90%; }
   td.markup1, td.markup2 { padding-left:10px; padding-right:10px; }
-  table.vert td.markup1 { border-bottom:1px solid #ccf; width:100%; overflow: auto; }
-  table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; overflow: auto; }
+  table.vert td.markup1 { border-bottom:1px solid #ccf;  }
+  table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; }
+  td.markup1 pre { width:100%; overflow: auto;}
   table.markup caption { text-align:left; }
   div.faq p, div.faq pre { margin-left:2em; }
   div.faq p.question { margin:1em 0 0.75em 0; font-weight:bold; }
