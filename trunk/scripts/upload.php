@@ -261,7 +261,8 @@ function UploadVerifyBasic($pagename,$uploadfile,$filepath) {
   global $EnableUploadOverwrite,$UploadExtSize,$UploadPrefixQuota,
     $UploadDirQuota,$UploadDir, $UploadBlacklist;
   if (count($UploadBlacklist)) {
-    $upname = strtolower(end(explode("/", $filepath)));
+    $tmp = explode("/", $filepath);
+    $upname = strtolower(end($tmp));
     foreach($UploadBlacklist as $needle) {
       if (strpos($upname, $needle)!==false) return 'upresult=badname';
     }
