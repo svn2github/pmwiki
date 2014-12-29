@@ -1610,6 +1610,12 @@ function Markup($id, $when, $pat=NULL, $rep=NULL) {
   if ($pat && !isset($MarkupTable[$id]['pat'])) {
     $MarkupTable[$id]['pat'] = $pat;
     $MarkupTable[$id]['rep'] = $rep;
+    
+    if (function_exists('debug_backtrace') && preg_match('!/[^/]*e[^/]*$!', $pat)) {
+      $dbg = debug_backtrace();
+      $MarkupTable[$id]['dbg'] = "! file: {$dbg['0']['file']}, "
+        . "line: {$dbg['0']['line']}, pat: {$dbg['0']['args'][2]}";
+    }
   }
 }
 

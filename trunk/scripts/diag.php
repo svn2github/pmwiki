@@ -25,9 +25,16 @@ if ($action=='phpinfo') { phpinfo(); exit(); }
 function Ruleset() {
   global $MarkupTable;
   $out = '';
+  $dbg = 0;
   BuildMarkupRules();
-  foreach($MarkupTable as $id=>$m) 
-    $out .= sprintf("%-16s %-16s %-16s\n",$id,@$m['cmd'],@$m['seq']);
+  foreach($MarkupTable as $id=>$m) {
+    $out .= sprintf("%-16s %-16s %-16s %s\n",$id,@$m['cmd'],@$m['seq'], @$m['dbg']);
+    if(@$m['dbg']) $dbg++;
+  }
+  if($dbg) $out .= "
+[!] Markup rules possibly incompatible with PHP 5.5 or newer.
+    Please contact the recipe maintainer for update
+    or see www.pmwiki.org/wiki/PmWiki/CustomMarkup";
   return $out;
 }
 
