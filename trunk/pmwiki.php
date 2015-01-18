@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2014 Patrick R. Michaud
+    Copyright 2001-2015 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
@@ -1611,10 +1611,14 @@ function Markup($id, $when, $pat=NULL, $rep=NULL) {
     $MarkupTable[$id]['pat'] = $pat;
     $MarkupTable[$id]['rep'] = $rep;
     
-    if (function_exists('debug_backtrace') && preg_match('!/[^/]*e[^/]*$!', $pat)) {
-      $dbg = debug_backtrace();
-      $MarkupTable[$id]['dbg'] = "! file: {$dbg['0']['file']}, "
-        . "line: {$dbg['0']['line']}, pat: {$dbg['0']['args'][2]}";
+    if (preg_match('!/[^/]*e[^/]*$!', $pat)) {
+      if (function_exists('debug_backtrace')) {
+        $dbg = debug_backtrace();
+        $MarkupTable[$id]['dbg'] = "! file: {$dbg['0']['file']}, "
+          . "line: {$dbg['0']['line']}, pat: {$dbg['0']['args'][2]}";
+      }
+      else 
+        $MarkupTable[$id]['dbg'] = "! id: '$id', pat: '$pat'";
     }
   }
 }
