@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2014 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -433,6 +433,10 @@ Markup('^>><<', '<^>>',
 #### special stuff ####
 ## (:markup:) for displaying markup examples
 function MarkupMarkup($pagename, $text, $opt = '') {
+  global $MarkupWordwrapFunction, $MarkupWrapTag;
+  SDV($MarkupWordwrapFunction, 
+    PCCF('return str_replace("  ", " &nbsp;", nl2br($m));'));
+  SDV($MarkupWrapTag, 'code');
   $MarkupMarkupOpt = array('class' => 'vert');
   $opt = array_merge($MarkupMarkupOpt, ParseArgs($opt));
   $html = MarkupToHTML($pagename, $text, array('escape' => 0));
@@ -440,10 +444,12 @@ function MarkupMarkup($pagename, $text, $opt = '') {
     $caption = str_replace("'", '&#039;', 
                            "<caption>{$opt['caption']}</caption>");
   $class = preg_replace('/[^-\\s\\w]+/', ' ', @$opt['class']);
-  $sep = (strpos($class, 'horiz') !== false) ? '' : '</tr><tr>';
-  $pretext = str_replace("  ", " &nbsp;", nl2br($text));
+  if (strpos($class, 'horiz') !== false) 
+    { $sep = ''; $pretext = $MarkupWordwrapFunction($text, 40); } 
+  else 
+    { $sep = '</tr><tr>'; $pretext = $MarkupWordwrapFunction($text, 75); }
   return Keep(@"<table class='markup $class' align='center'>$caption
-      <tr><td class='markup1' valign='top'><code>$pretext</code></td>$sep<td 
+      <tr><td class='markup1' valign='top'><$MarkupWrapTag>$pretext</$MarkupWrapTag></td>$sep<td 
         class='markup2' valign='top'>$html</td></tr></table>");
 }
 
@@ -457,7 +463,7 @@ Markup_e('markupend', '>markup',
 SDV($HTMLStylesFmt['markup'], "
   table.markup { border:2px dotted #ccf; width:90%; }
   td.markup1, td.markup2 { padding-left:10px; padding-right:10px; }
-  table.vert td.markup1 { border-bottom:1px solid #ccf;  }
+  table.vert td.markup1 { border-bottom:1px solid #ccf; }
   table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; }
   table.markup caption { text-align:left; }
   div.faq p, div.faq pre { margin-left:2em; }
