@@ -1177,7 +1177,8 @@ function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0) {
 
 function Abort($msg, $info='') {
   # exit pmwiki with an abort message
-  global $ScriptUrl, $Charset;
+  global $ScriptUrl, $Charset, $AbortFunction;
+  if(@$AbortFunction) return $AbortFunction($msg, $info);
   if ($info) 
     $info = "<p class='vspace'><a target='_blank' rel='nofollow' href='http://www.pmwiki.org/pmwiki/info/$info'>$[More information]</a></p>";
   $msg = "<h3>$[PmWiki can't process your request]</h3>
