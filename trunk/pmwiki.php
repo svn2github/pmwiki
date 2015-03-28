@@ -454,7 +454,8 @@ function PCCF($code, $template = 'default', $args = '$m') {
   $code = sprintf($CallbackFnTemplates[$template], $code);
   if(!isset($CallbackFunctions[$code])) {
     $fn = create_function($args, $code);
-    $CallbackFunctions[$code] = $fn;
+    if($fn) $CallbackFunctions[$code] = $fn;
+    else StopWatch("Failed to create callback function: $code");
   }
   return $CallbackFunctions[$code];
 }
@@ -2058,7 +2059,7 @@ function PmWikiAuth($pagename, $level, $authprompt=true, $since=0) {
       <form name='authform' action='$r' method='post'>
         $[Password]: <input tabindex='1' type='password' name='authpw' 
           value='' />
-        <input type='submit' value='OK' />\$PostVars</form>
+        <input type='submit' value='$[OK]' />\$PostVars</form>
         <script language='javascript' type='text/javascript'><!--
           document.authform.authpw.focus() //--></script>", &$PageEndFmt));
   PrintFmt($pagename,$AuthPromptFmt);
