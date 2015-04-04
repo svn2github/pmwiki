@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2014 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -171,7 +171,7 @@ function UploadAuth($pagename, $auth, $cache=0){
 }
 
 function HandleUpload($pagename, $auth = 'upload') {
-  global $FmtV,$UploadExtMax,
+  global $FmtV,$UploadExtMax, $EnableReadOnly,
     $HandleUploadFmt,$PageStartFmt,$PageEndFmt,$PageUploadFmt;
   UploadAuth($pagename, $auth, 1);
   $FmtV['$UploadName'] = MakeUploadName($pagename,@$_REQUEST['upname']);
@@ -180,7 +180,8 @@ function HandleUpload($pagename, $auth = 'upload') {
   $FmtV['$upext'] = PHSC(@$_REQUEST['upext']);
   $FmtV['$upmax'] = PHSC(@$_REQUEST['upmax']);
   $FmtV['$UploadResult'] = ($upresult) ?
-    FmtPageName("<i>$uprname</i>: $[UL$upresult]",$pagename) : '';
+    FmtPageName("<i>$uprname</i>: $[UL$upresult]",$pagename) : 
+      @$EnableReadOnly ? 'Cannot modify site -- $EnableReadOnly is set': '';
   SDV($HandleUploadFmt,array(&$PageStartFmt,&$PageUploadFmt,&$PageEndFmt));
   PrintFmt($pagename,$HandleUploadFmt);
 }
@@ -222,7 +223,12 @@ function HandlePostUpload($pagename, $auth = 'upload') {
   global $UploadVerifyFunction, $UploadFileFmt, $LastModFile, 
     $EnableUploadVersions, $Now, $RecentUploadsFmt, $FmtV,
     $NotifyItemUploadFmt, $NotifyItemFmt, $IsUploadPosted,
-    $UploadRedirectFunction, $UploadPermAdd, $UploadPermSet;
+    $UploadRedirectFunction, $UploadPermAdd, $UploadPermSet,
+    $EnableReadOnly;
+    
+  if(IsEnabled($EnableReadOnly, 0))
+    Abort('Cannot modify site -- $EnableReadOnly is set', 'readonly');
+
   UploadAuth($pagename, $auth);
   $uploadfile = $_FILES['uploadfile'];
   $upname = $_REQUEST['upname'];

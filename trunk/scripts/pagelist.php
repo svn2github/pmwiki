@@ -475,6 +475,7 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
     uasort($list,
            create_function('$x,$y', "global \$PCache; $code return 0;"));
   StopWatch('PageListSort end');
+  xmp($PCache);
 }
 
 
