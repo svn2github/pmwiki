@@ -181,7 +181,7 @@ function HandleUpload($pagename, $auth = 'upload') {
   $FmtV['$upmax'] = PHSC(@$_REQUEST['upmax']);
   $FmtV['$UploadResult'] = ($upresult) ?
     FmtPageName("<i>$uprname</i>: $[UL$upresult]",$pagename) : 
-      @$EnableReadOnly ? 'Cannot modify site -- $EnableReadOnly is set': '';
+      (@$EnableReadOnly ? XL('Cannot modify site -- $EnableReadOnly is set'): '');
   SDV($HandleUploadFmt,array(&$PageStartFmt,&$PageUploadFmt,&$PageEndFmt));
   PrintFmt($pagename,$HandleUploadFmt);
 }
