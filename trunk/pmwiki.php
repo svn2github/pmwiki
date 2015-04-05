@@ -455,7 +455,7 @@ function PCCF($code, $template = 'default', $args = '$m') {
   if(!isset($CallbackFunctions[$code])) {
     $fn = create_function($args, $code);
     if($fn) $CallbackFunctions[$code] = $fn;
-    else StopWatch("Failed to create callback function: $code");
+    else StopWatch("Failed to create callback function: ".PHSC($code));
   }
   return $CallbackFunctions[$code];
 }
