@@ -471,8 +471,8 @@ function PPRA($array, $x) {
   }
   return $x;
 }
-function pmcrypt($str, $salt=false) {
-  if (func_num_args() == 2) return crypt($str, $salt);
+function pmcrypt($str, $salt=null) {
+  if (!is_null($salt)) return crypt($str, $salt);
   if (function_exists('password_hash'))
     return password_hash($str, PASSWORD_DEFAULT);
   return crypt($str);
