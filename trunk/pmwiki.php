@@ -471,6 +471,12 @@ function PPRA($array, $x) {
   }
   return $x;
 }
+function pmcrypt($str, $salt=false) {
+  if (func_num_args() == 2) return crypt($str, $salt);
+  if (function_exists('password_hash'))
+    return password_hash($str, PASSWORD_DEFAULT);
+  return crypt($str);
+}
 
 function StopWatch($x) { 
   global $StopWatch, $EnableStopWatch;
@@ -2086,10 +2092,10 @@ function IsAuthorized($chal, $source, &$from) {
         if (@$AuthList[$pw]) $auth = $AuthList[$pw];
         continue;
       }
-      if (crypt($AllowPassword, $pw) == $pw)           # nopass
+      if (pmcrypt($AllowPassword, $pw) == $pw)           # nopass
         { $auth=1; continue; }
       foreach((array)$AuthPw as $pwresp)                       # password
-        if (crypt($pwresp, $pw) == $pw) { $auth=1; continue; }
+        if (pmcrypt($pwresp, $pw) == $pw) { $auth=1; continue; }
     }
   }
   if (!$passwd) return $from;
@@ -2213,7 +2219,7 @@ function HandlePostAttr($pagename, $auth = 'attr') {
       preg_match_all('/"[^"]*"|\'[^\']*\'|\\S+/', $v, $match);
       foreach($match[0] as $pw) 
         $a[] = preg_match('/^(@|\\w+:)/', $pw) ? $pw 
-                   : crypt(preg_replace('/^([\'"])(.*)\\1$/', '$2', $pw));
+                   : pmcrypt(preg_replace('/^([\'"])(.*)\\1$/', '$2', $pw));
       if ($a) $page[$attr] = implode(' ',$a);
     }
   }

@@ -397,7 +397,7 @@ function Cells($name,$attr) {
   $tattr = @$MarkupFrame[0]['tattr'];
   $name = strtolower($name);
   $key = preg_replace('/end$/', '', $name);
-  if (preg_match("/^(?:head|cell)/", $name)) $key = 'cell';
+  if (preg_match("/^(?:head|cell)$/", $name)) $key = 'cell';
   $out = '<:block>'.MarkupClose($key);
   if (substr($name, -3) == 'end') return $out;
   $cf = & $MarkupFrame[0]['closeall'];
@@ -414,14 +414,15 @@ function Cells($name,$attr) {
     else $out .= "<$t $attr>";
     $cf['cell'] = "</$t>";
   } else {
-    $out .= "<div $attr>";
-    $cf[$key] = '</div>';
+    $tag = preg_replace('/\\d+$/', '', $key);
+    $out .= "<$tag $attr>";
+    $cf[$key] = "</$tag>";
   }
   return $out;
 }
 
 Markup_e('table', '<block',
-  '/^\\(:(table|cell|cellnr|head|headnr|tableend|div\\d*(?:end)?)(\\s.*?)?:\\)/i',
+  '/^\\(:(table|cell|cellnr|head|headnr|tableend|(?:header|footer|nav|address|aside)(?:end)?|(?:div|section|article)\\d*(?:end)?)(\\s.*?)?:\\)/i',
   "Cells(\$m[1],\$m[2])");
 Markup('^>>', '<table',
   '/^&gt;&gt;(.+?)&lt;&lt;(.*)$/',
@@ -499,5 +500,5 @@ function CondDate($condparm) {
 
 # This pattern enables the (:encrypt <phrase>:) markup/replace-on-save
 # pattern.
-SDV($ROSPatterns['/\\(:encrypt\\s+([^\\s:=]+).*?:\\)/'], PCCF("return crypt(\$m[1]);"));
+SDV($ROSPatterns['/\\(:encrypt\\s+([^\\s:=]+).*?:\\)/'], PCCF("return pmcrypt(\$m[1]);"));
 

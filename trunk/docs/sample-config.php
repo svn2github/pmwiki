@@ -35,7 +35,7 @@ $WikiTitle = 'PmWiki';
 ## the "attr" passwords for the PmWiki and Main groups are locked, so
 ## an admin password is a good way to unlock those.  See PmWiki.Passwords
 ## and PmWiki.PasswordsAdmin.
-# $DefaultPasswords['admin'] = crypt('secret');
+# $DefaultPasswords['admin'] = pmcrypt('secret');
 
 ## Unicode (UTF-8) allows the display of all languages and all alphabets.
 ## Highly recommended for new wikis.
@@ -69,7 +69,7 @@ include_once("scripts/xlpage-utf-8.php");
 ##  see PmWiki.UploadsAdmin.
 # $EnableUpload = 1;
 # $UploadPermAdd = 0;
-# $DefaultPasswords['upload'] = crypt('secret');
+# $DefaultPasswords['upload'] = pmcrypt('secret');
 
 ##  Setting $EnableDiag turns on the ?action=diag and ?action=phpinfo
 ##  actions, which often helps others to remotely troubleshoot 

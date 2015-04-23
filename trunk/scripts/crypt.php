@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2002-2009 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2002-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -26,7 +26,7 @@ function HandleCrypt($pagename, $auth='read') {
       <input type='hidden' name='action' value='crypt' /></p></form>",
     $pagename);
   if ($passwd) { 
-    $crypt = crypt($passwd);
+    $crypt = pmcrypt($passwd);
     echo "<p class='vspace'>Encrypted password = $crypt</p>"; 
     echo "<p class='vspace'>To set a site-wide password, insert the line below
       in your <i>config.php</i> file, <br />replacing <tt>'type'</tt> with

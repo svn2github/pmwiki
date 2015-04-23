@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -21,7 +21,7 @@
 
     Individual username/password combinations can also be placed
     directly in the $AuthUser array, such as:
-        $AuthUser['pmichaud'] = crypt('secret');
+        $AuthUser['pmichaud'] = pmcrypt('secret');
 
     To authenticate against an LDAP server, put the url for
     the server in $AuthUser['ldap'], as in:
@@ -209,5 +209,5 @@ function _crypt($plain, $salt=null) {
     return "\$apr1\$$salt\$$q";
   }
   if (md5($plain) == $salt) return $salt;
-  return crypt($plain, $salt);
+  return pmcrypt($plain, $salt);
 }
