@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2014 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -46,9 +46,16 @@ if (IsEnabled($EnableStdWikiStyles,1)) {
     'item' => 'li|dt',
     'list' => 'ul|ol|dl',
     'div' => 'div',
+    'article' => 'article',
+    'section' => 'section',
+    'nav' => 'nav',
+    'aside' => 'aside',
+    'header' => 'header',
+    'footer' => 'footer',
+    'address' => 'address',
     'pre' => 'pre',
     'img' => 'img',
-    'block' => 'p(?!\\s+class=)|div|ul|ol|dl|li|dt|pre|h[1-6]',
+    'block' => 'p(?!\\s+class=)|div|ul|ol|dl|li|dt|pre|h[1-6]|article|section|nav|aside|address|header|footer',
     'p' => 'p(?!\\s+class=)'));
   foreach(array('item', 'list', 'block', 'p', 'div') as $c)
     SDV($WikiStyle[$c],array('apply'=>$c));
