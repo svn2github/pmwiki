@@ -422,7 +422,7 @@ function Cells($name,$attr) {
 }
 
 Markup_e('table', '<block',
-  '/^\\(:(table|cell|cellnr|head|headnr|tableend|(?:header|footer|nav|address|aside)(?:end)?|(?:div|section|article)\\d*(?:end)?)(\\s.*?)?:\\)/i',
+  '/^\\(:(table|cell|cellnr|head|headnr|tableend|(?:div\\d*|section\\d*|article\\d*|header|footer|nav|address|aside)(?:end)?)(\\s.*?)?:\\)/i',
   "Cells(\$m[1],\$m[2])");
 Markup('^>>', '<table',
   '/^&gt;&gt;(.+?)&lt;&lt;(.*)$/',
