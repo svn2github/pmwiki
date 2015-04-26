@@ -397,7 +397,7 @@ function Cells($name,$attr) {
   $tattr = @$MarkupFrame[0]['tattr'];
   $name = strtolower($name);
   $key = preg_replace('/end$/', '', $name);
-  if (preg_match("/^(?:head|cell)$/", $name)) $key = 'cell';
+  if (preg_match("/^(?:head|cell)(nr)?$/", $name)) $key = 'cell';
   $out = '<:block>'.MarkupClose($key);
   if (substr($name, -3) == 'end') return $out;
   $cf = & $MarkupFrame[0]['closeall'];
