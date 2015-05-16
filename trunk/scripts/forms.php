@@ -120,7 +120,10 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   ##  build $InputFormContent
   $FmtV['$InputFormContent'] = '';
   foreach((array)@$opt[':content'] as $a)
-    if (isset($opt[$a])) { $FmtV['$InputFormContent'] = $opt[$a]; break; }
+    if (isset($opt[$a])) { 
+      $FmtV['$InputFormContent'] = is_array($opt[$a]) ? $opt[$a][0]: $opt[$a];
+      break; 
+    }
   ##  hash and store any "secure" values
   if (@$opt['secure'] == '#') $opt['secure'] = rand();
   if (@$opt['secure'] > '') {
