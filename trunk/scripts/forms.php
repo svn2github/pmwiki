@@ -14,7 +14,7 @@ SDV($InputAttrs, array('name', 'value', 'id', 'class', 'rows', 'cols',
   ));
 
 # Set up formatting for text, submit, hidden, radio, etc. types
-foreach(array('text', 'submit', 'hidden', 'password', 'radio', 'checkbox',
+foreach(array('text', 'submit', 'hidden', 'password',
               'reset', 'file', 'image') as $t) 
   SDV($InputTags[$t][':html'], "<input type='$t' \$InputFormArgs />");
 SDV($InputTags['text']['class'], 'inputbox');
