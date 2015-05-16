@@ -150,6 +150,7 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   $attr = array();
   foreach ($attrlist as $a) {
     if (!isset($opt[$a]) || $opt[$a]===false) continue;
+    if (is_array($opt[$a])) $opt[$a] = $opt[$a][0];
     if(strpos($opt[$a], $KeepToken)!== false) # multiline textarea/hidden fields
       $opt[$a] = Keep(str_replace("'", '&#39;', MarkupRestore($opt[$a]) ));
     $attr[] = "$a='".str_replace("'", '&#39;', $opt[$a])."'";
@@ -177,13 +178,22 @@ function InputDefault($pagename, $type, $args) {
   $args[''] = (array)@$args[''];
   $name = (isset($args['name'])) ? $args['name'] : array_shift($args['']);
   $name = preg_replace('/^\\$:/', 'ptv_', $name);
-  $value = (isset($args['value'])) ? $args['value'] : array_shift($args['']);
+  $value = (isset($args['value'])) ? $args['value'] : $args[''];
   if (!isset($InputValues[$name])) $InputValues[$name] = $value;
   if (@$args['request']) {
-    $req = array_merge($_GET, $_POST);
-    foreach($req as $k => $v) 
-      if (!isset($InputValues[$k])) 
-        $InputValues[$k] = PHSC(stripmagic($v), ENT_NOQUOTES);
+    $req = RequestArgs();
+    foreach($req as $k => $v) {
+      if (is_array($v)) {
+        foreach($v as $vk=>$vv) {
+          if(is_numeric($vk)) $InputValues["{$k}[]"][] = PHSC($vv, ENT_NOQUOTES);
+          else $InputValues["{$k}[{$vk}]"] = PHSC($vv, ENT_NOQUOTES);
+        }
+      }
+      else {
+        if (!isset($InputValues[$k])) 
+          $InputValues[$k] = PHSC($v, ENT_NOQUOTES);
+      }
+    }
   }
   $sources = @$args['source'];
   if ($sources) {
@@ -251,7 +261,10 @@ function InputActionForm($pagename, $type, $args) {
 ## in $_GET and $_POST).
 function RequestArgs($req = NULL) {
   if (is_null($req)) $req = array_merge($_GET, $_POST);
-  foreach ($req as $k => $v) $req[$k] = stripmagic($req[$k]);
+  foreach ($req as $k => $v) {
+    if (is_array($v)) $req[$k] = RequestArgs($v);
+    else $req[$k] = stripmagic($req[$k]);
+  }
   return $req;
 }
 
