@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2014 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -21,8 +21,12 @@ SDV($InputTags['text']['class'], 'inputbox');
 SDV($InputTags['password']['class'], 'inputbox');
 SDV($InputTags['submit']['class'], 'inputbutton');
 SDV($InputTags['reset']['class'], 'inputbutton');
-SDV($InputTags['radio'][':checked'], 'checked');
-SDV($InputTags['checkbox'][':checked'], 'checked');
+
+foreach(array('radio', 'checkbox') as $t) 
+  SDVA($InputTags[$t], array(
+    ':html' => "<input type='$t' \$InputFormArgs />\$InputFormLabel",
+    ':args' => array('name', 'value', 'label'),
+    ':checked' => 'checked'));
 
 # (:input form:)
 SDVA($InputTags['form'], array(
@@ -124,6 +128,13 @@ function InputToHTML($pagename, $type, $args, &$opt) {
     @session_start(); 
     $_SESSION['forms'][$md5] = $opt['value'];
     $opt['value'] = $md5;
+  }
+  ## labels for checkbox and radio
+  $FmtV['$InputFormLabel'] = '';
+  if (isset($opt['label'])) {
+    static $labelcnt=0;
+    if (!isset($opt['id'])) $opt['id'] = "lbl_". (++$labelcnt);
+    $FmtV['$InputFormLabel'] = " <label for=\"{$opt['id']}\">{$opt['label']}</label> ";
   }
   ##  handle focus=# option
   $focus = @$opt['focus'];
