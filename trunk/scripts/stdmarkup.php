@@ -329,8 +329,8 @@ Markup('^!<:', '<^<:',
 Markup_e('^img', 'block',
   "/^((?>(\\s+|%%|%[A-Za-z][-,=:#\\w\\s'\".]*%)*)$KeepToken(\\d+L)$KeepToken)(\\s*\\|\\s?)?(.*)$/",
   "(strpos(\$GLOBALS['KPV'][\$m[3]],'<img')===false) ? \$m[0] :
-       '<:block,1><div>'.\$m[1] . (\$m[4] ? '<br />' : '') .\$m[5].'</div>'");
-
+       '<:block,1><div class=\"img\">'.\$m[1] . 
+       (\$m[4] ? '<br /><span class=\"caption\">'.\$m[5].'</span>' : \$m[5]) . '</div>'");
 
 ## Whitespace at the beginning of lines can be used to maintain the
 ## indent level of a previous list item, or a preformatted text block.
