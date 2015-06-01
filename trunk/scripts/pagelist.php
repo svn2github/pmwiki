@@ -660,10 +660,10 @@ function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
   $vv = array_values($pseudovars);
 
   $lgroup = ''; $out = '';
-  if(count($matches)==0 ) {
+  if (count($matches)==0) {
     $t = 0;
     while($t < count($tparts)) {
-      if($tparts[$t]=='template' && $tparts[$t+2]=='none') {
+      if ($tparts[$t]=='template' && $tparts[$t+2]=='none') {
          $out .= MarkupRestore(FPLExpandItemVars($tparts[$t+4], $matches, 0, $pseudovars));
          $t+=4;
       }
@@ -681,7 +681,7 @@ function FPLTemplateFormat($pagename, $matches, $opt, $tparts, &$output){
       if ($tparts[$t] != 'template') { $item = $tparts[$t]; $t++; }
       else {
         list($neg, $when, $control, $item) = array_slice($tparts, $t+1, 4); $t+=5;
-        if($when=='none') continue;
+        if ($when=='none') continue;
         if (!$control) {
           if ($when == 'first' && ($neg xor ($i != 0))) continue;
           if ($when == 'last' && ($neg xor ($i != count($matches) - 1))) continue;
@@ -723,7 +723,7 @@ function FPLExpandItemVars($item, $matches, $idx, $psvars) {
   $item = str_replace(array_keys($psvars), array_values($psvars), $item);
   $item = PPRE('/\\{(=|&[lg]t;)(\\$:?\\w[-\\w]*)\\}/',
               "PVSE(PageVar('$pn',  \$m[2], \$m[1]))", $item);
-  if(! IsEnabled($EnableUndefinedTemplateVars, 0))
+  if (! IsEnabled($EnableUndefinedTemplateVars, 0))
     $item = preg_replace("/\\{\\$\\$\\w+\\}/", '', $item);
   return $item;
 }

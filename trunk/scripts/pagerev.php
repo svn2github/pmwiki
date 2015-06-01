@@ -167,12 +167,12 @@ function DiffRenderSource($in, $out, $which) {
   $lines = $cnt = $x2 = $y2 = array();
   foreach($in as $line) {
     $tmp = $countdifflines>20 ? array($line) : DiffPrepareInline($line);
-    if(!$which) $cnt[] = array(count($x2), count($tmp));
+    if (!$which) $cnt[] = array(count($x2), count($tmp));
     $x2 = array_merge($x2, $tmp);
   }
   foreach($out as $line) {
     $tmp = $countdifflines>20 ? array($line) : DiffPrepareInline($line);
-    if($which) $cnt[] = array(count($y2), count($tmp));
+    if ($which) $cnt[] = array(count($y2), count($tmp));
     $y2 = array_merge($y2, $tmp);
   }
   $z = $WordDiffFunction(implode("\n", $x2), implode("\n", $y2));

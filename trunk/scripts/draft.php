@@ -57,10 +57,10 @@ function EditDraft(&$pagename, &$page, &$new) {
   if ($_POST['postdraft'] || $_POST['postedit']) $pagename = $draftname; 
   else if ($_POST['post'] && !preg_match("/$DeleteKeyPattern/", $new['text'])) { 
     $pagename = $basename; 
-    if(IsEnabled($EnableDraftAtomicDiff, 0)) {
+    if (IsEnabled($EnableDraftAtomicDiff, 0)) {
       $page = ReadPage($basename);
       foreach($new as $k=>$v) # delete draft history
-        if(preg_match('/:\\d+(:\\d+:)?$/', $k) && ! preg_match("/:$Now(:\\d+:)?$/", $k)) unset($new[$k]);
+        if (preg_match('/:\\d+(:\\d+:)?$/', $k) && ! preg_match("/:$Now(:\\d+:)?$/", $k)) unset($new[$k]);
       unset($new['rev']);
       SDVA($new, $page);
     }

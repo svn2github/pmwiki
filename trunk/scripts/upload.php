@@ -165,8 +165,8 @@ function UploadAuth($pagename, $auth, $cache=0){
     $pn_upload = FmtPageName($GroupAttributesFmt, $pagename);
   } else $pn_upload = $pagename;
   $page = RetrieveAuthPage($pn_upload, $auth, true, READPAGE_CURRENT);
-  if(!$page) Abort("?No '$auth' permissions for $pagename");
-  if($cache) PCache($pn_upload,$page);
+  if (!$page) Abort("?No '$auth' permissions for $pagename");
+  if ($cache) PCache($pn_upload,$page);
   return true;
 }
 
@@ -226,7 +226,7 @@ function HandlePostUpload($pagename, $auth = 'upload') {
     $UploadRedirectFunction, $UploadPermAdd, $UploadPermSet,
     $EnableReadOnly;
     
-  if(IsEnabled($EnableReadOnly, 0))
+  if (IsEnabled($EnableReadOnly, 0))
     Abort('Cannot modify site -- $EnableReadOnly is set', 'readonly');
 
   UploadAuth($pagename, $auth);

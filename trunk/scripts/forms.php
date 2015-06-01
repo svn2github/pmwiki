@@ -98,7 +98,7 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   ##  merge defaults for input type with arguments
   $opt = array_merge($InputTags[$type], $args);
   ## www.w3.org/TR/html4/types
-  if(isset($opt['id'])) $opt['id'] = preg_replace('/[^-A-Za-z0-9:_.]+/', '_', $opt['id']);
+  if (isset($opt['id'])) $opt['id'] = preg_replace('/[^-A-Za-z0-9:_.]+/', '_', $opt['id']);
   ##  convert any remaining positional args to flags
   foreach ((array)@$opt[''] as $a) 
     { $a = strtolower($a); if (!isset($opt[$a])) $opt[$a] = $a; }
@@ -154,7 +154,7 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   foreach ($attrlist as $a) {
     if (!isset($opt[$a]) || $opt[$a]===false) continue;
     if (is_array($opt[$a])) $opt[$a] = $opt[$a][0];
-    if(strpos($opt[$a], $KeepToken)!== false) # multiline textarea/hidden fields
+    if (strpos($opt[$a], $KeepToken)!== false) # multiline textarea/hidden fields
       $opt[$a] = Keep(str_replace("'", '&#39;', MarkupRestore($opt[$a]) ));
     $attr[] = "$a='".str_replace("'", '&#39;', $opt[$a])."'";
   }
@@ -188,7 +188,7 @@ function InputDefault($pagename, $type, $args) {
     foreach($req as $k => $v) {
       if (is_array($v)) {
         foreach($v as $vk=>$vv) {
-          if(is_numeric($vk)) $InputValues["{$k}[]"][] = PHSC($vv, ENT_NOQUOTES);
+          if (is_numeric($vk)) $InputValues["{$k}[]"][] = PHSC($vv, ENT_NOQUOTES);
           else $InputValues["{$k}[{$vk}]"] = PHSC($vv, ENT_NOQUOTES);
         }
       }
