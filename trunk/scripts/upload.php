@@ -358,17 +358,21 @@ function FmtUploadList($pagename, $args) {
   return implode("\n",$out);
 }
 
-# this adds (:if [!]attachments:) to the markup
-$Conditions['attachments'] = "AttachExist(\$pagename)";
-function AttachExist($pagename) {
-  global $UploadDir, $UploadPrefixFmt;
-  $uploaddir = FmtPageName("$UploadDir$UploadPrefixFmt", $pagename);
-  $count = 0;
+# this adds (:if [!]attachments filepattern pagename:) to the markup
+$Conditions['attachments'] = "AttachExist(\$pagename, \$condparm)";
+function AttachExist($pagename, $condparm='*') {
+  global $UploadFileFmt;
+  @list($fpat, $pn) = explode(' ', $condparm, 2);
+  $pn = ($pn > '') ? MakePageName($pagename, $pn) : $pagename;
+    
+  $uploaddir = FmtPageName($UploadFileFmt, $pn);
+  $flist = array();
   $dirp = @opendir($uploaddir);
   if ($dirp) {
     while (($file = readdir($dirp)) !== false)
-      if ($file{0} != '.') $count++;
+      if ($file{0} != '.') $flist[] = $file;
     closedir($dirp);
+    $flist = MatchNames($flist, $fpat);
   }
-  return $count;
+  return count($flist);
 }

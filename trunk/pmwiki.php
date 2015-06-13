@@ -660,6 +660,12 @@ function FixGlob($x, $rep = '$1*.$2') {
 ## regexes to include ('/'), regexes to exclude ('!'), or
 ## wildcard patterns (all others).
 function MatchPageNames($pagelist, $pat) {
+  # Note: MatchNames() is the generic function matching patterns,
+  # works for attachments and other arrays. We can commit to 
+  # keep it generic, even if we someday change MatchPageNames().
+  return MatchNames($pagelist, $pat);
+}
+function MatchNames($pagelist, $pat) {
   global $Charset, $EnableRangeMatchUTF8;
   # allow range matches in utf8; doesn't work on pmwiki.org and possibly elsewhere
   $pcre8 = (IsEnabled($EnableRangeMatchUTF8,0) && $Charset=='UTF-8')? 'u' : '';
