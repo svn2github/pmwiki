@@ -140,6 +140,7 @@ $FmtPV = array(
   '$SiteGroup'    => '$GLOBALS["SiteGroup"]',
   '$VersionNum'   => '$GLOBALS["VersionNum"]',
   '$Version'      => '$GLOBALS["Version"]',
+  '$WikiTitle'    => '$GLOBALS["WikiTitle"]',
   '$Author'       => 'NoCache($GLOBALS["Author"])',
   '$AuthId'       => 'NoCache($GLOBALS["AuthId"])',
   '$DefaultGroup' => '$GLOBALS["DefaultGroup"]',
