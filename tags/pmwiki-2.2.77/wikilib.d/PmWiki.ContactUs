@@ -1,0 +1,11 @@
+version=pmwiki-2.2.76 ordered=1 urlencoded=1
+author=Petko
+charset=UTF-8
+csum=Update for a release
+ctime=1276999784
+name=PmWiki.ContactUs
+rev=22
+targets=PmWiki.PmWiki
+text=(:title Contact us:)(:Summary:How to reach the PmWiki developers and community:)%0aThis website "{$WikiTitle}" is poweded by the open source [[http://www.pmwiki.org/|PmWiki collaborative content management system]].%0a%0aTo contact the owners/editors of the "{$WikiTitle}" '''website''', look around starting at [[{$DefaultGroup}/]]. Questions or objections about the website content should be directed to them.%0a%0aTo contact the developers and community publishing the PmWiki '''software''', please visit http://www.pmwiki.org/. %0a%0a
+time=1434750327
+title=Contact us
