@@ -981,6 +981,8 @@ class PageStore {
   var $encodefilenames;
   var $attr;
   var $recodefn;
+  var $u8decode;
+  var $u8encode;
   function PageStore($d='$WorkDir/$FullName', $w=0, $a=NULL) { 
     $this->dirfmt = $d; $this->iswrite = $w; $this->attr = (array)$a;
     $GLOBALS['PageExistsCache'] = array();
@@ -990,6 +992,8 @@ class PageStore {
     elseif (function_exists('mb_convert_encoding') && @mb_convert_encoding("te\xd0\xafst", "WINDOWS-1252", "UTF-8")=="te?st")
       $this->recodefn = create_function('$s,$from,$to', 'return @mb_convert_encoding($s,$to,$from);');
     else $this->recodefn = false;
+    $this->u8decode = create_function('$s,$from,$to', 'return utf8_decode($s);');
+    $this->u8encode = create_function('$s,$from,$to', 'return utf8_encode($s);');
   }
   function pagefile($pagename) {
     global $FarmD;
@@ -1131,9 +1135,9 @@ class PageStore {
     $to = ($Charset=='ISO-8859-1') ? 'WINDOWS-1252' : $Charset;
     if ($this->recodefn) $F = $this->recodefn;
     elseif ($to=='UTF-8' && $from=='WINDOWS-1252') # utf8 wiki & pre-2.2.30 doc
-      $F = create_function('$s,$from,$to', 'return utf8_encode($s);');
+      $F = $this->u8encode;
     elseif ($to=='WINDOWS-1252' && $from=='UTF-8') # 2.2.31+ documentation
-      $F = create_function('$s,$from,$to', 'return utf8_decode($s);');
+      $F = $this->u8decode;
     else return $a;
     foreach($a as $k=>$v) $a[$k] = $F($v,$from,$to);
     $a['charset'] = $Charset;
