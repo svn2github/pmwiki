@@ -45,8 +45,8 @@ if ($MetaRobots)
 
 ## $RobotPattern is used to identify robots.
 SDV($RobotPattern,'\\w+[-_ ]?(bot|spider|crawler)'
-  .'|Slurp|Teoma|ia_archiver|HTTrack|XML Sitemaps|Jabse|Yandex|PageAnalyzer|Yeti|Riddler'
-  .'|Pinterest|Qwantify|worldwebheritage|coccoc|HostWallker|Add Catalog');
+  .'|Slurp|Teoma|ia_archiver|HTTrack|XML Sitemaps|Jabse|Yandex|PageAnalyzer|Yeti|Riddler|Aboundex|ADmantX|WikiDo'
+  .'|Pinterest|Qwantify|worldwebheritage|coccoc|HostWallker|Add Catalog|idmarch|MegaIndex|heritrix|SEOdiver');
 SDV($IsRobotAgent, 
   $RobotPattern && preg_match("!$RobotPattern!i", @$_SERVER['HTTP_USER_AGENT']));
 if (!$IsRobotAgent) return;
