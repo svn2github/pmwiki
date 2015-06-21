@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2006 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -44,9 +44,11 @@ if ($MetaRobots)
     "  <meta name='robots' content='\$MetaRobots' />\n";
 
 ## $RobotPattern is used to identify robots.
-SDV($RobotPattern,'Googlebot|Slurp|msnbot|Teoma|ia_archiver|BecomeBot|HTTrack|MJ12bot|XML Sitemaps|Yandex');
+SDV($RobotPattern,'\\w+[-_ ]?(bot|spider|crawler)'
+  .'|Slurp|Teoma|ia_archiver|HTTrack|XML Sitemaps|Jabse|Yandex|PageAnalyzer|Yeti|Riddler'
+  .'|Pinterest|Qwantify|worldwebheritage|coccoc|HostWallker|Add Catalog');
 SDV($IsRobotAgent, 
-  $RobotPattern && preg_match("!$RobotPattern!", @$_SERVER['HTTP_USER_AGENT']));
+  $RobotPattern && preg_match("!$RobotPattern!i", @$_SERVER['HTTP_USER_AGENT']));
 if (!$IsRobotAgent) return;
 
 ## $RobotActions indicates which actions a robot is allowed to perform.
