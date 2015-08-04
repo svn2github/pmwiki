@@ -24,8 +24,10 @@ Markup_e('restorelinks','<%%',"/$KeepToken(\\d+L)$KeepToken/",
 if (IsEnabled($EnableStdWikiStyles,1)) {
   ## standard colors
   foreach(array('black','white','red','yellow','blue','gray',
-      'silver','maroon','green','navy','purple') as $c)
+      'silver','maroon','green','navy','purple',
+      'fuchsia','olive','lime','teal','aqua','orange') as $c)
     SDV($WikiStyle[$c]['color'],$c);
+  SDV($WikiStyle['grey']['color'],'gray');
   ## %newwin% style opens links in a new window
   SDV($WikiStyle['newwin']['target'],'_blank');
   ## %comment% style turns markup into a comment via display:none css
