@@ -1,7 +1,7 @@
 <?php  if (!defined('PmWiki')) exit();
 /*  
     Copyright 2003,2004 Nils Knappmeier (nk@knappi.org)
-    Copyright 2004-2010 Patrick R. Michaud (pmichaud@pobox.com)
+    Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
 
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
@@ -16,7 +16,8 @@
     Pm's revision of Nils' code simply attempts to streamline it 
     for speed (eliminate function calls and unnecessary string ops)
     and place everything into a single file.
-
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 ## PHPDiff returns the differences between $old and $new, formatted

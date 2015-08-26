@@ -4,18 +4,20 @@
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.  See pmwiki.php for full details.
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 # $InputAttrs are the attributes we allow in output tags
 SDV($InputAttrs, array('name', 'value', 'id', 'class', 'rows', 'cols', 
   'size', 'maxlength', 'action', 'method', 'accesskey', 'tabindex', 'multiple',
   'checked', 'disabled', 'readonly', 'enctype', 'src', 'alt',
-  'required', 'placeholder', 'autocomplete', 'target'
+  'required', 'placeholder', 'autocomplete'
   ));
 
 # Set up formatting for text, submit, hidden, radio, etc. types
-foreach(array('text', 'submit', 'hidden', 'password',
-              'reset', 'file', 'image') as $t) 
+foreach(array('text', 'submit', 'hidden', 'password', 'reset', 'file',
+    'image', 'email', 'url', 'number', 'search', 'date') as $t) 
   SDV($InputTags[$t][':html'], "<input type='$t' \$InputFormArgs />");
 SDV($InputTags['text']['class'], 'inputbox');
 SDV($InputTags['password']['class'], 'inputbox');

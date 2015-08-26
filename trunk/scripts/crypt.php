@@ -7,6 +7,8 @@
 
     This script defines ?action=crypt, providing help for WikiAdministrators
     to set up site-wide passwords in the installation.
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 SDV($HandleActions['crypt'],'HandleCrypt');

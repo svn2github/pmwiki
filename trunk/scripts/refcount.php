@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2011 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -14,6 +14,8 @@
     of (non-RecentChanges) pages that contain links to the page,
     the number of RecentChanges pages with links to the page, and the
     total number of references in all pages.
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 SDV($PageRefCountFmt,"<h2 class='wikiaction'>Reference Count Results</h2>");

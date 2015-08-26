@@ -14,6 +14,8 @@
     $id is a unique name for the rule, $where is the position of the rule
     relative to another rule, $pat is the pattern to look for, and
     $rep is the string to replace it with.
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 ## first we preserve text in [=...=] and [@...@]

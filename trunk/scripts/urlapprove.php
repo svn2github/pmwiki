@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -27,6 +27,8 @@
     number you can limit the number of unapproved urls that make it into
     a page.  (Wikispammers seem to like to post long lists of urls, while
     more "normal" authors tend to only post a few.)
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 $LinkFunctions['http:'] = 'LinkHTTP';

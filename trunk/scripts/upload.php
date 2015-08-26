@@ -13,6 +13,8 @@
     be necessary to set values for $UploadDir and $UploadUrlFmt,
     especially if any form of URL rewriting is being performed.
     See the PmWiki.UploadsAdmin page for more information.
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 ## $EnableUploadOverwrite determines if we allow previously uploaded

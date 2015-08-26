@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2014 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -60,7 +60,8 @@
     example, to enable just the 'pageeditfmt' transition, use
 
             $Transition['pageeditfmt'] = 1;
-
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 ## if ?trans=0 is specified, then we don't do any fixups.

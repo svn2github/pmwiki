@@ -26,6 +26,8 @@
     To authenticate against an LDAP server, put the url for
     the server in $AuthUser['ldap'], as in:
         $AuthUser['ldap'] = 'ldap://ldap.example.com/ou=People,o=example?uid';
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 # let Site.AuthForm know that we're doing user-based authorization

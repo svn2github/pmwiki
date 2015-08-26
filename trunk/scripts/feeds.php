@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -63,6 +63,8 @@
       http://www.atomenabled.org/developers/syndication/
       http://dublincore.org/documents/dcmes-xml/
       http://en.wikipedia.org/wiki/Podcasting
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 ## Settings for ?action=atom

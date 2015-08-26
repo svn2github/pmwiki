@@ -1,11 +1,13 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.  See pmwiki.php for full details.
 
     This script handles author tracking.
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 SDV($AuthorNameChars, "- '\\w\\x80-\\xff");

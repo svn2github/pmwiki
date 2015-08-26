@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2014 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -22,6 +22,8 @@
     to FmtPageList.  FmtPageList then returns the output to
     the caller, and calls Keep() (preserves HTML) or PRR() (re-evaluate
     as markup) as appropriate for the output being returned.
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 ## $PageIndexFile is the index file for term searches and link= option

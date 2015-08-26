@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2007-2014 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2007-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -50,6 +50,8 @@
     may contain escaped values representing quoted arguments and
     results of other expressions; these values may be un-escaped
     by using "preg_replace($rpat, $rrep, $params)".
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 Markup_e('{(', '>{$var}',
   '/\\{(\\(\\w+\\b.*?\\))\\}/',

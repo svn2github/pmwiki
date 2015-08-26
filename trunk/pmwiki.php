@@ -24,6 +24,8 @@
     more comments?  If you want help with any of the code here,
     write me at <pmichaud@pobox.com> with your question(s) and I'll
     provide explanations (and add comments) that answer them.
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 error_reporting(E_ALL ^ E_NOTICE);
 StopWatch('PmWiki');

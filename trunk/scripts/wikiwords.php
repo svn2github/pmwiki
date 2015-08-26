@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2001-2013 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2001-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -44,6 +44,8 @@
     be different for each call to Markup().  The example below disables
     WikiWord links like COM1, COM2, COM1234, etc.
         Markup('COM\d+', '<wikilink', '/\\bCOM\\d+/', "Keep('$0')");
+    
+    Script maintained by Petko YOTOV www.pmwiki.org/petko
 */
 
 SDV($LinkWikiWords, 1);
