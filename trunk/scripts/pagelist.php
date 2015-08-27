@@ -129,7 +129,7 @@ function SearchBox($pagename, $opt) {
     $k = str_replace("'", "&#039;", $k);
     $out .= "<input type='hidden' name='$k' value='$v' />";
   }
-  $out .= "<input type='text' name='q' value='{$opt['value']}' 
+  $out .= "<input type='search' name='q' value='{$opt['value']}' 
     class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
     class='inputbutton searchbutton' value='{$opt['label']}' />";
   return '<form '.Keep($out).'</form>';
