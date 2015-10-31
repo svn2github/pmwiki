@@ -27,6 +27,10 @@ $Charset = 'UTF-8';
 $HTTPHeaders['utf-8'] = 'Content-type: text/html; charset=UTF-8';
 $HTMLHeaderFmt['utf-8'] = 
   "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />";
+$HTMLStylesFmt['rtl-ltr'] = "
+  .rtl {direction:rtl; unicode-bidi:bidi-override;}
+  .ltr {direction:ltr; unicode-bidi:bidi-override;}
+  ";  
 $pagename = @$_REQUEST['n'];
 if (!$pagename) $pagename = @$_REQUEST['pagename'];
 if (!$pagename &&
