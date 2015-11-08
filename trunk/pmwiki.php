@@ -398,8 +398,13 @@ function HandleDispatch($pagename, $action, $msg=NULL) {
 }
 
 ## helper functions
-function stripmagic($x) 
-  { return get_magic_quotes_gpc() ? stripslashes($x) : $x; }
+function stripmagic($x) {
+  if (is_array($x)) {
+    foreach($x as $k=>$v) $x[$k] = stripmagic($v);
+    return $x;
+  }
+  return get_magic_quotes_gpc() ? stripslashes($x) : $x; 
+}
 function pre_r(&$x)
   { return '<pre>'.PHSC(print_r($x, true)).'</pre>'; }
 function PSS($x) 
