@@ -25,15 +25,15 @@ Or, to keep backups organized by date:
 
 The latest release is available here:
 
-  http://www.pmichaud.com/pub/pmwiki/pmwiki-latest.tgz
-  http://www.pmichaud.com/pub/pmwiki/pmwiki-latest.zip
+  http://www.pmwiki.org/pub/pmwiki/pmwiki-latest.tgz
+  http://www.pmwiki.org/pub/pmwiki/pmwiki-latest.zip
 
 Example download commands:
 
-  wget http://www.pmichaud.com/pub/pmwiki/pmwiki-latest.tgz
-  lftpget http://www.pmichaud.com/pub/pmwiki/pmwiki-latest.tgz
-  links http://www.pmichaud.com/pub/pmwiki/pmwiki-latest.tgz
-  lynx http://www.pmichaud.com/pub/pmwiki/pmwiki-latest.tgz
+  wget http://www.pmwiki.org/pub/pmwiki/pmwiki-latest.tgz
+  lftpget http://www.pmwiki.org/pub/pmwiki/pmwiki-latest.tgz
+  links http://www.pmwiki.org/pub/pmwiki/pmwiki-latest.tgz
+  lynx http://www.pmwiki.org/pub/pmwiki/pmwiki-latest.tgz
 
 Expanding the archive:
 
