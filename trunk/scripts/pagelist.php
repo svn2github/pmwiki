@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2016 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -162,6 +162,8 @@ function FmtPageList($outfmt, $pagename, $opt) {
     $cleanrequest = array();
     foreach($rkeys as $k) {
       $cleanrequest[$k] = stripmagic($_REQUEST[$k]);
+      if(substr($k, 0, 4)=='ptv_') # defined separately in forms
+        $cleanrequest['$:'.substr($k, 4)] = stripmagic($_REQUEST[$k]);
     }
     $opt = array_merge($opt, ParseArgs($rq, $PageListArgPattern), $cleanrequest);
   }
