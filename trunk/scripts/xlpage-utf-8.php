@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2016 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -30,6 +30,9 @@ $HTMLHeaderFmt['utf-8'] =
 $HTMLStylesFmt['rtl-ltr'] = "
   .rtl {direction:rtl; unicode-bidi:bidi-override;}
   .ltr {direction:ltr; unicode-bidi:bidi-override;}
+  .rtl .indent, .rtl.indent, .rtl .outdent, .rtl.outdent {
+    margin-left:0; margin-right: 40px;
+  }
   ";  
 $pagename = @$_REQUEST['n'];
 if (!$pagename) $pagename = @$_REQUEST['pagename'];
