@@ -1,4 +1,4 @@
-/*  Copyright 2004 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -7,7 +7,9 @@
     This file provides Javascript functions to support WYSIWYG-style
     editing.  The concepts are borrowed from the editor used in Wikipedia,
     but the code has been rewritten from scratch to integrate better with
-    PHP and PmWiki's codebase.  
+    PHP and PmWiki's codebase.
+    
+    Script maintained by Petko Yotov www.pmwiki.org/petko
 */
 
 function insButton(mopen, mclose, mtext, mlabel, mkey) {
