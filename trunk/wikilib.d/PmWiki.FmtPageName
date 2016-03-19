@@ -3,7 +3,6 @@ agent=Mozilla/5.0 (X11; Linux x86_64; rv:5.0) Gecko/20100101 Firefox/5.0
 author=Peter Bowers
 charset=UTF-8
 csum=add comment re PV form in #6
-host=85.171.160.186
 name=PmWiki.FmtPageName
 rev=44
 targets=PmWiki.Functions,PmWiki.Variables,PmWiki.Internationalizations,PmWiki.PageVariables,Cookbook.Functions

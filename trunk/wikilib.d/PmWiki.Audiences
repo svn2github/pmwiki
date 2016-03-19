@@ -3,7 +3,6 @@ agent=Mozilla/5.0 (X11; Linux x86_64; rv:5.0) Gecko/20100101 Firefox/5.0
 author=Simon
 charset=UTF-8
 csum=layout
-host=85.171.160.186
 name=PmWiki.Audiences
 rev=28
 targets=PmWiki.WikiAdministrator,PmWiki.InitialSetupTasks,PmWiki.PmWikiPhilosophy,PmWiki.LocalCustomizations

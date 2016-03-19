@@ -4,7 +4,6 @@ author=Petko
 charset=UTF-8
 csum=Title instead of Titlespaced: when it is intended to be spaced, the page has a title directive
 ctime=1135725585
-host=85.171.160.186
 name=Site.PageListTemplates
 rev=83
 targets=Group.Group,Group.Name,Site.FullName,Group.Namespaced,Site.LocalTemplates,PmWiki.PageLists,PmWiki.PageListTemplates,PmWiki.PageVariables,PmWiki.PageTextVariables,PmWiki.ConditionalMarkup,Cookbook.PagelistTemplateSamples

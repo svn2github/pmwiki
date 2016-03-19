@@ -4,7 +4,6 @@ author=Scott Connard
 charset=UTF-8
 csum=restore
 ctime=1142751483
-host=85.171.160.186
 name=PmWiki.WikiFarmTerminology
 rev=24
 targets=PmWiki.Glossary,Category.WikiFarms

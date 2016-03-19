@@ -4,7 +4,6 @@ author=ed
 charset=UTF-8
 csum=add click
 ctime=1137027716
-host=85.171.160.186
 name=PmWiki.AccessKeys
 rev=107
 targets=PmWiki.Drafts,PmWiki.Internationalizations,PmWiki.SitePreferences,Site.Preferences,Cookbook.LeanSkin,Site.PageActions

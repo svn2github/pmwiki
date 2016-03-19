@@ -4,7 +4,6 @@ author=Chris
 charset=UTF-8
 csum=\ is not needed when using simple quotes (doesn't work actually)
 ctime=1141945978
-host=85.171.160.186
 name=PmWiki.Tables
 rev=64
 targets=PmWiki.TableDirectives,Cookbook.RowspanInSimpleTables,Cookbook.FormattingTables,PmWiki.WikiStyles

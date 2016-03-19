@@ -4,7 +4,6 @@ author=SchreyP
 charset=UTF-8
 csum=Add "|+" after Documentation index link so translation is shown
 ctime=1219202352
-host=85.171.160.186
 name=PmWiki.GroupFooter
 rev=62
 targets=PmWiki.DocumentationIndex,PmWiki.Variables,PmWiki.GroupF

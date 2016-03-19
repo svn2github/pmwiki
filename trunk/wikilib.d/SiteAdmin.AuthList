@@ -4,7 +4,6 @@ author=HansB
 charset=UTF-8
 csum=added Summary so it shows up at Site/Site
 ctime=1180200570
-host=85.171.160.186
 name=SiteAdmin.AuthList
 rev=30
 targets=SiteAdmin.AuthList
