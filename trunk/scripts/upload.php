@@ -107,7 +107,7 @@ XLSDV('en',array(
   'ULpquota' => 'group quota exceeded',
   'ULtquota' => 'upload quota exceeded'));
 SDV($PageAttributes['passwdupload'],'$[Set new upload password:]');
-SDV($DefaultPasswords['upload'],'*');
+SDV($DefaultPasswords['upload'],'@lock');
 SDV($AuthCascade['upload'], 'read');
 SDV($FmtPV['$PasswdUpload'], 'PasswdVar($pn, "upload")');
 
