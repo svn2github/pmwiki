@@ -85,6 +85,7 @@ function PrintDiff($pagename) {
     if (!$diffauthor) $diffauthor="unknown";
     $FmtV['$DiffChangeSum'] = PHSC(@$page["csum:$diffgmt"]);
     $FmtV['$DiffHost'] = @$page["host:$diffgmt"];
+    $FmtV['$DiffUserAgent'] = PHSC(@$page["agent:$diffgmt"], ENT_QUOTES);
     $FmtV['$DiffAuthor'] = $diffauthor;
     $FmtV['$DiffId'] = $k;
     $html = $DiffHTMLFunction($pagename, $v);
