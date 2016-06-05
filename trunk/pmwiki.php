@@ -1569,6 +1569,7 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
     $LinkPageCreateSpaceFmt, $LinkPageCreateFmt, $LinkTargets,
     $EnableLinkPageRelative, $EnableLinkPlusTitlespaced;
   $alt = str_replace(array('"',"'"),array('&#34;','&#39;'),$alt);
+  $path = preg_replace('/(#[-.:\\w]*)#.*$/', '$1', $path); # PITS:01388
   if (!$fmt && $path{0} == '#') {
     $path = preg_replace("/[^-.:\\w]/", '', $path);
     if (trim($txt) == '+') $txt = PageVar($pagename, '$Title');
