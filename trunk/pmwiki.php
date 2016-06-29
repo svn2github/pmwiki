@@ -140,6 +140,7 @@ $FmtPV = array(
   '$LastModifiedTime' => '$page["time"]',
   '$Description'  => '@$page["description"]',
   '$SiteGroup'    => '$GLOBALS["SiteGroup"]',
+  '$SiteAdminGroup' => '$GLOBALS["SiteAdminGroup"]',
   '$VersionNum'   => '$GLOBALS["VersionNum"]',
   '$Version'      => '$GLOBALS["Version"]',
   '$WikiTitle'    => '$GLOBALS["WikiTitle"]',
