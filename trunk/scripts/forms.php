@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2016 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2015 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -342,8 +342,8 @@ SDVA($InputTags['e_changesummary'], array(
   'name' => 'csum', 'size' => '60', 'maxlength' => '100',
   'value' => PHSC(stripmagic(@$_POST['csum']), ENT_QUOTES)));
 SDVA($InputTags['e_minorcheckbox'], array(
-  ':html' => "<input type='checkbox' \$InputFormArgs />\$InputFormLabel",
-  'name' => 'diffclass', 'value' => 'minor', 'label' => XL('This is a minor edit')));  
+  ':html' => "<input type='checkbox' \$InputFormArgs />",
+  'name' => 'diffclass', 'value' => 'minor'));
 if (@$_POST['diffclass']=='minor') 
   SDV($InputTags['e_minorcheckbox']['checked'], 'checked');
 SDVA($InputTags['e_savebutton'], array(
