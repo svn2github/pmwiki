@@ -1270,28 +1270,19 @@ function PrintFmt($pagename,$fmt) {
   if (substr($x, 0, 5) == 'wiki:')
     { PrintWikiPage($pagename, substr($x, 5), 'read'); return; }
   if (substr($x, 0, 5) == 'page:')
-    { PrintWikiPage($pagename, substr($x, 5), 'ALWAYS'); return; }
+    { PrintWikiPage($pagename, substr($x, 5), ''); return; }
   echo $x;
 }
 
 function PrintWikiPage($pagename, $wikilist=NULL, $auth='read') {
   if (is_null($wikilist)) $wikilist=$pagename;
   $pagelist = preg_split('/\s+/',$wikilist,-1,PREG_SPLIT_NO_EMPTY);
-
   foreach($pagelist as $p) {
-    $section = "";
-    if(preg_match('/^([^#]+)(#.+)$/', $p, $m)) {
-      $p = $m[1];
-      $section = $m[2];
-    }
     if (PageExists($p)) {
-      if($section) $out = RetrieveAuthSection($p, $section, NULL, $auth);
-      else {
-        $page = RetrieveAuthPage($p, $auth, false, READPAGE_CURRENT);
-        $out = @$page['text'];
-      }
-      if ($out) 
-        echo MarkupToHTML($pagename,Qualify($p, $out));
+      $page = ($auth) ? RetrieveAuthPage($p, $auth, false, READPAGE_CURRENT)
+              : ReadPage($p, READPAGE_CURRENT);
+      if ($page['text']) 
+        echo MarkupToHTML($pagename,Qualify($p, $page['text']));
       return;
     }
   }
