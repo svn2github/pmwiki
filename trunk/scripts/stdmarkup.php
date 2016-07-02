@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2016 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -381,8 +381,15 @@ Markup_e('^||||', 'block',
   "FormatTableRow(\$m[0])");
 ## ||table attributes
 Markup_e('^||','>^||||','/^\\|\\|(.*)$/',
-  "PZZ(\$GLOBALS['BlockMarkups']['table'][0] = '<table '.PQA(\$m[1]).'>')
+  "PZZ(\$GLOBALS['BlockMarkups']['table'][0] = '<table '.SimpleTableAttr(\$m[1]).'>')
     .'<:block,1>'");
+function SimpleTableAttr($attr) {
+  global $SimpleTableDefaultClassName;
+  $qattr = PQA($attr);
+  if(IsEnabled($SimpleTableDefaultClassName) && !preg_match("/(^| )class='.*?' /", $qattr))
+    $qattr .= "class='$SimpleTableDefaultClassName'";
+  return $qattr;
+}
 
 ## headings
 Markup_e('^!', 'block',
