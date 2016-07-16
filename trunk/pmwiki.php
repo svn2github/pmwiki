@@ -1873,7 +1873,7 @@ function SaveAttributes($pagename,&$page,&$new) {
   if (!$EnablePost) return;
   $text = PPRA($SaveAttrPatterns, $new['text']);
   $LinkTargets = array();
-  $html = MarkupToHTML($pagename,$text);
+  $new['=html'] = MarkupToHTML($pagename,$text);
   $new['targets'] = implode(',',array_keys((array)$LinkTargets));
   $p = & $PCache[$pagename];
   foreach((array)$SaveProperties as $k) {
