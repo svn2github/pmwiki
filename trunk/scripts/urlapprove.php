@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2016 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -36,7 +36,7 @@ $LinkFunctions['https:'] = 'LinkHTTP';
 SDV($ApprovedUrlPagesFmt, array('$SiteAdminGroup.ApprovedUrls'));
 SDV($UnapprovedLinkFmt,
   "\$LinkText<a class='apprlink' href='{\$PageUrl}?action=approvesites'>$[(approve sites)]</a>");
-$HTMLStylesFmt['urlapprove'] = '.apprlink { font-size:smaller; }';
+SDVA($HTMLStylesFmt, array('urlapprove' => '.apprlink { font-size:smaller; }'));
 SDV($ApproveUrlPattern,
   "\\bhttps?:[^\\s$UrlExcludeChars]*[^\\s.,?!$UrlExcludeChars]");
 $WhiteUrlPatterns = (array)$WhiteUrlPatterns;
