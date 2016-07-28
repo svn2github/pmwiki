@@ -125,12 +125,13 @@ function SearchBox($pagename, $opt) {
     if ($v == '' || is_array($v)) continue;
     $v = str_replace("'", "&#039;", $v);
     $opt[$k] = $v;
-    if ($k == 'q' || $k == 'label' || $k == 'value' || $k == 'size') continue;
+    if(preg_match('/^(q|label|value|size|placeholder)$/', $k)) continue;
     $k = str_replace("'", "&#039;", $k);
     $out .= "<input type='hidden' name='$k' value='$v' />";
   }
-  $out .= "<input type='search' name='q' value='{$opt['value']}' 
-    class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
+  $out .= "<input type='search' name='q' value='{$opt['value']}' ";
+  if(@$opt['placeholder']) $out .= "  placeholder='{$opt['placeholder']}' ";
+  $out .= "  class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
     class='inputbutton searchbutton' value='{$opt['label']}' />";
   return '<form '.Keep($out).'</form>';
 }
