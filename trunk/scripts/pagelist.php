@@ -109,7 +109,7 @@ define('PAGELIST_POST', 4);
 ## If $SearchBoxFmt is defined, that is used, otherwise a searchbox
 ## is generated.  Options include group=, size=, label=.
 function SearchBox($pagename, $opt) {
-  global $SearchBoxFmt, $SearchBoxOpt, $SearchQuery, $EnablePathInfo;
+  global $SearchBoxFmt, $SearchBoxInputType, $SearchBoxOpt, $SearchQuery, $EnablePathInfo;
   if (isset($SearchBoxFmt)) return Keep(FmtPageName($SearchBoxFmt, $pagename));
   SDVA($SearchBoxOpt, array('size' => '40', 
     'label' => FmtPageName('$[Search]', $pagename),
@@ -129,7 +129,8 @@ function SearchBox($pagename, $opt) {
     $k = str_replace("'", "&#039;", $k);
     $out .= "<input type='hidden' name='$k' value='$v' />";
   }
-  $out .= "<input type='search' name='q' value='{$opt['value']}' ";
+  SDV($SearchBoxInputType, 'text');
+  $out .= "<input type='$SearchBoxInputType' name='q' value='{$opt['value']}' ";
   if(@$opt['placeholder']) $out .= "  placeholder='{$opt['placeholder']}' ";
   $out .= "  class='inputbox searchbox' size='{$opt['size']}' /><input type='submit' 
     class='inputbutton searchbutton' value='{$opt['label']}' />";
