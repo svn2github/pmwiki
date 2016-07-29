@@ -43,6 +43,7 @@ function VarIndexLoad($pagename) {
   static $loaded;
   $VarIndex = (array)@$VarIndex;
   if ($loaded) return;
+  $tmp = array();
   foreach($VarPagesFmt as $vf) {
     $v = FmtPageName($vf, $pagename);
     if (@$loaded[$v]) continue;
@@ -57,10 +58,15 @@ function VarIndexLoad($pagename) {
       if (!preg_match_all("/\n:\\$([[:upper:]]\\w+|pagename):/",@$vpage['text'],$match))
         continue;
       foreach($match[1] as $n) {
-        $VarIndex[$n]['pagename'] = $vname;
-        $VarIndex[$n]['url'] = FmtPageName("{\$PageUrl}#$n",$vname);
+        $tmp[$n]['pagename'] = $vname;
+        $tmp[$n]['url'] = FmtPageName("{\$PageUrl}#$n",$vname);
       }
     }
+  }
+  $keys = array_keys($tmp);
+  natcasesort($keys); # ksort requires PHP 5.4 for caseless sort
+  foreach($keys as $k) {
+    $VarIndex[$k] = $tmp[$k];
   }
 }
 
@@ -68,7 +74,6 @@ function VarIndexLoad($pagename) {
 function VarIndexList($pagename) {
   global $VarIndex;
   if (!isset($VarIndex)) VarIndexLoad($pagename);
-  ksort($VarIndex);
   $out = "<table><tr><th>Variable</th><th>Documented in</th></tr>\n";
   foreach($VarIndex as $v=>$a) 
     $out .= FmtPageName("<tr><td><a class='varlink' 
