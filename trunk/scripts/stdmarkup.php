@@ -328,11 +328,22 @@ Markup('^!<:', '<^<:',
 
 ## Lines that begin with displayed images receive their own block.  A
 ## pipe following the image indicates a "caption" (generates a linebreak).
-Markup_e('^img', 'block',
+Markup('^img', 'block',
   "/^((?>(\\s+|%%|%[A-Za-z][-,=:#\\w\\s'\".]*%)*)$KeepToken(\\d+L)$KeepToken)(\\s*\\|\\s?)?(.*)$/",
-  "(strpos(\$GLOBALS['KPV'][\$m[3]],'<img')===false) ? \$m[0] :
-       '<:block,1><div class=\"img\">'.\$m[1] . 
-       (\$m[4] ? '<br /><span class=\"caption\">'.\$m[5].'</span>' : \$m[5]) . '</div>'");
+  "ImgCaptionDiv");
+function ImgCaptionDiv($m) {
+  global $KPV;
+  if (strpos($KPV[$m[3]], '<img')===false) return $m[0];
+  $dclass = 'img';
+  $ret = $m[1];
+  if ($m[4]) {
+    $dclass .= " imgcaption";
+    $ret .= "<br /><span class='caption'>$m[5]</span>";
+  }
+  elseif (! $m[5]) $dclass .= " imgonly";
+  else $ret .= $m[5];
+  return "<:block,1><div class='$dclass'>$ret</div>";
+}
 
 ## Whitespace at the beginning of lines can be used to maintain the
 ## indent level of a previous list item, or a preformatted text block.
