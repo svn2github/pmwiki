@@ -1571,9 +1571,13 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
     $EnableLinkPageRelative, $EnableLinkPlusTitlespaced;
   $alt = str_replace(array('"',"'"),array('&#34;','&#39;'),$alt);
   $path = preg_replace('/(#[-.:\\w]*)#.*$/', '$1', $path); # PITS:01388
+  if (is_array($txt)) { # PITS:01392
+    $suffix = $txt[1];
+    $txt = $txt[0];
+  }
   if (!$fmt && $path{0} == '#') {
     $path = preg_replace("/[^-.:\\w]/", '', $path);
-    if (trim($txt) == '+') $txt = PageVar($pagename, '$Title');
+    if (trim($txt) == '+') $txt = PageVar($pagename, '$Title') . @$suffix;
     if ($alt) $alt = " title='$alt'";
     return ($path) ? "<a href='#$path'$alt>".str_replace("$", "&#036;", $txt)."</a>" : '';
   }
@@ -1593,7 +1597,7 @@ function LinkPage($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   }
   $url = PageVar($tgtname, '$PageUrl');
   if (trim($txt) == '+') $txt = PageVar($tgtname, 
-    IsEnabled($EnableLinkPlusTitlespaced, 0) ? '$Titlespaced' : '$Title');
+    IsEnabled($EnableLinkPlusTitlespaced, 0) ? '$Titlespaced' : '$Title') . @$suffix;
   $txt = str_replace("$", "&#036;", $txt);
   if (@$EnableLinkPageRelative)
     $url = preg_replace('!^[a-z]+://[^/]*!i', '', $url);
@@ -1622,7 +1626,10 @@ function MakeLink($pagename,$tgt,$txt=NULL,$suffix=NULL,$fmt=NULL) {
         $txt = preg_replace('!^.*[^<]/!', '', $txt);
       }
     }
-    $txt .= $suffix;
+    if ($m[1]=='<:page>' && trim($txt) == '+' && $suffix>'') { # PITS:01392
+      $txt = array(trim($txt), $suffix);
+    }
+    else $txt .= $suffix;
   }
   if (@$LinkTitleFunction) $m[4] = $LinkTitleFunction($pagename,$m,$txt);
   $out = $LinkFunctions[$m[1]]($pagename,$m[1],$m[2],@$m[4],$txt,$fmt);
