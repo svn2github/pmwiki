@@ -2140,9 +2140,9 @@ function IsAuthorized($chal, $source, &$from) {
         if (@$AuthList[$pw]) $auth = $AuthList[$pw];
         continue;
       }
-      if (pmcrypt($AllowPassword, $pw) == $pw)           # nopass
+      if ($AllowPassword && pmcrypt($AllowPassword, $pw) == $pw) # nopass
         { $auth=1; continue; }
-      foreach((array)$AuthPw as $pwresp)                       # password
+      foreach((array)$AuthPw as $pwresp)                         # password
         if (pmcrypt($pwresp, $pw) == $pw) { $auth=1; continue; }
     }
   }
