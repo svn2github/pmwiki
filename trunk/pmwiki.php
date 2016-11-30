@@ -871,7 +871,7 @@ function FmtPageName($fmt, $pagename) {
   $fmt = PPRE('/\\$\\[(?>([^\\]]+))\\]/',"XL(\$m[1])",$fmt);
   $fmt = str_replace('{$ScriptUrl}', '$ScriptUrl', $fmt);
   $fmt = 
-    PPRE('/\\{(\\$[A-Z]\\w+)\\}/', "PageVar('$pagename', \$m[1])", $fmt);
+    PPRE('/\\{\\*?(\\$[A-Z]\\w+)\\}/', "PageVar('$pagename', \$m[1])", $fmt);
   if (strpos($fmt,'$')===false) return $fmt;
   if ($FmtP) $fmt = PPRA($FmtP, $fmt); # FIXME
   static $pv, $pvpat;
