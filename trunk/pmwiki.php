@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2016 Patrick R. Michaud
+    Copyright 2001-2017 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
@@ -708,7 +708,7 @@ function ResolvePageName($pagename) {
   global $DefaultPage, $DefaultGroup, $DefaultName,
     $GroupPattern, $NamePattern, $EnableFixedUrlRedirect;
   SDV($DefaultPage, "$DefaultGroup.$DefaultName");
-  $pagename = preg_replace('!([./][^./]+)\\.html$!', '$1', $pagename);
+  $pagename = preg_replace('!([./][^./]+)\\.html?$!', '$1', $pagename);
   if ($pagename == '') return $DefaultPage;
   $p = MakePageName($DefaultPage, $pagename);
   if (!preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $p)) {
