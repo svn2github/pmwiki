@@ -1098,7 +1098,7 @@ class PageStore {
     if (!$s)
       Abort("Cannot write page to $pagename ($pagefile)...changes not saved");
     PCache($pagename, $page);
-    @unset($PageExistsCache[$pagename]); # PITS:01401
+    unset($PageExistsCache[$pagename]); # PITS:01401
   }
   function exists($pagename) {
     if (!$pagename) return false;
@@ -1109,7 +1109,7 @@ class PageStore {
     global $Now, $PageExistsCache;
     $pagefile = $this->pagefile($pagename);
     @rename($pagefile,"$pagefile,del-$Now");
-    @unset($PageExistsCache[$pagename]); # PITS:01401
+    unset($PageExistsCache[$pagename]); # PITS:01401
   }
   function ls($pats=NULL) {
     global $GroupPattern, $NamePattern;
