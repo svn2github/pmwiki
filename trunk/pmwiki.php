@@ -1064,7 +1064,7 @@ class PageStore {
     return $this->recode($pagename, @$page);
   }
   function write($pagename,$page) {
-    global $Now, $Version, $Charset, $EnableRevUserAgent;
+    global $Now, $Version, $Charset, $EnableRevUserAgent, $PageExistsCache;
     $page['charset'] = $Charset;
     $page['name'] = $pagename;
     $page['time'] = $Now;
@@ -1098,6 +1098,7 @@ class PageStore {
     if (!$s)
       Abort("Cannot write page to $pagename ($pagefile)...changes not saved");
     PCache($pagename, $page);
+    @unset($PageExistsCache[$pagename]); # PITS:01401
   }
   function exists($pagename) {
     if (!$pagename) return false;
@@ -1105,9 +1106,10 @@ class PageStore {
     return ($pagefile && file_exists($pagefile));
   }
   function delete($pagename) {
-    global $Now;
+    global $Now, $PageExistsCache;
     $pagefile = $this->pagefile($pagename);
     @rename($pagefile,"$pagefile,del-$Now");
+    @unset($PageExistsCache[$pagename]); # PITS:01401
   }
   function ls($pats=NULL) {
     global $GroupPattern, $NamePattern;
