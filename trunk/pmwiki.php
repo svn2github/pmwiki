@@ -886,7 +886,7 @@ function FmtPageName($fmt, $pagename) {
     array('pagename'=>$pagename));
   $fmt = PPRE('!\\$ScriptUrl/([^?#\'"\\s<>]+)!',
     (@$EnablePathInfo) ? "\$ScriptUrl.PUE(\$m[1])" :
-        "\$ScriptUrl?n=.str_replace('/','.',PUE(\$m[1]))",
+        "\$ScriptUrl.'?n='.str_replace('/','.',PUE(\$m[1]))",
     $fmt, array('ScriptUrl'=>$ScriptUrl));
   if (strpos($fmt,'$')===false) return $fmt;
   static $g;
