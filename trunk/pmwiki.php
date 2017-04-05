@@ -707,7 +707,7 @@ function MatchNames($pagelist, $pat) {
 function ResolvePageName($pagename, $sdv = true) {
   global $DefaultPage, $DefaultGroup, $DefaultName,
     $GroupPattern, $NamePattern, $EnableFixedUrlRedirect;
-  $dp = "$DefaultGroup.$DefaultName"
+  $dp = "$DefaultGroup.$DefaultName";
   if($sdv) SDV($DefaultPage, $dp);
   
   $pagename = preg_replace('!([./][^./]+)\\.html?$!', '$1', $pagename);
