@@ -704,13 +704,15 @@ function MatchNames($pagelist, $pat) {
 ## ResolvePageName "normalizes" a pagename based on the current
 ## settings of $DefaultPage and $PagePathFmt.  It's normally used
 ## during initialization to fix up any missing or partial pagenames.
-function ResolvePageName($pagename) {
+function ResolvePageName($pagename, $sdv = true) {
   global $DefaultPage, $DefaultGroup, $DefaultName,
     $GroupPattern, $NamePattern, $EnableFixedUrlRedirect;
-  SDV($DefaultPage, "$DefaultGroup.$DefaultName");
+  $dp = "$DefaultGroup.$DefaultName"
+  if($sdv) SDV($DefaultPage, $dp);
+  
   $pagename = preg_replace('!([./][^./]+)\\.html?$!', '$1', $pagename);
-  if ($pagename == '') return $DefaultPage;
-  $p = MakePageName($DefaultPage, $pagename);
+  if ($pagename == '') return $dp;
+  $p = MakePageName($dp, $pagename);
   if (!preg_match("/^($GroupPattern)[.\\/]($NamePattern)$/i", $p)) {
     header('HTTP/1.1 404 Not Found');
     Abort('$[?invalid page name]');
@@ -720,7 +722,7 @@ function ResolvePageName($pagename) {
   if (IsEnabled($EnableFixedUrlRedirect, 1)
       && $p && (PageExists($p) || preg_match('/[\\/.]/', $pagename)))
     { Redirect($p); exit(); }
-  return MakePageName($DefaultPage, "$pagename.$pagename");
+  return MakePageName($dp, "$pagename.$pagename");
 }
 
 ## MakePageName is used to convert a string $str into a fully-qualified
@@ -866,7 +868,8 @@ function FmtPageName($fmt, $pagename) {
   # Perform $-substitutions on $fmt relative to page given by $pagename
   global $GroupPattern, $NamePattern, $EnablePathInfo, $ScriptUrl,
     $GCount, $UnsafeGlobals, $FmtV, $FmtP, $FmtPV, $PCache, $AsSpacedFunction;
-  if (strpos($fmt,'$')===false) return $fmt;                  
+  if (strpos($fmt,'$')===false) return $fmt;
+  $pagename = ResolvePageName($pagename, false);
   $fmt = PPRE('/\\$([A-Z]\\w*Fmt)\\b/','$GLOBALS[$m[1]]',$fmt);
   $fmt = PPRE('/\\$\\[(?>([^\\]]+))\\]/',"XL(\$m[1])",$fmt);
   $fmt = str_replace('{$ScriptUrl}', '$ScriptUrl', $fmt);
@@ -1206,6 +1209,7 @@ function ListPages($pat=NULL) {
 function RetrieveAuthPage($pagename, $level, $authprompt=true, $since=0) {
   global $AuthFunction;
   SDV($AuthFunction,'PmWikiAuth');
+  $pagename = ResolvePageName($pagename, false);
   if (!function_exists($AuthFunction)) return ReadPage($pagename, $since);
   return $AuthFunction($pagename, $level, $authprompt, $since);
 }
