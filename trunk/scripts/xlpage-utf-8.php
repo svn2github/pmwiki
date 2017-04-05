@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2016 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -40,8 +40,9 @@ if (!$pagename &&
       preg_match('!^'.preg_quote($_SERVER['SCRIPT_NAME'],'!').'/?([^?]*)!',
           $_SERVER['REQUEST_URI'],$match))
     $pagename = urldecode($match[1]);
-$pagename = preg_replace('!/+$!','',$pagename);
-$FmtPV['$RequestedPage'] = "'".PHSC($pagename, ENT_QUOTES)."'";
+$pagename_unfiltered = $pagename;
+$pagename = preg_replace('![${}\'"\\\\]+!', '', $pagename);
+$FmtPV['$RequestedPage'] = 'PHSC($GLOBALS["pagename_unfiltered"], ENT_QUOTES)';
 
 $GroupPattern = '[\\w\\x80-\\xfe]+(?:-[\\w\\x80-\\xfe]+)*';
 $NamePattern = '[\\w\\x80-\\xfe]+(?:-[\\w\\x80-\\xfe]+)*';

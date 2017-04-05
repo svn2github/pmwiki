@@ -220,7 +220,6 @@ $CallbackFnTemplates = array(
   'return' => 'return %s;',
   'markup_e' => 'extract($GLOBALS["MarkupToHTML"]); return %s;',
   'qualify'  => 'extract($GLOBALS["tmp_qualify"]); return %s;',
-  'ppre'  => 'extract($GLOBALS["PPRE"]); return %s;',
 );
 
 $Conditions['enabled'] = '(boolean)@$GLOBALS[$condparm]';
@@ -323,7 +322,9 @@ if (!$pagename &&
 if (preg_match('/[\\x80-\\xbf]/',$pagename)) 
   $pagename=utf8_decode($pagename);
 $pagename = preg_replace('![^[:alnum:]\\x80-\\xff]+$!','',$pagename);
-$FmtPV['$RequestedPage'] = "'".PHSC($pagename, ENT_QUOTES)."'";
+$pagename_unfiltered = $pagename;
+$pagename = preg_replace('![${}\'"\\\\]+!', '', $pagename);
+$FmtPV['$RequestedPage'] = 'PHSC($GLOBALS["pagename_unfiltered"], ENT_QUOTES)';
 $Cursor['*'] = &$pagename;
 if (function_exists("date_default_timezone_get") ) { # fix PHP5.3 warnings
   @date_default_timezone_set(@date_default_timezone_get());
@@ -472,9 +473,8 @@ function PCCF($code, $template = 'default', $args = '$m') {
   }
   return $CallbackFunctions[$code];
 }
-function PPRE($pat, $rep, $x, $vars = false) {
-  $GLOBALS['PPRE'] = (is_array($vars)) ? $vars : array(); 
-  $lambda = PCCF($rep, "ppre");
+function PPRE($pat, $rep, $x) {
+  $lambda = PCCF("return $rep;");
   return preg_replace_callback($pat, $lambda, $x);
 }
 function PPRA($array, $x) {
@@ -873,8 +873,7 @@ function FmtPageName($fmt, $pagename) {
   $fmt = PPRE('/\\$\\[(?>([^\\]]+))\\]/',"XL(\$m[1])",$fmt);
   $fmt = str_replace('{$ScriptUrl}', '$ScriptUrl', $fmt);
   $fmt = 
-    PPRE('/\\{\\*?(\\$[A-Z]\\w+)\\}/', "PageVar(\$pagename, \$m[1])", $fmt,
-      array('pagename'=>$pagename));
+    PPRE('/\\{\\*?(\\$[A-Z]\\w+)\\}/', "PageVar('$pagename', \$m[1])", $fmt);
   if (strpos($fmt,'$')===false) return $fmt;
   if ($FmtP) $fmt = PPRA($FmtP, $fmt); # FIXME
   static $pv, $pvpat;
@@ -882,12 +881,11 @@ function FmtPageName($fmt, $pagename) {
     $pvpat = str_replace('$', '\\$', implode('|', array_keys($FmtPV)));
     $pv = count($FmtPV);
   }
-  $fmt = PPRE("/(?:$pvpat)\\b/", "PageVar(\$pagename, \$m[0])", $fmt,
-    array('pagename'=>$pagename));
+  $fmt = PPRE("/(?:$pvpat)\\b/", "PageVar('$pagename', \$m[0])", $fmt);
   $fmt = PPRE('!\\$ScriptUrl/([^?#\'"\\s<>]+)!',
-    (@$EnablePathInfo) ? "\$ScriptUrl.PUE(\$m[1])" :
-        "\$ScriptUrl.'?n='.str_replace('/','.',PUE(\$m[1]))",
-    $fmt, array('ScriptUrl'=>$ScriptUrl));
+    (@$EnablePathInfo) ? "'$ScriptUrl'.PUE(\$m[1])" :
+        "'$ScriptUrl?n='.str_replace('/','.',PUE(\$m[1]))", 
+    $fmt);
   if (strpos($fmt,'$')===false) return $fmt;
   static $g;
   if ($GCount != count($GLOBALS)+count($FmtV)) {
@@ -930,7 +928,7 @@ function FmtTemplateVars($text, $vars, $pagename = NULL) {
   if ($pagename) {
     $pat = implode('|', array_map('preg_quote', array_keys($FmtPV)));
     $text = PPRE("/\\{\\$($pat)\\}/",
-      "PageVar(\$pagename, \$m[1])", $text, array('pagename'=>$pagename));
+                         "PageVar('$pagename', \$m[1])", $text);
   }
   foreach(preg_grep('/^[\\w$]/', array_keys($vars)) as $k)
     if (!is_array($vars[$k]))
