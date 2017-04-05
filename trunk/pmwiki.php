@@ -220,6 +220,7 @@ $CallbackFnTemplates = array(
   'return' => 'return %s;',
   'markup_e' => 'extract($GLOBALS["MarkupToHTML"]); return %s;',
   'qualify'  => 'extract($GLOBALS["tmp_qualify"]); return %s;',
+  'ppre'  => 'extract($GLOBALS["PPRE"]); return %s;',
 );
 
 $Conditions['enabled'] = '(boolean)@$GLOBALS[$condparm]';
@@ -471,8 +472,9 @@ function PCCF($code, $template = 'default', $args = '$m') {
   }
   return $CallbackFunctions[$code];
 }
-function PPRE($pat, $rep, $x) {
-  $lambda = PCCF("return $rep;");
+function PPRE($pat, $rep, $x, $vars = false) {
+  $GLOBALS['PPRE'] = (is_array($vars)) ? $vars : array(); 
+  $lambda = PCCF($rep, "ppre");
   return preg_replace_callback($pat, $lambda, $x);
 }
 function PPRA($array, $x) {
@@ -871,7 +873,8 @@ function FmtPageName($fmt, $pagename) {
   $fmt = PPRE('/\\$\\[(?>([^\\]]+))\\]/',"XL(\$m[1])",$fmt);
   $fmt = str_replace('{$ScriptUrl}', '$ScriptUrl', $fmt);
   $fmt = 
-    PPRE('/\\{\\*?(\\$[A-Z]\\w+)\\}/', "PageVar('$pagename', \$m[1])", $fmt);
+    PPRE('/\\{\\*?(\\$[A-Z]\\w+)\\}/', "PageVar(\$pagename, \$m[1])", $fmt,
+      array('pagename'=>$pagename));
   if (strpos($fmt,'$')===false) return $fmt;
   if ($FmtP) $fmt = PPRA($FmtP, $fmt); # FIXME
   static $pv, $pvpat;
@@ -879,11 +882,12 @@ function FmtPageName($fmt, $pagename) {
     $pvpat = str_replace('$', '\\$', implode('|', array_keys($FmtPV)));
     $pv = count($FmtPV);
   }
-  $fmt = PPRE("/(?:$pvpat)\\b/", "PageVar('$pagename', \$m[0])", $fmt);
+  $fmt = PPRE("/(?:$pvpat)\\b/", "PageVar(\$pagename, \$m[0])", $fmt,
+    array('pagename'=>$pagename));
   $fmt = PPRE('!\\$ScriptUrl/([^?#\'"\\s<>]+)!',
-    (@$EnablePathInfo) ? "'$ScriptUrl/'.PUE(\$m[1])" :
-        "'$ScriptUrl?n='.str_replace('/','.',PUE(\$m[1]))",
-    $fmt);
+    (@$EnablePathInfo) ? "\$ScriptUrl.PUE(\$m[1])" :
+        "\$ScriptUrl?n=.str_replace('/','.',PUE(\$m[1]))",
+    $fmt, array('ScriptUrl'=>$ScriptUrl));
   if (strpos($fmt,'$')===false) return $fmt;
   static $g;
   if ($GCount != count($GLOBALS)+count($FmtV)) {
@@ -926,7 +930,7 @@ function FmtTemplateVars($text, $vars, $pagename = NULL) {
   if ($pagename) {
     $pat = implode('|', array_map('preg_quote', array_keys($FmtPV)));
     $text = PPRE("/\\{\\$($pat)\\}/",
-                         "PageVar('$pagename', \$m[1])", $text);
+      "PageVar(\$pagename, \$m[1])", $text, array('pagename'=>$pagename));
   }
   foreach(preg_grep('/^[\\w$]/', array_keys($vars)) as $k)
     if (!is_array($vars[$k]))
