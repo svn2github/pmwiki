@@ -883,7 +883,7 @@ function FmtPageName($fmt, $pagename) {
   }
   $fmt = PPRE("/(?:$pvpat)\\b/", "PageVar('$pagename', \$m[0])", $fmt);
   $fmt = PPRE('!\\$ScriptUrl/([^?#\'"\\s<>]+)!',
-    (@$EnablePathInfo) ? "'$ScriptUrl'.PUE(\$m[1])" :
+    (@$EnablePathInfo) ? "'$ScriptUrl/'.PUE(\$m[1])" :
         "'$ScriptUrl?n='.str_replace('/','.',PUE(\$m[1]))", 
     $fmt);
   if (strpos($fmt,'$')===false) return $fmt;
