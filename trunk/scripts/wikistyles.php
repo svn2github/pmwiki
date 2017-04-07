@@ -96,7 +96,7 @@ SDVA($WikiStyleAttr,array(
 SDVA($WikiStyleRepl,array(
   '/^%(.*)%$/' => '$1',
   '/\\bbgcolor([:=])/' => 'background-color$1',
-  '/\\b(\d+)pct\\b/' => '$1%',
+  '/\\b((?<!-)\d+)pct\\b/' => '$1%',
   ));
 
 $WikiStyleCSS[] = 'color|background-color';
