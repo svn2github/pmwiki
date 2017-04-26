@@ -19,11 +19,14 @@
 html, body, #bodywrap {
   padding: 0;
   margin: 0;
-/*   background-color: #fff; */
   font-family: 'Arial', 'Helvetica', Sans-serif;
   font-size:15px;
   line-height: 25px;
   background-color: #f7f7f7;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  position: relative;
 }
 
 #wikibody {
@@ -85,7 +88,6 @@ html, body, #bodywrap {
   left: 30px;
   padding:6px;
   z-index: 4;
-/*   min-width: 164px; */
 }
 
 #wikicmds { 
@@ -105,7 +107,6 @@ html, body, #bodywrap {
   padding-left:3px;
 }
 
-/* #wikihead-recent-changes-link, #wikihead-searchlink, */
 #wikihead-search-toggle, #wikileft-toggle, #wikicmds-toggle {
   display: none;
 }
@@ -130,7 +131,7 @@ html, body, #bodywrap {
   float: left;
 }
 #wikicmds-toggle-label {
-  margin: 3px; /*wikibody has padding 3px*/
+  margin: 3px;
 }
 
 #wikihead-search-toggle:checked + label, #wikileft-toggle:checked + label, #wikicmds-toggle:checked + label {
@@ -139,7 +140,7 @@ html, body, #bodywrap {
 
 #wikileft-toggle:checked ~ * #wikileft,
 #wikihead-search-toggle:checked ~ * #wikihead-searchform,
-#wikicmds-toggle:checked ~ #wikicmds {   
+#wikicmds-toggle:checked ~ * #wikicmds {   
   display: block;
   opacity: 1;
   
@@ -151,11 +152,13 @@ html, body, #bodywrap {
 }
 
 #wikioverlay {
-  position: absolute;
-  top:  0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0; 
+  right: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background-color: rgba(0, 0, 0, .2);
   z-index: 2;
