@@ -11,7 +11,7 @@
 
 
 global $HTMLStylesFmt, $SkinElementsPages, $DefaultSkinElements, $TableCellAlignFmt, 
-  $SearchBoxInputType, $WrapSkinSections, $HideTemplateSections;
+  $SearchBoxInputType, $WrapSkinSections, $HideTemplateSections, $EnableTableAttrToStyles;
 
 # Disable inline styles injected by the PmWiki core (we provide these styles in skin.css)
 $styles = explode(' ', 'pmwiki rtl-ltr wikistyles markup simuledit diff urlapprove vardoc');
@@ -19,6 +19,7 @@ foreach($styles as $style) $HTMLStylesFmt[$style] = '';
 
 # CSS alignment for table cells (valid HTML5)
 $TableCellAlignFmt = " class='%s'";
+$EnableTableAttrToStyles = 1;
 
 # For (:searchbox:), valid semantic HTML5
 $SearchBoxInputType = "search";
@@ -26,6 +27,8 @@ $SearchBoxInputType = "search";
 # remove deprecated "name=" parameter from anchor tags
 Markup_e('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/',
   "Keep(TrackAnchors(\$m[1]) ? '' : \"<a id='{\$m[1]}'></a>\", 'L')");
+# in HTML5 "clear" is a style not an attribute
+Markup('[[<<]]','inline','/\\[\\[&lt;&lt;\\]\\]/',"<br style='clear:all;' />");
 
 # Allow skin header and footer to be written 
 # in a wiki page, and use defaults otherwise

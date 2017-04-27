@@ -32,6 +32,12 @@
     if(! sbcontent.replace(/\s+/, '').length) // empty sidebar, eg. protected
       hide('wikileft-toggle-label');
   }
+  var wcmd = $('wikicmds');
+  if(wcmd) { // page actions
+    var pacontent = wcmd.textContent || wcmd.innerText;
+    if(! pacontent.replace(/\s+/, '').length) // empty, eg. protected
+      hide('wikicmds-toggle-label');
+  }
   if(! $('wikihead-searchform')) // no search form, eg. custom header
     hide('wikihead-search-toggle-label');
   var overlay = $('wikioverlay');
