@@ -400,7 +400,7 @@ function SimpleTableAttr($attr) {
   if(IsEnabled($SimpleTableDefaultClassName) && !preg_match("/(^| )class='.*?' /", $qattr))
     $qattr .= "class='$SimpleTableDefaultClassName'";
   if(IsEnabled($EnableTableAttrToStyles, 0))
-    $qattr = TableAttrToStyles($attr, true);
+    $qattr = TableAttrToStyles($qattr, true);
   return $qattr;
 }
 
