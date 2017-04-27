@@ -430,11 +430,11 @@ function Cells($name,$attr) {
     }
     $t = (strpos($name, 'head')===0 ) ? 'th' : 'td';
     if (!@$cf['table']) {
+      $tattr = @$MarkupFrame[0]['tattr'];
       if (IsEnabled($EnableTableAttrToStyles, 0)) { # deprecated attributes to CSS
         $tattr = TableAttrToStyles($tattr);
         $attr  = TableAttrToStyles($attr);
       }
-      $tattr = @$MarkupFrame[0]['tattr'];
       $out .= "<table $tattr><tr><$t $attr>";
       $cf['table'] = '</tr></table>';
     } else if ( preg_match("/nr$/", $name)) $out .= "</tr><tr><$t $attr>";
