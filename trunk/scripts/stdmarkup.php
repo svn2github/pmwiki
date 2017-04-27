@@ -426,29 +426,17 @@ function Cells($name,$attr) {
     if (IsEnabled($EnableTableAutoValignTop, 1) && strpos($attr, "valign=")===false)
       $attr .= " valign='top'";
     if (IsEnabled($EnableTableAttrToStyles, 0)) { # deprecated attributes to CSS
-      $rx = "!(?:^| )(v?align|bgcolor|width)='([^']+)'!";
-      if(preg_match_all($rx, $attr, $m, PREG_SET_ORDER)) {
-        $styles = '';
-        $repl = array(
-          'align' => 'text-align',
-          'valign' => 'vertical-align',
-          'bgcolor' => 'background-color',
-          'width' => 'width',
-        );
-        foreach ($m as $set) {
-          $styles .= " {$repl[$set[1]]}: {$set[2]};";
-        }
-        $attr = preg_replace($rx, '', $attr);
-        if (preg_match("!\\bstyle='!", $attr))
-          $attr = preg_replace("!\\bstyle='!", "$0$styles", $attr);
-        else $attr .= " style='$styles'";
-      }
+      $attr = TableAttrToStyles($attr);
     }
     $t = (strpos($name, 'head')===0 ) ? 'th' : 'td';
     if (!@$cf['table']) {
-       $tattr = @$MarkupFrame[0]['tattr'];
-       $out .= "<table $tattr><tr><$t $attr>";
-       $cf['table'] = '</tr></table>';
+      if (IsEnabled($EnableTableAttrToStyles, 0)) { # deprecated attributes to CSS
+        $tattr = TableAttrToStyles($tattr);
+        $attr  = TableAttrToStyles($attr);
+      }
+      $tattr = @$MarkupFrame[0]['tattr'];
+      $out .= "<table $tattr><tr><$t $attr>";
+      $cf['table'] = '</tr></table>';
     } else if ( preg_match("/nr$/", $name)) $out .= "</tr><tr><$t $attr>";
     else $out .= "<$t $attr>";
     $cf['cell'] = "</$t>";
@@ -458,6 +446,36 @@ function Cells($name,$attr) {
     $cf[$key] = "</$tag>";
   }
   return $out;
+}
+function TableAttrToStyles($attr) {
+  $rx = "!(?:^| )(v?align|bgcolor|width|border|cellpadding|cellspacing)='([^']+)'!";
+  if(preg_match_all($rx, $attr, $m, PREG_SET_ORDER)) {
+    $styles = '';
+    $repl = array(
+      'align' => 'text-align',
+      'valign' => 'vertical-align',
+      'bgcolor' => 'background-color',
+      'width' => 'width',
+    );
+    foreach ($m as $set) {
+      if(@$repl[$set[1]])
+        $styles .= " {$repl[$set[1]]}: {$set[2]};";
+      
+      elseif ($set[1] == 'cellspacing') {
+        if($set[2] == '0')
+          $styles .= " border-spacing: 0px; border-collapse: collapse;";
+        elseif (preg_match('/^ *(\\d+) *$/', $set[2], $m)) 
+          $styles .= " border-spacing: {$m[1]}px; border-collapse: separate;";
+      }
+      elseif ($set[1] == 'border') 
+        $styles .= " border-width: {$set[2]}px;";
+    }
+    $attr = preg_replace($rx, '', $attr);
+    if (preg_match("!\\bstyle='!", $attr))
+      $attr = preg_replace("!\\bstyle='!", "$0$styles", $attr);
+    else $attr .= " style='$styles'";
+  }
+  return $attr;
 }
 
 Markup_e('table', '<block',
