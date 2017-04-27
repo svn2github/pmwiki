@@ -490,9 +490,9 @@ function MarkupMarkup($pagename, $text, $opt = '') {
   else 
     { $sep = '</tr><tr>'; $pretext = $MarkupWordwrapFunction($text, 75); }
   $align = (IsEnabled($EnableTableAttrToStyles, 0)) 
-    ? "align='center'" : "style='text-align:center;'";
+    ? "style='margin: 0 auto;'" : "align='center'";
   $valign = (IsEnabled($EnableTableAttrToStyles, 0)) 
-    ? "valign='top'" : "style='vertical-align:top;'";
+    ? "style='vertical-align:top;'" : "valign='top'";
   return Keep(@"<table class='markup $class' $align>$caption
       <tr><td class='markup1' $valign><$MarkupWrapTag>$pretext</$MarkupWrapTag></td>$sep<td 
         class='markup2' $valign>$html</td></tr></table>");
