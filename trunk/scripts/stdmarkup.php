@@ -432,7 +432,7 @@ function Cells($name,$attr) {
     if (!@$cf['table']) {
       $tattr = @$MarkupFrame[0]['tattr'];
       if (IsEnabled($EnableTableAttrToStyles, 0)) { # deprecated attributes to CSS
-        $tattr = TableAttrToStyles($tattr);
+        $tattr = TableAttrToStyles($tattr, 1);
         $attr  = TableAttrToStyles($attr);
       }
       $out .= "<table $tattr><tr><$t $attr>";
@@ -447,12 +447,11 @@ function Cells($name,$attr) {
   }
   return $out;
 }
-function TableAttrToStyles($attr) {
+function TableAttrToStyles($attr, $table=false) {
   $rx = "!(?:^| )(v?align|bgcolor|width|border|cellpadding|cellspacing)='([^']+)'!";
   if(preg_match_all($rx, $attr, $m, PREG_SET_ORDER)) {
     $styles = '';
     $repl = array(
-      'align' => 'text-align',
       'valign' => 'vertical-align',
       'bgcolor' => 'background-color',
       'width' => 'width',
@@ -460,7 +459,14 @@ function TableAttrToStyles($attr) {
     foreach ($m as $set) {
       if(@$repl[$set[1]])
         $styles .= " {$repl[$set[1]]}: {$set[2]};";
-      
+      if ($set[1] == 'align') {
+        if (!$table) $styles .= " text-align:{$set[2]};"; # td/th
+        elseif (strtolower($set[2])=='center') 
+          $styles .= " margin: 0 auto;"; # table align=center
+        else
+          $styles .= " margin-{$set[2]}: 0;"; # table align=center
+        
+      }
       elseif ($set[1] == 'cellspacing') {
         if($set[2] == '0')
           $styles .= " border-spacing: 0px; border-collapse: collapse;";
