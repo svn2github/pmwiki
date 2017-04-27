@@ -448,7 +448,7 @@ function Cells($name,$attr) {
   return $out;
 }
 function TableAttrToStyles($attr, $table=false) {
-  $rx = "!(?:^| )(v?align|bgcolor|width|border|cellpadding|cellspacing)='([^']+)'!";
+  $rx = "!(?:^| )(v?align|bgcolor|width)='([^']+)'!";
   if(preg_match_all($rx, $attr, $m, PREG_SET_ORDER)) {
     $styles = '';
     $repl = array(
@@ -460,21 +460,12 @@ function TableAttrToStyles($attr, $table=false) {
       if(@$repl[$set[1]])
         $styles .= " {$repl[$set[1]]}: {$set[2]};";
       if ($set[1] == 'align') {
-        if (!$table) $styles .= " text-align:{$set[2]};"; # td/th
+        if (!$table) $styles .= " text-align:{$set[2]};"; # td, th
         elseif (strtolower($set[2])=='center') 
           $styles .= " margin: 0 auto;"; # table align=center
         else # table align=left|right
           $styles .= " margin: auto; margin-{$set[2]}: 0;";
-        
       }
-      elseif ($set[1] == 'cellspacing') {
-        if($set[2] == '0')
-          $styles .= " border-spacing: 0px; border-collapse: collapse;";
-        elseif (preg_match('/^ *(\\d+) *$/', $set[2], $m)) 
-          $styles .= " border-spacing: {$m[1]}px; border-collapse: separate;";
-      }
-      elseif ($set[1] == 'border') 
-        $styles .= " border-width: {$set[2]}px;";
     }
     $attr = preg_replace($rx, '', $attr);
     if (preg_match("!\\bstyle='!", $attr))
