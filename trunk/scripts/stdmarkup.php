@@ -463,8 +463,8 @@ function TableAttrToStyles($attr, $table=false) {
         if (!$table) $styles .= " text-align:{$set[2]};"; # td/th
         elseif (strtolower($set[2])=='center') 
           $styles .= " margin: 0 auto;"; # table align=center
-        else
-          $styles .= " margin-{$set[2]}: 0;"; # table align=center
+        else # table align=left|right
+          $styles .= " margin: auto; margin-{$set[2]}: 0;";
         
       }
       elseif ($set[1] == 'cellspacing') {
