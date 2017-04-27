@@ -395,10 +395,12 @@ Markup_e('^||','>^||||','/^\\|\\|(.*)$/',
   "PZZ(\$GLOBALS['BlockMarkups']['table'][0] = '<table '.SimpleTableAttr(\$m[1]).'>')
     .'<:block,1>'");
 function SimpleTableAttr($attr) {
-  global $SimpleTableDefaultClassName;
+  global $SimpleTableDefaultClassName, $EnableTableAttrToStyles;
   $qattr = PQA($attr);
   if(IsEnabled($SimpleTableDefaultClassName) && !preg_match("/(^| )class='.*?' /", $qattr))
     $qattr .= "class='$SimpleTableDefaultClassName'";
+  if(IsEnabled($EnableTableAttrToStyles, 0))
+    $qattr = TableAttrToStyles($attr, true);
   return $qattr;
 }
 
