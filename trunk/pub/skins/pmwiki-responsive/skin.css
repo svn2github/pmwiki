@@ -23,6 +23,7 @@ html, body, #bodywrap {
   font-size:15px;
   line-height: 25px;
   background-color: #f7f7f7;
+  color: black;
   min-height: 100%;
   position: relative;
 }
@@ -130,7 +131,7 @@ html, body, #bodywrap {
   margin: 3px;
 }
 
-#wikihead-search-toggle:checked + label, #wikileft-toggle:checked + label, #wikicmds-toggle:checked + label {
+#wikihead-search-toggle:checked + label, #wikileft-toggle:checked + label, #wikicmds-toggle:checked ~ #wikimid #wikicmds-toggle-label {
   background-image: url(xclose.svg);
 }
 
