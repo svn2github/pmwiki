@@ -46,8 +46,6 @@ html, body, #bodywrap {
   max-width: 90%;
   max-width: 90vw;
   height: auto;
-  max-height: 90%;
-  max-height: 90vh;
   overflow: auto;
   top: 8px;  
   -webkit-box-shadow: 2px 2px 8px 0px rgba(0,0,0,0.75);
