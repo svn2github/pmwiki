@@ -349,6 +349,7 @@ td.middle, th.middle { vertical-align: middle;}
     width: auto;
     max-width: auto;
     line-height: inherit;
+    overflow: hidden;
   }
   #wikilogo {
     display: inline-block;
