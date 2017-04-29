@@ -212,6 +212,7 @@ pre, code { font-size:14px; }
 pre, code, .diffmarkup { font-family:'Lucida Console','Andale Mono','Courier New',Courier,monospace; }
 pre { line-height: 18px; }
 pre code, code code, pre pre { font-size:100%; }
+pre, code.escaped { max-width: 100%; overflow: auto; }
 
 #wikiedit form { margin:0px; width:100%; max-width:100%; }
 #wikiedit textarea { width:99.5%; max-width:99.5%; }
@@ -440,8 +441,6 @@ td.middle, th.middle { vertical-align: middle;}
   select, textarea, input {
     font-size: 14px;
   }
-
-  pre, code.escaped { max-width: 100%; overflow-x: visible; overflow-y: auto; }
   
   #wikileft-toggle:checked ~ #wikioverlay,
   #wikihead-search-toggle:checked ~ #wikioverlay,
