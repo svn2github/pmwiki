@@ -441,7 +441,7 @@ td.middle, th.middle { vertical-align: middle;}
     font-size: 14px;
   }
 
-  pre, code.escaped { max-width: 100%; max-height: 90vh; overflow: auto; }
+  pre, code.escaped { max-width: 100%; overflow-x: visible; overflow-y: auto; }
   
   #wikileft-toggle:checked ~ #wikioverlay,
   #wikihead-search-toggle:checked ~ #wikioverlay,
