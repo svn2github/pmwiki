@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2017 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2016 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -395,12 +395,10 @@ Markup_e('^||','>^||||','/^\\|\\|(.*)$/',
   "PZZ(\$GLOBALS['BlockMarkups']['table'][0] = '<table '.SimpleTableAttr(\$m[1]).'>')
     .'<:block,1>'");
 function SimpleTableAttr($attr) {
-  global $SimpleTableDefaultClassName, $EnableTableAttrToStyles;
+  global $SimpleTableDefaultClassName;
   $qattr = PQA($attr);
   if(IsEnabled($SimpleTableDefaultClassName) && !preg_match("/(^| )class='.*?' /", $qattr))
     $qattr .= "class='$SimpleTableDefaultClassName'";
-  if(IsEnabled($EnableTableAttrToStyles, 0))
-    $qattr = TableAttrToStyles($qattr, true);
   return $qattr;
 }
 
@@ -414,7 +412,7 @@ Markup('^----','>^->','/^----+/','<:block,1><hr />');
 
 #### (:table:) markup (AdvancedTables)
 function Cells($name,$attr) {
-  global $MarkupFrame, $EnableTableAutoValignTop, $EnableTableAttrToStyles;
+  global $MarkupFrame, $EnableTableAutoValignTop;
   $attr = PQA($attr);
   $tattr = @$MarkupFrame[0]['tattr'];
   $name = strtolower($name);
@@ -427,18 +425,11 @@ function Cells($name,$attr) {
   else if ($key == 'cell') {
     if (IsEnabled($EnableTableAutoValignTop, 1) && strpos($attr, "valign=")===false)
       $attr .= " valign='top'";
-    if (IsEnabled($EnableTableAttrToStyles, 0)) { # deprecated attributes to CSS
-      $attr = TableAttrToStyles($attr);
-    }
     $t = (strpos($name, 'head')===0 ) ? 'th' : 'td';
     if (!@$cf['table']) {
-      $tattr = @$MarkupFrame[0]['tattr'];
-      if (IsEnabled($EnableTableAttrToStyles, 0)) { # deprecated attributes to CSS
-        $tattr = TableAttrToStyles($tattr, 1);
-        $attr  = TableAttrToStyles($attr);
-      }
-      $out .= "<table $tattr><tr><$t $attr>";
-      $cf['table'] = '</tr></table>';
+       $tattr = @$MarkupFrame[0]['tattr'];
+       $out .= "<table $tattr><tr><$t $attr>";
+       $cf['table'] = '</tr></table>';
     } else if ( preg_match("/nr$/", $name)) $out .= "</tr><tr><$t $attr>";
     else $out .= "<$t $attr>";
     $cf['cell'] = "</$t>";
@@ -449,39 +440,9 @@ function Cells($name,$attr) {
   }
   return $out;
 }
-function TableAttrToStyles($attr, $table=false) {
-  $rx = "!(?:^| )(v?align|bgcolor|width)='([^']+)'!";
-  if(preg_match_all($rx, $attr, $m, PREG_SET_ORDER)) {
-    $styles = '';
-    $repl = array(
-      'valign' => 'vertical-align',
-      'bgcolor' => 'background-color',
-      'width' => 'width',
-    );
-    foreach ($m as $set) {
-      if ($set[1] == 'width')
-        $set[2] = preg_replace('/^ *(\\d+) *$/', '$1px', $set[2]);
-      if(@$repl[$set[1]])
-        $styles .= " {$repl[$set[1]]}: {$set[2]};";
-      if ($set[1] == 'align') {
-        if (!$table) $styles .= " text-align:{$set[2]};"; # td, th
-        elseif (strtolower($set[2])=='center') 
-          $styles .= " margin: 0 auto;"; # table align=center
-        else # table align=left|right
-          $styles .= " margin: auto; margin-{$set[2]}: 0;";
-      }
-    }
-    $attr = preg_replace($rx, '', $attr);
-    if (preg_match("!\\bstyle='!", $attr))
-      $attr = preg_replace("!\\bstyle='!", "$0$styles", $attr);
-    else $attr .= " style='$styles'";
-  }
-  return $attr;
-}
 
 Markup_e('table', '<block',
-  '/^\\(:(table|cell|cellnr|head|headnr|tableend|(?:div\\d*|section\\d*|'
-    .'article\\d*|header|footer|nav|address|aside)(?:end)?)(\\s.*?)?:\\)/i',
+  '/^\\(:(table|cell|cellnr|head|headnr|tableend|(?:div\\d*|section\\d*|article\\d*|header|footer|nav|address|aside)(?:end)?)(\\s.*?)?:\\)/i',
   "Cells(\$m[1],\$m[2])");
 Markup('^>>', '<table',
   '/^&gt;&gt;(.+?)&lt;&lt;(.*)$/',
@@ -493,7 +454,7 @@ Markup('^>><<', '<^>>',
 #### special stuff ####
 ## (:markup:) for displaying markup examples
 function MarkupMarkup($pagename, $text, $opt = '') {
-  global $MarkupWordwrapFunction, $MarkupWrapTag, $EnableTableAttrToStyles;
+  global $MarkupWordwrapFunction, $MarkupWrapTag;
   SDV($MarkupWordwrapFunction, 
     PCCF('return str_replace("  ", " &nbsp;", nl2br($m));'));
   SDV($MarkupWrapTag, 'code');
@@ -508,13 +469,9 @@ function MarkupMarkup($pagename, $text, $opt = '') {
     { $sep = ''; $pretext = $MarkupWordwrapFunction($text, 40); } 
   else 
     { $sep = '</tr><tr>'; $pretext = $MarkupWordwrapFunction($text, 75); }
-  $align = (IsEnabled($EnableTableAttrToStyles, 0)) 
-    ? "style='margin: 0 auto;'" : "align='center'";
-  $valign = (IsEnabled($EnableTableAttrToStyles, 0)) 
-    ? "style='vertical-align:top;'" : "valign='top'";
-  return Keep(@"<table class='markup $class' $align>$caption
-      <tr><td class='markup1' $valign><$MarkupWrapTag>$pretext</$MarkupWrapTag></td>$sep<td 
-        class='markup2' $valign>$html</td></tr></table>");
+  return Keep(@"<table class='markup $class' align='center'>$caption
+      <tr><td class='markup1' valign='top'><$MarkupWrapTag>$pretext</$MarkupWrapTag></td>$sep<td 
+        class='markup2' valign='top'>$html</td></tr></table>");
 }
 
 Markup_e('markup', '<[=',
