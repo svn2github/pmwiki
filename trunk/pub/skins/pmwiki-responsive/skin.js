@@ -11,8 +11,9 @@
 **  like (:noleft:) are used in a page.
 ***********************************************************************/
 (function(){
+  var W = window, D = document;
   function $(x) { // returns element from id
-    return document.getElementById(x);
+    return D.getElementById(x);
   }
   function hide(id) { // hides element
     var el = $(id);
@@ -48,4 +49,30 @@
       $('wikileft-toggle').checked = false;
     });
   }
+  var scrolltables = function() {
+    // This function "wraps" large tables in a scrollable div
+    // and "unwraps" narrow tables from the scrollable div 
+    // allowing table alignement
+    var tables = D.getElementsByTagName('table');
+    for(var i=0; i<tables.length; i++) {
+      var t = tables[i];
+      var pn = t.parentNode;
+      if(pn.className == 'scrollable') {
+        var gp = pn.parentNode;
+        if(t.offsetWidth < gp.offsetWidth) {
+          gp.insertBefore(t, pn);
+          gp.removeChild(pn);
+        }
+      }
+      else  {
+        if(t.offsetWidth > pn.offsetWidth) {
+          var nn = D.createElement('div');
+          pn.insertBefore(nn, t).className = 'scrollable';
+          nn.appendChild(t);
+        }
+      }
+    }
+  }
+  W.addEventListener('resize', scrolltables, false);
+  D.addEventListener('DOMContentLoaded', scrolltables, false);
 })();
