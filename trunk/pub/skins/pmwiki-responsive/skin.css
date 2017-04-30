@@ -1,6 +1,6 @@
 /***********************************************************************
 **  skin.css
-**  Copyright 2016 Petko Yotov www.pmwiki.org/petko
+**  Copyright 2016-2017 Petko Yotov www.pmwiki.org/petko
 **  
 **  Partially based on pmwiki.css:
 **  Copyright 2004-2006 Patrick R. Michaud pmichaud@pobox.com
@@ -214,6 +214,9 @@ pre { line-height: 18px; }
 pre code, code code, pre pre { font-size:100%; }
 pre, code.escaped { max-width: 100%; overflow: auto; }
 
+/* Large tables can scroll */
+div.scrollable { max-width: 100%; overflow: auto; }
+
 #wikiedit form { margin:0px; width:100%; max-width:100%; }
 #wikiedit textarea { width:99.5%; max-width:99.5%; }
 #wikiedit input { max-width:99.5%; }
@@ -316,7 +319,8 @@ td.top,    th.top    { vertical-align: top;}
 td.bottom, th.bottom { vertical-align: bottom;}
 td.middle, th.middle { vertical-align: middle;}
 
-@media screen and (min-width:38em) {
+
+@media screen and (min-width:50em) {
   html, body, #bodywrap {
     line-height: 20px;
     width: 100%;

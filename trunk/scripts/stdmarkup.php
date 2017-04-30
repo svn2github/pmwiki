@@ -459,6 +459,8 @@ function TableAttrToStyles($attr, $table=false) {
       'width' => 'width',
     );
     foreach ($m as $set) {
+      if ($set[1] == 'width')
+        $set[2] = preg_replace('/^ *(\\d+) *$/', '$1px', $set[2]);
       if(@$repl[$set[1]])
         $styles .= " {$repl[$set[1]]}: {$set[2]};";
       if ($set[1] == 'align') {

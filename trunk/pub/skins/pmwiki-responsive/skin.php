@@ -30,6 +30,10 @@ Markup_e('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/',
 # in HTML5 "clear" is a style not an attribute
 Markup('[[<<]]','inline','/\\[\\[&lt;&lt;\\]\\]/',"<br style='clear:all;' />");
 
+# Wrap tables in a scrollable div
+Markup('table-scroll', '><:', '/<table/i', '<div class="scrollable">$0');
+Markup('/table-scroll', '>table-scroll', '/<\\/table.*?>/i', '$0</div>');
+
 # Allow skin header and footer to be written 
 # in a wiki page, and use defaults otherwise
 SDVA($WrapSkinSections, array(
