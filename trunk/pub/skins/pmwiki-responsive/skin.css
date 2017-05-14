@@ -131,7 +131,9 @@ html, body, #bodywrap {
   margin: 3px;
 }
 
-#wikihead-search-toggle:checked + label, #wikileft-toggle:checked + label, #wikicmds-toggle:checked ~ #wikimid #wikicmds-toggle-label {
+#wikihead-search-toggle:checked + label,
+#wikileft-toggle:checked + label, 
+#wikicmds-toggle:checked ~ #wikimid #wikicmds-toggle-label {
   background-image: url(xclose.svg);
 }
 

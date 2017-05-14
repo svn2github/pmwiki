@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2002-2016 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2002-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -31,11 +31,9 @@ function VarLink($pagename,$tgt,$txt) {
   SDV($VarLinkMissingFmt,'$LinkText');
   SDV($VarLinkExistsFmt,"<a class='varlink' href='\$LinkUrl'><code class='varlink'>\$LinkText</code></a>");
   VarIndexLoad($pagename);
-  $FmtV['$LinkText'] = str_replace('$', '&#36;', $txt);
-  $FmtV['$LinkUrl'] = @$VarIndex[$tgt]['url'];
-  if (@!$VarIndex[$tgt]['url'])
+  if (@!$VarIndex[$tgt]['pagename'])
     return FmtPageName($VarLinkMissingFmt,$pagename);
-  return FmtPageName($VarLinkExistsFmt,$pagename);
+  return MakeLink($pagename,"{$VarIndex[$tgt]['pagename']}#$tgt",$txt,null,$VarLinkExistsFmt);
 }
 
 function VarIndexLoad($pagename) {
