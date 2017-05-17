@@ -31,6 +31,7 @@ function VarLink($pagename,$tgt,$txt) {
   SDV($VarLinkMissingFmt,'$LinkText');
   SDV($VarLinkExistsFmt,"<a class='varlink' href='\$LinkUrl'><code class='varlink'>\$LinkText</code></a>");
   VarIndexLoad($pagename);
+  $FmtV['$LinkText'] = str_replace('$', '&#36;', $txt);
   if (@!$VarIndex[$tgt]['pagename'])
     return FmtPageName($VarLinkMissingFmt,$pagename);
   return MakeLink($pagename,"{$VarIndex[$tgt]['pagename']}#$tgt",$txt,null,$VarLinkExistsFmt);
