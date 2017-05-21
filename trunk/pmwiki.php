@@ -1870,16 +1870,20 @@ function RestorePage($pagename,&$page,&$new,$restore=NULL) {
 ## patterns held in $ROSPatterns are replaced only when the page
 ## is being posted (as signaled by $EnablePost).
 function ReplaceOnSave($pagename,&$page,&$new) {
-  global $EnablePost, $ROSPatterns, $ROEPatterns, $EnableROSEscape;
-  $t = $new['text'];
-  if (IsEnabled($EnableROSEscape, 0)) $t = MarkupEscape($t);
-  $t = PPRA((array)@$ROEPatterns, $t);
+  global $EnablePost, $ROSPatterns, $ROEPatterns;
+  $new['text'] = ProcessROESPatterns($new['text'], $ROEPatterns);
   if ($EnablePost) {
-    $t = PPRA((array)@$ROSPatterns, $t);
+    $new['text'] = ProcessROESPatterns($new['text'], $ROSPatterns);
   }
-  if (IsEnabled($EnableROSEscape, 0)) $t = MarkupRestore($t);
-  $new['=preview'] = $new['text'] = $t;
+  $new['=preview'] = $new['text'];
   PCache($pagename, $new);
+}
+function ProcessROESPatterns($text, $patterns) {
+  global $EnableROSEscape;
+  if (IsEnabled($EnableROSEscape, 0)) $text = MarkupEscape($text);
+  $text = PPRA((array)@$patterns, $text);
+  if (IsEnabled($EnableROSEscape, 0)) $text = MarkupRestore($text);
+  return $text;
 }
 
 function SaveAttributes($pagename,&$page,&$new) {
