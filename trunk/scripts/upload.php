@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2016 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -30,7 +30,7 @@ SDVA($UploadExts,array(
   'mp3' => 'audio/mpeg', 'au' => 'audio/basic', 'wav' => 'audio/x-wav',
   'ogg' => 'audio/ogg', 'flac' => 'audio/x-flac',
   'ogv' => 'video/ogg', 'mp4' => 'video/mp4', 'webm' => 'video/webm',
-  'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
+  'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg', 'mkv' => 'video/x-matroska',
   'mov' => 'video/quicktime', 'qt' => 'video/quicktime',
   'wmf' => 'text/plain', 'avi' => 'video/x-msvideo',
   'zip' => 'application/zip', '7z' => 'application/x-7z-compressed',
