@@ -113,7 +113,7 @@ SDV($FmtPV['$PasswdUpload'], 'PasswdVar($pn, "upload")');
 
 Markup_e('attachlist', 'directives',
   '/\\(:attachlist\\s*(.*?):\\)/i',
-  "Keep('<ul>'.FmtUploadList('$pagename',\$m[1]).'</ul>')");
+  "Keep('<ul>'.FmtUploadList(\$pagename,\$m[1]).'</ul>')");
 SDV($GUIButtons['attach'], array(220, 'Attach:', '', '$[file.ext]',
   '$GUIButtonDirUrlFmt/attach.gif"$[Attach file]"'));
 SDV($LinkFunctions['Attach:'], 'LinkUpload');
