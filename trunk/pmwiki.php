@@ -1399,7 +1399,7 @@ function IncludeText($pagename, $inclspec) {
   global $MaxIncludes, $IncludeOpt, $InclCount, $PCache;
   SDV($MaxIncludes,50);
   SDVA($IncludeOpt, array('self'=>1));
-  if ($InclCount++>=$MaxIncludes) return Keep($inclspec);
+  if ($InclCount[$pagename]++>=$MaxIncludes) return Keep($inclspec);
   $args = array_merge($IncludeOpt, ParseArgs($inclspec));
   while (count($args['#'])>0) {
     $k = array_shift($args['#']); $v = array_shift($args['#']);
@@ -1692,8 +1692,10 @@ function BuildMarkupRules() {
   if (!$MarkupRules) {
     uasort($MarkupTable,'mpcmp');
     foreach($MarkupTable as $id=>$m) 
-      if (@$m['pat'] && @$m['seq']) 
-        $MarkupRules[str_replace('\\L',$LinkPattern,$m['pat'])]=$m['rep'];
+      if (@$m['pat'] && @$m['seq']) {
+        $MarkupRules[str_replace('\\L',$LinkPattern,$m['pat'])]
+          = array($m['rep'], $id);
+      }
   }
   return $MarkupRules;
 }
@@ -1717,6 +1719,8 @@ function MarkupToHTML($pagename, $text, $opt = NULL) {
     $RedoMarkupLine=0;
     $markrules = BuildMarkupRules();
     foreach($markrules as $p=>$r) {
+      list($r, $id) = (array)$r;
+      $MarkupToHTML['markupid'] = $id;
       if ($p{0} == '/') {
         if (is_callable($r)) $x = preg_replace_callback($p,$r,$x);
         else $x=preg_replace($p,$r,$x);
