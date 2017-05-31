@@ -437,6 +437,7 @@ td.middle, th.middle { vertical-align: middle;}
   td.markup1, td.markup2 { padding-left:10px; padding-right:10px; }
   table.vert td.markup1 { border-bottom:1px solid #ccf; }
   table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; border-bottom:none; }
+  td.markup1 pre { white-space: pre-wrap; }
   
   div.faq p, div.faq pre { margin-left:40px; }
   div.faq p.question { margin:15px 0 12px 0; }
