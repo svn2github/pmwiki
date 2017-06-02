@@ -1973,15 +1973,16 @@ function AutoCreateTargets($pagename, &$page, &$new) {
     }
   }
 }
-    
+
 function PreviewPage($pagename,&$page,&$new) {
-  global $IsPageSaved, $FmtV;
+  global $IsPageSaved, $FmtV, $ROSPatterns;
   if (@$_REQUEST['preview']) {
-    $text = '(:groupheader:)'.$new['text'].'(:groupfooter:)';
+    $text = ProcessROESPatterns($new['text'], $ROSPatterns);
+    $text = '(:groupheader:)'.$text.'(:groupfooter:)';
     $FmtV['$PreviewText'] = MarkupToHTML($pagename,$text);
-  } 
+  }
 }
-  
+
 function HandleEdit($pagename, $auth = 'edit') {
   global $IsPagePosted, $EditFields, $ChangeSummary, $EditFunctions, 
     $EnablePost, $FmtV, $Now, $EditRedirectFmt, 
