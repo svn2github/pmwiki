@@ -40,8 +40,6 @@ if (IsEnabled($EnableAuthorSignature,1)) {
     '/(?<!~)~~~~(?!~)/' => "[[~$Author]] $CurrentTime",
     '/(?<!~)~~~(?!~)/' => "[[~$Author]]",
   ));
-  Markup('~~~~','<[[~','/(?<!~)~~~~(?!~)/',"[[~$Author]] $CurrentTime");
-  Markup('~~~','>~~~~','/(?<!~)~~~(?!~)/',"[[~$Author]]");
 }
 if (IsEnabled($EnablePostAuthorRequired,0))
   array_unshift($EditFunctions,'RequireAuthor');
