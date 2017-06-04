@@ -457,7 +457,7 @@ function ParseArgs($x, $optpat = '(?>(\\w+)[:=])') {
 }
 function PHSC($x, $flags=ENT_COMPAT, $enc=null, $dbl_enc=true) { # for PHP 5.4
   if (is_null($enc)) $enc = "ISO-8859-1"; # single-byte charset
-  if (! is_array($x)) return htmlspecialchars($x, $flags, $enc, $dbl_enc);
+  if (! is_array($x)) return @htmlspecialchars($x, $flags, $enc, $dbl_enc);
   foreach($x as $k=>$v) $x[$k] = PHSC($v, $flags, $enc, $dbl_enc);
   return $x;  
 }
@@ -995,9 +995,6 @@ class PageStore {
   var $recodefn;
   var $u8decode;
   var $u8encode;
-  public function __construct($d='$WorkDir/$FullName', $w=0, $a=NULL) {
-    $this->PageStore($d, $w, $a);
-  }
   function PageStore($d='$WorkDir/$FullName', $w=0, $a=NULL) { 
     $this->dirfmt = $d; $this->iswrite = $w; $this->attr = (array)$a;
     $GLOBALS['PageExistsCache'] = array();
@@ -1009,6 +1006,9 @@ class PageStore {
     else $this->recodefn = false;
     $this->u8decode = create_function('$s,$from,$to', 'return utf8_decode($s);');
     $this->u8encode = create_function('$s,$from,$to', 'return utf8_encode($s);');
+  }
+  function __construct($d='$WorkDir/$FullName', $w=0, $a=NULL) {
+    $this->PageStore($d, $w, $a);
   }
   function pagefile($pagename) {
     global $FarmD;
