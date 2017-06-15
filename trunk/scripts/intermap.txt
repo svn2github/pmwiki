@@ -4,7 +4,7 @@ Skins:      http://www.pmwiki.org/wiki/Skins/
 Wiki:       http://www.c2.com/cgi/wiki?
 UseMod:     http://www.usemod.com/cgi-bin/wiki.pl?
 Meatball:   http://www.usemod.com/cgi-bin/mb.pl?
-Wikipedia:  http://en.wikipedia.org/wiki/
+Wikipedia:  https://en.wikipedia.org/wiki/
 PITS:       http://www.pmwiki.org/wiki/PITS/
 PmL10n:     http://www.pmwiki.org/wiki/Localization/
 Path:            

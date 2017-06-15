@@ -459,7 +459,7 @@ function PHSC($x, $flags=ENT_COMPAT, $enc=null, $dbl_enc=true) { # for PHP 5.4
   if (is_null($enc)) $enc = "ISO-8859-1"; # single-byte charset
   if (! is_array($x)) return @htmlspecialchars($x, $flags, $enc, $dbl_enc);
   foreach($x as $k=>$v) $x[$k] = PHSC($v, $flags, $enc, $dbl_enc);
-  return $x;  
+  return $x;
 }
 function PCCF($code, $template = 'default', $args = '$m') {
   global $CallbackFnTemplates, $CallbackFunctions;
