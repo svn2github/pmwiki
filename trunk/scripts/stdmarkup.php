@@ -56,7 +56,7 @@ Markup_e('{$var}', '>$[phrase]',
 
 # invisible (:textvar:...:) definition
 Markup('textvar:', '<if',
-  '/\\(: *\\w[-\\w]* *:(?!\\)).*?(:\\)|$|(?=\\(:))/s', '');
+  '/\\(: *\\w[-\\w]* *:(?!\\))((?!\\(:).)*?(:\\))/s', '');
 
 ## handle relative text vars in includes
 if (IsEnabled($EnableRelativePageVars, 1)) 
