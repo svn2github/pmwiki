@@ -158,6 +158,7 @@ $SaveProperties = array('title', 'description', 'keywords');
 $PageTextVarPatterns = array(
   'var:'        => '/^(:*[ \\t]*(\\w[-\\w]*)[ \\t]*:[ \\t]?)(.*)($)/m',
   '(:var:...:)' => '/(\\(: *(\\w[-\\w]*) *:(?!\\))\\s?)(.*?)(:\\))/s'
+# '(:var:...:)' => '/(\\(: *(\\w[-\\w]*) *:(?!\\))\\s?)(.*?)(:\\)|$|(?=\\(:))/s' # PITS:1300?
   );
 
 

@@ -55,8 +55,8 @@ Markup_e('{$var}', '>$[phrase]',
   "PRR(PVSE(PageVar(\$pagename, \$m[2], \$m[1])))");
 
 # invisible (:textvar:...:) definition
-Markup('textvar:', '<split',
-  '/\\(: *\\w[-\\w]* *:(?!\\)).*?:\\)/s', '');
+Markup('textvar:', '<if',
+  '/\\(: *\\w[-\\w]* *:(?!\\)).*?(:\\)|$|(?=\\(:))/s', '');
 
 ## handle relative text vars in includes
 if (IsEnabled($EnableRelativePageVars, 1)) 
