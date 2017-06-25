@@ -16,7 +16,7 @@
 */
 
 SDV($VarPagesFmt,array('$[PmWiki.Variables]'));
-Markup_e('varlink','<wikilink',"/\\$($WikiWordPattern|Author|Skin|pagename)\\b/",
+Markup_e('varlink','<wikilink',"/\\$($WikiWordPattern|Author|Skin|pagename|Version)\\b/",
   "Keep(VarLink(\$pagename,\$m[1],'$'.\$m[1]))");
 Markup('vardef','<links',"/^:\\$($WikiWordPattern|Author|Skin|pagename|Version):/",
   ':[[#$1]]$$1:');
