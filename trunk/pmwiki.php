@@ -995,7 +995,7 @@ class PageStore {
   var $recodefn;
   var $u8decode;
   var $u8encode;
-  function PageStore($d='$WorkDir/$FullName', $w=0, $a=NULL) { 
+  function __construct($d='$WorkDir/$FullName', $w=0, $a=NULL) { 
     $this->dirfmt = $d; $this->iswrite = $w; $this->attr = (array)$a;
     $GLOBALS['PageExistsCache'] = array();
     # can we rely on iconv() or on mb_convert_encoding() ?
@@ -1006,9 +1006,6 @@ class PageStore {
     else $this->recodefn = false;
     $this->u8decode = create_function('$s,$from,$to', 'return utf8_decode($s);');
     $this->u8encode = create_function('$s,$from,$to', 'return utf8_encode($s);');
-  }
-  function __construct($d='$WorkDir/$FullName', $w=0, $a=NULL) {
-    $this->PageStore($d, $w, $a);
   }
   function pagefile($pagename) {
     global $FarmD;
