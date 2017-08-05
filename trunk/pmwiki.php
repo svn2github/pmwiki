@@ -157,7 +157,7 @@ $FmtPV = array(
 $SaveProperties = array('title', 'description', 'keywords');
 $PageTextVarPatterns = array(
   'var:'        => '/^(:*[ \\t]*(\\w[-\\w]*)[ \\t]*:[ \\t]?)(.*)($)/m',
-  '(:var:...:)' => '/(\\(: *(\\w[-\\w]*) *:(?!\\))\\s?)((?:(?!\\(:).)*?)(:\\))/s' # PITS:01300
+  '(:var:...:)' => '/(\\(: *(\\w[-\\w]*) *:(?!\\))\\s?)(.*?)(:\\))/s'
   );
 
 
