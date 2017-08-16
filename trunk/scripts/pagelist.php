@@ -41,7 +41,13 @@ SDVA($SearchPatterns['normal'], array(
   'group' => '!\.Group(Print)?(Header|Footer|Attributes)$!',
   'self' => str_replace('.', '\\.', "!^$pagename$!")));
 
-if (IsEnabled($EnablePageListGroupHomes, 0)) {
+# The list=grouphomes search pattern requires to scan 
+# all PageStore directories to get the pagenames.
+# This takes (a tiny amoint of) time, so we only do it when needed.
+function EnablePageListGroupHomes() { 
+  global $SearchPatterns;
+  if(isset($SearchPatterns['grouphomes'])) return;
+  
   $groups = $homes = array();
   foreach(ListPages() as $pn) {
     list($g, $n) = explode(".", $pn);
@@ -50,8 +56,7 @@ if (IsEnabled($EnablePageListGroupHomes, 0)) {
   foreach($groups as $g => $cnt) {
     $homes[] = MakePageName("$g.$g", "$g.");
   }
-  SDVA($SearchPatterns['grouphomes'], array('/^('.implode('|', $homes).')$/'));
-  unset($groups, $homes, $g, $n, $cnt);
+  $SearchPatterns['grouphomes'] = array('/^('.implode('|', $homes).')$/');
 }
 
 ## $FPLFormatOpt is a list of options associated with fmt=
@@ -306,6 +311,7 @@ function PageListSources(&$list, &$opt, $pn, &$page) {
   global $SearchPatterns;
 
   StopWatch('PageListSources begin');
+  if ($opt['list'] == 'grouphomes') EnablePageListGroupHomes();
   ## add the list= option to our list of pagename filter patterns
   $opt['=pnfilter'] = array_merge((array)@$opt['=pnfilter'], 
                                   (array)@$SearchPatterns[$opt['list']]);
