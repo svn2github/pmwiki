@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2016 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -41,6 +41,19 @@ SDVA($SearchPatterns['normal'], array(
   'group' => '!\.Group(Print)?(Header|Footer|Attributes)$!',
   'self' => str_replace('.', '\\.', "!^$pagename$!")));
 
+if (IsEnabled($EnablePageListGroupHomes, 0)) {
+  $groups = $homes = array();
+  foreach(ListPages() as $pn) {
+    list($g, $n) = explode(".", $pn);
+    @$groups[$g]++;
+  }
+  foreach($groups as $g => $cnt) {
+    $homes[] = MakePageName("$g.$g", "$g.");
+  }
+  SDVA($SearchPatterns['grouphomes'], array('/^('.implode('|', $homes).')$/'));
+  unset($groups, $homes, $g, $n, $cnt);
+}
+
 ## $FPLFormatOpt is a list of options associated with fmt=
 ## values.  'default' is used for any undefined values of fmt=.
 SDVA($FPLFormatOpt, array(
@@ -68,16 +81,26 @@ XLSDV('en', array(
 
 SDV($PageListArgPattern, '((?:\\$:?)?\\w+)[:=]');
 
-Markup_e('pagelist', 'directives',
-  '/\\(:pagelist(\\s+.*?)?:\\)/i',
-  "FmtPageList('\$MatchList', \$pagename, array('o' => \$m[1].' '))");
-Markup_e('searchbox', 'directives',
-  '/\\(:searchbox(\\s.*?)?:\\)/',
-  "SearchBox(\$pagename, ParseArgs(\$m[1], '$PageListArgPattern'))");
-Markup_e('searchresults', 'directives',
-  '/\\(:searchresults(\\s+.*?)?:\\)/i',
-  "FmtPageList(\$GLOBALS['SearchResultsFmt'], \$pagename, 
-       array('req' => 1, 'request'=>1, 'o' => \$m[1]))");
+Markup('pagelist', 'directives',
+  '/\\(:pagelist(\\s+.*?)?:\\)/i', "MarkupPageList");
+Markup('searchbox', 'directives',
+  '/\\(:searchbox(\\s.*?)?:\\)/', "MarkupPageList");
+Markup('searchresults', 'directives',
+  '/\\(:searchresults(\\s+.*?)?:\\)/i', "MarkupPageList");
+
+function MarkupPageList($m) {
+  extract($GLOBALS["MarkupToHTML"]); # get $pagename, $markupid
+  switch ($markupid) {
+    case 'pagelist': 
+      return FmtPageList('$MatchList', $pagename, array('o' => $m[1].' '));
+    case 'searchbox': 
+      return SearchBox($pagename, 
+        ParseArgs($m[1], $GLOBALS['PageListArgPattern']));
+    case 'searchresults': 
+      return FmtPageList($GLOBALS['SearchResultsFmt'], 
+        $pagename, array('req' => 1, 'request'=>1, 'o' => $m[1]));
+  }
+}
 
 SDV($SaveAttrPatterns['/\\(:(searchresults|pagelist)(\\s+.*?)?:\\)/i'], ' ');
 
