@@ -24,8 +24,13 @@ SDV($TableCellAlignFmt, " class='%s'");
 $SearchBoxInputType = "search";
 
 # remove deprecated "name=" parameter from anchor tags
-Markup_e('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/',
-  "Keep(TrackAnchors(\$m[1]) ? '' : \"<a id='{\$m[1]}'></a>\", 'L')");
+Markup('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/',
+  "MarkupKeepTrackAnchors");
+
+function MarkupKeepTrackAnchors($m) {
+  return Keep(TrackAnchors($m[1]) ? '' : "<a id='{$m[1]}'></a>", 'L');
+}
+
 # in HTML5 "clear" is a style not an attribute
 Markup('[[<<]]','inline','/\\[\\[&lt;&lt;\\]\\]/',"<br style='clear:both;' />");
 
