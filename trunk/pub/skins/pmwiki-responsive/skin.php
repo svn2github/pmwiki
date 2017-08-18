@@ -24,9 +24,10 @@ SDV($TableCellAlignFmt, " class='%s'");
 $SearchBoxInputType = "search";
 
 # remove deprecated "name=" parameter from anchor tags
-Markup('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/',
-  "MarkupKeepTrackAnchors");
-
+if($VersionNum >= 2002056) {
+  Markup('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/',
+    "MarkupKeepTrackAnchors");
+}
 function MarkupKeepTrackAnchors($m) {
   return Keep(TrackAnchors($m[1]) ? '' : "<a id='{$m[1]}'></a>", 'L');
 }
