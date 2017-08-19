@@ -58,6 +58,7 @@ SDVA($UploadExts,array(
   'epub'=> 'application/epub+zip',
   'kml' => 'application/vnd.google-earth.kml+xml',
   'kmz' => 'application/vnd.google-earth.kmz',
+  'vtt' => 'text/vtt',
   '' => 'text/plain'));
 
 # Array containing forbidden strings in a filename, array('.php', '.cgi')
