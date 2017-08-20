@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -52,14 +52,15 @@ SDVA($GUIButtons, array(
   'center'   => array(410, '%center%', '', '',
                   '$GUIButtonDirUrlFmt/center.gif"$[Center]"')));
 
-Markup_e('e_guibuttons', 'directives',
-  '/\\(:e_guibuttons:\\)/',
-  "Keep(FmtPageName(GUIButtonCode(\$pagename), \$pagename))");
+Markup('e_guibuttons', 'directives',
+  '/\\(:e_guibuttons:\\)/', 'GUIButtonCode');
 
-function GUIButtonCode($pagename) {
+function cb_gbcompare($a, $b) {return $a[0]-$b[0];}
+function GUIButtonCode() {
   global $GUIButtons;
-  $cmpfn = create_function('$a,$b', 'return $a[0]-$b[0];');
-  usort($GUIButtons, $cmpfn);
+  extract($GLOBALS["MarkupToHTML"]); # get $pagename
+  
+  usort($GUIButtons, 'cb_gbcompare');
   $out = "<script type='text/javascript'><!--\n";
   foreach ($GUIButtons as $k => $g) {
     if (!$g) continue;
@@ -79,6 +80,6 @@ function GUIButtonCode($pagename) {
       "insButton(\"$mopen\", \"$mclose\", '$mtext', \"$tag\", \"$mkey\");\n";
   }
   $out .= '//--></script>';
-  return $out;
+  return Keep(FmtPageName($out, $pagename));
 }
 

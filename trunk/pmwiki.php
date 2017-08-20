@@ -277,9 +277,9 @@ Markup('inline','>directives');
 Markup('links','>inline');
 Markup('block','>links');
 Markup('style','>block');
-Markup_e('closeall', '_begin',
-  '/^\\(:closeall:\\)$/',
-  "'<:block>' . MarkupClose()");
+Markup('closeall', '_begin',
+  '/^\\(:closeall:\\)$/', "MarkupMarkupClose");
+function MarkupMarkupClose() { return '<:block>' . MarkupClose(); }
 
 $ImgExtPattern="\\.(?:gif|jpg|jpeg|png|svgz?|GIF|JPG|JPEG|PNG|SVGZ?)";
 $ImgTagFmt="<img src='\$LinkUrl' alt='\$LinkAlt' title='\$LinkAlt' />";
@@ -420,17 +420,17 @@ function PZZ($x,$y='') { return ''; }
 function PRR($x=NULL) 
   { if ($x || is_null($x)) $GLOBALS['RedoMarkupLine']++; return $x; }
 function PUE($x)
-  { return PPRE('/[\\x80-\\xff \'"<>]/', "'%'.dechex(ord(\$m[0]))", $x); }
+  { return preg_replace_callback('/[\\x80-\\xff \'"<>]/', "cb_pue", $x); }
+function cb_pue($m) { return '%'.dechex(ord($m[0])); }
 function PQA($x) { 
   $out = '';
   if (preg_match_all('/([a-zA-Z][-\\w]*)\\s*=\\s*("[^"]*"|\'[^\']*\'|\\S*)/',
                      $x, $attr, PREG_SET_ORDER)) {
     foreach($attr as $a) {
       if (preg_match('/^on/i', $a[1])) continue;
-      $out .= $a[1] . '=' 
-              . PPRE( '/^([\'"]?)(.*)\\1$/',
-                  "\"'\".str_replace(\"'\", '&#39;', \$m[2]).\"'\"", $a[2])
-              . ' ';
+      $val = preg_replace('/^([\'"]?)(.*)\\1$/', '$2', $a[2]);
+      $val = str_replace("'", '&#39;', $val);
+      $out .= "{$a[1]}='$val'";
     }
   }
   return $out;
@@ -485,6 +485,25 @@ function PPRA($array, $x) {
   }
   return $x;
 }
+## callback functions
+class PPRC { # PmWiki preg replace callbacks + pass local vars
+  var $vars;
+  function __construct($vars = false) {
+    if ($vars && !is_null($vars)) $this->vars = $vars;
+  }
+  function pagevar($m) { # called from FmtPageName
+    $pagename = $this->vars;
+    return PageVar($pagename, $m[1]);
+  }
+}
+
+# restores kept/protected strings
+function cb_expandkpv($m) { return $GLOBALS['KPV'][$m[1]]; }
+
+# make a string upper or lower case in various patterns
+function cb_toupper($m) { return strtoupper($m[1]); }
+function cb_tolower($m) { return strtolower($m[1]); }
+
 function pmcrypt($str, $salt=null) {
   if (!is_null($salt)) return crypt($str, $salt);
   if (function_exists('password_hash'))
@@ -737,7 +756,7 @@ function MakePageName($basepage, $str) {
   SDV($MakePageNamePatterns, array(
     "/'/" => '',			   # strip single-quotes
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
-    '/((^|[^-\\w])\\w)/' => PCCF("return strtoupper(\$m[1]);"),
+    '/((^|[^-\\w])\\w)/' => 'cb_toupper',
     '/ /' => ''));
   SDV($MakePageNameSplitPattern, '/[.\\/]/');
   $str = preg_replace('/[#?].*$/', '', $str);
@@ -796,8 +815,8 @@ function SetProperty($pagename, $prop, $value, $sep=NULL, $keep=NULL) {
   global $PCache, $KeepToken;
   NoCache();
   $prop = "=p_$prop";
-  $value = PPRE("/$KeepToken(\\d.*?)$KeepToken/",
-                        "\$GLOBALS['KPV'][\$m[1]]", $value);
+  $value = preg_replace_callback("/$KeepToken(\\d.*?)$KeepToken/",
+                        "cb_expandkpv", $value);
   if (!is_null($sep) && isset($PCache[$pagename][$prop]))
     $value = $PCache[$pagename][$prop] . $sep . $value;
   if (is_null($keep) || !isset($PCache[$pagename][$prop]))
@@ -868,12 +887,13 @@ function FmtPageName($fmt, $pagename) {
   # Perform $-substitutions on $fmt relative to page given by $pagename
   global $GroupPattern, $NamePattern, $EnablePathInfo, $ScriptUrl,
     $GCount, $UnsafeGlobals, $FmtV, $FmtP, $FmtPV, $PCache, $AsSpacedFunction;
-  if (strpos($fmt,'$')===false) return $fmt;                  
-  $fmt = PPRE('/\\$([A-Z]\\w*Fmt)\\b/','$GLOBALS[$m[1]]',$fmt);
-  $fmt = PPRE('/\\$\\[(?>([^\\]]+))\\]/',"XL(\$m[1])",$fmt);
+  if (strpos($fmt,'$')===false) return $fmt;
+  $fmt = preg_replace_callback('/\\$([A-Z]\\w*Fmt)\\b/','cb_expandglobal',$fmt);
+  $fmt = preg_replace_callback('/\\$\\[(?>([^\\]]+))\\]/',"cb_expandxlang",$fmt);
   $fmt = str_replace('{$ScriptUrl}', '$ScriptUrl', $fmt);
-  $fmt = 
-    PPRE('/\\{\\*?(\\$[A-Z]\\w+)\\}/', "PageVar('$pagename', \$m[1])", $fmt);
+  $pprc = new PPRC($pagename);
+  $fmt = preg_replace_callback('/\\{\\*?(\\$[A-Z]\\w+)\\}/', 
+    array($pprc, 'pagevar'), $fmt);
   if (strpos($fmt,'$')===false) return $fmt;
   if ($FmtP) $fmt = PPRA($FmtP, $fmt); # FIXME
   static $pv, $pvpat;
@@ -881,11 +901,9 @@ function FmtPageName($fmt, $pagename) {
     $pvpat = str_replace('$', '\\$', implode('|', array_keys($FmtPV)));
     $pv = count($FmtPV);
   }
-  $fmt = PPRE("/(?:$pvpat)\\b/", "PageVar('$pagename', \$m[0])", $fmt);
-  $fmt = PPRE('!\\$ScriptUrl/([^?#\'"\\s<>]+)!',
-    (@$EnablePathInfo) ? "'$ScriptUrl/'.PUE(\$m[1])" :
-        "'$ScriptUrl?n='.str_replace('/','.',PUE(\$m[1]))", 
-    $fmt);
+  $fmt = preg_replace_callback("/($pvpat)\\b/", array($pprc, 'pagevar'), $fmt);
+  $fmt = preg_replace_callback('!\\$ScriptUrl/([^?#\'"\\s<>]+)!',
+    'cb_expandscripturl', $fmt);
   if (strpos($fmt,'$')===false) return $fmt;
   static $g;
   if ($GCount != count($GLOBALS)+count($FmtV)) {
@@ -899,10 +917,21 @@ function FmtPageName($fmt, $pagename) {
     krsort($g); reset($g);
   }
   $fmt = str_replace(array_keys($g),array_values($g),$fmt);
-  $fmt = PPRE('/(?>(\\$[[:alpha:]]\\w+))/',
-          "isset(\$GLOBALS['FmtV'][\$m[1]]) ? \$GLOBALS['FmtV'][\$m[1]] : \$m[1]", $fmt);
+  $fmt = preg_replace_callback('/(?>(\\$[[:alpha:]]\\w+))/',
+          "cb_expandfmtv", $fmt);
   return $fmt;
 }
+function cb_expandglobal($m){ return $GLOBALS[$m[1]]; }
+function cb_expandxlang ($m){ return NoCache(XL($m[1])); }
+function cb_expandfmtv ($m){ 
+  return isset($GLOBALS['FmtV'][$m[1]]) ? $GLOBALS['FmtV'][$m[1]] : $m[1];
+}
+function cb_expandscripturl($m) {
+  global $EnablePathInfo, $ScriptUrl;
+  return (@$EnablePathInfo) ? "$ScriptUrl/" . PUE($m[1])
+    : "$ScriptUrl?n=".str_replace('/','.',PUE($m[1]));
+}
+
 
 ## FmtPageTitle returns the page title, or the page name
 ## It localizes standard technical pages (RecentChanges...)
@@ -927,8 +956,9 @@ function FmtTemplateVars($text, $vars, $pagename = NULL) {
   global $FmtPV, $EnableUndefinedTemplateVars;
   if ($pagename) {
     $pat = implode('|', array_map('preg_quote', array_keys($FmtPV)));
-    $text = PPRE("/\\{\\$($pat)\\}/",
-                         "PageVar('$pagename', \$m[1])", $text);
+    $pprc = new PPRC($pagename);
+    $text = preg_replace_callback("/\\{\\$($pat)\\}/",
+              array($pprc, 'pagevar'), $text);
   }
   foreach(preg_grep('/^[\\w$]/', array_keys($vars)) as $k)
     if (!is_array($vars[$k]))
@@ -992,20 +1022,28 @@ class PageStore {
   var $iswrite;
   var $encodefilenames;
   var $attr;
-  var $recodefn;
-  var $u8decode;
-  var $u8encode;
   function __construct($d='$WorkDir/$FullName', $w=0, $a=NULL) { 
     $this->dirfmt = $d; $this->iswrite = $w; $this->attr = (array)$a;
     $GLOBALS['PageExistsCache'] = array();
-    # can we rely on iconv() or on mb_convert_encoding() ?
-    if (function_exists('iconv') && @iconv("UTF-8", "WINDOWS-1252//IGNORE", "te\xd0\xafst")=='test' )
-      $this->recodefn = create_function('$s,$from,$to', 'return @iconv($from,"$to//IGNORE",$s);');
-    elseif (function_exists('mb_convert_encoding') && @mb_convert_encoding("te\xd0\xafst", "WINDOWS-1252", "UTF-8")=="te?st")
-      $this->recodefn = create_function('$s,$from,$to', 'return @mb_convert_encoding($s,$to,$from);');
-    else $this->recodefn = false;
-    $this->u8decode = create_function('$s,$from,$to', 'return utf8_decode($s);');
-    $this->u8encode = create_function('$s,$from,$to', 'return utf8_encode($s);');
+  }
+  function recodefn($s,$from,$to) {
+    static $able;
+    if(is_null($able)) {
+      # can we rely on iconv() or on mb_convert_encoding() ?
+      if (function_exists('iconv') && @iconv("UTF-8", "WINDOWS-1252//IGNORE", "te\xd0\xafst")=='test' )
+        $able = 'iconv';
+      elseif (function_exists('mb_convert_encoding') && @mb_convert_encoding("te\xd0\xafst", "WINDOWS-1252", "UTF-8")=="te?st")
+        $able = 'mb';
+    }
+    switch ($able) {
+      case "iconv":
+        return @iconv($from,"$to//IGNORE",$s);
+      case "mb":
+        return @mb_convert_encoding($s,$to,$from);
+    }
+    if ($to=='UTF-8' && $from=='WINDOWS-1252') return utf8_decode($s);
+    if ($from=='UTF-8' && $to=='WINDOWS-1252') return utf8_encode($s);
+    return $s;
   }
   function pagefile($pagename) {
     global $FarmD;
@@ -1148,13 +1186,9 @@ class PageStore {
     if (!$a['charset'] || $Charset==$a['charset']) return $a;
     $from = ($a['charset']=='ISO-8859-1') ? 'WINDOWS-1252' : $a['charset'];
     $to = ($Charset=='ISO-8859-1') ? 'WINDOWS-1252' : $Charset;
-    if ($this->recodefn) $F = $this->recodefn;
-    elseif ($to=='UTF-8' && $from=='WINDOWS-1252') # utf8 wiki & pre-2.2.30 doc
-      $F = $this->u8encode;
-    elseif ($to=='WINDOWS-1252' && $from=='UTF-8') # 2.2.31+ documentation
-      $F = $this->u8decode;
-    else return $a;
-    foreach($a as $k=>$v) $a[$k] = $F($v,$from,$to);
+    if($from != $to) {
+      foreach($a as $k=>$v) $a[$k] = $this->recodefn($v,$from,$to);
+    }
     $a['charset'] = $Charset;
     return $a;
   }
@@ -1221,7 +1255,7 @@ function Abort($msg, $info='') {
     $info
     <p class='vspace'><a href='$ScriptUrl'>$[Return to] $ScriptUrl</a></p>";
   @header("Content-type: text/html; charset=$Charset");
-  echo PPRE('/\\$\\[([^\\]]+)\\]/', "XL(\$m[1])", $msg);
+  echo preg_replace_callback('/\\$\\[([^\\]]+)\\]/', "cb_expandxlang", $msg);
   exit;
 }
 
@@ -1290,9 +1324,10 @@ function PrintWikiPage($pagename, $wikilist=NULL, $auth='read') {
 }
 
 function Keep($x, $pool=NULL) {
+  if(is_array($x)) $x = $x[0]; # used in many callbacks
   # Keep preserves a string from being processed by wiki markups
   global $BlockPattern, $KeepToken, $KPV, $KPCount;
-  $x = PPRE("/$KeepToken(\\d.*?)$KeepToken/", "\$GLOBALS['KPV'][\$m[1]]", $x);
+  $x = preg_replace_callback("/$KeepToken(\\d.*?)$KeepToken/", 'cb_expandkpv', $x);
   if (is_null($pool) && preg_match("!</?($BlockPattern)\\b!", $x)) $pool = 'B';
   $KPCount++; $KPV[$KPCount.$pool]=$x;
   return $KeepToken.$KPCount.$pool.$KeepToken;
@@ -1305,11 +1340,11 @@ function Keep($x, $pool=NULL) {
 function MarkupEscape($text) {
   global $EscapePattern;
   SDV($EscapePattern, '\\[([=@]).*?\\1\\]');
-  return PPRE("/$EscapePattern/s", "Keep(\$m[0])", $text);
+  return preg_replace_callback("/$EscapePattern/s", "Keep", $text);
 }
 function MarkupRestore($text) {
   global $KeepToken, $KPV;
-  return PPRE("/$KeepToken(\\d.*?)$KeepToken/", "\$GLOBALS['KPV'][\$m[1]]", $text);
+  return preg_replace_callback("/$KeepToken(\\d.*?)$KeepToken/", 'cb_expandkpv', $text);
 }
 
 

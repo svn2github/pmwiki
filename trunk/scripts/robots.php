@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -69,12 +69,13 @@ if (!@$RobotActions[$action]) {
 
 ## The following removes any ?action= parameters that robots aren't
 ## allowed to access.
+function cb_bool($a) { return (boolean)$a; }
 if (IsEnabled($EnableRobotCloakActions, 0)) {
-  $p = create_function('$a', 'return (boolean)$a;');
-  $p = join('|', array_keys(array_filter($RobotActions, $p)));
+  $p = join('|', array_keys(array_filter($RobotActions, 'cb_bool')));
   $FmtPV['$PageUrl'] = 
     'PUE(($EnablePathInfo)
          ? "\\$ScriptUrl/$group/$name"
          : "\\$ScriptUrl?n=$group.$name")';
   $FmtP["/(\\\$ScriptUrl[^#\"'\\s<>]+)\\?action=(?!$p)\\w+/"] = '$1';
 }
+

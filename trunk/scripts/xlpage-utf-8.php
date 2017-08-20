@@ -55,14 +55,15 @@ SDV($MakePageNamePatterns, array(
     '/[?#].*$/' => '',                     # strip everything after ? or #
     "/'/" => '',                           # strip single-quotes
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
-    '/(?<=^| )([a-z])/' => PCCF("return strtoupper(\$m[1]);"),
-    '/(?<=^| )([\\xc0-\\xdf].)/' => PCCF("return utf8toupper(\$m[1]);"),
+    '/(?<=^| )([a-z])/' => 'cb_toupper',
+    '/(?<=^| )([\\xc0-\\xdf].)/' => 'utf8toupper',
     '/ /' => ''));
 SDV($StrFoldFunction, 'utf8fold');
 
 $AsSpacedFunction = 'AsSpacedUTF8';
 
 function utf8toupper($x) {
+  if(is_array($x)) $x = $x[1];
   global $CaseConversions;
   if (strlen($x) <= 2 && @$CaseConversions[$x])
     return $CaseConversions[$x];
@@ -116,9 +117,9 @@ function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo fo
   $ascii = preg_match('/[\\x80-\\xFF]/', $str)? 0:1;
   switch ((string)$start) {
     case 'ucfirst': return $ascii ? ucfirst($str) :
-      PPRE("/^($lower)/", '$GLOBALS["CaseConversions"][$m[1]]', $str);
+      preg_replace_callback("/(^)($lower)/", 'cb_uc_first_words', $str);
     case 'ucwords': return $ascii ? ucwords($str) :
-      PPRE("/(^|\\s+)($lower)/", '$m[1].$GLOBALS["CaseConversions"][$m[2]]', $str);
+      preg_replace_callback("/(^|\\s+)($lower)/", 'cb_uc_first_words', $str);
     case 'tolower': return $ascii ? strtolower($str) : utf8fold($str);
     case 'toupper': return $ascii ? strtoupper($str) : utf8toupper($str);
   }
@@ -133,7 +134,9 @@ function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo fo
   if ($len===false) return implode('', array_slice($letters, $start));
   return implode('', array_slice($letters, $start, $len));
 }
-
+function cb_uc_first_words($m){
+  return $m[1].$GLOBALS["CaseConversions"][$m[2]];
+}
 ##   Conversion tables.  
 ##   $CaseConversion maps lowercase utf8 sequences to 
 ##   their uppercase equivalents.  The table was derived from [1].

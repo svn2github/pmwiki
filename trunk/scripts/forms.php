@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -64,14 +64,27 @@ SDVA($InputTags['default'], array(':fn' => 'InputDefault'));
 SDVA($InputTags['defaults'], array(':fn' => 'InputDefault'));
 
 ##  (:input ...:) directives
-Markup_e('input', 'directives',
+Markup('input', 'directives',
   '/\\(:input\\s+(\\w+)(.*?):\\)/i',
-  "InputMarkup(\$pagename, \$m[1], \$m[2])");
+  "MarkupInputForms");
 
 ##  (:input select:) has its own markup processing
-Markup_e('input-select', '<input',
+Markup('input-select', '<input',
   '/\\(:input\\s+select\\s.*?:\\)(?:\\s*\\(:input\\s+select\\s.*?:\\))*/i',
-  "InputSelect(\$pagename, 'select', \$m[0])");
+  "MarkupInputForms");
+
+function MarkupInputForms($m) {
+  extract($GLOBALS["MarkupToHTML"]); # get $pagename, $markupid
+  switch ($markupid) {
+    case 'input': 
+      return InputMarkup($pagename, $m[1], $m[2]);
+    case 'input-select': 
+      return InputSelect($pagename, 'select', $m[0]);
+    case 'e_preview': 
+      return isset($GLOBALS['FmtV']['$PreviewText']) 
+        ? Keep($GLOBALS['FmtV']['$PreviewText']): '';
+  }
+}
 
 ##  The 'input+sp' rule combines multiple (:input select ... :)
 ##  into a single markup line (to avoid split line effects)
@@ -310,9 +323,8 @@ if (@$_REQUEST['editform']) {
 $Conditions['e_preview'] = '(boolean)$_REQUEST["preview"]';
 
 # (:e_preview:) displays the preview of formatted text.
-Markup_e('e_preview', 'directives',
-  '/^\\(:e_preview:\\)/',
-  "isset(\$GLOBALS['FmtV']['\$PreviewText']) ? Keep(\$GLOBALS['FmtV']['\$PreviewText']): ''");
+Markup('e_preview', 'directives',
+  '/^\\(:e_preview:\\)/', "MarkupInputForms");
 
 # If we didn't load guiedit.php, then set (:e_guibuttons:) to
 # simply be empty.

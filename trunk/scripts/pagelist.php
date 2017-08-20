@@ -107,6 +107,14 @@ function MarkupPageList($m) {
   }
 }
 
+# called from PageListIf and FPLExpandItemVars
+class cb_pl_expandvars extends PPRC { 
+  function pl_expandvars($m) {
+    $pn = $this->vars;
+    return PVSE(PageVar($pn, $m[2], $m[1]));
+  }
+}
+
 SDV($SaveAttrPatterns['/\\(:(searchresults|pagelist)(\\s+.*?)?:\\)/i'], ' ');
 
 SDV($HandleActions['search'], 'HandleSearchA');
@@ -359,8 +367,9 @@ function PageListIf(&$list, &$opt, $pn, &$page) {
   $Cursor['='] = $pn;
   $varpat = '\\{([=*]|!?[-\\w.\\/\\x80-\\xff]*)(\\$:?\\w+)\\}';
   while (preg_match("/$varpat/", $condspec, $match)) {
-    $condspec = PPRE("/$varpat/",
-                    "PVSE(PageVar('$pn', \$m[2], \$m[1]))", $condspec);
+    $cb = new cb_pl_expandvars($pn);
+    $condspec = preg_replace_callback("/$varpat/", 
+      array($cb, 'pl_expandvars'), $condspec);
   }
   if (!preg_match("/^\\s*(!?)\\s*(\\S*)\\s*(.*?)\\s*$/", $condspec, $match)) 
     return 0;
@@ -369,7 +378,6 @@ function PageListIf(&$list, &$opt, $pn, &$page) {
   $tf = (int)@eval("return ({$Conditions[$condname]});");
   return (boolean)($tf xor $not);
 }
-
 
 function PageListTermsTargets(&$list, &$opt, $pn, &$page) {
   global $FmtV;
@@ -756,8 +764,9 @@ function FPLExpandItemVars($item, $matches, $idx, $psvars) {
   $Cursor['='] = $pn = (string)@$matches[$idx];
   $Cursor['>'] = $Cursor['&gt;'] = (string)@$matches[$idx+1];
   $item = str_replace(array_keys($psvars), array_values($psvars), $item);
-  $item = PPRE('/\\{(=|&[lg]t;)(\\$:?\\w[-\\w]*)\\}/',
-              "PVSE(PageVar('$pn',  \$m[2], \$m[1]))", $item);
+  $cb = new cb_pl_expandvars($pn);
+  $item = preg_replace_callback('/\\{(=|&[lg]t;)(\\$:?\\w[-\\w]*)\\}/',
+              array($cb, 'pl_expandvars'), $item);
   if (! IsEnabled($EnableUndefinedTemplateVars, 0))
     $item = preg_replace("/\\{\\$\\$\\w+\\}/", '', $item);
   return $item;

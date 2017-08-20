@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2007-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2007-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -25,32 +25,47 @@ Markup('//', 'inline',
   '<em>$1</em>');
 
 ## == Headings ==
-Markup_e('^=', 'block',
+Markup('^=', 'block',
   '/^(={1,6})\\s?(.*?)(\\s*=*\\s*)$/',
-  "'<:block,1><h'.strlen(\$m[1]).'>'.\$m[2].'</h'.strlen(\$m[1]).'>'");
+  "MarkupCreole");
 
 ## Line breaks
 Markup('\\\\', 'inline', '/\\\\\\\\/', '<br />');
 
 ## Preformatted
-Markup_e('^{{{', '[=',
+Markup('^{{{', '[=',
   "/^\\{\\{\\{\n(.*?\n)\\}\\}\\}[^\\S\n]*\n/sm",
-  "Keep('<pre class=\"escaped\">'.\$m[1].'</pre>')");
-Markup_e('{{{', '>{{{',
+  "MarkupCreole");
+Markup('{{{', '>{{{',
   '/\\{\\{\\{(.*?)\\}\\}\\}/s',
-  "Keep('<code class=\"escaped\">'.\$m[1].'</code>')");
+  "MarkupCreole");
 
 ## Tables
-Markup_e('|-table', '>^||',
+Markup('|-table', '>^||',
   '/^\\|(.*)$/',
-  "FormatTableRow(\$m[0], '\\|')");
+  "MarkupCreole");
 
 ## Images
-Markup_e('{{', 'inline',
+Markup('{{', 'inline',
   '/\\{\\{(?>(\\L))([^|\\]]*)(?:\\|\\s*(.*?)\\s*)?\\}\\}/',
-  "Keep(\$GLOBALS['LinkFunctions'][\$m[1]](\$pagename, \$m[1], \$m[2], \$m[3],
-     \$m[1].\$m[2], \$GLOBALS['ImgTagFmt']),'L')");
+  "MarkupCreole");
 
+function MarkupCreole($m) {
+  extract($GLOBALS["MarkupToHTML"]); # get $pagename, $markupid
+  switch ($markupid) {
+    case '^=': 
+      return '<:block,1><h'.strlen($m[1]).'>'.$m[2].'</h'.strlen($m[1]).'>';
+    case '^{{{': 
+      return Keep('<pre class="escaped">'.$m[1].'</pre>');
+    case '{{{': 
+      return Keep('<code class="escaped">'.$m[1].'</code>');
+    case '|-table': 
+      return FormatTableRow($m[0], '\\|');
+    case '{{': 
+      return Keep($GLOBALS['LinkFunctions'][$m[1]]($pagename, $m[1], $m[2], $m[3],
+     $m[1].$m[2], $GLOBALS['ImgTagFmt']),'L');
+  }
+}
 
 ## GUIButtons
 SDVA($GUIButtons, array(

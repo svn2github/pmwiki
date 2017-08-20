@@ -16,13 +16,22 @@
 */
 
 SDV($VarPagesFmt,array('$[PmWiki.Variables]'));
-Markup_e('varlink','<wikilink',"/\\$($WikiWordPattern|Author|Skin|pagename|Version)\\b/",
-  "Keep(VarLink(\$pagename,\$m[1],'$'.\$m[1]))");
 Markup('vardef','<links',"/^:\\$($WikiWordPattern|Author|Skin|pagename|Version) *:/",
   ':[[#$1]]$$1:');
-Markup_e('varindex', 'directives',
-  '/\\(:varindex:\\)/i',
-  "Keep(VarIndexList(\$pagename))");
+Markup_e('varlink','<wikilink',"/\\$($WikiWordPattern|Author|Skin|pagename|Version)\\b/",
+  "MarkupVarLinkIndex");
+Markup('varindex', 'directives',
+  '/\\(:varindex:\\)/i', "MarkupVarLinkIndex");
+
+function MarkupVarLinkIndex($m) {
+  extract($GLOBALS["MarkupToHTML"]); # get $pagename, $markupid
+  switch ($markupid) {
+    case 'varlink': 
+      return Keep(VarLink($pagename,$m[1],'$'.$m[1]));
+    case 'varindex': 
+      return Keep(VarIndexList($pagename));
+  }
+}
 
 SDVA($HTMLStylesFmt, array('vardoc' => "a.varlink { text-decoration:none;}\n"));
 

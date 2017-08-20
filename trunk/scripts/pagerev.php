@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -130,7 +130,7 @@ function DiffHTML($pagename, $diff) {
             .$DiffRenderSourceFunction($in, $out, 0)
             ."</div>";
         else $html .= MarkupToHTML($pagename,
-          PPRE('/\\(:.*?:\\)/',"Keep(PHSC(\$m[0]))", join("\n",$in)));
+          preg_replace_callback('/\\(:.*?:\\)/',"cb_diffhtml", join("\n",$in)));
       }
       if ($match[4]=='d' || $match[4]=='c') {
         $txt = str_replace('line',$lines,$DiffAddFmt[$match[4]]);
@@ -141,7 +141,7 @@ function DiffHTML($pagename, $diff) {
             .$DiffRenderSourceFunction($in, $out, 1)
             ."</div>";
         else $html .= MarkupToHTML($pagename,
-          PPRE('/\\(:.*?:\\)/',"Keep(PHSC(\$m[0]))",join("\n",$out)));
+          preg_replace_callback('/\\(:.*?:\\)/',"cb_diffhtml",join("\n",$out)));
       }
       $html .= FmtPageName($DiffEndDelAddFmt,$pagename);
     }
@@ -149,6 +149,8 @@ function DiffHTML($pagename, $diff) {
   }
   return $html;
 }
+function cb_diffhtml($m) { return Keep(PHSC($m[0])); }
+
 function HandleDiff($pagename, $auth='read') {
   global $HandleDiffFmt, $PageStartFmt, $PageDiffFmt, $PageEndFmt;
   $page = RetrieveAuthPage($pagename, $auth, true, READPAGE_CURRENT);
