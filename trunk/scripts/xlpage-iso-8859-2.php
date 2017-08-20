@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -15,7 +15,7 @@
 */
   global $HTTPHeaders, $pagename, $KeepToken, $Charset, $DefaultPageCharset;
 
-  $HTTPHeaders[] = "Content-Type: text/html; charset=iso-8859-2;";
+  $HTTPHeaders[] = "Content-Type: text/html; charset=iso-8859-2";
   $Charset = "ISO-8859-2";
   SDVA($DefaultPageCharset, array('ISO-8859-1'=>$Charset));
 
