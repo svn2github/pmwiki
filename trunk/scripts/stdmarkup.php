@@ -583,12 +583,14 @@ Markup('markup', '<[=',
   "/\\(:markup(\\s+([^\n]*?))?:\\)[^\\S\n]*\\[([=@])(.*?)\\3\\]/si",
   "MarkupMarkupMarkup");
 function MarkupMarkupMarkup($m) { # cannot be joined, $markupid resets
+  extract($GLOBALS["MarkupToHTML"]);
   return MarkupMarkup($pagename, $m[4], $m[2]);
 }
 Markup('markupend', '>markup',
   "/\\(:markup(\\s+([^\n]*?))?:\\)[^\\S\n]*\n(.*?)\\(:markupend:\\)/si",
   "MarkupMarkupMarkupEnd");
 function MarkupMarkupMarkupEnd($m) {
+  extract($GLOBALS["MarkupToHTML"]);
   return MarkupMarkup($pagename, $m[3], $m[1]);
 }
 
