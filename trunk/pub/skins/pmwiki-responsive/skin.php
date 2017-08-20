@@ -24,7 +24,12 @@ SDV($TableCellAlignFmt, " class='%s'");
 $SearchBoxInputType = "search";
 
 # remove deprecated "name=" parameter from anchor tags
-if($VersionNum >= 2002056) {
+if($GLOBALS['VersionNum'] < 2002056) {
+  # we want the skin to also work with older PmWiki versions
+  Markup('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/e',
+    "Keep(TrackAnchors('$1') ? '' : \"<a id='$1'></a>\", 'L')");
+}
+else {
   Markup('[[#','<[[','/(?>\\[\\[#([A-Za-z][-.:\\w]*))\\]\\]/',
     "MarkupKeepTrackAnchors");
 }
