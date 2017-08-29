@@ -11,7 +11,7 @@
 # $InputAttrs are the attributes we allow in output tags
 SDV($InputAttrs, array('name', 'value', 'id', 'class', 'rows', 'cols', 
   'size', 'maxlength', 'action', 'method', 'accesskey', 'tabindex', 'multiple',
-  'checked', 'disabled', 'readonly', 'enctype', 'src', 'alt',
+  'checked', 'disabled', 'readonly', 'enctype', 'src', 'alt', 'title',
   'required', 'placeholder', 'autocomplete', 'min', 'max', 'step'
   ));
 
