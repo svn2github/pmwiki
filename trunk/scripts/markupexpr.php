@@ -82,6 +82,7 @@ function cb_keep_m2_p($m) { return Keep($m[2],'P'); }
 function MarkupExpression($pagename, $expr) {
   global $KeepToken, $KPV, $MarkupExpr;
   $rpat = "/$KeepToken(\\d+P)$KeepToken/";
+  $rrep = '$GLOBALS["KPV"][$m[1]]';
   
   $expr = preg_replace_callback('/([\'"])(.*?)\\1/','cb_keep_m2_p', $expr);
   $expr = preg_replace_callback('/\\(\\W/', 'cb_keep_m0_p', $expr);
