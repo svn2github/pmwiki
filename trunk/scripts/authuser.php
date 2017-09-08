@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2017 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -132,7 +132,7 @@ function AuthUserHtGroup($pagename, $id, $pw, $pwlist) {
   
 
 function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
-  global $AuthLDAPBindDN, $AuthLDAPBindPassword;
+  global $AuthLDAPBindDN, $AuthLDAPBindPassword, $AuthLDAPReferrals;
   if (!$pw) return false;
   if (!function_exists('ldap_connect')) 
     Abort('authuser: LDAP authentication requires PHP ldap functions','ldapfn');
@@ -143,6 +143,8 @@ function AuthUserLDAP($pagename, $id, $pw, $pwlist) {
     list($z, $url, $path) = $match;
     $ds = ldap_connect($url);
     ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+    if(isset($AuthLDAPReferrals)) # *NOT* IsEnabled
+      ldap_set_option($ds, LDAP_OPT_REFERRALS, $AuthLDAPReferrals);
     ##  For Active Directory, don't specify a path and we simply
     ##  attempt to bind with the username and password directly
     if (!$path && @ldap_bind($ds, $id, $pw)) { ldap_close($ds); return true; }
