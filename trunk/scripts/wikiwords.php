@@ -56,6 +56,7 @@ Markup('wikilink', '>urllink',
   "MarkupWikiLink");
 
 function MarkupWikiLink($m) {
+  extract($GLOBALS["MarkupToHTML"]); # get $pagename
   return Keep('<span class="wikiword">'.WikiLink($pagename,$m[0]).'</span>', 'L');
 }
 
