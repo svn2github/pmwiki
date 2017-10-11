@@ -43,7 +43,7 @@ function MarkupMakeTrail($m) {
       return PRR(MakeTrailStop($pagename,$m[1]));
     case '<|': 
       return PRR(MakeTrailStopB($pagename,$m[1]));
-    case '<<|': 
+    case '^|': 
       return PRR(MakeTrailPath($pagename,$m[1]));
   }
 }
