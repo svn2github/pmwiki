@@ -177,10 +177,8 @@ function UploadAuth($pagename, $auth, $cache=0){
   return true;
 }
 
-function HandleUpload($pagename, $auth = 'upload') {
-  global $FmtV,$UploadExtMax, $EnableReadOnly,
-    $HandleUploadFmt,$PageStartFmt,$PageEndFmt,$PageUploadFmt;
-  UploadAuth($pagename, $auth, 1);
+function UploadSetVars($pagename) {
+  global $FmtV, $UploadExtMax, $EnableReadOnly;
   $FmtV['$UploadName'] = MakeUploadName($pagename,@$_REQUEST['upname']);
   $upresult = PHSC(@$_REQUEST['upresult']);
   $uprname = PHSC(@$_REQUEST['uprname']);
@@ -189,6 +187,12 @@ function HandleUpload($pagename, $auth = 'upload') {
   $FmtV['$UploadResult'] = ($upresult) ?
     FmtPageName("<i>$uprname</i>: $[UL$upresult]",$pagename) : 
       (@$EnableReadOnly ? XL('Cannot modify site -- $EnableReadOnly is set'): '');
+}
+
+function HandleUpload($pagename, $auth = 'upload') {
+  global $HandleUploadFmt,$PageStartFmt,$PageEndFmt,$PageUploadFmt;
+  UploadAuth($pagename, $auth, 1);
+  UploadSetVars($pagename);
   SDV($HandleUploadFmt,array(&$PageStartFmt,&$PageUploadFmt,&$PageEndFmt));
   PrintFmt($pagename,$HandleUploadFmt);
 }
