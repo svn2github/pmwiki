@@ -430,7 +430,7 @@ function PQA($x) {
       if (preg_match('/^on/i', $a[1])) continue;
       $val = preg_replace('/^([\'"]?)(.*)\\1$/', '$2', $a[2]);
       $val = str_replace("'", '&#39;', $val);
-      $out .= "{$a[1]}='$val'";
+      $out .= "{$a[1]}='$val' ";
     }
   }
   return $out;
