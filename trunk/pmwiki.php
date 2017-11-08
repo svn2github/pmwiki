@@ -354,6 +354,17 @@ if (isset($PostConfig) && is_array($PostConfig)) {
   }
 }
 
+function pmsetcookie($name, $val="", $exp=0, $path="", $dom="", $secure=null, $httponly=null) {
+  global $EnableCookieSecure, $EnableCookieHTTPOnly;
+  if (is_null($secure))   $secure   = IsEnabled($EnableCookieSecure,   false);
+  if (is_null($httponly)) $httponly = IsEnabled($EnableCookieHTTPOnly, false);
+  setcookie($name, $val, $exp, $path, $dom, $secure, $httponly);
+}
+if (IsEnabled($EnableCookieSecure, false)) 
+    @ini_set('session.cookie_secure', $EnableCookieSecure);
+if (IsEnabled($EnableCookieHTTPOnly, false)) 
+    @ini_set('session.cookie_httponly', $EnableCookieHTTPOnly);
+
 foreach((array)$InterMapFiles as $f) {
   $f = FmtPageName($f, $pagename);
   if (($v = @file($f))) 
@@ -2336,9 +2347,9 @@ function HandleLogoutA($pagename, $auth = 'read') {
   @session_start();
   $_SESSION = array();
   if ( session_id() != '' || isset($_COOKIE[session_name()]) )
-    setcookie(session_name(), '', time()-43200, '/');
+    pmsetcookie(session_name(), '', time()-43200, '/');
   foreach ($LogoutCookies as $c)
-    if (isset($_COOKIE[$c])) setcookie($c, '', time()-43200, '/');
+    if (isset($_COOKIE[$c])) pmsetcookie($c, '', time()-43200, '/');
   session_destroy();
   Redirect(FmtPageName($LogoutRedirectFmt, $pagename));
 }

@@ -24,7 +24,7 @@ $LogoutCookies[] = $AuthorCookie;
 if (!isset($Author)) {
   if (isset($_POST['author'])) {
     $x = stripmagic($_POST['author']);
-    setcookie($AuthorCookie, $x, $AuthorCookieExpires, $AuthorCookieDir);
+    pmsetcookie($AuthorCookie, $x, $AuthorCookieExpires, $AuthorCookieDir);
   } elseif (@$_COOKIE[$AuthorCookie]) {
     $x = stripmagic(@$_COOKIE[$AuthorCookie]);
   } else $x = @$AuthId;
