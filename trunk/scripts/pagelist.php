@@ -505,21 +505,29 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
   foreach(preg_grep('/^\\$/', array_keys($order)) as $o) 
     foreach($list as $pn) 
       $PCache[$pn][$o] = PageVar($pn, $o);
-  $code = '';
-  foreach($opt['=order'] as $o => $r) {
-    if (@$PageListSortCmp[$o]) 
-      $code .= "\$c = {$PageListSortCmp[$o]}; "; 
-    else 
-      $code .= "\$c = @strcasecmp(\$PCache[\$x]['$o'],\$PCache[\$y]['$o']); ";
-    $code .= "if (\$c) return $r\$c;\n";
-  }
+  foreach($PageListSortCmp as $o=>$f)
+    if(! is_callable($f)) # DEPRECATED
+      $PageListSortCmp[$o] = create_function('$x,$y', "return {$f};");
+
   StopWatch('PageListSort sort');
-  if ($code) 
-    uasort($list,
-           create_function('$x,$y', "global \$PCache; $code return 0;"));
+  if (count($opt['=order'])) {
+    $PCache['=pagelistoptorder'] = $opt['=order'];
+    uasort($list, 'PageListUASort');
+  }
   StopWatch('PageListSort end');
 }
-
+function PageListUASort($x,$y) {
+  global $PCache, $PageListSortCmp;
+  foreach($PCache['=pagelistoptorder'] as $o => $r) {
+    $sign = ($r == '-') ? -1 : 1;
+    if (@$PageListSortCmp[$o] && is_callable($PageListSortCmp[$o]))
+      $c = $PageListSortCmp[$o]($x, $y);
+    else 
+      $c = @strcasecmp($PCache[$x][$o],$PCache[$y][$o]);
+    if ($c) return $sign*$c;
+  }
+  return 0;
+}
 
 function PageListCache(&$list, &$opt, $pn, &$page) {
   global $PageListCacheDir, $LastModTime, $PageIndexFile;
@@ -809,7 +817,7 @@ function PageIndexUpdate($pagelist = NULL, $dir = '') {
   StopWatch("PageIndexUpdate begin ($c pages to update)");
   $pagelist = (array)$pagelist;
   $timeout = time() + $PageIndexTime;
-  $cmpfn = create_function('$a,$b', 'return strlen($b)-strlen($a);');
+  $cmpfn = 'PageIndexUpdateSort';
   Lock(2);
   $ofp = fopen("$PageIndexFile,new", 'w');
   foreach($pagelist as $pn) {
@@ -848,6 +856,7 @@ function PageIndexUpdate($pagelist = NULL, $dir = '') {
   StopWatch("PageIndexUpdate end ($updatecount updated)");
   ignore_user_abort($abort);
 }
+function PageIndexUpdateSort($a,$b) {return strlen($b)-strlen($a);}
 
 ## PageIndexQueueUpdate specifies pages to be updated in
 ## the index upon shutdown (via register_shutdown function).
