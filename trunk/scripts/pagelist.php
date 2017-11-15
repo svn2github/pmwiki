@@ -507,7 +507,7 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
       $PCache[$pn][$o] = PageVar($pn, $o);
   foreach($PageListSortCmp as $o=>$f)
     if(! is_callable($f)) # DEPRECATED
-      $PageListSortCmp[$o] = create_function('$x,$y', "return {$f};");
+      $PageListSortCmp[$o] = create_function('$x,$y', "global \$PCache; return {$f};");
 
   StopWatch('PageListSort sort');
   if (count($opt['=order'])) {
