@@ -398,7 +398,8 @@ Markup('wikilink', '>urllink');
 ##    v2.2: rule kept here for markup compatibility with 2.1 and earlier
 Markup('`wikiword', '<wikilink',
   "/`(($GroupPattern([\\/.]))?($WikiWordPattern))/",
-  "Keep");
+  "MarkupNoWikiWord");
+function MarkupNoWikiWord($m) { return Keep($m[1]); }
 
 #### Block markups ####
 ## Completely blank lines don't do anything.
