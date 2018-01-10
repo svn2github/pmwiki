@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2005-2017 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2005-2018 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -106,7 +106,7 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   ##  convert any positional arguments to named arguments
   $posnames = @$InputTags[$type][':args'];
   if (!$posnames) $posnames = array('name', 'value');
-  while (count($posnames) > 0 && count(@$args['']) > 0) {
+  while (count($posnames) > 0 && @count(@$args['']) > 0) {
     $n = array_shift($posnames);
     if (!isset($args[$n])) $args[$n] = array_shift($args['']);
   }

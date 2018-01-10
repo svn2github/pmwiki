@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2006-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2006-2018 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -89,7 +89,7 @@ function PostNotify($pagename, &$page, &$new) {
 
 function NotifyUpdate($pagename, $dir='') {
   global $NotifyList, $NotifyListPageFmt, $NotifyFile, $IsPagePosted, $IsUploadPosted,
-    $FmtV, $NotifyTimeFmt, $NotifyItemFmt, $SearchPatterns,
+    $FmtV, $NotifyTimeFmt, $NotifyItemFmt, $SearchPatterns, $MailFunction,
     $NotifySquelch, $NotifyDelay, $Now, $Charset, $EnableNotifySubjectEncode,
     $NotifySubjectFmt, $NotifyBodyFmt, $NotifyHeaders, $NotifyParameters;
 
@@ -178,10 +178,11 @@ function NotifyUpdate($pagename, $dir='') {
       if (!$notify[$m]) { unset($notify[$m]); continue; }
       $mbody = str_replace('$NotifyItems',   
                            urldecode(implode("\n", $notify[$m])), $body);
+      SDV($MailFunction, 'mail');
       if ($NotifyParameters && !@ini_get('safe_mode'))
-        mail($m, $subject, $mbody, $NotifyHeaders, $NotifyParameters);
+        $MailFunction($m, $subject, $mbody, $NotifyHeaders, $NotifyParameters);
       else 
-        mail($m, $subject, $mbody, $NotifyHeaders);
+        $MailFunction($m, $subject, $mbody, $NotifyHeaders);
       $notify[$m] = array('lastmail' => $nnow);
     }
   }

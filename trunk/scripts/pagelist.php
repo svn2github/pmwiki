@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2017 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2018 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -132,10 +132,13 @@ SDVA($PageListFilters, array(
   'PageListSort' => 900,
 ));
 
-foreach(array('random', 'size', 'time', 'ctime') as $o) 
-  SDV($PageListSortCmp[$o], "@(\$PCache[\$x]['$o']-\$PCache[\$y]['$o'])");
-SDV($PageListSortCmp['title'], 
-  '@strcasecmp($PCache[$x][\'=title\'], $PCache[$y][\'=title\'])');
+function CorePageListSorts($x, $y, $o) {
+  global $PCache; 
+  if($o == 'title') $o = '=title';
+  return @($PCache[$x][$o]-$PCache[$y][$o]);
+}
+foreach(array('random', 'size', 'time', 'ctime', 'title') as $o) 
+  SDV($PageListSortCmp[$o], 'CorePageListSorts');
 
 define('PAGELIST_PRE' , 1);
 define('PAGELIST_ITEM', 2);
@@ -521,7 +524,7 @@ function PageListUASort($x,$y) {
   foreach($PCache['=pagelistoptorder'] as $o => $r) {
     $sign = ($r == '-') ? -1 : 1;
     if (@$PageListSortCmp[$o] && is_callable($PageListSortCmp[$o]))
-      $c = $PageListSortCmp[$o]($x, $y);
+      $c = $PageListSortCmp[$o]($x, $y, $o);
     else 
       $c = @strcasecmp($PCache[$x][$o],$PCache[$y][$o]);
     if ($c) return $sign*$c;
@@ -866,7 +869,7 @@ function PageIndexQueueUpdate($pagelist) {
     register_shutdown_function('PageIndexUpdate', NULL, getcwd());
   $PageIndexUpdateList = array_merge((array)@$PageIndexUpdateList,
                                      (array)$pagelist);
-  $c1 = count($pagelist); $c2 = count($PageIndexUpdateList);
+  $c1 = @count($pagelist); $c2 = count($PageIndexUpdateList);
   StopWatch("PageIndexQueueUpdate: queued $c1 pages ($c2 total)");
 }
 
