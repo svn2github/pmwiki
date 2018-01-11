@@ -133,8 +133,9 @@ SDVA($PageListFilters, array(
 ));
 
 function CorePageListSorts($x, $y, $o) {
-  global $PCache; 
-  if($o == 'title') $o = '=title';
+  global $PCache;
+  if($o == 'title')
+    return @strcasecmp($PCache[$x]['=title'],$PCache[$y]['=title']);
   return @($PCache[$x][$o]-$PCache[$y][$o]);
 }
 foreach(array('random', 'size', 'time', 'ctime', 'title') as $o) 
