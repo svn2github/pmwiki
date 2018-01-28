@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2017 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2018 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -28,8 +28,8 @@ $HTTPHeaders['utf-8'] = 'Content-type: text/html; charset=UTF-8';
 $HTMLHeaderFmt['utf-8'] = 
   "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />";
 SDVA($HTMLStylesFmt, array('rtl-ltr' => "
-  .rtl {direction:rtl; unicode-bidi:bidi-override;}
-  .ltr {direction:ltr; unicode-bidi:bidi-override;}
+  .rtl, .rtl * {direction:rtl; unicode-bidi:bidi-override;}
+  .ltr, .ltr * {direction:ltr; unicode-bidi:bidi-override;}
   .rtl .indent, .rtl.indent, .rtl .outdent, .rtl.outdent {
     margin-left:0; margin-right: 40px;
   }

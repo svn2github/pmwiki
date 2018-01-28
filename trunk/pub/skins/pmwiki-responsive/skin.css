@@ -1,6 +1,6 @@
 /***********************************************************************
 **  skin.css
-**  Copyright 2016-2017 Petko Yotov www.pmwiki.org/petko
+**  Copyright 2016-2018 Petko Yotov www.pmwiki.org/petko
 **  
 **  Partially based on pmwiki.css:
 **  Copyright 2004-2006 Patrick R. Michaud pmichaud@pobox.com
@@ -243,8 +243,8 @@ select, textarea, input {
 }
 
 /* xlpage-utf-8.php */
-.rtl {direction:rtl; unicode-bidi:bidi-override;}
-.ltr {direction:ltr; unicode-bidi:bidi-override;}
+.rtl, .rtl * {direction:rtl; unicode-bidi:bidi-override;}
+.ltr, .ltr * {direction:ltr; unicode-bidi:bidi-override;}
 .rtl .indent, .rtl.indent, .rtl .outdent, .rtl.outdent {
   margin-left:0; margin-right: 15px;
 }
