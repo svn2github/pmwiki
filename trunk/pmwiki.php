@@ -473,7 +473,10 @@ function PHSC($x, $flags=ENT_COMPAT, $enc=null, $dbl_enc=true) { # for PHP 5.4
   return $x;
 }
 function PCCF($code, $template = 'default', $args = '$m') {
-  global $CallbackFnTemplates, $CallbackFunctions;
+  global $CallbackFnTemplates, $CallbackFunctions, $PCCFOverrideFunction;
+  if ($PCCFOverrideFunction && is_callable($PCCFOverrideFunction))
+    return $PCCFOverrideFunction($code, $template, $args);
+
   if (!isset($CallbackFnTemplates[$template]))
     Abort("No \$CallbackFnTemplates[$template]).");
   $code = sprintf($CallbackFnTemplates[$template], $code);
@@ -516,6 +519,7 @@ function cb_toupper($m) { return strtoupper($m[1]); }
 function cb_tolower($m) { return strtolower($m[1]); }
 
 function pmcrypt($str, $salt=null) {
+  if ($salt && ($salt == '*' || $salt{0} == '@')) return false;
   if (!is_null($salt)) return crypt($str, $salt);
   if (function_exists('password_hash'))
     return password_hash($str, PASSWORD_DEFAULT);

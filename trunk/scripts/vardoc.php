@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2002-2017 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2002-2018 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +18,7 @@
 SDV($VarPagesFmt,array('$[PmWiki.Variables]'));
 Markup('vardef','<links',"/^:\\$($WikiWordPattern|Author|Skin|pagename|Version) *:/",
   ':[[#$1]]$$1:');
-Markup_e('varlink','<wikilink',"/\\$($WikiWordPattern|Author|Skin|pagename|Version)\\b/",
+Markup('varlink','<wikilink',"/\\$($WikiWordPattern|Author|Skin|pagename|Version)\\b/",
   "MarkupVarLinkIndex");
 Markup('varindex', 'directives',
   '/\\(:varindex:\\)/i', "MarkupVarLinkIndex");

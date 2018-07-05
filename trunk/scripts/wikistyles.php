@@ -87,6 +87,7 @@ if (IsEnabled($EnableStdWikiStyles,1)) {
   ##  preformatted text sections
   SDV($WikiStyle['pre'], array('apply' => 'block', 'white-space' => 'pre'));
   SDV($WikiStyle['sidehead'], array('apply' => 'block', 'class' => 'sidehead'));
+  SDV($WikiStyle['reversed'], array('apply' => 'list', 'reversed' => 'reversed'));
 }
 
 SDVA($WikiStyleAttr,array(
@@ -94,6 +95,7 @@ SDVA($WikiStyleAttr,array(
   'hspace' => 'img',
   'align' => 'img',
   'value' => 'li',
+  'reversed' => 'ol',
   'target' => 'a',
   'accesskey' => 'a',
   'rel' => 'a'));
@@ -127,7 +129,7 @@ function ApplyStyles($x) {
     $p = array_shift($parts);
     if (preg_match("/^$WikiStylePattern\$/",$p)) {
       $WikiStyle['curr']=$style; $style=array();
-      foreach((array)$WikiStyleRepl as $pat=>$rep) 
+      foreach((array)$WikiStyleRepl as $pat=>$rep)
         $p=preg_replace($pat,$rep,$p);
       preg_match_all(
         '/\\b([a-zA-Z][-\\w]*)([:=]([-#,\\w.()%]+|([\'"]).*?\\4))?/',

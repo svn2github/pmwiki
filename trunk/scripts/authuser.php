@@ -55,16 +55,18 @@ function AuthUserId($pagename, $id, $pw=NULL) {
     $id => 'AuthUserConfig'));
 
   SDV($AuthUserPat, "/^\\s*([@\\w][^\\s:]*):(.*)/m");
-  $pn = FmtPageName($AuthUserPageFmt, $pagename);
-  $apage = ReadPage($pn, READPAGE_CURRENT);
-  if ($apage && preg_match_all($AuthUserPat, 
-                               $apage['text'], $matches, PREG_SET_ORDER)) {
-    foreach($matches as $m) {
-      if (!preg_match_all('/\\bldaps?:\\S+|[^\\s,]+/', $m[2], $v))
-        continue;
-      if ($m[1]{0} == '@') 
-        foreach($v[0] as $g) $auth[$g][] = $m[1];
-      else $auth[$m[1]] = array_merge((array)@$auth[$m[1]], $v[0]);
+  foreach ( (array)$AuthUserPageFmt as $aupn) {
+    $pn = FmtPageName($aupn, $pagename);
+    $apage = ReadPage($pn, READPAGE_CURRENT);
+    if ($apage && preg_match_all($AuthUserPat,
+                                $apage['text'], $matches, PREG_SET_ORDER)) {
+      foreach($matches as $m) {
+        if (!preg_match_all('/\\bldaps?:\\S+|[^\\s,]+/', $m[2], $v))
+          continue;
+        if ($m[1]{0} == '@')
+          foreach($v[0] as $g) $auth[$g][] = $m[1];
+        else $auth[$m[1]] = array_merge((array)@$auth[$m[1]], $v[0]);
+      }
     }
   }
 

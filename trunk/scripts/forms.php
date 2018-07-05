@@ -152,7 +152,8 @@ function InputToHTML($pagename, $type, $args, &$opt) {
   if (isset($opt['label'])) {
     static $labelcnt=0;
     if (!isset($opt['id'])) $opt['id'] = "lbl_". (++$labelcnt);
-    $FmtV['$InputFormLabel'] = " <label for=\"{$opt['id']}\">{$opt['label']}</label> ";
+    $lbtitle = isset($opt['title']) ? " title='".str_replace("'", '&#39;', $opt['title'])."'" : '';
+    $FmtV['$InputFormLabel'] = " <label for=\"{$opt['id']}\"$lbtitle>{$opt['label']}</label> ";
   }
   ##  handle focus=# option
   $focus = @$opt['focus'];

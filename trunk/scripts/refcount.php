@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2015 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2018 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -56,8 +56,8 @@ function PrintRefCount($pagename) {
   foreach($grouplist as $g=>$t)
     echo "<option ",in_array($g,$flist) ? 'selected="selected"' : ''," value='$g'>$t</option>\n";
   echo "</select></td></tr></table>
-    <p><input type='checkbox' name='showrefs' value='checked' $showrefs/>
-      Display referencing pages
+    <p><input type='checkbox' name='showrefs' id='chk_showrefs' value='checked' $showrefs/>
+      <label for='chk_showrefs'>Display referencing pages</label>
     </p><p><input type='submit' name='submit' value='Search'/></p></form><hr/>";
 
   if ($submit) {
@@ -76,7 +76,7 @@ function PrintRefCount($pagename) {
       }
     }
     uasort($tref,'RefCountCmp');
-    echo "<table >
+    echo "<table class='refcount'>
       <tr><th></th><th colspan='2'>Referring pages</th></tr>
       <tr><th>Name / Time</th><th>All</th><th>R.C.</th></tr>";
     reset($tref);

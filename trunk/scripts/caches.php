@@ -58,7 +58,10 @@ mkdirp($PageCacheDir);
 if (!file_exists("$PageCacheDir/.htaccess") 
     && $fp = @fopen("$PageCacheDir/.htaccess", "w"))
   { fwrite($fp, "Order Deny,Allow\nDeny from all\n"); fclose($fp); }
-$PageCacheFile = "$PageCacheDir/$pagename,cache";
+
+SDV($PageCacheFileFmt, "%s/%s,cache");
+SDV($PageCacheFile, sprintf($PageCacheFileFmt, $PageCacheDir, $pagename));
+
 if (file_exists($PageCacheFile) && @filemtime($PageCacheFile) < $LastModTime) 
   @unlink($PageCacheFile);
 
