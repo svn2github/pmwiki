@@ -7,4 +7,4 @@ Meatball:   http://www.usemod.com/cgi-bin/mb.pl?
 Wikipedia:  https://en.wikipedia.org/wiki/
 PITS:       https://www.pmwiki.org/wiki/PITS/
 PmL10n:     https://www.pmwiki.org/wiki/Localization/
-Path:            
+Path:
