@@ -519,8 +519,9 @@ function cb_toupper($m) { return strtoupper($m[1]); }
 function cb_tolower($m) { return strtolower($m[1]); }
 
 function pmcrypt($str, $salt=null) {
-  if ($salt && ($salt == '*' || $salt{0} == '@')) return false;
+  if ($salt && preg_match('/^(-?@|\\*$)/',  $salt)) return false;
   if (!is_null($salt)) return crypt($str, $salt);
+
   if (function_exists('password_hash'))
     return password_hash($str, PASSWORD_DEFAULT);
   return crypt($str);
