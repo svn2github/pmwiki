@@ -33,6 +33,7 @@ if (IsEnabled($EnablePageIndex, 1)) {
 }
 
 SDV($StrFoldFunction, 'strtolower');
+SDV($PageListSortCmpFunction, 'strcasecmp');
 
 ## $SearchPatterns holds patterns for list= option
 SDV($SearchPatterns['all'], array());
@@ -521,13 +522,13 @@ function PageListSort(&$list, &$opt, $pn, &$page) {
   StopWatch('PageListSort end');
 }
 function PageListUASort($x,$y) {
-  global $PCache, $PageListSortCmp;
+  global $PCache, $PageListSortCmp, $PageListSortCmpFunction;
   foreach($PCache['=pagelistoptorder'] as $o => $r) {
     $sign = ($r == '-') ? -1 : 1;
     if (@$PageListSortCmp[$o] && is_callable($PageListSortCmp[$o]))
       $c = $PageListSortCmp[$o]($x, $y, $o);
     else 
-      $c = @strcasecmp($PCache[$x][$o],$PCache[$y][$o]);
+      $c = @$PageListSortCmpFunction($PCache[$x][$o],$PCache[$y][$o]);
     if ($c) return $sign*$c;
   }
   return 0;
