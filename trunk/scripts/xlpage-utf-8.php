@@ -125,8 +125,8 @@ function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo fo
   }
   if ($ascii) {
     if ($start==='strlen') return strlen($str);
-    if ($len===false) return substr($str, $start);
-    return substr($str, $start, $len);
+    if ($len===false) return substr($str, intval($start));
+    return substr($str, intval($start), intval($len));
   }
   $letters = preg_split("/([\\x00-\\x7f]|[\\xc2-\\xdf].|[\\xe0-\\xef]..|[\\xf0-\\xf4]...)/", 
               $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
