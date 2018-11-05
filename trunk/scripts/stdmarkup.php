@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2004-2016 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2004-2018 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -583,16 +583,15 @@ function MarkupMarkup($pagename, $text, $opt = '') {
 Markup('markup', '<[=',
   "/\\(:markup(\\s+([^\n]*?))?:\\)[^\\S\n]*\\[([=@])(.*?)\\3\\]/si",
   "MarkupMarkupMarkup");
+Markup('markupend', '>markup', # $1 only shifts the other matches
+  "/\\(:(markup)(\\s+([^\n]*?))?:\\)[^\\S\n]*\n(.*?)\\(:markupend:\\)/si",
+  "MarkupMarkupMarkup");
 function MarkupMarkupMarkup($m) { # cannot be joined, $markupid resets
-  extract($GLOBALS["MarkupToHTML"]);
-  return MarkupMarkup($pagename, $m[4], $m[2]);
-}
-Markup('markupend', '>markup',
-  "/\\(:markup(\\s+([^\n]*?))?:\\)[^\\S\n]*\n(.*?)\\(:markupend:\\)/si",
-  "MarkupMarkupMarkupEnd");
-function MarkupMarkupMarkupEnd($m) {
-  extract($GLOBALS["MarkupToHTML"]);
-  return MarkupMarkup($pagename, $m[3], $m[1]);
+  extract($GLOBALS["MarkupToHTML"]); global $MarkupMarkupLevel;
+  @$MarkupMarkupLevel++;
+  $x = MarkupMarkup($pagename, $m[4], $m[2]);
+  $MarkupMarkupLevel--;
+  return $x;
 }
 
 SDV($HTMLStylesFmt['markup'], "
