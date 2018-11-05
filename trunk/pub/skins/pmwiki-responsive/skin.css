@@ -252,7 +252,7 @@ select, textarea, input {
 /* pmwiki.php */
 ul, ol, pre, dl, p { margin-top:0px; margin-bottom:0px; }
 code.escaped { 
-  white-space: nowrap; 
+  white-space: pre; 
   display: inline-block;
   vertical-align: bottom;
   text-indent: 0;
