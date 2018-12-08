@@ -1,7 +1,7 @@
 <?php
 /*
     PmWiki
-    Copyright 2001-2017 Patrick R. Michaud
+    Copyright 2001-2018 Patrick R. Michaud
     pmichaud@pobox.com
     http://www.pmichaud.com/
 
@@ -26,6 +26,7 @@
     provide explanations (and add comments) that answer them.
     
     Script maintained by Petko YOTOV www.pmwiki.org/petko
+    $Id$
 */
 error_reporting(E_ALL ^ E_NOTICE);
 StopWatch('PmWiki');
@@ -329,6 +330,18 @@ $Cursor['*'] = &$pagename;
 if (function_exists("date_default_timezone_get") ) { # fix PHP5.3 warnings
   @date_default_timezone_set(@date_default_timezone_get());
 }
+
+$DenyHtaccessContent = <<<EOF
+<IfModule !mod_authz_host.c>
+  Order Deny,Allow
+  Deny from all
+</IfModule>
+
+<IfModule mod_authz_host.c>
+  Require all denied
+</IfModule>
+
+EOF;
 
 if (file_exists("$FarmD/local/farmconfig.php")) 
   include_once("$FarmD/local/farmconfig.php");
@@ -1117,7 +1130,7 @@ class PageStore {
     return $this->recode($pagename, @$page);
   }
   function write($pagename,$page) {
-    global $Now, $Version, $Charset, $EnableRevUserAgent, $PageExistsCache;
+    global $Now, $Version, $Charset, $EnableRevUserAgent, $PageExistsCache, $DenyHtaccessContent;
     $page['charset'] = $Charset;
     $page['name'] = $pagename;
     $page['time'] = $Now;
@@ -1131,7 +1144,7 @@ class PageStore {
     $pagefile = $this->pagefile($pagename);
     $dir = dirname($pagefile); mkdirp($dir);
     if (!file_exists("$dir/.htaccess") && $fp = @fopen("$dir/.htaccess", "w")) 
-      { fwrite($fp, "Order Deny,Allow\nDeny from all\n"); fclose($fp); }
+      { fwrite($fp, $DenyHtaccessContent); fclose($fp); }
     if ($pagefile && ($fp=fopen("$pagefile,new","w"))) {
       $r0 = array('%', "\n", '<');
       $r1 = array('%25', '%0a', '%3c');

@@ -357,7 +357,7 @@ td.middle, th.middle { vertical-align: middle;}
     right: 6px;
     top: 6px;
     width: auto;
-    max-width: auto;
+    max-width: none;
     line-height: inherit;
     overflow: hidden;
   }

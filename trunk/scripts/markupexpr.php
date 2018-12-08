@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2007-2017 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2007-2018 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -127,9 +127,18 @@ function ME_ftime($arg0 = '', $arg1 = '', $argp = NULL) {
   if (isset($argp['when'])) list($time, $x) = DRange($argp['when']);
   else if ($arg0 > '') list($time, $x) = DRange($arg0);
   else $time = $Now;
+  $dtz = function_exists('date_default_timezone_get') # tz=Europe/Paris
+    ? date_default_timezone_get() : false;
+  if (@$argp['tz'] && $dtz) @date_default_timezone_set($argp['tz']);
+  $dloc = setlocale(LC_TIME, 0);
+  if(@$argp['locale']) # locale=fr_FR.utf8,bg_BG,C
+    setlocale(LC_TIME, preg_split('/[, ]+/', $argp['locale'], null, PREG_SPLIT_NO_EMPTY));
   if (@$fmt == '') { SDV($FTimeFmt, $TimeFmt); $fmt = $FTimeFmt; }
   ##  make sure we have %F available for ISO dates
   $fmt = str_replace(array('%F', '%s'), array('%Y-%m-%d', $time), $fmt);
-  return strftime($fmt, $time);
+  $ret = strftime($fmt, $time);
+  if (@$argp['tz'] && $dtz) date_default_timezone_set($dtz);
+  if(@$argp['locale']) setlocale(LC_TIME, $dloc);
+  return $ret;
 }
 
