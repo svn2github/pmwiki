@@ -736,10 +736,10 @@ function MatchNames($pagelist, $pat) {
     switch ($p{0}) {
       case '/': 
         $pagelist = preg_grep($p, $pagelist); 
-        continue;
+        break;
       case '!':
         $pagelist = array_diff($pagelist, preg_grep($p, $pagelist)); 
-        continue;
+        break;
       default:
         list($inclp, $exclp) = GlobToPCRE(str_replace('/', '.', $p));
         if ($exclp) 
